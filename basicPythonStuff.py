@@ -40,13 +40,15 @@ def get_divisors(x):
             array_of_divisors.append(i)    
     return array_of_divisors
 
-def find_possible_combinations(N, possible_steps_taken, solving_array, index):        
+def find_possible_combinations(N, possible_steps_taken, solving_array, index, i):        
     if sum(solving_array) == N:
+        print("O solutie arata astfel: ", solving_array)
         return solving_array
-    else:     
-        solving_array.append(possible_steps_taken[0]) 
-        print("S-a facut pasul", index)
-        return find_possible_combinations(N - 1, possible_steps_taken, solving_array, index + 1)   
+    else: 
+        for i in range(len(possible_steps_taken)):  
+            print("La indicele", i)
+            solving_array.append(possible_steps_taken[i])
+            return find_possible_combinations(N, possible_steps_taken, solving_array, index, i)   
 
 
 
@@ -96,15 +98,16 @@ def find_possible_combinations(N, possible_steps_taken, solving_array, index):
 #
 # Vezi fisierul Problema3.txt. Incercam recursiv aici
 #
-N = int(input("Enter number of stairs to be walked up: "))
-print(N)
-TriassicStuff.log_stuff_going_on(N)
+# N = int(input("Enter number of stairs to be walked up: "))
+# TriassicStuff.log_stuff_going_on(N)
+N = 3
 
 possible_steps_taken = [1, 2]
+possible_steps_taken.sort()
 solving_array = []
-
-find_possible_combinations(N, possible_steps_taken, solving_array, 0)
-print("O solutie arata astfel: ", solving_array)
+i = 0
+find_possible_combinations(N, possible_steps_taken, solving_array, 0, i)
+# print("O solutie arata astfel: ", solving_array)
 
 
 
