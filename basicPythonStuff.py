@@ -20,11 +20,14 @@ import matplotlib.pyplot as plt
 import numpy as np
 # asta e ca importez dintr-un alt fisier scris de mine
 from functions.triassic import TriassicStuff
+#
+from array import *
 
 
 
 # ------------ Declarari de functii ------------
-# Functiile aparent se declara inainte de partea din cod in care pot fi folosite
+# Functiile aparent se declara inainte de partea din cod in care pot fi folosite, sau in afara
+# 
 # Declaratie de functie care ridica la patrat
 def square_function(x) :
     return x**2
@@ -40,15 +43,91 @@ def get_divisors(x):
             array_of_divisors.append(i)    
     return array_of_divisors
 
-def find_possible_combinations(N, possible_steps_taken, solving_array, index, i):        
-    if sum(solving_array) == N:
-        print("O solutie arata astfel: ", solving_array)
+def factorial(x):
+    if x == 0:
+        return 1
+    if x == 1:
+        return 1
+    else:
+        return (x * factorial(x-1))
+
+def fibonacci_recursive(N):    
+    if N <= 1:
+        return 1
+    else:
+        return fibonacci_recursive(N - 1) + fibonacci_recursive(N - 2)
+    
+def custom_fibonacci_recursive(N, X):    
+    if N < 0:
+        return 0
+    if N == 0:
+        return 1
+    else:
+        # asta face suma de mai sus, doar ca pentru fiecare membru x al vectorului X
+        return sum(custom_fibonacci_recursive(N - x, X) for x in X)
+    
+def fibonacci(n):
+    # aparent poti sa faci asignarea asa    
+    a, b = 1, 2
+    # aici nu folosim iteratorul deci pare ca nu trebuie nici macar specificat
+    for _ in range(n - 1):
+        # a = b
+        # b = a + b
+        a, b = b, a + b
+    return a
+
+def custom_fibonacci(n, X):
+    
+    # asta e echivalent cu cache = np.zeroes(n + 1)
+    cache = [0 for _ in range(n + 1)]
+    cache[0] = 1    
+    for i in range(1, n + 1):
+        cache[i] += sum(cache[i - x] for x in X if i - x >= 0)
+    return cache[n]
+    
+        
+def find_possible_combinations(N, possible_steps_taken, solving_array, solutions, tried_arrays):    
+    if tried_arrays.count(solving_array) > 0:
+        solving_array.pop(len(solving_array) - 1)
         return solving_array
-    else: 
-        for i in range(len(possible_steps_taken)):  
-            print("La indicele", i)
-            solving_array.append(possible_steps_taken[i])
-            return find_possible_combinations(N, possible_steps_taken, solving_array, index, i)   
+    
+    for i in range(len(possible_steps_taken)):
+        
+        solving_array.append(possible_steps_taken[i])
+        print("\nCurrently managing: ", solving_array)
+        
+        if tried_arrays.count(solving_array) > 0:
+            print(solving_array, " found in ", tried_arrays, "skipping...") 
+            solving_array.pop(len(solving_array) - 1)
+            print("Reduced to ", solving_array)
+            return solving_array
+        
+        else:            
+            if sum(solving_array) < N:                
+                print("Sum smaller than N for: ", solving_array)
+                temp_array = solving_array
+                solving_array = find_possible_combinations(N, possible_steps_taken, solving_array, solutions, tried_arrays)
+                if tried_arrays.count(solving_array) != 0:
+                    solving_array = temp_array
+                    
+            if sum(solving_array) == N:
+                if tried_arrays.count(solving_array) == 0:
+                    solutions.append(solving_array.copy())
+                    tried_arrays.append(solving_array.copy())
+                    print("Found solution: ", solving_array, "!!!")
+                    solving_array.pop(len(solving_array) - 1)
+                    print("Reduced to ", solving_array)
+                    
+            if sum(solving_array) > N:                
+                print("Sum bigger than N for: ", solving_array)
+                tried_arrays.append(solving_array.copy())
+                solving_array.pop(len(solving_array) - 1)
+                if i == len(possible_steps_taken) - 1:                    
+                    # solving_array.pop(len(solving_array) - 1)
+                    pass
+                print("Reduced to ", solving_array)
+                return solving_array
+
 
 
 
@@ -96,28 +175,43 @@ def find_possible_combinations(N, possible_steps_taken, solving_array, index, i)
 
 # ----------------- Programu 3 -----------------
 #
-# Vezi fisierul Problema3.txt. Incercam recursiv aici
-#
-# N = int(input("Enter number of stairs to be walked up: "))
-# TriassicStuff.log_stuff_going_on(N)
-N = 3
+# Vezi fisierul Problema3.txt. Incercam recursiv aici, adica:
+    
+# Pentru trepte posibile = [1, 2] avem urmatoarele combinatii posibile
+# N = 1 | 1 posibilitate | [1]
+# N = 2 | 2 posibilitati | [[1, 1], [2]]
+# N = 3 | 3 posibilitati | [[1, 1, 1], [1, 2], [2, 1]]
+# N = 4 | 5 posibilitati | [[1, 1, 1, 1], [1, 1, 2], [1, 2, 1], [2, 1, 1], [2, 2]]
+# N = 5 | 8 posibilitati | [[1, 1, 1, 1, 1], [1, 1, 1, 2], [1, 1, 2, 1], [1, 2, 1, 1], [1, 2, 2], [2, 1, 1, 1], [2, 1, 2], [2, 2, 1]]
+# Remarcam, deci, ca e sirul lui fibonacci aici
 
-possible_steps_taken = [1, 2]
-possible_steps_taken.sort()
-solving_array = []
-i = 0
-find_possible_combinations(N, possible_steps_taken, solving_array, 0, i)
-# print("O solutie arata astfel: ", solving_array)
+# de la input vine string, asa ca ii facem cast la int
+N = int(input("Numarul de trepte ce trebuie urcate: "))
+TriassicStuff.log_stuff_going_on(N)
+chosen_steps = [1, 3, 5]
+chosen_steps.sort()
 
+print("[Recursiv] Numarul de variante posibile este ", fibonacci_recursive(N))
+print("[Secvential] Numarul de variante posibile este ", fibonacci(N))
 
+print("[Recursiv] Pentru sirul ", chosen_steps, ", numarul de variante posibile este ", custom_fibonacci_recursive(N, chosen_steps))
+print("[Secvential] Pentru sirul ", chosen_steps, ", numarul de variante posibile este ", custom_fibonacci(N, chosen_steps))
 
 
 # # ----------------- Programu 4 -----------------
 # #
-# # Vezi fisierul Problema3.txt. Incercam cu arbori aici
+# # Vezi fisierul Problema3.txt. Incercam sa aflam si combinatiile posibile, nu doar numarul lor
+# # da smtbmm ca ma ia ceafa cu problema asta
 # #
 # N = input("Enter number of stairs to be walked up: ")
 # print(N)
 # TriassicStuff.log_stuff_going_on(N)
 
 # possible_steps_taken = [1, 2]
+# possible_steps_taken.sort()
+# solving_array = []
+# solutions = []
+# tried_arrays = []
+
+# find_possible_combinations(N, possible_steps_taken, solving_array, solutions, tried_arrays)
+# print("Sa speram: ", solutions)
