@@ -131,27 +131,27 @@ def find_possible_combinations(N, possible_steps_taken, solving_array, solutions
 
 
 
-# # ----------------- Programu 1 -----------------
-# #
-# # Plot x^2 pentru intervalul [-1000, 1000], babeste. !00% exista deja functii
-# #
-# # Vector de numere definit prin interval
-# array_of_numbers = range(-1001, 1001)
+# ----------------- Programu 1 -----------------
+#
+# Plot x^2 pentru intervalul [-1000, 1000], babeste. !00% exista deja functii
+#
+# Vector de numere definit prin interval
+array_of_numbers = range(-1001, 1001)
 
-# # Vector gol
-# array_of_numbers_squared_up = []
+# Vector gol
+array_of_numbers_squared_up = []
 
-# # FOR loop
-# for i in array_of_numbers :
-#     array_of_numbers_squared_up.append(square_function(i))
+# FOR loop
+for i in array_of_numbers :
+    array_of_numbers_squared_up.append(square_function(i))
     
-# # FOR loop, dar in care nu se intampla nimic. Echivalent cu for (i = 0; i < 5; i++) ;
-# for i in range(5) :
-#     pass
+# FOR loop, dar in care nu se intampla nimic. Echivalent cu for (i = 0; i < 5; i++) ;
+for i in range(5) :
+    pass
 
-# # asta e de la TD daca mai tii minte. Mai intai plotezi axa X, apoi axa Y
-# plt.plot(array_of_numbers, array_of_numbers_squared_up)
-# plt.show()
+# asta e de la TD daca mai tii minte. Mai intai plotezi axa X, apoi axa Y
+plt.plot(array_of_numbers, array_of_numbers_squared_up)
+plt.show()
 
 
 
@@ -173,29 +173,29 @@ def find_possible_combinations(N, possible_steps_taken, solving_array, solutions
 
 
 
-# ----------------- Programu 3 -----------------
-#
-# Vezi fisierul Problema3.txt. Incercam recursiv aici, adica:
+# # ----------------- Programu 3 -----------------
+# #
+# # Vezi fisierul Problema3.txt. Incercam recursiv aici, adica:
     
-# Pentru trepte posibile = [1, 2] avem urmatoarele combinatii posibile
-# N = 1 | 1 posibilitate | [1]
-# N = 2 | 2 posibilitati | [[1, 1], [2]]
-# N = 3 | 3 posibilitati | [[1, 1, 1], [1, 2], [2, 1]]
-# N = 4 | 5 posibilitati | [[1, 1, 1, 1], [1, 1, 2], [1, 2, 1], [2, 1, 1], [2, 2]]
-# N = 5 | 8 posibilitati | [[1, 1, 1, 1, 1], [1, 1, 1, 2], [1, 1, 2, 1], [1, 2, 1, 1], [1, 2, 2], [2, 1, 1, 1], [2, 1, 2], [2, 2, 1]]
-# Remarcam, deci, ca e sirul lui fibonacci aici
+# # Pentru trepte posibile = [1, 2] avem urmatoarele combinatii posibile
+# # N = 1 | 1 posibilitate | [1]
+# # N = 2 | 2 posibilitati | [[1, 1], [2]]
+# # N = 3 | 3 posibilitati | [[1, 1, 1], [1, 2], [2, 1]]
+# # N = 4 | 5 posibilitati | [[1, 1, 1, 1], [1, 1, 2], [1, 2, 1], [2, 1, 1], [2, 2]]
+# # N = 5 | 8 posibilitati | [[1, 1, 1, 1, 1], [1, 1, 1, 2], [1, 1, 2, 1], [1, 2, 1, 1], [1, 2, 2], [2, 1, 1, 1], [2, 1, 2], [2, 2, 1]]
+# # Remarcam, deci, ca e sirul lui fibonacci aici
 
-# de la input vine string, asa ca ii facem cast la int
-N = int(input("Numarul de trepte ce trebuie urcate: "))
-TriassicStuff.log_stuff_going_on(N)
-chosen_steps = [1, 3, 5]
-chosen_steps.sort()
+# # de la input vine string, asa ca ii facem cast la int
+# N = int(input("Numarul de trepte ce trebuie urcate: "))
+# TriassicStuff.log_stuff_going_on(N)
+# chosen_steps = [1, 3, 5]
+# chosen_steps.sort()
 
-print("[Recursiv] Numarul de variante posibile este ", fibonacci_recursive(N))
-print("[Secvential] Numarul de variante posibile este ", fibonacci(N))
+# print("[Recursiv] Numarul de variante posibile este ", fibonacci_recursive(N))
+# print("[Secvential] Numarul de variante posibile este ", fibonacci(N))
 
-print("[Recursiv] Pentru sirul ", chosen_steps, ", numarul de variante posibile este ", custom_fibonacci_recursive(N, chosen_steps))
-print("[Secvential] Pentru sirul ", chosen_steps, ", numarul de variante posibile este ", custom_fibonacci(N, chosen_steps))
+# print("[Recursiv] Pentru sirul ", chosen_steps, ", numarul de variante posibile este ", custom_fibonacci_recursive(N, chosen_steps))
+# print("[Secvential] Pentru sirul ", chosen_steps, ", numarul de variante posibile este ", custom_fibonacci(N, chosen_steps))
 
 
 # # ----------------- Programu 4 -----------------
