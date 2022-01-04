@@ -2,8 +2,7 @@ import matplotlib.pyplot as plt
 import numpy as np
 import math
 
-def run_regression(signal, regressors):
-    
+def run_regression(signal, regressors):    
     remade_signal = []
     for i in range(len(signal)):        
         if i == 0:
@@ -14,17 +13,17 @@ def run_regression(signal, regressors):
                 if i - j > 0:
                     y += signal[i - j - 1]*regressors[j]
         
-        remade_signal.append(y)
-        
+        remade_signal.append(y)        
     return remade_signal
 
-def get_normal_value(signal):
-    
+def get_normal_value(signal):    
     sum_of_squared_elements = 0
     for i in range(len(signal)):
-        sum_of_squared_elements += signal[i]**2 # la patrat
-        
+        sum_of_squared_elements += signal[i]**2 # la patrat        
     return sum_of_squared_elements**(1/float(len(signal))) # suma^(1/n), unde n este nr de elemente
+
+def get_median_value(signal):    
+    return float(sum(signal) / len(signal))
 
 # creaza [0, 0.1, 0.2 ... 99.8, 99.9]
 timeline = np.arange(0, 100, 0.1)
@@ -45,33 +44,30 @@ errors = np.empty([6, 1000])
 regressors = [0.5, 0.4, 0.3, 0.2, 0.1]
 # pe care ii testam de complezenta
 error = abs(noisy_signal - run_regression(noisy_signal, regressors))
-error_normal = get_normal_value(error)
+error_normal = get_median_value(error)
 
 number_of_generations = 10
 
+
+
 # --------------------- Tentativa de gasit regresori buni ---------------------
-# si acu sa incercam un fel de 2 feluri
-# sa gasim un numar n de solutii pt fiecare lungime de regresori 
-# si care are eroarea mai buna, pastram
+# ------------------------- mai intai complet random --------------------------
 
-# mai intai complet random
-
-for i in range(1, 7):
-    
+for i in range(1, 7):    
     
     regressors = np.random.rand(i)    
     solutions[i - 1] = run_regression(noisy_signal, regressors)
     final_regressors.append(regressors)
     errors[i - 1] = abs(noisy_signal - solutions[i - 1])
-    med_error = get_normal_value(errors[i - 1])
+    med_error = get_median_value(errors[i - 1])
     
     for _ in range(number_of_generations - 1):
         temp_regressors = np.random.rand(i)    
         temp_solution = run_regression(noisy_signal, regressors)
         temp_error = abs(noisy_signal - temp_solution)
-        temp_med_error = get_normal_value(temp_error)
+        temp_med_error = get_median_value(temp_error)
         
-        if temp_med_error < get_normal_value(errors[i - 1]):
+        if temp_med_error < get_median_value(errors[i - 1]):
             final_regressors.pop()
             final_regressors.append(temp_regressors)
             solutions[i - 1] = temp_solution
@@ -79,30 +75,45 @@ for i in range(1, 7):
             
 
 final_errors = []
-
 for i in range(6):
-    final_errors.append(get_normal_value(errors[i]))
+    final_errors.append(get_median_value(errors[i]))
+    
+    
+# ------------------------- Tentativa cu alg genetic --------------------------
+
+# Pentru fiecare dimensiune posibila de regresori > 1
+#   | Cat timp fitness > Y SAU timp de number_of_generations generatii
+#      | Creat generatia
+#      | Testat fitness (eroare SAU min(abs((eroare_dorita - eroare obtinuta)))
+#      | Sortat indivizi pe baza fitnessului
+#      | Ales primii X indivizi pentru combinare (prima jumatate din primul + 
+#      |                    a doua jumatate din al doilea, hopa individ nou!)
+#      | Sansa de mutare
+#   | Adaugat cel mai bun individ la solutions[i], final_regressors[i] etc
+
 
 # ---------------------------------- Complot ----------------------------------
+# ----------------------- te-ai prins ca e plot cu com? -----------------------
 fig1, (f1, f2, f3, f4) = plt.subplots(4, 1)
 f1.plot(timeline, signal)
 f2.plot(timeline, noisy_signal)
 f3.plot(timeline, run_regression(noisy_signal, regressors))
-f4.plot(timeline, error)
+f4.plot(timeline, error, label = "error")
+f4.axhline(y=error_normal, color='r', linestyle='-', label = "error normal")
 
-fig2, (f1, f2, f3, f4, f5, f6) = plt.subplots(6, 1)
-f1.plot(timeline, solutions[0])
-f2.plot(timeline, solutions[1])
-f3.plot(timeline, solutions[2])
-f4.plot(timeline, solutions[3])
-f5.plot(timeline, solutions[4])
-f6.plot(timeline, solutions[5])
+# fig2, (f1, f2, f3, f4, f5, f6) = plt.subplots(6, 1)
+# f1.plot(timeline, solutions[0])
+# f2.plot(timeline, solutions[1])
+# f3.plot(timeline, solutions[2])
+# f4.plot(timeline, solutions[3])
+# f5.plot(timeline, solutions[4])
+# f6.plot(timeline, solutions[5])
 
-fig3, (f1, f2, f3, f4, f5, f6) = plt.subplots(6, 1)
-f1.plot(timeline, errors[0])
-f2.plot(timeline, errors[1])
-f3.plot(timeline, errors[2])
-f4.plot(timeline, errors[3])
-f5.plot(timeline, errors[4])
-f6.plot(timeline, errors[5])
+# fig3, (f1, f2, f3, f4, f5, f6) = plt.subplots(6, 1)
+# f1.plot(timeline, errors[0])
+# f2.plot(timeline, errors[1])
+# f3.plot(timeline, errors[2])
+# f4.plot(timeline, errors[3])
+# f5.plot(timeline, errors[4])
+# f6.plot(timeline, errors[5])
 plt.show()
