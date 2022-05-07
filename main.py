@@ -248,3 +248,31 @@ for iteration in range(number_of_iterations):
 plt.figure(3)
 plt.plot(range(number_of_iterations), losses)
 plt.show()
+
+# # -------------------------------- section 6 --------------------------------
+# # So quasi-random alteration of the NN does not work for complex problems. 
+# # Quasi-random alteration alters weights and biases by treating all of them the same,
+# # but each neuron (with its weights and bias) has a different impact on the NN
+# # A good way to find this impact of each neuron are derivatives
+# # The following example is not optimal. Calculating derivatives like this for 
+# # each w & b would be a rather brute-force approach
+# # As such, let's welcome partial derivatives after we get the damn book
+
+# x^2 example
+def f(x):
+    return 2*x**2
+
+p2_delta = 0.0001
+
+x1 = 1
+x2 = x1 + p2_delta  # on a continuous function (i.e. with infinite points), 
+                    # x2 would be the 'next' point. We can't define such a point
+                    # but we can define a delta small enough to get us a good approximation
+
+y1 = f(x1)
+y2 = f(x2)
+
+approximate_derivative = (y2 - y1) / (x2 - x1)
+b = y2 - approximate_derivative * x2    # y = m*x + b
+
+print(approximate_derivative)
