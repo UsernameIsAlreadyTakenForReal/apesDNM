@@ -71,28 +71,37 @@ def spiral_data(points, classes):
         y[ix] = class_number
     return X, y
 
-# activation function
+# activation function (Rectified Linear Unit)
 class Activation_ReLU:
     def forward(self, inputs):
         self.output = np.maximum(0, inputs)
         
+# different activation function (Softmax)
 class Activation_Softmas:
     def forward(self, inputs):
         exp_values = np.exp(inputs - np.max(inputs, axis=1, keepdims=True))
         probabilities = exp_values / np.sum(exp_values, axis=1, keepdims=True)
         self.output = probabilities
+        
+        # Activation_Softmas - some explaining:
+        # keep in mind we are considering having batches here, parallel runs of the model
+        #   which means every 'input' is a matrix with multiple rows, each row signifying a run from the batch
+        # exp_values = np.exp(inputs - np.max()) because exp() can go very big very quickly
+        #   so we substract the biggest value of the vector from all elements of the vector
+        # axis=1 means summing the matrix's rows
+        # keepdims=True means results are put into a vertical vector
 
 # class
 class Layer_Dense:
     def __init__(self, n_inputs, n_neurons):
-        self.weights = 0.10 * np.random.randn(n_inputs, n_neurons) #done like this so we don't transpose every fucking fucking cufking time
+        self.weights = 0.10 * np.random.randn(n_inputs, n_neurons)  # done like this so we don't transpose every fucking fucking cufking time
+                                                                    # also * 0.10 to have the values scaled to [-1, 1]
         self.biases = np.zeros((1, n_neurons))
     def forward(self, inputs):
         self.output = np.dot(inputs, self.weights) + self.biases
 
 
-# Program itself here bih
-
+# Small program here
 # this is testing the Layer_Dense class
 # X = [[1, 2, 3, 2.5],
 #      [2, 5, -1, 2],
@@ -105,30 +114,137 @@ class Layer_Dense:
 # layer2.forward(layer1.output)
 # print(layer2.output)
 
-X, y = spiral_data(100, 3)
+classes = 3
+samples = 100
+X, y = spiral_data(samples, classes)
 
-# see that beautiful data
+# FIGURE 1 - see that beautiful data
+plt.figure(1)
 plt.scatter(X[:,0], X[:,1])
 plt.show()
 plt.scatter(X[:,0], X[:,1], c=y, cmap="brg")
 plt.show()
 
-layer1 = Layer_Dense(2, 5) # 2 inputs because we are taking a 2d plot as input
+layer1 = Layer_Dense(2, 5) # 2 inputs because we are taking a 2d plot as input, duuh
+layer2 = Layer_Dense(5, classes) # 3 final outputs because we have 3 classes to sort
+
 activation1 = Activation_ReLU()
+activation2 = Activation_Softmas() 
 
 layer1.forward(X)
 activation1.forward(layer1.output)
-print(layer1.output)
-print(activation1.output)
 
+layer2.forward(activation1.output)
+activation2.forward(layer2.output)
 
-# softmax
-layer_outputs = [[4.8, 1.21, 2.385],
-                 [8.9, 1.81, 0.2],
-                 [1.41, 1.051, 0.026]]
+print("Layer 1 output:\n", layer1.output)
+print("Layer 1 after activation:\n", activation1.output)
 
-exp_values = np.exp(layer_outputs) # e^x pt fiecare
-# fiecare vector din layer_outputs sub forma e^x / suma vectorului de e^x
-norm_values = exp_values / np.sum(exp_values, axis=1, keepdims=True) 
+print("Layer 2 output:\n", layer2.output)
+print("Layer 2 after activation (first 5):\n", activation2.output[:5])
+print("At this point, what we see here is just the probability / distribution of each class (3 classes in a row, each with a 33% chance). This makes sense given the fact that the classes were randomly generated in this example")
 
-print(norm_values)
+# # -------------------------------- section 4 --------------------------------
+# # loss is error, calculated in ln() (Part 7 & 8 in tutorial)
+
+class Loss:
+    def calculate(self, output, y):
+        sample_losses = self.forward(output, y)
+        data_loss = np.mean(sample_losses) # batch loss
+        return data_loss
+    
+class Loss_CategoricalCrossEntropy(Loss): 
+    def forward(self, y_prediction, y_true): # y_true = target training values
+        samples = len(y_prediction)
+        y_pred_clipped = np.clip(y_prediction, 1e-7, 1-1e-7)
+        
+        if len(y_true.shape) == 1: # passed scalar class values
+            correct_confidences = y_pred_clipped[range(samples), y_true] # https://youtu.be/levekYbxauw?t=665
+        elif len(y_true.shape) == 2:
+            correct_confidences = np.sum(y_pred_clipped*y_true, axis=1) # https://youtu.be/levekYbxauw?t=764
+            
+        negative_log_likelihoods = -np.log(correct_confidences)
+        return negative_log_likelihoods
+    
+loss_function = Loss_CategoricalCrossEntropy()
+loss = loss_function.calculate(activation2.output, y)
+
+print("Loss:", loss)
+
+# # -------------------------------- section 5 --------------------------------
+# # This section treats adapting the NN for a very simple, vertical data
+# # This section uses quasi-random alteration of weights and biases, and only
+# # works because the data_set is VERY simplistic
+
+import numpy as np 
+import matplotlib.pyplot as plt
+# nnfs is Neural Networks From Scratch's python library. Useful for learning
+import nnfs
+from nnfs.datasets import vertical_data
+
+nnfs.init()
+
+X, y = vertical_data(samples=100, classes=3)
+
+# FIGURE 2
+plt.figure(2)
+plt.scatter(X[:, 0], X[:, 1], c=y, s=40, cmap='brg')
+plt.show()
+
+dense1 = Layer_Dense(2, 3)
+activation1 = Activation_ReLU()
+dense2 = Layer_Dense(3, 3)
+activation2 = Activation_Softmas()
+
+loss_function = Loss_CategoricalCrossEntropy()
+
+# take the initial values as point of reference
+lowest_loss = 9999999
+best_dense1_weights = dense1.weights.copy()
+best_dense1_biases = dense1.biases.copy()
+best_dense2_weights = dense2.weights.copy()
+best_dense2_biases = dense2.biases.copy()
+
+number_of_iterations = 100000
+losses = np.zeros(number_of_iterations) # save all losses just to plot them at the end
+
+for iteration in range(number_of_iterations):
+    
+    # modify weights and biases in relation to the previous values, kind of like
+    # you do with genetic algorithms
+    dense1.weights += 0.05 * np.random.randn(2, 3)
+    dense1.biases += 0.05 * np.random.randn(1, 3)
+    dense2.weights += 0.05 * np.random.randn(3, 3)
+    dense2.biases += 0.05 * np.random.randn(1, 3)
+    
+    # run the NN
+    dense1.forward(X)
+    activation1.forward(dense1.output)
+    dense2.forward(activation1.output)
+    activation2.forward(dense2.output)
+    
+    loss = loss_function.calculate(activation2.output, y)
+    losses[iteration] = loss
+    
+    # np.argmax returns the indices of the maximum values along the axis. Here, 
+    # maximum values for each row. Accuracy goes up when loss goes down, duh
+    predictions = np.argmax(activation2.output, axis=1)
+    accuracy = np.mean(predictions==y)
+    
+    if loss < lowest_loss: # if we found better stuff, it becomes the new reference
+        print('New set of weights found, iteration:', iteration, 'loss:', loss, 'acc:', accuracy)
+        best_dense1_weights = dense1.weights.copy()
+        best_dense1_biases = dense1.biases.copy()
+        best_dense2_weights = dense2.weights.copy()
+        best_dense2_biases = dense2.biases.copy()
+        lowest_loss = loss
+        
+    else: # if not, we revert the changes made in this iteration
+        dense1.weights = best_dense1_weights.copy()
+        dense1.biases = best_dense1_biases.copy()
+        dense2.weights = best_dense2_weights.copy()
+        dense2.biases = best_dense2_biases.copy()
+
+plt.figure(3)
+plt.plot(range(number_of_iterations), losses)
+plt.show()
