@@ -27,10 +27,6 @@ data = pd.read_csv('./train.csv')
 # To use this and be impressed by it, run the whole code and then run line 150 from the console line
 # The first parameter picks an example for the NN to interpret, so change that if you want
 
-# # ---------------------------------------------------------------------------
-# # -------------------------------- Functions --------------------------------
-# # ---------------------------------------------------------------------------
-
 data = np.array(data)
 m, n = data.shape
 np.random.shuffle(data)     # shuffle before splitting into dev and training sets
@@ -48,6 +44,10 @@ Y_train = data_train[0]
 X_train = data_train[1:n]
 X_train = X_train / 255.
 _,m_train = X_train.shape
+
+# # ---------------------------------------------------------------------------
+# # -------------------------------- Functions --------------------------------
+# # ---------------------------------------------------------------------------
 
 def init_params():
     W1 = np.random.rand(10, 784) - 0.5      # this generates random values between 0 and 1
@@ -89,6 +89,7 @@ def back_prop(Z1, A1, Z2, A2, W2, X, Y):
     dW1 = 1 / m * dZ1.dot(X.T)
     db1 = 1 / m * np.sum(dZ1)
     return dW1, db1, dW2, db2
+
 def update_params(W1, b1, W2, b2, dW1, db1, dW2, db2, alpha):
     W1 = W1 - alpha * dW1
     b1 = b1 - alpha * db1
@@ -122,7 +123,7 @@ def gradient_descent(X, Y, iterations, alpha): # optimization. This is literally
 # # -------------------------------- Train NN! --------------------------------
 # # ---------------------------------------------------------------------------
 
-number_of_iterations = 500
+number_of_iterations = 50
 alpha = 0.10
 W1, b1, W2, b2 = gradient_descent(X_train, Y_train, number_of_iterations, alpha)
 
