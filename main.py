@@ -258,21 +258,21 @@ plt.show()
 # # each w & b would be a rather brute-force approach
 # # As such, let's welcome partial derivatives after we get the damn book
 
-# x^2 example
-def f(x):
-    return 2*x**2
+# # x^2 example
+# def f(x):
+#     return 2*x**2
 
-p2_delta = 0.0001
+# p2_delta = 0.0001
 
-x1 = 1
-x2 = x1 + p2_delta  # on a continuous function (i.e. with infinite points), 
-                    # x2 would be the 'next' point. We can't define such a point
-                    # but we can define a delta small enough to get us a good approximation
+# x1 = 1
+# x2 = x1 + p2_delta  # on a continuous function (i.e. with infinite points), 
+#                     # x2 would be the 'next' point. We can't define such a point
+#                     # but we can define a delta small enough to get us a good approximation
 
-y1 = f(x1)
-y2 = f(x2)
+# y1 = f(x1)
+# y2 = f(x2)
 
-approximate_derivative = (y2 - y1) / (x2 - x1)
-b = y2 - approximate_derivative * x2    # y = m*x + b
+# approximate_derivative = (y2 - y1) / (x2 - x1)
+# b = y2 - approximate_derivative * x2    # y = m*x + b
 
-print(approximate_derivative)
+# print(approximate_derivative)

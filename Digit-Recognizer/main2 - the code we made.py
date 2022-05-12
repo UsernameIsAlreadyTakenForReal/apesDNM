@@ -101,52 +101,90 @@ def get_predictions(A2):
     return np.argmax(A2, 0)
 
 def get_accuracy(predictions, Y):
-    print(predictions, Y)
+    # print(predictions, Y)
     return np.sum(predictions == Y) / Y.size
 
 def gradient_descent(X, Y, iterations, alpha): # optimization. This is literally the whole thing
     W1, b1, W2, b2 = init_params()
+    accuracy_over_time = []
     
     for i in range(iterations):
         Z1, A1, Z2, A2 = forward_prop(W1, b1, W2, b2, X)
         dW1, db1, dW2, db2 = back_prop(Z1, A1, Z2, A2, W2, X, Y)
         W1, b1, W2, b2 = update_params(W1, b1, W2, b2, dW1, db1, dW2, db2, alpha)
         
+        predictions = get_predictions(A2);
+        accuracy = get_accuracy(predictions, Y);
+        accuracy_over_time.append(accuracy);
+        
         if i % 10 == 0:
             print("Iteration: ", i)
             predictions = get_predictions(A2)
+            # print("Accuracy is ", get_accuracy(predictions, Y), " for prediction ", predictions)
             print("Accuracy: ", get_accuracy(predictions, Y))
             
-    return W1, b1, W2, b2
+    return accuracy_over_time, W1, b1, W2, b2
     
 # # ---------------------------------------------------------------------------
 # # -------------------------------- Train NN! --------------------------------
 # # ---------------------------------------------------------------------------
 
-number_of_iterations = 50
+number_of_iterations = 160
 alpha = 0.10
-W1, b1, W2, b2 = gradient_descent(X_train, Y_train, number_of_iterations, alpha)
+accuracy_over_time, W1, b1, W2, b2 = gradient_descent(X_train, Y_train, number_of_iterations, alpha)
+
+plt.figure(1)
+plt.plot(accuracy_over_time)
+plt.show()
+
+# W1 = np.random.rand(10, 784) - 0.5      # this generates random values between 0 and 1
+# b1 = np.random.rand(10, 1) - 0.5        # 784 inputs, 10 neurons in the hidden layer
+# W2 = np.random.rand(10, 10) - 0.5       # this generates random values between 0 and 1
+# b2 = np.random.rand(10, 1) - 0.5   
+
+# Z1 = W1.dot(X_train) + b1
+# A1 = ReLU(Z1)
+# Z2 = W2.dot(A1) + b2
+# A2 = softmax(Z2)
+
+# m = Y_train.size
+# one_hot_Y = one_hot(Y_train)
+# dZ2 = A2 - one_hot_Y
+# dW2 = 1 / m * dZ2.dot(A1.T)
+# db2 = 1 / m * np.sum(dZ2)
+# dZ1 = W2.T.dot(dZ2) * deriv_ReLU(Z1)
+# dW1 = 1 / m * dZ1.dot(X_train.T)
+# db1 = 1 / m * np.sum(dZ1)
+
+# alpha = 0.10
+# W1 = W1 - alpha * dW1
+# b1 = b1 - alpha * db1
+# W2 = W2 - alpha * dW2
+# b2 = b2 - alpha * db2
+
+# predictions = get_predictions(A2);
+# accuracy = get_accuracy(predictions, Y_train);
 
 # # ---------------------------------------------------------------------------
 # # ---------------------------- Use NN to predict ----------------------------
 # # ---------------------------------------------------------------------------
 
-def make_predictions(X, W1, b1, W2, b2):
-    _, _, _, A2 = forward_prop(W1, b1, W2, b2, X)
-    predictions = get_predictions(A2)
-    return predictions
+# def make_predictions(X, W1, b1, W2, b2):
+#     _, _, _, A2 = forward_prop(W1, b1, W2, b2, X)
+#     predictions = get_predictions(A2)
+#     return predictions
 
-def test_prediction(index, W1, b1, W2, b2):
-    current_image = X_train[:, index, None]
-    prediction = make_predictions(X_train[:, index, None], W1, b1, W2, b2)
-    label = Y_train[index]
-    print("Prediction: ", prediction)
-    print("Label: ", label)
+# def test_prediction(index, W1, b1, W2, b2):
+#     current_image = X_train[:, index, None]
+#     prediction = make_predictions(X_train[:, index, None], W1, b1, W2, b2)
+#     label = Y_train[index]
+#     print("Prediction: ", prediction)
+#     print("Label: ", label)
     
-    current_image = current_image.reshape((28, 28)) * 255
-    plt.gray()
-    plt.imshow(current_image, interpolation='nearest')
-    plt.show()
+#     current_image = current_image.reshape((28, 28)) * 255
+#     plt.gray()
+#     plt.imshow(current_image, interpolation='nearest')
+#     plt.show()
 
 # fancier to run this from the console line
 # test_prediction(0, W1, b1, W2, b2)
