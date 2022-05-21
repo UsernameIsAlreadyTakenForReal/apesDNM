@@ -39,24 +39,24 @@ np.random.shuffle(data)
 data_dev = data[0:50].T
 Y_dev = data_dev[9]
 X_dev = data_dev[0:9]
-X_dev = X_dev
+X_dev = X_dev / 564.
 
 # chunk of data on which we train
 data_train = data[50:m].T
 Y_train = data_train[9]
 X_train = data_train[0:9]
-X_train = X_train
+X_train = X_train / 564.
 _,m_train = X_train.shape
 
 number_of_input_neurons = 9
-number_of_neurons_in_first_layer = 40
+number_of_neurons_in_first_layer = 100
 number_of_outputs = 2
 
 def init_params(): # passing variables to np.random.rand() seems to create weird looking random numbers lol (i.e. they are treated as e-01)
-    W1 = np.random.rand(100, 9) - 0.5        # this generates random values between 0 and 1
-    b1 = np.random.rand(100, 1) - 0.5        # 784 inputs, 10 neurons in the hidden layer
-    W2 = np.random.rand(2, 100) - 0.5        # this generates random values between 0 and 1
-    b2 = np.random.rand(2, 1) - 0.5        
+    W1 = np.random.rand(number_of_neurons_in_first_layer, number_of_input_neurons) - 0.5        # this generates random values between 0 and 1
+    b1 = np.random.rand(number_of_neurons_in_first_layer, 1) - 0.5        # 784 inputs, 10 neurons in the hidden layer
+    W2 = np.random.rand(number_of_outputs, number_of_neurons_in_first_layer) - 0.5        # this generates random values between 0 and 1
+    b2 = np.random.rand(number_of_outputs, 1) - 0.5        
     return W1, b1, W2, b2
 
 def ReLU(Z):
@@ -80,9 +80,9 @@ def one_hot(Y):
     one_hot_Y = np.zeros((Y.size, 2))
     for i in range(Y.size):
         if Y[i] == 1:
-            one_hot_Y[i][0] = 1
-        else:
             one_hot_Y[i][1] = 1
+        else:
+            one_hot_Y[i][0] = 1
     return one_hot_Y.T
 
 
@@ -136,7 +136,7 @@ def gradient_descent(X, Y, iterations, alpha): # optimization. This is literally
 # # -------------------------------- Train NN! --------------------------------
 # # ---------------------------------------------------------------------------
 
-number_of_iterations = 500
+number_of_iterations = 10000
 alpha = 0.1
 accuracy_over_time, W1, b1, W2, b2 = gradient_descent(X_train, Y_train, number_of_iterations, alpha)
 
@@ -162,3 +162,5 @@ plt.show()
 # dZ1 = W2.T.dot(dZ2) * deriv_ReLU(Z1)
 # dW1 = 1 / m_back * dZ1.dot(X_train.T)
 # db1 = 1 / m_back * np.sum(dZ1)
+
+# FA ONE HOT INVERS SI VEZI CE IESE!!!@!!!!!!!!!!!!!!!!!!

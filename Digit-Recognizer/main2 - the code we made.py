@@ -117,7 +117,7 @@ def gradient_descent(X, Y, iterations, alpha): # optimization. This is literally
         accuracy = get_accuracy(predictions, Y);
         accuracy_over_time.append(accuracy);
         
-        if i % 10 == 0:
+        if i % 100 == 0:
             print("Iteration: ", i)
             predictions = get_predictions(A2)
             # print("Accuracy is ", get_accuracy(predictions, Y), " for prediction ", predictions)
@@ -129,7 +129,7 @@ def gradient_descent(X, Y, iterations, alpha): # optimization. This is literally
 # # -------------------------------- Train NN! --------------------------------
 # # ---------------------------------------------------------------------------
 
-number_of_iterations = 160
+number_of_iterations = 2000
 alpha = 0.10
 accuracy_over_time, W1, b1, W2, b2 = gradient_descent(X_train, Y_train, number_of_iterations, alpha)
 
