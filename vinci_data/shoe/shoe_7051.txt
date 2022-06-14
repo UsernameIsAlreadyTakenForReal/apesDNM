@@ -1,0 +1,80 @@
+[
+    {
+        "id": 55949,
+        "data": "{\"step_counter\": 0, \"step_activity\": 2}",
+        "timestamp": 1625063460000,
+        "deviceId": 7051
+    },
+    {
+        "id": 55950,
+        "data": "{\"step_counter\": 0, \"step_activity\": 2}",
+        "timestamp": 1625063490000,
+        "deviceId": 7051
+    },
+    {
+        "id": 55951,
+        "data": "{\"step_counter\": 0, \"step_activity\": 2}",
+        "timestamp": 1625063520000,
+        "deviceId": 7051
+    },
+    {
+        "id": 55952,
+        "data": "{\"step_counter\": 0, \"step_activity\": 2}",
+        "timestamp": 1625063970000,
+        "deviceId": 7051
+    },
+    {
+        "id": 55953,
+        "data": "{\"step_counter\": 0, \"step_activity\": 2}",
+        "timestamp": 1625064000000,
+        "deviceId": 7051
+    },
+    {
+        "id": 55954,
+        "data": "{\"step_counter\": 0, \"step_activity\": 2}",
+        "timestamp": 1625064030000,
+        "deviceId": 7051
+    },
+    {
+        "id": 55955,
+        "data": "{\"step_counter\": 0, \"step_activity\": 2}",
+        "timestamp": 1625064060000,
+        "deviceId": 7051
+    },
+    {
+        "id": 55956,
+        "data": "{\"step_counter\": 0, \"step_activity\": 2}",
+        "timestamp": 1625064090000,
+        "deviceId": 7051
+    },
+    {
+        "id": 55957,
+        "data": "{\"step_counter\": 0, \"step_activity\": 2}",
+        "timestamp": 1625064120000,
+        "deviceId": 7051
+    },
+    {
+        "id": 55958,
+        "data": "{\"step_counter\": 0, \"step_activity\": 2}",
+        "timestamp": 1625064150000,
+        "deviceId": 7051
+    },
+    {
+        "id": 55959,
+        "data": "{\"step_counter\": 0, \"step_activity\": 2}",
+        "timestamp": 1625064180000,
+        "deviceId": 7051
+    },
+    {
+        "id": 55960,
+        "data": "{\"step_counter\": 0, \"step_activity\": 2}",
+        "timestamp": 1625064210000,
+        "deviceId": 7051
+    },
+    {
+        "id": 55961,
+        "data": "{\"step_counter\": 0, \"step_activity\": 2}",
+        "timestamp": 1625064240000,
+        "deviceId": 7051
+    }
+]

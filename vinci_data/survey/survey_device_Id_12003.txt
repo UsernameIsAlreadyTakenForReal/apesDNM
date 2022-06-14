@@ -1,0 +1,204 @@
+[
+    {
+        "id": 102101,
+        "identifier": "",
+        "surveyType": "IPAQ",
+        "assesmentData": "{\"1\":\"23:30\",\"2\":\"7:04:00\",\"3\":\"7:03:00\",\"4\":\"0\"}",
+        "scoringResult": 10584,
+        "createdTime": "2021-11-11T14:39:04.549Z",
+        "endTime": "2021-11-11T14:41:55.833Z",
+        "additionalInfo": "",
+        "deviceId": 12003
+    },
+    {
+        "id": 102102,
+        "identifier": "",
+        "surveyType": "WHOQOL_BREF",
+        "assesmentData": "{\"G1\":4,\"G4\":5,\"F1.4\":2,\"F11.3\":5,\"F4.1\":5,\"F24.2\":4,\"F5.3\":5,\"F16.1\":5,\"F22.1\":5,\"F2.1\":5,\"F7.1\":4,\"F18.1\":5,\"F20.1\":4,\"F21.1\":1,\"F9.1\":5,\"F3.3\":4,\"F10.3\":5,\"F12.4\":5,\"F6.3\":5,\"F13.3\":5,\"F15.3\":1,\"F14.4\":5,\"F17.3\":5,\"F19.3\":4,\"F23.3\":5,\"F8.1\":4}",
+        "scoringResult": 64,
+        "createdTime": "2021-11-11T14:42:01.817Z",
+        "endTime": "2021-11-11T14:52:32.553Z",
+        "additionalInfo": "",
+        "deviceId": 12003
+    },
+    {
+        "id": 102144,
+        "identifier": "",
+        "surveyType": "FEELINGS",
+        "assesmentData": "",
+        "scoringResult": 3,
+        "createdTime": "2021-11-11T14:38:40.082Z",
+        "endTime": "2021-11-11T14:38:40.082Z",
+        "additionalInfo": "",
+        "deviceId": 12003
+    },
+    {
+        "id": 102145,
+        "identifier": "",
+        "surveyType": "FEELINGS",
+        "assesmentData": "",
+        "scoringResult": 4,
+        "createdTime": "2021-11-13T08:56:09.019Z",
+        "endTime": "2021-11-13T08:56:09.019Z",
+        "additionalInfo": "",
+        "deviceId": 12003
+    },
+    {
+        "id": 102146,
+        "identifier": "",
+        "surveyType": "FEELINGS",
+        "assesmentData": "",
+        "scoringResult": 3,
+        "createdTime": "2021-11-14T06:56:07.955Z",
+        "endTime": "2021-11-14T06:56:07.955Z",
+        "additionalInfo": "",
+        "deviceId": 12003
+    },
+    {
+        "id": 102147,
+        "identifier": "",
+        "surveyType": "FEELINGS",
+        "assesmentData": "",
+        "scoringResult": 3,
+        "createdTime": "2021-11-16T05:47:29.380Z",
+        "endTime": "2021-11-16T05:47:29.380Z",
+        "additionalInfo": "",
+        "deviceId": 12003
+    },
+    {
+        "id": 102148,
+        "identifier": "",
+        "surveyType": "FEELINGS",
+        "assesmentData": "",
+        "scoringResult": 4,
+        "createdTime": "2021-11-17T06:39:58.187Z",
+        "endTime": "2021-11-17T06:39:58.187Z",
+        "additionalInfo": "",
+        "deviceId": 12003
+    },
+    {
+        "id": 102149,
+        "identifier": "",
+        "surveyType": "FEELINGS",
+        "assesmentData": "",
+        "scoringResult": 4,
+        "createdTime": "2021-11-19T05:53:36.132Z",
+        "endTime": "2021-11-19T05:53:36.132Z",
+        "additionalInfo": "",
+        "deviceId": 12003
+    },
+    {
+        "id": 102150,
+        "identifier": "",
+        "surveyType": "FEELINGS",
+        "assesmentData": "",
+        "scoringResult": 4,
+        "createdTime": "2021-11-26T09:20:07.734Z",
+        "endTime": "2021-11-26T09:20:07.734Z",
+        "additionalInfo": "",
+        "deviceId": 12003
+    },
+    {
+        "id": 102201,
+        "identifier": "",
+        "surveyType": "IPAQ",
+        "assesmentData": "{\"1\":\"21:00\",\"2\":\"7:03:00\",\"3\":\"7:02:00\",\"4\":\"0\"}",
+        "scoringResult": 7518,
+        "createdTime": "2021-11-26T09:20:15.333Z",
+        "endTime": "2021-11-26T09:24:04.940Z",
+        "additionalInfo": "",
+        "deviceId": 12003
+    },
+    {
+        "id": 102202,
+        "identifier": "",
+        "surveyType": "WHOQOL_BREF",
+        "assesmentData": "{\"G1\":5,\"G4\":4,\"F1.4\":2,\"F11.3\":3,\"F4.1\":5,\"F24.2\":5,\"F5.3\":4,\"F16.1\":4,\"F22.1\":5,\"F2.1\":5,\"F7.1\":5,\"F18.1\":5,\"F20.1\":5,\"F21.1\":5,\"F9.1\":5,\"F3.3\":3,\"F10.3\":5,\"F12.4\":3,\"F6.3\":5,\"F13.3\":5,\"F15.3\":1,\"F14.4\":4,\"F17.3\":5,\"F19.3\":5,\"F23.3\":5,\"F8.1\":4}",
+        "scoringResult": 66,
+        "createdTime": "2021-11-26T09:24:18.329Z",
+        "endTime": "2021-11-26T09:30:12.466Z",
+        "additionalInfo": "",
+        "deviceId": 12003
+    },
+    {
+        "id": 102203,
+        "identifier": "",
+        "surveyType": "FEELINGS",
+        "assesmentData": "",
+        "scoringResult": 4,
+        "createdTime": "2021-11-26T10:54:53.754Z",
+        "endTime": "2021-11-26T10:54:53.754Z",
+        "additionalInfo": "",
+        "deviceId": 12003
+    },
+    {
+        "id": 102218,
+        "identifier": "",
+        "surveyType": "FEELINGS",
+        "assesmentData": "",
+        "scoringResult": 3,
+        "createdTime": "2021-12-02T08:01:27.102Z",
+        "endTime": "2021-12-02T08:01:27.102Z",
+        "additionalInfo": "",
+        "deviceId": 12003
+    },
+    {
+        "id": 102221,
+        "identifier": "",
+        "surveyType": "FEELINGS",
+        "assesmentData": "",
+        "scoringResult": 3,
+        "createdTime": "2021-12-06T08:05:43.341Z",
+        "endTime": "2021-12-06T08:05:43.341Z",
+        "additionalInfo": "",
+        "deviceId": 12003
+    },
+    {
+        "id": 102224,
+        "identifier": "",
+        "surveyType": "FEELINGS",
+        "assesmentData": "",
+        "scoringResult": 4,
+        "createdTime": "2021-12-08T06:10:15.450Z",
+        "endTime": "2021-12-08T06:10:15.450Z",
+        "additionalInfo": "",
+        "deviceId": 12003
+    },
+    {
+        "id": 102225,
+        "identifier": "",
+        "surveyType": "FEELINGS",
+        "assesmentData": "",
+        "scoringResult": 3,
+        "createdTime": "2021-12-09T07:16:15.440Z",
+        "endTime": "2021-12-09T07:16:15.440Z",
+        "additionalInfo": "",
+        "deviceId": 12003
+    },
+    {
+        "id": 102226,
+        "identifier": "",
+        "surveyType": "FEELINGS",
+        "assesmentData": "",
+        "scoringResult": 4,
+        "createdTime": "2021-12-13T07:48:19.721Z",
+        "endTime": "2021-12-13T07:48:19.721Z",
+        "additionalInfo": "",
+        "deviceId": 12003
+    },
+    {
+        "id": 102227,
+        "identifier": "",
+        "surveyType": "FEELINGS",
+        "assesmentData": "",
+        "scoringResult": 3,
+        "createdTime": "2021-12-15T08:00:53.819Z",
+        "endTime": "2021-12-15T08:00:53.820Z",
+        "additionalInfo": "",
+        "deviceId": 12003
+    }
+ 
+]
+
+
+

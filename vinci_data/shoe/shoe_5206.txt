@@ -1,0 +1,914 @@
+[
+    {
+        "id": 44525,
+        "data": "{\"step_counter\": 3644, \"step_activity\": 2}",
+        "timestamp": 1617224400000,
+        "deviceId": 5206
+    },
+    {
+        "id": 44526,
+        "data": "{\"step_counter\": 3427, \"step_activity\": 2}",
+        "timestamp": 1617310800000,
+        "deviceId": 5206
+    },
+    {
+        "id": 44527,
+        "data": "{\"step_counter\": 2588, \"step_activity\": 2}",
+        "timestamp": 1617397200000,
+        "deviceId": 5206
+    },
+    {
+        "id": 44528,
+        "data": "{\"step_counter\": 550, \"step_activity\": 2}",
+        "timestamp": 1617483600000,
+        "deviceId": 5206
+    },
+    {
+        "id": 44529,
+        "data": "{\"step_counter\": 2315, \"step_activity\": 2}",
+        "timestamp": 1617570000000,
+        "deviceId": 5206
+    },
+    {
+        "id": 44530,
+        "data": "{\"step_counter\": 17204, \"step_activity\": 2}",
+        "timestamp": 1617656400000,
+        "deviceId": 5206
+    },
+    {
+        "id": 44531,
+        "data": "{\"step_counter\": 14850, \"step_activity\": 2}",
+        "timestamp": 1617742800000,
+        "deviceId": 5206
+    },
+    {
+        "id": 44532,
+        "data": "{\"step_counter\": 13967, \"step_activity\": 2}",
+        "timestamp": 1617829200000,
+        "deviceId": 5206
+    },
+    {
+        "id": 44533,
+        "data": "{\"step_counter\": 14595, \"step_activity\": 2}",
+        "timestamp": 1617915600000,
+        "deviceId": 5206
+    },
+    {
+        "id": 44534,
+        "data": "{\"step_counter\": 11624, \"step_activity\": 2}",
+        "timestamp": 1618002000000,
+        "deviceId": 5206
+    },
+    {
+        "id": 44535,
+        "data": "{\"step_counter\": 9510, \"step_activity\": 2}",
+        "timestamp": 1618088400000,
+        "deviceId": 5206
+    },
+    {
+        "id": 44536,
+        "data": "{\"step_counter\": 12486, \"step_activity\": 2}",
+        "timestamp": 1618174800000,
+        "deviceId": 5206
+    },
+    {
+        "id": 44537,
+        "data": "{\"step_counter\": 5701, \"step_activity\": 2}",
+        "timestamp": 1618261200000,
+        "deviceId": 5206
+    },
+    {
+        "id": 44538,
+        "data": "{\"step_counter\": 8225, \"step_activity\": 2}",
+        "timestamp": 1618347600000,
+        "deviceId": 5206
+    },
+    {
+        "id": 44539,
+        "data": "{\"step_counter\": 6995, \"step_activity\": 2}",
+        "timestamp": 1618434000000,
+        "deviceId": 5206
+    },
+    {
+        "id": 44540,
+        "data": "{\"step_counter\": 9185, \"step_activity\": 2}",
+        "timestamp": 1618520400000,
+        "deviceId": 5206
+    },
+    {
+        "id": 44541,
+        "data": "{\"step_counter\": 3777, \"step_activity\": 2}",
+        "timestamp": 1618606800000,
+        "deviceId": 5206
+    },
+    {
+        "id": 44542,
+        "data": "{\"step_counter\": 5759, \"step_activity\": 2}",
+        "timestamp": 1618693200000,
+        "deviceId": 5206
+    },
+    {
+        "id": 44543,
+        "data": "{\"step_counter\": 7470, \"step_activity\": 2}",
+        "timestamp": 1618779600000,
+        "deviceId": 5206
+    },
+    {
+        "id": 44544,
+        "data": "{\"step_counter\": 5862, \"step_activity\": 2}",
+        "timestamp": 1618866000000,
+        "deviceId": 5206
+    },
+    {
+        "id": 44545,
+        "data": "{\"step_counter\": 5708, \"step_activity\": 2}",
+        "timestamp": 1618952400000,
+        "deviceId": 5206
+    },
+    {
+        "id": 44546,
+        "data": "{\"step_counter\": 5644, \"step_activity\": 2}",
+        "timestamp": 1619038800000,
+        "deviceId": 5206
+    },
+    {
+        "id": 44547,
+        "data": "{\"step_counter\": 2568, \"step_activity\": 2}",
+        "timestamp": 1619125200000,
+        "deviceId": 5206
+    },
+    {
+        "id": 44548,
+        "data": "{\"step_counter\": 1962, \"step_activity\": 2}",
+        "timestamp": 1619211600000,
+        "deviceId": 5206
+    },
+    {
+        "id": 44549,
+        "data": "{\"step_counter\": 1369, \"step_activity\": 2}",
+        "timestamp": 1619298000000,
+        "deviceId": 5206
+    },
+    {
+        "id": 44550,
+        "data": "{\"step_counter\": 5386, \"step_activity\": 2}",
+        "timestamp": 1619384400000,
+        "deviceId": 5206
+    },
+    {
+        "id": 49001,
+        "data": "{\"step_counter\": 450, \"step_activity\": 2}",
+        "timestamp": 1619470800000,
+        "deviceId": 5206
+    },
+    {
+        "id": 49002,
+        "data": "{\"step_counter\": 15, \"step_activity\": 2}",
+        "timestamp": 1620162000000,
+        "deviceId": 5206
+    },
+    {
+        "id": 49003,
+        "data": "{\"step_counter\": 12406, \"step_activity\": 2}",
+        "timestamp": 1620248400000,
+        "deviceId": 5206
+    },
+    {
+        "id": 49004,
+        "data": "{\"step_counter\": 12781, \"step_activity\": 2}",
+        "timestamp": 1620334800000,
+        "deviceId": 5206
+    },
+    {
+        "id": 49005,
+        "data": "{\"step_counter\": 16482, \"step_activity\": 2}",
+        "timestamp": 1620421200000,
+        "deviceId": 5206
+    },
+    {
+        "id": 49006,
+        "data": "{\"step_counter\": 14748, \"step_activity\": 2}",
+        "timestamp": 1620507600000,
+        "deviceId": 5206
+    },
+    {
+        "id": 49007,
+        "data": "{\"step_counter\": 15581, \"step_activity\": 2}",
+        "timestamp": 1620594000000,
+        "deviceId": 5206
+    },
+    {
+        "id": 49008,
+        "data": "{\"step_counter\": 16030, \"step_activity\": 2}",
+        "timestamp": 1620680400000,
+        "deviceId": 5206
+    },
+    {
+        "id": 49009,
+        "data": "{\"step_counter\": 12703, \"step_activity\": 2}",
+        "timestamp": 1620766800000,
+        "deviceId": 5206
+    },
+    {
+        "id": 49010,
+        "data": "{\"step_counter\": 3439, \"step_activity\": 2}",
+        "timestamp": 1620853200000,
+        "deviceId": 5206
+    },
+    {
+        "id": 49011,
+        "data": "{\"step_counter\": 2426, \"step_activity\": 2}",
+        "timestamp": 1620939600000,
+        "deviceId": 5206
+    },
+    {
+        "id": 49012,
+        "data": "{\"step_counter\": 5098, \"step_activity\": 2}",
+        "timestamp": 1621026000000,
+        "deviceId": 5206
+    },
+    {
+        "id": 49013,
+        "data": "{\"step_counter\": 3062, \"step_activity\": 2}",
+        "timestamp": 1621112400000,
+        "deviceId": 5206
+    },
+    {
+        "id": 49014,
+        "data": "{\"step_counter\": 3611, \"step_activity\": 2}",
+        "timestamp": 1621198800000,
+        "deviceId": 5206
+    },
+    {
+        "id": 49015,
+        "data": "{\"step_counter\": 1247, \"step_activity\": 2}",
+        "timestamp": 1621285200000,
+        "deviceId": 5206
+    },
+    {
+        "id": 49016,
+        "data": "{\"step_counter\": 4491, \"step_activity\": 2}",
+        "timestamp": 1621371600000,
+        "deviceId": 5206
+    },
+    {
+        "id": 49017,
+        "data": "{\"step_counter\": 5084, \"step_activity\": 2}",
+        "timestamp": 1621458000000,
+        "deviceId": 5206
+    },
+    {
+        "id": 49018,
+        "data": "{\"step_counter\": 10, \"step_activity\": 2}",
+        "timestamp": 1621544400000,
+        "deviceId": 5206
+    },
+    {
+        "id": 49019,
+        "data": "{\"step_counter\": 7515, \"step_activity\": 2}",
+        "timestamp": 1621803600000,
+        "deviceId": 5206
+    },
+    {
+        "id": 49020,
+        "data": "{\"step_counter\": 4069, \"step_activity\": 2}",
+        "timestamp": 1621890000000,
+        "deviceId": 5206
+    },
+    {
+        "id": 49021,
+        "data": "{\"step_counter\": 5048, \"step_activity\": 2}",
+        "timestamp": 1621976400000,
+        "deviceId": 5206
+    },
+    {
+        "id": 49022,
+        "data": "{\"step_counter\": 4390, \"step_activity\": 2}",
+        "timestamp": 1622062800000,
+        "deviceId": 5206
+    },
+    {
+        "id": 49023,
+        "data": "{\"step_counter\": 3040, \"step_activity\": 2}",
+        "timestamp": 1622149200000,
+        "deviceId": 5206
+    },
+    {
+        "id": 49024,
+        "data": "{\"step_counter\": 2473, \"step_activity\": 2}",
+        "timestamp": 1622235600000,
+        "deviceId": 5206
+    },
+    {
+        "id": 49025,
+        "data": "{\"step_counter\": 2942, \"step_activity\": 2}",
+        "timestamp": 1622322000000,
+        "deviceId": 5206
+    },
+    {
+        "id": 49026,
+        "data": "{\"step_counter\": 806, \"step_activity\": 2}",
+        "timestamp": 1622408400000,
+        "deviceId": 5206
+    },
+    {
+        "id": 49049,
+        "data": "{\"step_counter\": 58, \"step_activity\": 2}",
+        "timestamp": 1615500000000,
+        "deviceId": 5206
+    },
+    {
+        "id": 49050,
+        "data": "{\"step_counter\": 7509, \"step_activity\": 2}",
+        "timestamp": 1615586400000,
+        "deviceId": 5206
+    },
+    {
+        "id": 52451,
+        "data": "{\"step_counter\": 5235, \"step_activity\": 2}",
+        "timestamp": 1615672800000,
+        "deviceId": 5206
+    },
+    {
+        "id": 52452,
+        "data": "{\"step_counter\": 7805, \"step_activity\": 2}",
+        "timestamp": 1615759200000,
+        "deviceId": 5206
+    },
+    {
+        "id": 52453,
+        "data": "{\"step_counter\": 6707, \"step_activity\": 2}",
+        "timestamp": 1615845600000,
+        "deviceId": 5206
+    },
+    {
+        "id": 52454,
+        "data": "{\"step_counter\": 381, \"step_activity\": 2}",
+        "timestamp": 1615932000000,
+        "deviceId": 5206
+    },
+    {
+        "id": 52455,
+        "data": "{\"step_counter\": 5129, \"step_activity\": 2}",
+        "timestamp": 1616018400000,
+        "deviceId": 5206
+    },
+    {
+        "id": 52456,
+        "data": "{\"step_counter\": 10846, \"step_activity\": 2}",
+        "timestamp": 1616104800000,
+        "deviceId": 5206
+    },
+    {
+        "id": 52457,
+        "data": "{\"step_counter\": 4424, \"step_activity\": 2}",
+        "timestamp": 1616191200000,
+        "deviceId": 5206
+    },
+    {
+        "id": 52458,
+        "data": "{\"step_counter\": 8958, \"step_activity\": 2}",
+        "timestamp": 1616277600000,
+        "deviceId": 5206
+    },
+    {
+        "id": 52459,
+        "data": "{\"step_counter\": 1941, \"step_activity\": 2}",
+        "timestamp": 1616364000000,
+        "deviceId": 5206
+    },
+    {
+        "id": 52460,
+        "data": "{\"step_counter\": 3214, \"step_activity\": 2}",
+        "timestamp": 1616450400000,
+        "deviceId": 5206
+    },
+    {
+        "id": 52461,
+        "data": "{\"step_counter\": 3119, \"step_activity\": 2}",
+        "timestamp": 1616536800000,
+        "deviceId": 5206
+    },
+    {
+        "id": 52462,
+        "data": "{\"step_counter\": 2887, \"step_activity\": 2}",
+        "timestamp": 1616623200000,
+        "deviceId": 5206
+    },
+    {
+        "id": 52463,
+        "data": "{\"step_counter\": 5339, \"step_activity\": 2}",
+        "timestamp": 1616709600000,
+        "deviceId": 5206
+    },
+    {
+        "id": 52464,
+        "data": "{\"step_counter\": 798, \"step_activity\": 2}",
+        "timestamp": 1616796000000,
+        "deviceId": 5206
+    },
+    {
+        "id": 52465,
+        "data": "{\"step_counter\": 1010, \"step_activity\": 2}",
+        "timestamp": 1616882400000,
+        "deviceId": 5206
+    },
+    {
+        "id": 52466,
+        "data": "{\"step_counter\": 450, \"step_activity\": 2}",
+        "timestamp": 1616965200000,
+        "deviceId": 5206
+    },
+    {
+        "id": 52467,
+        "data": "{\"step_counter\": 4859, \"step_activity\": 2}",
+        "timestamp": 1617051600000,
+        "deviceId": 5206
+    },
+    {
+        "id": 52468,
+        "data": "{\"step_counter\": 6139, \"step_activity\": 2}",
+        "timestamp": 1617138000000,
+        "deviceId": 5206
+    },
+    {
+        "id": 52469,
+        "data": "{\"step_counter\": 3644, \"step_activity\": 2}",
+        "timestamp": 1617224400000,
+        "deviceId": 5206
+    },
+    {
+        "id": 52470,
+        "data": "{\"step_counter\": 3427, \"step_activity\": 2}",
+        "timestamp": 1617310800000,
+        "deviceId": 5206
+    },
+    {
+        "id": 52471,
+        "data": "{\"step_counter\": 2588, \"step_activity\": 2}",
+        "timestamp": 1617397200000,
+        "deviceId": 5206
+    },
+    {
+        "id": 52472,
+        "data": "{\"step_counter\": 550, \"step_activity\": 2}",
+        "timestamp": 1617483600000,
+        "deviceId": 5206
+    },
+    {
+        "id": 52473,
+        "data": "{\"step_counter\": 2315, \"step_activity\": 2}",
+        "timestamp": 1617570000000,
+        "deviceId": 5206
+    },
+    {
+        "id": 52474,
+        "data": "{\"step_counter\": 17204, \"step_activity\": 2}",
+        "timestamp": 1617656400000,
+        "deviceId": 5206
+    },
+    {
+        "id": 52475,
+        "data": "{\"step_counter\": 14850, \"step_activity\": 2}",
+        "timestamp": 1617742800000,
+        "deviceId": 5206
+    },
+    {
+        "id": 52476,
+        "data": "{\"step_counter\": 13967, \"step_activity\": 2}",
+        "timestamp": 1617829200000,
+        "deviceId": 5206
+    },
+    {
+        "id": 52477,
+        "data": "{\"step_counter\": 14595, \"step_activity\": 2}",
+        "timestamp": 1617915600000,
+        "deviceId": 5206
+    },
+    {
+        "id": 52478,
+        "data": "{\"step_counter\": 11624, \"step_activity\": 2}",
+        "timestamp": 1618002000000,
+        "deviceId": 5206
+    },
+    {
+        "id": 52479,
+        "data": "{\"step_counter\": 9510, \"step_activity\": 2}",
+        "timestamp": 1618088400000,
+        "deviceId": 5206
+    },
+    {
+        "id": 52480,
+        "data": "{\"step_counter\": 12486, \"step_activity\": 2}",
+        "timestamp": 1618174800000,
+        "deviceId": 5206
+    },
+    {
+        "id": 52481,
+        "data": "{\"step_counter\": 5701, \"step_activity\": 2}",
+        "timestamp": 1618261200000,
+        "deviceId": 5206
+    },
+    {
+        "id": 52482,
+        "data": "{\"step_counter\": 8225, \"step_activity\": 2}",
+        "timestamp": 1618347600000,
+        "deviceId": 5206
+    },
+    {
+        "id": 52483,
+        "data": "{\"step_counter\": 6995, \"step_activity\": 2}",
+        "timestamp": 1618434000000,
+        "deviceId": 5206
+    },
+    {
+        "id": 52484,
+        "data": "{\"step_counter\": 9185, \"step_activity\": 2}",
+        "timestamp": 1618520400000,
+        "deviceId": 5206
+    },
+    {
+        "id": 52485,
+        "data": "{\"step_counter\": 3777, \"step_activity\": 2}",
+        "timestamp": 1618606800000,
+        "deviceId": 5206
+    },
+    {
+        "id": 52486,
+        "data": "{\"step_counter\": 5759, \"step_activity\": 2}",
+        "timestamp": 1618693200000,
+        "deviceId": 5206
+    },
+    {
+        "id": 52487,
+        "data": "{\"step_counter\": 7470, \"step_activity\": 2}",
+        "timestamp": 1618779600000,
+        "deviceId": 5206
+    },
+    {
+        "id": 52488,
+        "data": "{\"step_counter\": 5862, \"step_activity\": 2}",
+        "timestamp": 1618866000000,
+        "deviceId": 5206
+    },
+    {
+        "id": 52489,
+        "data": "{\"step_counter\": 5708, \"step_activity\": 2}",
+        "timestamp": 1618952400000,
+        "deviceId": 5206
+    },
+    {
+        "id": 52490,
+        "data": "{\"step_counter\": 5644, \"step_activity\": 2}",
+        "timestamp": 1619038800000,
+        "deviceId": 5206
+    },
+    {
+        "id": 52491,
+        "data": "{\"step_counter\": 2568, \"step_activity\": 2}",
+        "timestamp": 1619125200000,
+        "deviceId": 5206
+    },
+    {
+        "id": 52492,
+        "data": "{\"step_counter\": 1962, \"step_activity\": 2}",
+        "timestamp": 1619211600000,
+        "deviceId": 5206
+    },
+    {
+        "id": 52493,
+        "data": "{\"step_counter\": 1369, \"step_activity\": 2}",
+        "timestamp": 1619298000000,
+        "deviceId": 5206
+    },
+    {
+        "id": 52494,
+        "data": "{\"step_counter\": 5386, \"step_activity\": 2}",
+        "timestamp": 1619384400000,
+        "deviceId": 5206
+    },
+    {
+        "id": 52495,
+        "data": "{\"step_counter\": 450, \"step_activity\": 2}",
+        "timestamp": 1619470800000,
+        "deviceId": 5206
+    },
+    {
+        "id": 52496,
+        "data": "{\"step_counter\": 15, \"step_activity\": 2}",
+        "timestamp": 1620162000000,
+        "deviceId": 5206
+    },
+    {
+        "id": 52497,
+        "data": "{\"step_counter\": 12406, \"step_activity\": 2}",
+        "timestamp": 1620248400000,
+        "deviceId": 5206
+    },
+    {
+        "id": 52498,
+        "data": "{\"step_counter\": 12781, \"step_activity\": 2}",
+        "timestamp": 1620334800000,
+        "deviceId": 5206
+    },
+    {
+        "id": 52499,
+        "data": "{\"step_counter\": 16482, \"step_activity\": 2}",
+        "timestamp": 1620421200000,
+        "deviceId": 5206
+    },
+    {
+        "id": 52500,
+        "data": "{\"step_counter\": 14748, \"step_activity\": 2}",
+        "timestamp": 1620507600000,
+        "deviceId": 5206
+    },
+    {
+        "id": 52501,
+        "data": "{\"step_counter\": 15581, \"step_activity\": 2}",
+        "timestamp": 1620594000000,
+        "deviceId": 5206
+    },
+    {
+        "id": 52502,
+        "data": "{\"step_counter\": 16030, \"step_activity\": 2}",
+        "timestamp": 1620680400000,
+        "deviceId": 5206
+    },
+    {
+        "id": 52503,
+        "data": "{\"step_counter\": 12703, \"step_activity\": 2}",
+        "timestamp": 1620766800000,
+        "deviceId": 5206
+    },
+    {
+        "id": 52504,
+        "data": "{\"step_counter\": 3439, \"step_activity\": 2}",
+        "timestamp": 1620853200000,
+        "deviceId": 5206
+    },
+    {
+        "id": 52505,
+        "data": "{\"step_counter\": 2426, \"step_activity\": 2}",
+        "timestamp": 1620939600000,
+        "deviceId": 5206
+    },
+    {
+        "id": 52506,
+        "data": "{\"step_counter\": 5098, \"step_activity\": 2}",
+        "timestamp": 1621026000000,
+        "deviceId": 5206
+    },
+    {
+        "id": 52507,
+        "data": "{\"step_counter\": 3062, \"step_activity\": 2}",
+        "timestamp": 1621112400000,
+        "deviceId": 5206
+    },
+    {
+        "id": 52508,
+        "data": "{\"step_counter\": 3611, \"step_activity\": 2}",
+        "timestamp": 1621198800000,
+        "deviceId": 5206
+    },
+    {
+        "id": 52509,
+        "data": "{\"step_counter\": 1247, \"step_activity\": 2}",
+        "timestamp": 1621285200000,
+        "deviceId": 5206
+    },
+    {
+        "id": 52510,
+        "data": "{\"step_counter\": 4491, \"step_activity\": 2}",
+        "timestamp": 1621371600000,
+        "deviceId": 5206
+    },
+    {
+        "id": 52511,
+        "data": "{\"step_counter\": 5084, \"step_activity\": 2}",
+        "timestamp": 1621458000000,
+        "deviceId": 5206
+    },
+    {
+        "id": 52512,
+        "data": "{\"step_counter\": 10, \"step_activity\": 2}",
+        "timestamp": 1621544400000,
+        "deviceId": 5206
+    },
+    {
+        "id": 52513,
+        "data": "{\"step_counter\": 7515, \"step_activity\": 2}",
+        "timestamp": 1621803600000,
+        "deviceId": 5206
+    },
+    {
+        "id": 52514,
+        "data": "{\"step_counter\": 4069, \"step_activity\": 2}",
+        "timestamp": 1621890000000,
+        "deviceId": 5206
+    },
+    {
+        "id": 52515,
+        "data": "{\"step_counter\": 5048, \"step_activity\": 2}",
+        "timestamp": 1621976400000,
+        "deviceId": 5206
+    },
+    {
+        "id": 52516,
+        "data": "{\"step_counter\": 4390, \"step_activity\": 2}",
+        "timestamp": 1622062800000,
+        "deviceId": 5206
+    },
+    {
+        "id": 52517,
+        "data": "{\"step_counter\": 3040, \"step_activity\": 2}",
+        "timestamp": 1622149200000,
+        "deviceId": 5206
+    },
+    {
+        "id": 52518,
+        "data": "{\"step_counter\": 2473, \"step_activity\": 2}",
+        "timestamp": 1622235600000,
+        "deviceId": 5206
+    },
+    {
+        "id": 52519,
+        "data": "{\"step_counter\": 2942, \"step_activity\": 2}",
+        "timestamp": 1622322000000,
+        "deviceId": 5206
+    },
+    {
+        "id": 52520,
+        "data": "{\"step_counter\": 806, \"step_activity\": 2}",
+        "timestamp": 1622408400000,
+        "deviceId": 5206
+    },
+    {
+        "id": 54247,
+        "data": "{\"step_counter\": 0, \"step_activity\": 2}",
+        "timestamp": 1625057610000,
+        "deviceId": 5206
+    },
+    {
+        "id": 54248,
+        "data": "{\"step_counter\": 0, \"step_activity\": 2}",
+        "timestamp": 1625057640000,
+        "deviceId": 5206
+    },
+    {
+        "id": 54249,
+        "data": "{\"step_counter\": 0, \"step_activity\": 2}",
+        "timestamp": 1625057670000,
+        "deviceId": 5206
+    },
+    {
+        "id": 54250,
+        "data": "{\"step_counter\": 0, \"step_activity\": 2}",
+        "timestamp": 1625057700000,
+        "deviceId": 5206
+    },
+    {
+        "id": 55751,
+        "data": "{\"step_counter\": 0, \"step_activity\": 2}",
+        "timestamp": 1625057730000,
+        "deviceId": 5206
+    },
+    {
+        "id": 55752,
+        "data": "{\"step_counter\": 0, \"step_activity\": 2}",
+        "timestamp": 1625057760000,
+        "deviceId": 5206
+    },
+    {
+        "id": 55753,
+        "data": "{\"step_counter\": 0, \"step_activity\": 2}",
+        "timestamp": 1625057790000,
+        "deviceId": 5206
+    },
+    {
+        "id": 55754,
+        "data": "{\"step_counter\": 0, \"step_activity\": 2}",
+        "timestamp": 1625057820000,
+        "deviceId": 5206
+    },
+    {
+        "id": 55755,
+        "data": "{\"step_counter\": 0, \"step_activity\": 2}",
+        "timestamp": 1625057850000,
+        "deviceId": 5206
+    },
+    {
+        "id": 55756,
+        "data": "{\"step_counter\": 0, \"step_activity\": 2}",
+        "timestamp": 1625057880000,
+        "deviceId": 5206
+    },
+    {
+        "id": 55757,
+        "data": "{\"step_counter\": 0, \"step_activity\": 2}",
+        "timestamp": 1625057910000,
+        "deviceId": 5206
+    },
+    {
+        "id": 55758,
+        "data": "{\"step_counter\": 0, \"step_activity\": 2}",
+        "timestamp": 1625057940000,
+        "deviceId": 5206
+    },
+    {
+        "id": 55759,
+        "data": "{\"step_counter\": 0, \"step_activity\": 2}",
+        "timestamp": 1625057970000,
+        "deviceId": 5206
+    },
+    {
+        "id": 55760,
+        "data": "{\"step_counter\": 0, \"step_activity\": 2}",
+        "timestamp": 1625058000000,
+        "deviceId": 5206
+    },
+    {
+        "id": 55761,
+        "data": "{\"step_counter\": 0, \"step_activity\": 2}",
+        "timestamp": 1625058030000,
+        "deviceId": 5206
+    },
+    {
+        "id": 55762,
+        "data": "{\"step_counter\": 0, \"step_activity\": 2}",
+        "timestamp": 1625058060000,
+        "deviceId": 5206
+    },
+    {
+        "id": 55763,
+        "data": "{\"step_counter\": 0, \"step_activity\": 2}",
+        "timestamp": 1625058090000,
+        "deviceId": 5206
+    },
+    {
+        "id": 55764,
+        "data": "{\"step_counter\": 0, \"step_activity\": 2}",
+        "timestamp": 1625058120000,
+        "deviceId": 5206
+    },
+    {
+        "id": 55765,
+        "data": "{\"step_counter\": 0, \"step_activity\": 2}",
+        "timestamp": 1625058150000,
+        "deviceId": 5206
+    },
+    {
+        "id": 55766,
+        "data": "{\"step_counter\": 0, \"step_activity\": 2}",
+        "timestamp": 1625058180000,
+        "deviceId": 5206
+    },
+    {
+        "id": 55767,
+        "data": "{\"step_counter\": 0, \"step_activity\": 2}",
+        "timestamp": 1625058210000,
+        "deviceId": 5206
+    },
+    {
+        "id": 55768,
+        "data": "{\"step_counter\": 0, \"step_activity\": 2}",
+        "timestamp": 1625058240000,
+        "deviceId": 5206
+    },
+    {
+        "id": 55769,
+        "data": "{\"step_counter\": 0, \"step_activity\": 2}",
+        "timestamp": 1625058270000,
+        "deviceId": 5206
+    },
+    {
+        "id": 55770,
+        "data": "{\"step_counter\": 0, \"step_activity\": 2}",
+        "timestamp": 1625058300000,
+        "deviceId": 5206
+    },
+    {
+        "id": 55771,
+        "data": "{\"step_counter\": 0, \"step_activity\": 2}",
+        "timestamp": 1625058330000,
+        "deviceId": 5206
+    },
+    {
+        "id": 55772,
+        "data": "{\"step_counter\": 0, \"step_activity\": 2}",
+        "timestamp": 1625058360000,
+        "deviceId": 5206
+    },
+    {
+        "id": 55773,
+        "data": "{\"step_counter\": 0, \"step_activity\": 2}",
+        "timestamp": 1625058390000,
+        "deviceId": 5206
+    },
+    {
+        "id": 55774,
+        "data": "{\"step_counter\": 0, \"step_activity\": 2}",
+        "timestamp": 1625058420000,
+        "deviceId": 5206
+    }
+]

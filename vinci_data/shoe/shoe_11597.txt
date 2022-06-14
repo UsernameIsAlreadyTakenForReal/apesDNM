@@ -1,0 +1,182 @@
+[
+    {
+        "id": 102006,
+        "data": "{\"step_counter\": 192, \"step_activity\": 2}",
+        "timestamp": 1634120700000,
+        "deviceId": 11597
+    },
+    {
+        "id": 102152,
+        "data": "{\"step_counter\": 522, \"step_activity\": 2}",
+        "timestamp": 1638357000000,
+        "deviceId": 11597
+    },
+    {
+        "id": 102153,
+        "data": "{\"step_counter\": 624, \"step_activity\": 2}",
+        "timestamp": 1638357300000,
+        "deviceId": 11597
+    },
+    {
+        "id": 102154,
+        "data": "{\"step_counter\": 624, \"step_activity\": 2}",
+        "timestamp": 1638357600000,
+        "deviceId": 11597
+    },
+    {
+        "id": 102155,
+        "data": "{\"step_counter\": 632, \"step_activity\": 2}",
+        "timestamp": 1638357900000,
+        "deviceId": 11597
+    },
+    {
+        "id": 102156,
+        "data": "{\"step_counter\": 632, \"step_activity\": 2}",
+        "timestamp": 1638358200000,
+        "deviceId": 11597
+    },
+    {
+        "id": 102157,
+        "data": "{\"step_counter\": 622, \"step_activity\": 2}",
+        "timestamp": 1638358500000,
+        "deviceId": 11597
+    },
+    {
+        "id": 102158,
+        "data": "{\"step_counter\": 622, \"step_activity\": 2}",
+        "timestamp": 1638358500000,
+        "deviceId": 11597
+    },
+    {
+        "id": 102159,
+        "data": "{\"step_counter\": 690, \"step_activity\": 2}",
+        "timestamp": 1638359100000,
+        "deviceId": 11597
+    },
+    {
+        "id": 102160,
+        "data": "{\"step_counter\": 528, \"step_activity\": 2}",
+        "timestamp": 1638358800000,
+        "deviceId": 11597
+    },
+    {
+        "id": 102161,
+        "data": "{\"step_counter\": 562, \"step_activity\": 2}",
+        "timestamp": 1638359400000,
+        "deviceId": 11597
+    },
+    {
+        "id": 102162,
+        "data": "{\"step_counter\": 690, \"step_activity\": 2}",
+        "timestamp": 1638359100000,
+        "deviceId": 11597
+    },
+    {
+        "id": 102163,
+        "data": "{\"step_counter\": 574, \"step_activity\": 2}",
+        "timestamp": 1638359700000,
+        "deviceId": 11597
+    },
+    {
+        "id": 102164,
+        "data": "{\"step_counter\": 562, \"step_activity\": 2}",
+        "timestamp": 1638359400000,
+        "deviceId": 11597
+    },
+    {
+        "id": 102165,
+        "data": "{\"step_counter\": 574, \"step_activity\": 2}",
+        "timestamp": 1638359700000,
+        "deviceId": 11597
+    },
+    {
+        "id": 102166,
+        "data": "{\"step_counter\": 672, \"step_activity\": 2}",
+        "timestamp": 1638360000000,
+        "deviceId": 11597
+    },
+    {
+        "id": 102167,
+        "data": "{\"step_counter\": 672, \"step_activity\": 2}",
+        "timestamp": 1638360000000,
+        "deviceId": 11597
+    },
+    {
+        "id": 102169,
+        "data": "{\"step_counter\": 686, \"step_activity\": 2}",
+        "timestamp": 1638361200000,
+        "deviceId": 11597
+    },
+    {
+        "id": 102168,
+        "data": "{\"step_counter\": 686, \"step_activity\": 2}",
+        "timestamp": 1638361200000,
+        "deviceId": 11597
+    },
+    {
+        "id": 102170,
+        "data": "{\"step_counter\": 584, \"step_activity\": 2}",
+        "timestamp": 1638361500000,
+        "deviceId": 11597
+    },
+    {
+        "id": 55929,
+        "data": "{\"step_counter\": 0, \"step_activity\": 2}",
+        "timestamp": 1625062860000,
+        "deviceId": 11597
+    },
+    {
+        "id": 55930,
+        "data": "{\"step_counter\": 0, \"step_activity\": 2}",
+        "timestamp": 1625062890000,
+        "deviceId": 11597
+    },
+    {
+        "id": 55931,
+        "data": "{\"step_counter\": 0, \"step_activity\": 2}",
+        "timestamp": 1625062920000,
+        "deviceId": 11597
+    },
+    {
+        "id": 55932,
+        "data": "{\"step_counter\": 0, \"step_activity\": 2}",
+        "timestamp": 1625062950000,
+        "deviceId": 11597
+    },
+    {
+        "id": 55933,
+        "data": "{\"step_counter\": 0, \"step_activity\": 2}",
+        "timestamp": 1625062980000,
+        "deviceId": 11597
+    },
+    {
+        "id": 55934,
+        "data": "{\"step_counter\": 0, \"step_activity\": 2}",
+        "timestamp": 1625063010000,
+        "deviceId": 11597
+    },
+    {
+        "id": 55935,
+        "data": "{\"step_counter\": 0, \"step_activity\": 2}",
+        "timestamp": 1625063040000,
+        "deviceId": 11597
+    },
+    {
+        "id": 55936,
+        "data": "{\"step_counter\": 0, \"step_activity\": 2}",
+        "timestamp": 1625063070000,
+        "deviceId": 11597
+    },
+    {
+        "id": 55937,
+        "data": "{\"step_counter\": 0, \"step_activity\": 2}",
+        "timestamp": 1625063100000,
+        "deviceId": 11597
+    },
+    {
+        "id": 55938,
+        "data": "{\"step_counter\": 0, \"step_activity\": 2}",
+        "timestamp": 1625063130000,
+        "deviceId": 11597
+    }
+]
