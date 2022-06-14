@@ -1,6 +1,7 @@
 """
 Use this tiny teensy program to transform those nifty .json (.txt) files to .csv.
 Everything is better with .csv files
+Also this holds functions for the 3 types of data
 """
 
 import os
@@ -56,6 +57,33 @@ def getNumberOfStepsAndStepActivityAsColumns(column):
     return no_steps, step_activity  
 
 
+# 2. getTimestampsDifferenceAsInt
+# For survey data, there are two columns with timestamps, one for the start of 
+# the survey, and the other for the end. Getting this difference and saving it
+# as a column of integers could help the neural network. Function has a choice
+# of whether to convert to seconds (s) or miliseconds (ms) (param difference_type)
+
+def getTimestampsDifferenceAsInt(column_begin, column_end, difference_type):
+    
+    size = column_begin.size
+    duration = np.zeros(size)
+    
+    for column_index in range(size):
+        
+        # first we get rid of the 'Z' in the end
+        if column_end[column_index][23] == 'Z':
+            column_end[column_index] = column_end[column_index][0:23]
+        if column_begin[column_index][23] == 'Z':
+            column_begin[column_index] = column_begin[column_index][0:23]
+            
+        # then we create the difference
+        difference = (np.datetime64(column_end[column_index], difference_type) - 
+                      np.datetime64(column_begin[column_index], difference_type)).astype(int)
+        duration[column_index] = difference
+    
+    return duration
+
+
 ### ---------------------------------------------------------------------------
 ### -------------------------------- Smart way --------------------------------
 ### ---------------------------------------------------------------------------
@@ -82,13 +110,15 @@ data_shoe_test = pd.read_json('./vinci_data/shoe/shoe_7051.txt')
 # Get shoe data
 for i in range(len(shoe_ids)):
     string = shoe_file_path + shoe_file_name_prefix + shoe_ids[i]
-    temp_data_panda = pd.read_json(string + '.txt')
-    temp_data_panda.to_csv(string + '.csv')
+    temp_data_panda = pd.read_json(string + '.txt')    
+    if os.path.exists(string + '.csv') == False:
+        temp_data_panda.to_csv(string + '.csv')
     
     temp_data = np.array(temp_data_panda)
     column_to_be_split = temp_data[:,1]
     no_steps, step_activity = getNumberOfStepsAndStepActivityAsColumns(column_to_be_split)
     
+    # remove the 'data' column and replace it with the two resulting columns from above
     temp_data_shortened = np.delete(temp_data, 1, 1)
     temp_data = np.insert(temp_data_shortened, 1, no_steps, 1)
     temp_data = np.insert(temp_data, 2, step_activity, 1)  
@@ -112,15 +142,21 @@ for i in range(len(shoe_ids)):
 # Get survey data
 for i in range(len(survey_ids)):
     string = survey_file_path + survey_file_name_prefix + survey_ids[i]
-    print(string)
     temp_data_panda = pd.read_json(string + '.txt')
-    temp_data_panda.to_csv(string + '.csv')
+    if os.path.exists(string + '.csv') == False:
+        temp_data_panda.to_csv(string + '.csv')
     
     temp_data = np.array(temp_data_panda)  
+    difference_column = getTimestampsDifferenceAsInt(temp_data[:,5], temp_data[:,6], 'ms')
+    
+    # remove de timestamps columns and replace them with the difference column from above
+    temp_data_shortened = np.delete(temp_data, 6, 1)
+    temp_data_shortened = np.delete(temp_data_shortened, 5, 1)
+    temp_data = np.insert(temp_data_shortened, 5, difference_column, 1)    
     
     temp_data_list = temp_data.tolist()
     all_survey_data.append(temp_data_list)
     
-    # plt.figure(1)
-    # plt.plot(temp_data[:,1])
-    # plt.show()
+    plt.figure(1)
+    plt.plot(temp_data[:,5])
+    plt.show()
