@@ -101,10 +101,6 @@ shoe_file_name_prefix = "shoe_"
 watch_file_name_prefix = "watchdeviceId_"
 survey_file_name_prefix = "survey_device_Id_"
 
-data_shoe_test = pd.read_json('./vinci_data/shoe/shoe_7051.txt')
-# data_watch_test = pd.read_json('./vinci_data/watch/watchdeviceID_3151.txt')
-# data_survey_test = pd.read_json('./vinci_data/survey/survey_device_Id_11576.txt')
-
 ### -------------------------------- Get Data ---------------------------------
 
 # Get shoe data
@@ -128,15 +124,30 @@ for i in range(len(shoe_ids)):
     all_shoe_data.append(temp_data_list)
     
     
-# # Get watch data
-# for i in len(watch_ids):
-#     string = watch_file_path + watch_file_name_prefix + watch_ids[i]
-#     temp_data_panda = pd.read_json(string + '.txt')
-#     temp_watch = np.array(temp_data_panda)    
-#     temp_watch_list = temp_watch.tolist()
-#     all_watch_data.add(temp_watch_list)
-#     temp_data_panda.to_csv(string + '.csv')
+# Get watch data
+for i in range(len(watch_ids)):
+    string = watch_file_path + watch_file_name_prefix + watch_ids[i]
+    https://stackoverflow.com/questions/6475328/how-can-i-read-large-text-files-line-by-line-without-loading-it-into-memory
+    file1 = open(string + '.txt', 'r')
+    Lines = file1.readlines()
+    temp_data_list = []
     
+    for i in range(len(Lines)):
+        if i >= 2:
+            print('reached i: ', i)
+            temp = Lines[i].split()
+            temp_data_list.append(temp[0])
+            temp_data_list.append(temp[2])
+            temp_data_list.append(temp[4])
+            temp_data_list.append(temp[6])
+            
+    
+    temp_data = np.array(temp_data_list)    
+    temp_data_panda = pd.DataFrame(temp_data, columns = ['id','data','jhi_timestamp', 'device_id'])
+    if os.path.exists(string + '.csv') == False:
+        temp_data_panda.to_csv(string + '.csv')
+    
+    all_watch_data.append(temp_data_list)
     
     
 # Get survey data
