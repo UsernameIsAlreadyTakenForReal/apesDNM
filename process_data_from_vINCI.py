@@ -55,11 +55,13 @@ def getNumberOfStepsAndStepActivityAsColumns(column):
     
     return no_steps, step_activity  
 
+
 ### ---------------------------------------------------------------------------
 ### -------------------------------- Smart way --------------------------------
 ### ---------------------------------------------------------------------------
 
 shoe_ids = ["5206", "5651", "7051", "11597"]
+# shoe_ids = ["5206"]
 watch_ids = ['3151', '4552', '4553']
 survey_ids = ['3951', '11551', '11574', '11575', '11576', '11579', '11589', '11598', '12003', '12005', '12207']
 
@@ -89,38 +91,36 @@ for i in range(len(shoe_ids)):
     
     temp_data_shortened = np.delete(temp_data, 1, 1)
     temp_data = np.insert(temp_data_shortened, 1, no_steps, 1)
-    temp_data = np.insert(temp_data, 2, step_activity, 1)    
+    temp_data = np.insert(temp_data, 2, step_activity, 1)  
+    # temp_data[temp_data[:, 3].argsort()]
     
     temp_data_list = temp_data.tolist()
     all_shoe_data.append(temp_data_list)
     
     
-     
-
-    
-    
 # # Get watch data
 # for i in len(watch_ids):
-#     string = watch_file_path + watch_file_name_prefix + watch_ids(i)
+#     string = watch_file_path + watch_file_name_prefix + watch_ids[i]
 #     temp_data_panda = pd.read_json(string + '.txt')
 #     temp_watch = np.array(temp_data_panda)    
 #     temp_watch_list = temp_watch.tolist()
 #     all_watch_data.add(temp_watch_list)
 #     temp_data_panda.to_csv(string + '.csv')
     
-# # Get survey data
-# for i in len(survey_ids):
-#     string = survey_file_path + survey_file_name_prefix + survey_ids(i)
-#     temp_data_panda = pd.read_json(string + '.txt')
-#     temp_data = np.array(temp_data_panda)    
-#     temp_data_list = temp_data.tolist()
-#     all_survey_data.add(temp_data_list)
-#     temp_data_panda.to_csv(string + '.csv')
-
-### --------- Step by step way because the smart way doesn't work ffs ---------
-
-# data_shoe_5206 = pd.read_json('./vinci_data/shoe/shoe_5206.txt')
-# data_shoe_5651 = pd.read_json('./vinci_data/shoe/shoe_5651.txt')
-# data_shoe_7051 = pd.read_json('./vinci_data/shoe/shoe_7051.txt')
-# data_shoe_11597 = pd.read_json('./vinci_data/shoe/shoe_11597.txt')
-
+    
+    
+# Get survey data
+for i in range(len(survey_ids)):
+    string = survey_file_path + survey_file_name_prefix + survey_ids[i]
+    print(string)
+    temp_data_panda = pd.read_json(string + '.txt')
+    temp_data_panda.to_csv(string + '.csv')
+    
+    temp_data = np.array(temp_data_panda)  
+    
+    temp_data_list = temp_data.tolist()
+    all_survey_data.append(temp_data_list)
+    
+    # plt.figure(1)
+    # plt.plot(temp_data[:,1])
+    # plt.show()

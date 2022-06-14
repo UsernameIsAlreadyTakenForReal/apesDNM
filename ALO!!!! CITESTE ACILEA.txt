@@ -1,0 +1,7 @@
+Anomaly detection!!
+
+Shoe 	- timestamp-urile variaza. La unele persoane sunt zi dupa zi, la altele sunt mai multe timestamp-uri in aceeasi zi, ca s-au trimis cate 600 de pasi odata
+	- numarul de pasi variaza. Doi din ei au 0 pe linie
+
+Survey 	- timestamp-urile de incepere si finalizare pot fi transformate in secunde. Mai usor pt NN si kNN sa gaseasca bube majore
+	- 
