@@ -138,6 +138,8 @@ for i in range(len(watch_ids)):
     Lines = file1.readlines()
     temp_data_list = np.empty((len(Lines) - 2, 13), dtype=object)
     
+    hopefully_the_same_lenght = []
+    
     for j in range(len(Lines)):
         if j >= 2:
             # print('Now reached row ', j)
@@ -162,9 +164,20 @@ for i in range(len(watch_ids)):
             temp_data_list[j - 2][9] = data_cell_as_json_dict["y"]
             temp_data_list[j - 2][10] = data_cell_as_json_dict["m"]
             temp_data_list[j - 2][11] = data_cell_as_json_dict["d"]
-            temp_data_list[j - 2][12] = data_cell_as_json_dict["p"]       
+            temp_data_list[j - 2][12] = data_cell_as_json_dict["p"] 
             
+            hj = data_cell_as_json_dict["c"].split(";")
+            
+            if len(hj) != 11:
+                hopefully_the_same_lenght.append(len(hj))
+                
+            
+    print('atatea date utile: ', len(hopefully_the_same_lenght))
     
+    plt.figure(1)
+    plt.plot(hopefully_the_same_lenght)
+    plt.show()
+            
     temp_data = np.array(temp_data_list)    
     temp_data_panda = pd.DataFrame(temp_data, columns = ['id', 'device_id', '_id', '_xt', 'ei', 'si', 'dt', 's', 'c', 'y', 'm', 'd', 'p'])
     if os.path.exists(string + '.csv') == False:
@@ -193,6 +206,6 @@ for i in range(len(survey_ids)):
     temp_data_list = temp_data.tolist()
     all_survey_data.append(temp_data_list)
     
-    plt.figure(1)
+    plt.figure(2)
     plt.plot(temp_data[:,5])
     plt.show()
