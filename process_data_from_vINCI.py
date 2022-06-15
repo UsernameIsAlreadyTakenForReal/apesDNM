@@ -8,6 +8,7 @@ import os
 import numpy as np
 import pandas as pd
 from matplotlib import pyplot as plt
+import json
 
 all_shoe_data = []
 all_watch_data = []
@@ -142,57 +143,61 @@ for i in range(len(watch_ids)):
         
     file1 = open(string + '.txt', 'r')
     Lines = file1.readlines()
-    temp_data_list = np.empty((len(Lines) - 2, 4), dtype=object)
+    temp_data_list = np.empty((len(Lines) - 2, 13), dtype=object)
     
     for j in range(len(Lines)):
         if j >= 2:
-            temp = Lines[j].split()
+            # print('Now reached row ', j)
+            temp = Lines[j].split('|') 
+            temp[0] = temp[0].strip()
+            temp[1] = temp[1].strip()
+            temp[2] = temp[2].strip()
+            temp[3] = temp[3].strip()
+            
+            data_cell_as_json_dict = json.loads(temp[1])
+            
             temp_data_list[j - 2][0] = temp[0]
-            temp_data_list[j - 2][1] = temp[2]
-            temp_data_list[j - 2][2] = temp[4]
-            temp_data_list[j - 2][3] = temp[6]
+            temp_data_list[j - 2][1] = temp[3]
             
+            temp_data_list[j - 2][2] = data_cell_as_json_dict["_id"]
+            temp_data_list[j - 2][3] = data_cell_as_json_dict["_xt"]
+            temp_data_list[j - 2][4] = data_cell_as_json_dict["ei"]
+            temp_data_list[j - 2][5] = data_cell_as_json_dict["si"]
+            temp_data_list[j - 2][6] = data_cell_as_json_dict["dt"]
+            temp_data_list[j - 2][7] = data_cell_as_json_dict["s"]
+            temp_data_list[j - 2][8] = data_cell_as_json_dict["c"]
+            temp_data_list[j - 2][9] = data_cell_as_json_dict["y"]
+            temp_data_list[j - 2][10] = data_cell_as_json_dict["m"]
+            temp_data_list[j - 2][11] = data_cell_as_json_dict["d"]
+            temp_data_list[j - 2][12] = data_cell_as_json_dict["p"]       
             
-            data_cell = temp[2].split("\"")
-            
-            data_id = data_cell[3]  # id
-            data_xt = data_cell[7]  # xt
-            data_ei = data_cell[11] # ei
-            data_si = data_cell[15] # si
-            data_dt = data_cell[19] # dt (date & time)
-            data_s  = data_cell[23] # s (what is this?)
-            data_c  = data_cell[27] # c. this needs to be split again 'cause wth is this
-            data_y  = data_cell[31] # year
-            data_m  = data_cell[35] # month
-            data_d  = data_cell[39] # day
-            data_p  = data_cell[43] # H02 for example
     
     temp_data = np.array(temp_data_list)    
-    temp_data_panda = pd.DataFrame(temp_data, columns = ['id','data','jhi_timestamp', 'device_id'])
+    temp_data_panda = pd.DataFrame(temp_data, columns = ['id', 'device_id', '_id', '_xt', 'ei', 'si', 'dt', 's', 'c', 'y', 'm', 'd', 'p'])
     if os.path.exists(string + '.csv') == False:
         temp_data_panda.to_csv(string + '.csv')
     
     all_watch_data.append(temp_data_list)
     
     
-# # Get survey data
-# for i in range(len(survey_ids)):
-#     string = survey_file_path + survey_file_name_prefix + survey_ids[i]
-#     temp_data_panda = pd.read_json(string + '.txt')
-#     if os.path.exists(string + '.csv') == False:
-#         temp_data_panda.to_csv(string + '.csv')
+# Get survey data
+for i in range(len(survey_ids)):
+    string = survey_file_path + survey_file_name_prefix + survey_ids[i]
+    temp_data_panda = pd.read_json(string + '.txt')
+    if os.path.exists(string + '.csv') == False:
+        temp_data_panda.to_csv(string + '.csv')
     
-#     temp_data = np.array(temp_data_panda)  
-#     difference_column = getTimestampsDifferenceAsInt(temp_data[:,5], temp_data[:,6], 'ms')
+    temp_data = np.array(temp_data_panda)  
+    difference_column = getTimestampsDifferenceAsInt(temp_data[:,5], temp_data[:,6], 'ms')
     
-#     # remove de timestamps columns and replace them with the difference column from above
-#     temp_data_shortened = np.delete(temp_data, 6, 1)
-#     temp_data_shortened = np.delete(temp_data_shortened, 5, 1)
-#     temp_data = np.insert(temp_data_shortened, 5, difference_column, 1)    
+    # remove de timestamps columns and replace them with the difference column from above
+    temp_data_shortened = np.delete(temp_data, 6, 1)
+    temp_data_shortened = np.delete(temp_data_shortened, 5, 1)
+    temp_data = np.insert(temp_data_shortened, 5, difference_column, 1)    
     
-#     temp_data_list = temp_data.tolist()
-#     all_survey_data.append(temp_data_list)
+    temp_data_list = temp_data.tolist()
+    all_survey_data.append(temp_data_list)
     
-#     plt.figure(1)
-#     plt.plot(temp_data[:,5])
-#     plt.show()
+    plt.figure(1)
+    plt.plot(temp_data[:,5])
+    plt.show()

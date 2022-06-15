@@ -27,3 +27,54 @@
 }
 
 _xt ala e literalmente timestamp-ul 'jhi_timestamp'
+
+{
+    "_id":"60a3e80fb8162d6c4fd14a4b",
+    "_xt":"1621354511814",
+    "ei":"352413080064321",
+    "si":"9226103003325864",
+    "dt":"2021-05-18T16:15:11.814Z",
+    "s":"::ffff:109.166.135.142",
+    "c":"
+        #@H02@#;
+        352413080064321;
+        9226103003325864;
+        862182;
+        2021-05-18;
+        19:15:08;
+        1;
+        G;
+        0;
+        N44.456400;
+        E26.074771;
+        98.1;
+        5.899;
+        0;
+        5076;
+        5;
+        6;
+        2021-05-18;
+        19:03:36;
+        N44.456315;
+        E26.075319;
+        24;
+        50;
+        226@10@140@38121@54;
+        00;
+        0;
+        I;
+        \u0001",
+    "y":"2021",
+    "m":"5",
+    "d":"18",
+    "p":"H02"
+}                 
+
+{
+    "9":"No",
+    "2":"[useful to be more motivated to exercise, useful to self-assess your health status, an easy way to inform close persons about your health status and needs]",
+    "3":"Yes",
+    "4":"[your pharmacist, a friend or neighbor]",
+    "5":"Yes",
+    "7":"Yes"
+}
