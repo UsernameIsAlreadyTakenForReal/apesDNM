@@ -155,6 +155,17 @@ for i in range(len(watch_ids)):
             
             data_cell = temp[2].split("\"")
             
+            data_id = data_cell[3]  # id
+            data_xt = data_cell[7]  # xt
+            data_ei = data_cell[11] # ei
+            data_si = data_cell[15] # si
+            data_dt = data_cell[19] # dt (date & time)
+            data_s  = data_cell[23] # s (what is this?)
+            data_c  = data_cell[27] # c. this needs to be split again 'cause wth is this
+            data_y  = data_cell[31] # year
+            data_m  = data_cell[35] # month
+            data_d  = data_cell[39] # day
+            data_p  = data_cell[43] # H02 for example
     
     temp_data = np.array(temp_data_list)    
     temp_data_panda = pd.DataFrame(temp_data, columns = ['id','data','jhi_timestamp', 'device_id'])
