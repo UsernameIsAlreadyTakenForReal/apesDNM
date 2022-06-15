@@ -91,6 +91,7 @@ def getTimestampsDifferenceAsInt(column_begin, column_end, difference_type):
 shoe_ids = ["5206", "5651", "7051", "11597"]
 # shoe_ids = ["5206"]
 watch_ids = ['3151', '4552', '4553']
+# watch_ids = ['3151']
 survey_ids = ['3951', '11551', '11574', '11575', '11576', '11579', '11589', '11598', '12003', '12005', '12207']
 
 shoe_file_path = "./vinci_data/shoe/"
@@ -127,19 +128,32 @@ for i in range(len(shoe_ids)):
 # Get watch data
 for i in range(len(watch_ids)):
     string = watch_file_path + watch_file_name_prefix + watch_ids[i]
-    https://stackoverflow.com/questions/6475328/how-can-i-read-large-text-files-line-by-line-without-loading-it-into-memory
+    # https://stackoverflow.com/questions/6475328/how-can-i-read-large-text-files-line-by-line-without-loading-it-into-memory
+    
+    # count = 0
+    # with open(string + '.txt') as infile:
+    # for line in infile:
+    #     count += 1
+        
+    # for line in open(string + '.txt'):
+    #     count += 1
+        
+    # print(count)
+        
     file1 = open(string + '.txt', 'r')
     Lines = file1.readlines()
-    temp_data_list = []
+    temp_data_list = np.empty((len(Lines) - 2, 4), dtype=object)
     
-    for i in range(len(Lines)):
-        if i >= 2:
-            print('reached i: ', i)
-            temp = Lines[i].split()
-            temp_data_list.append(temp[0])
-            temp_data_list.append(temp[2])
-            temp_data_list.append(temp[4])
-            temp_data_list.append(temp[6])
+    for j in range(len(Lines)):
+        if j >= 2:
+            temp = Lines[j].split()
+            temp_data_list[j - 2][0] = temp[0]
+            temp_data_list[j - 2][1] = temp[2]
+            temp_data_list[j - 2][2] = temp[4]
+            temp_data_list[j - 2][3] = temp[6]
+            
+            
+            data_cell = temp[2].split("\"")
             
     
     temp_data = np.array(temp_data_list)    
@@ -150,24 +164,24 @@ for i in range(len(watch_ids)):
     all_watch_data.append(temp_data_list)
     
     
-# Get survey data
-for i in range(len(survey_ids)):
-    string = survey_file_path + survey_file_name_prefix + survey_ids[i]
-    temp_data_panda = pd.read_json(string + '.txt')
-    if os.path.exists(string + '.csv') == False:
-        temp_data_panda.to_csv(string + '.csv')
+# # Get survey data
+# for i in range(len(survey_ids)):
+#     string = survey_file_path + survey_file_name_prefix + survey_ids[i]
+#     temp_data_panda = pd.read_json(string + '.txt')
+#     if os.path.exists(string + '.csv') == False:
+#         temp_data_panda.to_csv(string + '.csv')
     
-    temp_data = np.array(temp_data_panda)  
-    difference_column = getTimestampsDifferenceAsInt(temp_data[:,5], temp_data[:,6], 'ms')
+#     temp_data = np.array(temp_data_panda)  
+#     difference_column = getTimestampsDifferenceAsInt(temp_data[:,5], temp_data[:,6], 'ms')
     
-    # remove de timestamps columns and replace them with the difference column from above
-    temp_data_shortened = np.delete(temp_data, 6, 1)
-    temp_data_shortened = np.delete(temp_data_shortened, 5, 1)
-    temp_data = np.insert(temp_data_shortened, 5, difference_column, 1)    
+#     # remove de timestamps columns and replace them with the difference column from above
+#     temp_data_shortened = np.delete(temp_data, 6, 1)
+#     temp_data_shortened = np.delete(temp_data_shortened, 5, 1)
+#     temp_data = np.insert(temp_data_shortened, 5, difference_column, 1)    
     
-    temp_data_list = temp_data.tolist()
-    all_survey_data.append(temp_data_list)
+#     temp_data_list = temp_data.tolist()
+#     all_survey_data.append(temp_data_list)
     
-    plt.figure(1)
-    plt.plot(temp_data[:,5])
-    plt.show()
+#     plt.figure(1)
+#     plt.plot(temp_data[:,5])
+#     plt.show()
