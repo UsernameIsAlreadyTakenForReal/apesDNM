@@ -103,14 +103,12 @@ shoe_file_name_prefix = "shoe_"
 watch_file_name_prefix = "watchdeviceId_"
 survey_file_name_prefix = "survey_device_Id_"
 
-### -------------------------------- Get Data ---------------------------------
+### ----------------------------- Get Shoe Data -------------------------------
 
 # Get shoe data
 for i in range(len(shoe_ids)):
     string = shoe_file_path + shoe_file_name_prefix + shoe_ids[i]
-    temp_data_panda = pd.read_json(string + '.txt')    
-    if os.path.exists(string + '.csv') == False:
-        temp_data_panda.to_csv(string + '.csv')
+    temp_data_panda = pd.read_json(string + '.txt')  
     
     temp_data = np.array(temp_data_panda)
     column_to_be_split = temp_data[:,1]
@@ -120,26 +118,21 @@ for i in range(len(shoe_ids)):
     temp_data_shortened = np.delete(temp_data, 1, 1)
     temp_data = np.insert(temp_data_shortened, 1, no_steps, 1)
     temp_data = np.insert(temp_data, 2, step_activity, 1)  
-    # temp_data[temp_data[:, 3].argsort()]
     
     temp_data_list = temp_data.tolist()
     all_shoe_data.append(temp_data_list)
     
+    to_csv_panda_data = pd.DataFrame(temp_data, columns = ['id', 'step_counter','step_activity','timestamp','deviceID'])
+    if os.path.exists(string + '.csv') == False:
+        to_csv_panda_data.to_csv(string + '.csv')
+        
+        
+    
+### ---------------------------- Get Watch Data -------------------------------
     
 # Get watch data
 for i in range(len(watch_ids)):
     string = watch_file_path + watch_file_name_prefix + watch_ids[i]
-    # https://stackoverflow.com/questions/6475328/how-can-i-read-large-text-files-line-by-line-without-loading-it-into-memory
-    
-    # count = 0
-    # with open(string + '.txt') as infile:
-    # for line in infile:
-    #     count += 1
-        
-    # for line in open(string + '.txt'):
-    #     count += 1
-        
-    # print(count)
         
     file1 = open(string + '.txt', 'r')
     Lines = file1.readlines()
@@ -180,6 +173,8 @@ for i in range(len(watch_ids)):
     all_watch_data.append(temp_data_list)
     
     
+### ---------------------------- Get Survey Data ------------------------------
+
 # Get survey data
 for i in range(len(survey_ids)):
     string = survey_file_path + survey_file_name_prefix + survey_ids[i]
