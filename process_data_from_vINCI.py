@@ -14,6 +14,8 @@ all_shoe_data = []
 all_watch_data = []
 all_survey_data = []
 
+overwrite_csv_files = True
+
 ### ---------------------------------------------------------------------------
 ### -------------------------------- Functions --------------------------------
 ### ---------------------------------------------------------------------------
@@ -123,8 +125,14 @@ for i in range(len(shoe_ids)):
     all_shoe_data.append(temp_data_list)
     
     to_csv_panda_data = pd.DataFrame(temp_data, columns = ['id', 'step_counter','step_activity','timestamp','deviceID'])
-    if os.path.exists(string + '.csv') == False:
+    
+    
+    if os.path.exists(string + '.csv') == False:        
         to_csv_panda_data.to_csv(string + '.csv')
+    else:
+        if overwrite_csv_files == True:
+            os.remove(string + '.csv')
+            to_csv_panda_data.to_csv(string + '.csv')
         
         
     
@@ -308,43 +316,49 @@ for i in range(len(watch_ids)):
     40.  d: 18
     41.  p: H02
     """
-    
-    plt.figure(1)
-    plt.plot(hopefully_the_same_lenght)
-    plt.show()
             
     temp_data = np.array(temp_data_list)    
-    temp_data_panda = pd.DataFrame(temp_data, columns = ['id', 'device_id', '_id', '_xt', 'ei', 'si', 'dt', 's', 
-                                                         'c_??', 'c_ei', 'c_si', 'c_?!', 'c_d1', 'c_t1', 'c_n1', 'c_l1',
-                                                         'c_m1', 'c_N1', 'c_E1', 'c_p1', 'c_p2', 'c_m2', 'c_!?', 'c_n2', 
-                                                         'c_n3', 'c_d2', 'c_t2', 'c_N2', 'c_E2', 'c_n4', 'c_n5', 'c_!!', 
-                                                         'c_00', 'c_0', 'c_L1', 'c_L2', 'c_en',  'y', 'm', 'd', 'p'])
-    if os.path.exists(string + '.csv') == False:
-        temp_data_panda.to_csv(string + '.csv')
+    to_csv_panda_data = pd.DataFrame(temp_data, columns = ['id', 'device_id', '_id', '_xt', 'ei', 'si', 'dt', 's', 
+                                                           'c_??', 'c_ei', 'c_si', 'c_?!', 'c_d1', 'c_t1', 'c_n1', 'c_l1',
+                                                           'c_m1', 'c_N1', 'c_E1', 'c_p1', 'c_p2', 'c_m2', 'c_!?', 'c_n2', 
+                                                           'c_n3', 'c_d2', 'c_t2', 'c_N2', 'c_E2', 'c_n4', 'c_n5', 'c_!!', 
+                                                           'c_00', 'c_0', 'c_L1', 'c_L2', 'c_en',  'y', 'm', 'd', 'p'])
     
     all_watch_data.append(temp_data_list)
     
+    if os.path.exists(string + '.csv') == False:        
+        to_csv_panda_data.to_csv(string + '.csv')
+    else:
+        if overwrite_csv_files == True:
+            os.remove(string + '.csv')
+            to_csv_panda_data.to_csv(string + '.csv')
     
-### ---------------------------- Get Survey Data ------------------------------
+    
+# ### ---------------------------- Get Survey Data ------------------------------
 
-# Get survey data
-for i in range(len(survey_ids)):
-    string = survey_file_path + survey_file_name_prefix + survey_ids[i]
-    temp_data_panda = pd.read_json(string + '.txt')
-    if os.path.exists(string + '.csv') == False:
-        temp_data_panda.to_csv(string + '.csv')
+# # Get survey data
+# for i in range(len(survey_ids)):
+#     string = survey_file_path + survey_file_name_prefix + survey_ids[i]
+#     to_csv_panda_data = pd.read_json(string + '.txt')
     
-    temp_data = np.array(temp_data_panda)  
-    difference_column = getTimestampsDifferenceAsInt(temp_data[:,5], temp_data[:,6], 'ms')
+#     temp_data = np.array(temp_data_panda)  
+#     difference_column = getTimestampsDifferenceAsInt(temp_data[:,5], temp_data[:,6], 'ms')
     
-    # remove de timestamps columns and replace them with the difference column from above
-    temp_data_shortened = np.delete(temp_data, 6, 1)
-    temp_data_shortened = np.delete(temp_data_shortened, 5, 1)
-    temp_data = np.insert(temp_data_shortened, 5, difference_column, 1)    
+#     # remove de timestamps columns and replace them with the difference column from above
+#     temp_data_shortened = np.delete(temp_data, 6, 1)
+#     temp_data_shortened = np.delete(temp_data_shortened, 5, 1)
+#     temp_data = np.insert(temp_data_shortened, 5, difference_column, 1)    
     
-    temp_data_list = temp_data.tolist()
-    all_survey_data.append(temp_data_list)
+#     temp_data_list = temp_data.tolist()
+#     all_survey_data.append(temp_data_list)
     
-    plt.figure(2)
-    plt.plot(temp_data[:,5])
-    plt.show()
+#     plt.figure(2)
+#     plt.plot(temp_data[:,5])
+#     plt.show()
+    
+#     if os.path.exists(string + '.csv') == False:        
+#         to_csv_panda_data.to_csv(string + '.csv')
+#     else:
+#         if overwrite_csv_files == True:
+#             os.remove(string + '.csv')
+#             to_csv_panda_data.to_csv(string + '.csv')
