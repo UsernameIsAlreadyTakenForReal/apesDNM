@@ -14,7 +14,7 @@ all_shoe_data = []
 all_watch_data = []
 all_survey_data = []
 
-overwrite_csv_files = True
+overwrite_csv_files = False
 
 ### ---------------------------------------------------------------------------
 ### -------------------------------- Functions --------------------------------
@@ -126,7 +126,7 @@ for i in range(len(shoe_ids)):
     
     to_csv_panda_data = pd.DataFrame(temp_data, columns = ['id', 'step_counter','step_activity','timestamp','deviceID'])
     
-    
+    # write to .csv file
     if os.path.exists(string + '.csv') == False:        
         to_csv_panda_data.to_csv(string + '.csv')
     else:
@@ -326,6 +326,7 @@ for i in range(len(watch_ids)):
     
     all_watch_data.append(temp_data_list)
     
+    # write to .csv file
     if os.path.exists(string + '.csv') == False:        
         to_csv_panda_data.to_csv(string + '.csv')
     else:
@@ -334,31 +335,40 @@ for i in range(len(watch_ids)):
             to_csv_panda_data.to_csv(string + '.csv')
     
     
-# ### ---------------------------- Get Survey Data ------------------------------
+### ---------------------------- Get Survey Data ------------------------------
 
-# # Get survey data
-# for i in range(len(survey_ids)):
-#     string = survey_file_path + survey_file_name_prefix + survey_ids[i]
-#     to_csv_panda_data = pd.read_json(string + '.txt')
+all_possible_quiz_types = []
+
+# Get survey data
+for i in range(len(survey_ids)):
+    string = survey_file_path + survey_file_name_prefix + survey_ids[i]
+    temp_data_panda = pd.read_json(string + '.txt')
     
-#     temp_data = np.array(temp_data_panda)  
-#     difference_column = getTimestampsDifferenceAsInt(temp_data[:,5], temp_data[:,6], 'ms')
+    temp_data = np.array(temp_data_panda)  
     
-#     # remove de timestamps columns and replace them with the difference column from above
-#     temp_data_shortened = np.delete(temp_data, 6, 1)
-#     temp_data_shortened = np.delete(temp_data_shortened, 5, 1)
-#     temp_data = np.insert(temp_data_shortened, 5, difference_column, 1)    
+    for data_row in temp_data:
+        if data_row[2] in all_possible_quiz_types == False:
+            all_possible_quiz_types.append(data_row[2])
     
-#     temp_data_list = temp_data.tolist()
-#     all_survey_data.append(temp_data_list)
+    difference_column = getTimestampsDifferenceAsInt(temp_data[:,5], temp_data[:,6], 'ms')
     
-#     plt.figure(2)
-#     plt.plot(temp_data[:,5])
-#     plt.show()
+    # remove de timestamps columns and replace them with the difference column from above
+    temp_data_shortened = np.delete(temp_data, 6, 1)
+    temp_data_shortened = np.delete(temp_data_shortened, 5, 1)
+    temp_data = np.insert(temp_data_shortened, 5, difference_column, 1)    
     
-#     if os.path.exists(string + '.csv') == False:        
-#         to_csv_panda_data.to_csv(string + '.csv')
-#     else:
-#         if overwrite_csv_files == True:
-#             os.remove(string + '.csv')
-#             to_csv_panda_data.to_csv(string + '.csv')
+    temp_data_list = temp_data.tolist()
+    all_survey_data.append(temp_data_list)
+    
+    plt.figure(2)
+    plt.plot(temp_data[:,5])
+    plt.show()
+    
+    to_csv_panda_data = temp_data_panda
+    
+    if os.path.exists(string + '.csv') == False:        
+        to_csv_panda_data.to_csv(string + '.csv')
+    else:
+        if overwrite_csv_files == True:
+            os.remove(string + '.csv')
+            to_csv_panda_data.to_csv(string + '.csv')
