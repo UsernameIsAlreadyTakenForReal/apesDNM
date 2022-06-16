@@ -136,7 +136,7 @@ for i in range(len(watch_ids)):
         
     file1 = open(string + '.txt', 'r')
     Lines = file1.readlines()
-    temp_data_list = np.empty((len(Lines) - 2, 13), dtype=object)
+    temp_data_list = np.empty((len(Lines) - 2, 41), dtype=object)
     
     hopefully_the_same_lenght = []
     
@@ -160,26 +160,107 @@ for i in range(len(watch_ids)):
             temp_data_list[j - 2][5] = data_cell_as_json_dict["si"]
             temp_data_list[j - 2][6] = data_cell_as_json_dict["dt"]
             temp_data_list[j - 2][7] = data_cell_as_json_dict["s"]
-            temp_data_list[j - 2][8] = data_cell_as_json_dict["c"]
-            temp_data_list[j - 2][9] = data_cell_as_json_dict["y"]
-            temp_data_list[j - 2][10] = data_cell_as_json_dict["m"]
-            temp_data_list[j - 2][11] = data_cell_as_json_dict["d"]
-            temp_data_list[j - 2][12] = data_cell_as_json_dict["p"] 
             
-            hj = data_cell_as_json_dict["c"].split(";")
-            
-            if len(hj) != 11:
-                hopefully_the_same_lenght.append(len(hj))
+            c_column_split = data_cell_as_json_dict["c"].split(";")
                 
+            if len(c_column_split) == 29:
+                temp_data_list[j - 2][8] = c_column_split[0]
+                temp_data_list[j - 2][9] = c_column_split[1]
+                temp_data_list[j - 2][10] = c_column_split[2]
+                temp_data_list[j - 2][11] = c_column_split[3]
+                temp_data_list[j - 2][12] = c_column_split[4]
+                temp_data_list[j - 2][13] = c_column_split[5]
+                temp_data_list[j - 2][14] = c_column_split[6]
+                temp_data_list[j - 2][15] = c_column_split[7]
+                temp_data_list[j - 2][16] = c_column_split[8]
+                temp_data_list[j - 2][17] = c_column_split[9]
+                temp_data_list[j - 2][18] = c_column_split[10]
+                temp_data_list[j - 2][19] = c_column_split[11]
+                temp_data_list[j - 2][20] = c_column_split[12]
+                temp_data_list[j - 2][21] = c_column_split[13]
+                temp_data_list[j - 2][22] = c_column_split[14]
+                temp_data_list[j - 2][23] = c_column_split[15]
+                temp_data_list[j - 2][24] = c_column_split[16]
+                temp_data_list[j - 2][25] = c_column_split[17]
+                temp_data_list[j - 2][26] = c_column_split[18]
+                temp_data_list[j - 2][27] = c_column_split[19]
+                temp_data_list[j - 2][28] = c_column_split[20]
+                temp_data_list[j - 2][29] = c_column_split[21]
+                temp_data_list[j - 2][30] = c_column_split[22]
+                temp_data_list[j - 2][31] = c_column_split[23]
+                temp_data_list[j - 2][32] = c_column_split[24]
+                temp_data_list[j - 2][33] = c_column_split[25]
+                temp_data_list[j - 2][34] = c_column_split[20]
+                temp_data_list[j - 2][35] = c_column_split[21]
+                temp_data_list[j - 2][36] = c_column_split[22]                
+                pass
             
-    print('atatea date utile: ', len(hopefully_the_same_lenght))
+            if len(c_column_split) == 28:
+                pass
+            
+            if len(c_column_split) == 11:
+                pass
+            
+            
+            temp_data_list[j - 2][37] = data_cell_as_json_dict["y"]
+            temp_data_list[j - 2][38] = data_cell_as_json_dict["m"]
+            temp_data_list[j - 2][39] = data_cell_as_json_dict["d"]
+            temp_data_list[j - 2][40] = data_cell_as_json_dict["p"] 
+                
+    
+    """
+    don't forget to substract 1 to find the list index!
+    3.  _id: 60a3e80fb8162d6c4fd14a4b
+    4.  _xt: 1621354511814
+    5.  ei: 352413080064321
+    6.  si: 9226103003325864
+    7.  dt: 2021-05-18T16:15:11.814Z
+    8.  s:  ::ffff:109.166.135.142
+    9.  c_??: #@H02@#                   1
+    10.  c_ei: 352413080064321          2 (same as 5?)
+    11.  c_si: 9226103003325864         3 (same as 6?)
+    12.  c_?!: 862182                   4
+    13.  c_d1: 2021-05-18               5
+    14.  c_t1: 19:15:08                 6
+    15.  c_n1: 1                        7
+    16.  c_l1: G                        8
+    17.  c_m1: 0                        9
+    18.  c_N1: N44.456400               10
+    19.  c_E1: E26.074771               11
+    20.  c_p1: 98.1                     12 
+    21.  c_p2: 5.899                    13
+    22.  c_m2: 0                        14
+    23.  c_!?: 5076                     15
+    24.  c_n2: 5                        16
+    25.  c_n3: 6                        17
+    26.  c_d2: 2021-05-18               18
+    27.  c_t2: 19:03:36                 19
+    28.  c_N2: N44.456315               20
+    29.  c_E2: E26.075319               21
+    30.  c_n4: 24                       22
+    31.  c_n5: 50                       23
+    32.  c_!!: 226@10@140@38121@54      24
+    33.  c_00: 00                       25
+    34.  c_0:  0                        26
+    35.  c_L1: 1                        27
+    36.  c_L2: -                        28
+    37.  c_en: \u0001                   29
+    38.  y: 2021
+    39.  m: 5
+    40.  d: 18
+    41.  p: H02
+    """
     
     plt.figure(1)
     plt.plot(hopefully_the_same_lenght)
     plt.show()
             
     temp_data = np.array(temp_data_list)    
-    temp_data_panda = pd.DataFrame(temp_data, columns = ['id', 'device_id', '_id', '_xt', 'ei', 'si', 'dt', 's', 'c', 'y', 'm', 'd', 'p'])
+    temp_data_panda = pd.DataFrame(temp_data, columns = ['id', 'device_id', '_id', '_xt', 'ei', 'si', 'dt', 's', 
+                                                         'c_??', 'c_ei', 'c_si', 'c_?!', 'c_d1', 'c_t1', 'c_n1', 'c_l1',
+                                                         'c_m1', 'c_N1', 'c_E1', 'c_p1', 'c_p2', 'c_m2', 'c_!?', 'c_n2', 
+                                                         'c_n3', 'c_d2', 'c_t2', 'c_N2', 'c_E2', 'c_n4', 'c_n5', 'c_!!', 
+                                                         'c_00', 'c_0', 'c_L1', 'c_L2', 'c_en',  'y', 'm', 'd', 'p'])
     if os.path.exists(string + '.csv') == False:
         temp_data_panda.to_csv(string + '.csv')
     
