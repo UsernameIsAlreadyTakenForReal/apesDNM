@@ -196,9 +196,67 @@ for i in range(len(watch_ids)):
                 pass
             
             if len(c_column_split) == 28:
+                temp_data_list[j - 2][8] = c_column_split[0]
+                temp_data_list[j - 2][9] = c_column_split[1]
+                temp_data_list[j - 2][10] = c_column_split[2]
+                temp_data_list[j - 2][11] = c_column_split[3]
+                temp_data_list[j - 2][12] = c_column_split[4]
+                temp_data_list[j - 2][13] = c_column_split[5]
+                temp_data_list[j - 2][14] = c_column_split[6]
+                temp_data_list[j - 2][15] = c_column_split[7]
+                temp_data_list[j - 2][16] = c_column_split[8]
+                temp_data_list[j - 2][17] = c_column_split[9]
+                temp_data_list[j - 2][18] = c_column_split[10]
+                temp_data_list[j - 2][19] = c_column_split[11]
+                temp_data_list[j - 2][20] = c_column_split[12]
+                temp_data_list[j - 2][21] = c_column_split[13]
+                temp_data_list[j - 2][22] = c_column_split[14]
+                temp_data_list[j - 2][23] = c_column_split[15]
+                temp_data_list[j - 2][24] = c_column_split[16]
+                temp_data_list[j - 2][25] = c_column_split[17]
+                temp_data_list[j - 2][26] = c_column_split[18]
+                temp_data_list[j - 2][27] = c_column_split[19]
+                temp_data_list[j - 2][28] = c_column_split[20]
+                temp_data_list[j - 2][29] = c_column_split[21]
+                temp_data_list[j - 2][30] = c_column_split[22]
+                temp_data_list[j - 2][31] = c_column_split[23]
+                temp_data_list[j - 2][32] = c_column_split[24]
+                temp_data_list[j - 2][33] = c_column_split[25]
+                temp_data_list[j - 2][34] = c_column_split[20]
+                temp_data_list[j - 2][35] = -1
+                temp_data_list[j - 2][36] = c_column_split[22]                
                 pass
             
             if len(c_column_split) == 11:
+                temp_data_list[j - 2][8] = c_column_split[0]
+                temp_data_list[j - 2][9] = c_column_split[1]
+                temp_data_list[j - 2][10] = c_column_split[2]
+                temp_data_list[j - 2][11] = c_column_split[3]
+                temp_data_list[j - 2][12] = c_column_split[4]
+                temp_data_list[j - 2][13] = c_column_split[5]                
+                temp_data_list[j - 2][14] = -1
+                temp_data_list[j - 2][15] = -1
+                temp_data_list[j - 2][16] = -1
+                temp_data_list[j - 2][17] = -1
+                temp_data_list[j - 2][18] = -1
+                temp_data_list[j - 2][19] = -1
+                temp_data_list[j - 2][20] = -1
+                temp_data_list[j - 2][21] = -1
+                temp_data_list[j - 2][22] = -1
+                temp_data_list[j - 2][23] = -1
+                temp_data_list[j - 2][24] = -1
+                temp_data_list[j - 2][25] = -1
+                temp_data_list[j - 2][26] = -1
+                temp_data_list[j - 2][27] = -1
+                temp_data_list[j - 2][28] = -1
+                temp_data_list[j - 2][29] = -1
+                temp_data_list[j - 2][30] = -1
+                temp_data_list[j - 2][31] = -1
+                temp_data_list[j - 2][32] = c_column_split[6]
+                temp_data_list[j - 2][33] = c_column_split[7]
+                temp_data_list[j - 2][34] = c_column_split[8]
+                temp_data_list[j - 2][35] = c_column_split[9]
+                temp_data_list[j - 2][36] = c_column_split[10]                
                 pass
             
             
