@@ -11,13 +11,23 @@ from matplotlib import pyplot as plt
 import json
 from from_raw_data import *
 
+overwrite_csv_files = True
+# survey_elapsed_time_unit = 'ms'
+survey_elapsed_time_unit = 's'
+
 all_shoe_data = []
 all_watch_data = []
 all_survey_data = []
 
-overwrite_csv_files = True
-survey_elapsed_time_unit = 'ms'
-# survey_elapsed_time_unit = 's'
+all_shoe_panda = pd.DataFrame(columns = ['id', 'step_counter','step_activity','timestamp','deviceID'])
+all_watch_panda = pd.DataFrame(columns = ['id', 'device_id', '_id', '_xt', 'ei', 'si', 'dt', 's', 
+                                                       'c_??', 'c_ei', 'c_si', 'c_?!', 'c_d1', 'c_t1', 'c_n1', 'c_l1',
+                                                       'c_m1', 'c_N1', 'c_E1', 'c_p1', 'c_p2', 'c_m2', 'c_!?', 'c_n2', 
+                                                       'c_n3', 'c_d2', 'c_t2', 'c_N2', 'c_E2', 'c_n4', 'c_n5', 'c_!!', 
+                                                       'c_00', 'c_0', 'c_L1', 'c_L2', 'c_en',  'y', 'm', 'd', 'p'])
+all_survey_panda = pd.DataFrame(columns = ['id', 'identifier', 'surveyType', 'assesmentData',
+                                           'scoringResult', 'elapsedTime (' + survey_elapsed_time_unit + ')', 
+                                           'additionalInfo', 'deviceId'])
 
 ### ---------------------------------------------------------------------------
 ### -------------------------------- Smart way --------------------------------
@@ -34,6 +44,10 @@ survey_file_path = "../vinci_data/survey/"
 shoe_file_name_prefix = "shoe_"
 watch_file_name_prefix = "watchdeviceId_"
 survey_file_name_prefix = "survey_device_Id_"
+
+all_shoe_file_complete = '../vinci_data/shoe/all_shoe_data.csv'
+all_watch_file_complete = '../vinci_data/watch/all_watch_data.csv'
+all_survey_file_complete = '../vinci_data/survey/all_survey_data.csv'
 
 ### ----------------------------- Get Shoe Data -------------------------------
 
@@ -55,7 +69,8 @@ for i in range(len(shoe_ids)):
     all_shoe_data.append(temp_data_list)
     
     to_csv_panda_data = pd.DataFrame(temp_data, columns = ['id', 'step_counter','step_activity','timestamp','deviceID'])
-    
+
+    all_shoe_panda = all_shoe_panda.append(to_csv_panda_data)
     # write to .csv file
     if os.path.exists(string + '.csv') == False:        
         to_csv_panda_data.to_csv(string + '.csv')
@@ -75,8 +90,6 @@ for i in range(len(watch_ids)):
     file1 = open(string + '.txt', 'r')
     Lines = file1.readlines()
     temp_data_list = np.empty((len(Lines) - 2, 41), dtype=object)
-    
-    hopefully_the_same_lenght = []
     
     for j in range(len(Lines)):
         if j >= 2:
@@ -253,7 +266,7 @@ for i in range(len(watch_ids)):
                                                            'c_m1', 'c_N1', 'c_E1', 'c_p1', 'c_p2', 'c_m2', 'c_!?', 'c_n2', 
                                                            'c_n3', 'c_d2', 'c_t2', 'c_N2', 'c_E2', 'c_n4', 'c_n5', 'c_!!', 
                                                            'c_00', 'c_0', 'c_L1', 'c_L2', 'c_en',  'y', 'm', 'd', 'p'])
-    
+    all_watch_panda = all_watch_panda.append(to_csv_panda_data)
     all_watch_data.append(temp_data_list)
     
     # write to .csv file
@@ -280,7 +293,7 @@ for i in range(len(survey_ids)):
         if data_row[2] in all_possible_quiz_types == False:
             all_possible_quiz_types.append(data_row[2])
     
-    difference_column = getTimestampsDifferenceAsInt(temp_data[:,5], temp_data[:,6], 'ms')
+    difference_column = getTimestampsDifferenceAsInt(temp_data[:,5], temp_data[:,6], survey_elapsed_time_unit)
     
     # remove de timestamps columns and replace them with the difference column from above
     temp_data_shortened = np.delete(temp_data, 6, 1)
@@ -297,6 +310,7 @@ for i in range(len(survey_ids)):
     to_csv_panda_data = pd.DataFrame(temp_data, columns = ['id', 'identifier', 'surveyType', 'assesmentData',
                                                            'scoringResult', 'elapsedTime (' + survey_elapsed_time_unit + ')', 
                                                            'additionalInfo', 'deviceId'])
+    all_survey_panda = all_survey_panda.append(to_csv_panda_data)
     
     if os.path.exists(string + '.csv') == False:        
         to_csv_panda_data.to_csv(string + '.csv')
@@ -304,3 +318,33 @@ for i in range(len(survey_ids)):
         if overwrite_csv_files == True:
             os.remove(string + '.csv')
             to_csv_panda_data.to_csv(string + '.csv')
+            
+            
+### ---------------------------------------------------------------------------
+### ---------------- Write it as one csv for each kind of data ----------------
+### ---------------------------------------------------------------------------
+
+print('Total shoe data lenght: ', len(all_shoe_panda))
+print('Total watch data lenght: ', len(all_watch_panda))
+print('Total survey data lenght: ', len(all_survey_panda))
+
+if os.path.exists(all_shoe_file_complete) == False:        
+    all_shoe_panda.to_csv(all_shoe_file_complete)
+else:
+    if overwrite_csv_files == True:
+        os.remove(all_shoe_file_complete)
+        all_shoe_panda.to_csv(all_shoe_file_complete)
+        
+if os.path.exists(all_watch_file_complete) == False:        
+    all_watch_panda.to_csv(all_watch_file_complete)
+else:
+    if overwrite_csv_files == True:
+        os.remove(all_watch_file_complete)
+        all_watch_panda.to_csv(all_watch_file_complete)
+            
+if os.path.exists(all_survey_file_complete) == False:        
+    all_survey_panda.to_csv(all_survey_file_complete)
+else:
+    if overwrite_csv_files == True:
+        os.remove(all_survey_file_complete)
+        all_survey_panda.to_csv(all_survey_file_complete)

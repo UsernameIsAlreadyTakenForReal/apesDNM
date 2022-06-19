@@ -1,14 +1,13 @@
 """
 This is the main file.
-For now, it creates an unsupervised ML k-means algorithm for survey->survey_score
+For now, it creates an unsupervised ML k-means algorithm for survey->elapsed_time
 data
 """
 
-import os
 import numpy as np
 import pandas as pd
 from matplotlib import pyplot as plt
-import json
+from sklearn.cluster import KMeans
 
 from helpers_aiders_and_conveniencers.file_names_and_prefixes import files_info
 
@@ -23,10 +22,18 @@ for survey_id in files_info.survey_ids:
     panda_list.append(temp_data_panda) 
     numpy_list.append(temp_numpy)   
     
-# Get all survey_scores
-for survey_data in numpy_list:
+
+no_of_clusters = 4
+# Plot initial clusters for all data
+for i in range(len(numpy_list)):
     
-    plt.figure(1)
-    plt.plot(survey_data[:,5])
+    Kmean = KMeans(no_of_clusters)
+    X = numpy_list[i][:,6]
+    X = X.reshape(-1, 1)
+    Kmean.fit(X)  
+    
+    print ('for index ', i, ' we have ', Kmean.cluster_centers_)
+    plt.figure(i)
+    plt.plot(Kmean.cluster_centers_, '*')
+    plt.plot(X)
     plt.show()
-    pass
