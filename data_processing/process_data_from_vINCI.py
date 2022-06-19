@@ -15,7 +15,9 @@ all_shoe_data = []
 all_watch_data = []
 all_survey_data = []
 
-overwrite_csv_files = False
+overwrite_csv_files = True
+survey_elapsed_time_unit = 'ms'
+# survey_elapsed_time_unit = 's'
 
 ### ---------------------------------------------------------------------------
 ### -------------------------------- Smart way --------------------------------
@@ -292,7 +294,9 @@ for i in range(len(survey_ids)):
     plt.plot(temp_data[:,5])
     plt.show()
     
-    to_csv_panda_data = temp_data_panda
+    to_csv_panda_data = pd.DataFrame(temp_data, columns = ['id', 'identifier', 'surveyType', 'assesmentData',
+                                                           'scoringResult', 'elapsedTime (' + survey_elapsed_time_unit + ')', 
+                                                           'additionalInfo', 'deviceId'])
     
     if os.path.exists(string + '.csv') == False:        
         to_csv_panda_data.to_csv(string + '.csv')

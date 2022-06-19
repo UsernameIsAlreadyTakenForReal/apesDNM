@@ -24,3 +24,9 @@ for survey_id in files_info.survey_ids:
     numpy_list.append(temp_numpy)   
     
 # Get all survey_scores
+for survey_data in numpy_list:
+    
+    plt.figure(1)
+    plt.plot(survey_data[:,5])
+    plt.show()
+    pass
