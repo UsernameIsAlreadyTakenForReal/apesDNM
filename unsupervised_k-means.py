@@ -11,7 +11,7 @@ from sklearn.cluster import KMeans
 from helpers_aiders_and_conveniencers.file_names_and_prefixes import files_info
 
 # Get all survey->elapsed_time data in a list
-data = pd.read_csv(files_info.all_survey_file_from_root_complete)
+data = pd.read_csv(files_info.all_survey_file_from_root_complete_2)
 data_numpy = np.array(data)
 
 elapsed_time_array = data_numpy[:,6]
