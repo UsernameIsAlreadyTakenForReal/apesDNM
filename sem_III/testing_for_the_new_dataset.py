@@ -23,13 +23,13 @@ train_number_of_entries = 0
 for row in data:
     train_number_of_entries = train_number_of_entries + 1
     temp_row = []
-    for i in range(0, 141):
+    for i in range(0, 140):
         temp_row.append(row[i])
     train_class_list.append(int(row.target))
     train_list.append(temp_row)
     
 
-train_data = np.zeros((train_number_of_entries, 141))
+train_data = np.zeros((train_number_of_entries, 140))
 train_labels = np.array(train_class_list)
  
 for i in range(0, train_number_of_entries):
@@ -48,13 +48,13 @@ test_number_of_entries = 0
 for row in data:
     test_number_of_entries = test_number_of_entries + 1
     temp_row = []
-    for i in range(0, 141):
+    for i in range(0, 140):
         temp_row.append(row[i])
     test_class_list.append(int(row.target))
     test_list.append(temp_row)
     
 
-test_data = np.zeros((test_number_of_entries, 141))
+test_data = np.zeros((test_number_of_entries, 140))
 test_labels = np.array(test_class_list)
  
 for i in range(0, test_number_of_entries):
