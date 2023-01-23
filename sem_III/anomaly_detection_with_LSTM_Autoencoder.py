@@ -9,6 +9,8 @@ from pylab import rcParams
 import matplotlib.pyplot as plt
 from matplotlib import rc
 from sklearn.model_selection import train_test_split
+import os, psutil
+from datetime import datetime
 
 from torch import nn, optim
 
@@ -246,6 +248,7 @@ def train_model(model, train_dataset, val_dataset, n_epochs):
   best_loss = 10000.0
   
   for epoch in range(1, n_epochs + 1):
+    time_temp = datetime.now() 
     print("begin train_model epoch {i}".format(i=epoch))
     model = model.train()
 
@@ -285,6 +288,8 @@ def train_model(model, train_dataset, val_dataset, n_epochs):
       best_model_wts = copy.deepcopy(model.state_dict())
 
     print(f'Epoch {epoch}: train loss {train_loss} val loss {val_loss}')
+    time_per_epoch = (datetime.now() - time_temp).seconds
+    print(time_per_epoch)
 
   model.load_state_dict(best_model_wts)
   return model.eval(), history
