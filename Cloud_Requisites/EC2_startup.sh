@@ -5,6 +5,8 @@ echo "Starting script at $DATE"
 
 yum update -y
 yum install git -y
+yum install pip
+python3 -m pip install --upgrade pip
 
 git config --global user.name APESDNMhasGitbub
 git config --global user.email apednm@gmail.com
