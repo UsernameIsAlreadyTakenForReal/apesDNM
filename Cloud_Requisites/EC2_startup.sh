@@ -23,6 +23,17 @@ cd /
 mkdir /ebs_data
 mount /dev/xvdh /ebs_data
 
+## Create user and give uid 1002
+sudo useradd -m apesdnm_ec2_user -u 1002
+
+## See if the python venv exists on the EBS
+if [ -d "/ebs_data/apesdnm_python_venv" ] 
+then 
+    echo "Python venv exists on EBS."
+else 
+    echo "Python venv does not exist on EBS. Creating..."
+    python3 -m venv /ebs/apesdnm_python_venv
+fi
 
 # ## Install / compile Python 3.11.3 from source code
 # mkdir ~/startup/python_setup
@@ -57,6 +68,7 @@ AAAEBdqvJra+i2nbNekLj+75Jq1nSu8JXntsKf8ZjogKCzFC+zvEDP+eTBNxcRfN/EWSgN
 -----END OPENSSH PRIVATE KEY-----" >> ~/.ssh/id_ed25519
 sudo chmod 700 ~/.ssh/
 sudo chmod 600 ~/.ssh/id_ed25519
+
 
 # ## Create python venv and clone repo there
 # mkdir /home/ssm-user/project_home
