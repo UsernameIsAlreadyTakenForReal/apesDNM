@@ -10,7 +10,6 @@ export default function UploadComponent() {
   const [text, setText] = useState("");
   const [hover1, setHover1] = useState(false);
   const [hover2, setHover2] = useState(false);
-  var a = {};
 
   const FETCH = {
     GET: "get",
@@ -53,61 +52,24 @@ export default function UploadComponent() {
     </UploadDropzone>
   );
 
-  function playFetch(method, route, data) {
-    if (data === {}) {
-      fetch(BASE_URL + route, {
-        method: method,
-        headers: { "Content-Type": "application/json" },
-      }).then((response) => {
-        console.clear();
-        if (response.status == "200") {
-          response.json().then((json) => {
-            a = json;
-          });
-        } else return "Request failed";
+  async function playFetch(method, route, setFunction) {
+    await fetch(BASE_URL + route, {
+      method: method,
+      headers: { "Content-Type": "application/json" },
+    })
+      .then((response) => response.json())
+      .then((response) => {
+        setFunction(response);
+        return response;
       });
-    } else {
-      fetch(BASE_URL + route, {
-        method: method,
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(data),
-      }).then((response) => {
-        console.clear();
-        if (response.status == "200") {
-          response.json().then((json) => {
-            a = json;
-          });
-        } else return "Request failed";
-      });
-    }
   }
 
-  function getTesting(route) {
-    fetch(BASE_URL + route, {
-      method: "get",
-      headers: { "Content-Type": "application/json" },
-    }).then((response) => {
-      console.clear();
-      if (response.status == "200") {
-        response.json().then((json) => {
-          setText(json);
-        });
-      }
-    });
-  }
-
-  function post(route) {
-    fetch(BASE_URL + route, {
-      method: "post",
-      headers: { "Content-Type": "application/json" },
-    }).then((response) => {
-      console.clear();
-      if (response.status == "200") {
-        response.json().then((json) => {
-          a = json;
-        });
-      }
-    });
+  function playFlask() {
+    fetch(BASE_URL + "testing").then((res) =>
+      res.json().then((data) => {
+        setText(data);
+      })
+    );
   }
 
   return (
@@ -124,8 +86,8 @@ export default function UploadComponent() {
             color="primary"
             size="large"
             onClick={() => {
-              let response = playFetch(FETCH.GET, "testing", {});
-              console.log(response);
+              // playFetch(FETCH.GET, "testing", setText);
+              // playFlask();
             }}
             onMouseEnter={() => {
               setHover1(true);
@@ -149,7 +111,7 @@ export default function UploadComponent() {
             color="primary"
             size="large"
             onClick={() => {
-              getTesting("testing");
+              setText("HOLD UP I AM STILL TESTING");
             }}
             onMouseEnter={() => {
               setHover2(true);

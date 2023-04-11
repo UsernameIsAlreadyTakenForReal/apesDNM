@@ -9,7 +9,9 @@ api = Api(app)
 
 class Testing(Resource):
     def get(self):
-        return " -- string returned from backend -- "
+        return "this is the response of a get method"
+    def post(self):
+        return "this is the response of a post method"
 
 api.add_resource(Testing, "/testing")
 
