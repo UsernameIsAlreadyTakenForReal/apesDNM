@@ -32,3 +32,8 @@ export const RowFlex = styled.div`
   justify-content: ${(props) => (props.justify ? props.justify : "center")};
   align-items: ${(props) => (props.align ? props.align : "center")};
 `;
+
+export const TextFieldDivv = styled.div`
+  margin-top: 10px;
+  padding: 5px;
+`;
