@@ -1,8 +1,11 @@
 #!/bin/bash
 
-PYTHON_VERSION=3.11.3
 DATE=$(date +%c)
 echo "Starting script at $DATE"
+
+## Variables
+PYTHON_VERSION=3.11.3
+CUSTOM_USERNAME="apesdnm_user"
 
 ## Update and install stuff
 echo "---- STEP: Update and install stuff ----"
@@ -11,6 +14,17 @@ yum install git -y
 yum install pip
 
 python3 -m pip install --upgrade pip
+
+## Create user and give uid 1002, add to sudoers. Switch to user.
+echo "---- STEP: Add user and switch to it ----"
+sudo useradd -m $CUSTOM_USERNAME -u 1002
+touch /etc/sudoers.d/${CUSTOM_USERNAME}-users
+echo "Created by startup script somewhere around $DATE
+
+# User rules for $CUSTOM_USERNAME
+$CUSTOM_USERNAME ALL=(ALL) NOPASSWD:ALL" > /etc/sudoers.d/${CUSTOM_USERNAME}-users
+
+su $CUSTOM_USERNAME
 
 ## Attach the EBS volume
 echo "---- STEP: Attach the EBS volume ----"
@@ -22,32 +36,33 @@ aws ec2 attach-volume --instance-id $INSTANCE_ID --volume-id $VOLUME_ID --device
 cd /
 mkdir /ebs_data
 mount /dev/xvdh /ebs_data
+# hopefully no chown -R ?
 
-## Create user and give uid 1002
-sudo useradd -m apesdnm_ec2_user -u 1002
+## Install / compile Python ${PYTHON_VERSION} from source code
+echo "---- STEP: Install python $PYTHON_VERSION ----"
+if [ ! -d "~/startup" ] then
+    mkdir ~/startup
+fi
+mkdir ~/startup/python${PYTHON_VERSION}_setup
+cd ~/startup/python${PYTHON_VERSION}_setup
+sudo yum install gcc openssl-devel bzip2-devel libffi-devel -y
+wget https://www.python.org/ftp/python/${PYTHON_VERSION}/Python-${PYTHON_VERSION}.tgz
+tar xzf Python-${PYTHON_VERSION}.tgz
+rm -f Python-${PYTHON_VERSION}.tgz
+cd Python-${PYTHON_VERSION}
+sudo ./configure --enable-optimizations
+sudo make altinstall
+
+## Add 
+sudo ln -s /usr/local/bin/python3.11 /bin/python3 -f
 
 ## See if the python venv exists on the EBS
-if [ -d "/ebs_data/apesdnm_python_venv" ] 
-then 
+if [ -d "/ebs_data/apesdnm_python_venv" ] then 
     echo "Python venv exists on EBS."
 else 
     echo "Python venv does not exist on EBS. Creating..."
-    python3 -m venv /ebs/apesdnm_python_venv
+    sudo python3 -m venv /ebs_data/apesdnm_python_venv
 fi
-
-# ## Install / compile Python 3.11.3 from source code
-# mkdir ~/startup/python_setup
-# cd ~/startup/python_setup
-# yum install gcc openssl-devel bzip2-devel libffi-devel -y
-# wget https://www.python.org/ftp/python/3.11.1/Python-3.11.3.tgz
-# tar xzf Python-3.11.3.tgz
-# rm -f Python-3.11.3.tgz
-# cd Python-3.11.3
-# ./configure --enable-optimizations
-# make altinstall
-
-# ## Make sure the 'python3' command points to the correct stuff
-# ln -s /usr/local/bin/python3.11 /bin/python3 -f
 
 ## Git configuration
 echo "---- STEP: Git configuration ----"
@@ -70,19 +85,21 @@ sudo chmod 700 ~/.ssh/
 sudo chmod 600 ~/.ssh/id_ed25519
 
 
-# ## Create python venv and clone repo there
-# mkdir /home/ssm-user/project_home
-# cd /home/ssm-user/project_home
-# python3.11 -m venv env
-# git clone git@github.com:UsernameIsAlreadyTakenForReal/apesDNM.git
-# cd apesDNM
-# python3 -m pip install -r requirements.txt
-# source env/bin/activate
+## Clone repo
+echo "---- STEP: Clone repository ----"
+mkdir /ebs_data/apesDNM_project
+cd /ebs_data/apesDNM_project
+git clone git@github.com:UsernameIsAlreadyTakenForReal/apesDNM.git
+cd apesDNM
+git checkout feature/cloud_project
+
+## Python restore
+echo "---- STEP: Install python dependencies ----"
+sudo source /ebs_data/apesdnm_python_venv/bin/activate
+pip install -r requirements.txt
 
 # Installing collected packages: setuptools, pip
 # WARNING: The script pip3.11 is installed in '/usr/local/bin' which is not on PATH.
 # Consider adding this directory to PATH or, if you prefer to suppress this warning, use --no-warn-script-location.
 # Successfully installed pip-22.3.1 setuptools-65.5.0
 # WARNING: Running pip as the 'root' user can result in broken permissions and conflicting behaviour with the system package manager. It is recommended to use a virtual environment instead: https://pip.pypa.io/warnings/venv
-
-# ln -s /usr/local/bin/python3.11 /bin/python3 -f
