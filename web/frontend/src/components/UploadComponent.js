@@ -14,6 +14,10 @@ export default function UploadComponent() {
   const [text, setText] = useState("");
   const [apiData, setApiData] = useState({ value: -1 });
 
+  const [state, setState] = useState({
+    selectedFile: null,
+  });
+
   const FETCH = {
     GET: "get",
     POST: "post",
@@ -55,8 +59,8 @@ export default function UploadComponent() {
     </UploadDropzone>
   );
 
-  function playFetch(method, route, setFunction) {
-    fetch(BASE_URL + route, {
+  async function playFetch(method, route, setFunction) {
+    await fetch(BASE_URL + route, {
       method: method,
       headers: { "Content-Type": "application/json" },
     })
@@ -74,37 +78,25 @@ export default function UploadComponent() {
     })
       .then((response) => response.json())
       .then((response) => {
-        console.log("this is from the fetch function - response");
-        console.log(response);
-
         setFunction(response);
-        // setText(response.value);
-        // https://stackoverflow.com/questions/54069253/the-usestate-set-method-is-not-reflecting-a-change-immediately
-
-        console.log("this is from the fetch function - apiData");
-        console.log(apiData);
       });
   }
 
-  // async function playFetchAsync(method, route, setFunction) {
-  //   await fetch(BASE_URL + route, {
-  //     method: method,
-  //     headers: { "Content-Type": "application/json" },
-  //   })
-  //     .then((response) => response.json())
-  //     .then((response) => {
-  //       setFunction(response);
-  //     });
-  // }
+  function onFileUpload() {
+    // https://www.geeksforgeeks.org/file-uploading-in-react-js/
+    const formData = new FormData();
+    formData.append("myFile", state.selectedFile, state.selectedFile.name);
 
-  // function playFlask(setFunction) {
-  //   let data = fetch(BASE_URL + "morbin").then((res) =>
-  //     res.json().then((data) => {
-  //       setFunction(data);
-  //     })
-  //   );
-  //   return data;
-  // }
+    console.log(state.selectedFile);
+  }
+
+  function onFileChange(event) {
+    setState({ selectedFile: event.target.files[0] });
+  }
+
+  useEffect(() => {
+    setText(apiData.value);
+  }, [apiData]);
 
   return (
     <>
@@ -120,7 +112,7 @@ export default function UploadComponent() {
             color="primary"
             size="large"
             onClick={() => {
-              playFetch(FETCH.GET, "morbin", setText);
+              playFetch(FETCH.GET, "morbin", setApiData);
             }}
             onMouseEnter={() => {
               setHover1(true);
@@ -183,13 +175,6 @@ export default function UploadComponent() {
                 JSON.stringify(body),
                 setApiData
               );
-
-              console.log(
-                "this is fron the onClick function handler - api Data"
-              );
-              console.log(apiData);
-
-              setText(apiData.value);
             }}
             onMouseEnter={() => {
               setHover3(true);
@@ -209,9 +194,27 @@ export default function UploadComponent() {
         </Divv>
       </RowFlex>
 
-      <Divv>From backend: {text === "" ? "nothing" : '"' + text + '"'}</Divv>
+      <Divv>from backend: {text}</Divv>
+
+      <Divv>apiData.value: {apiData.value}</Divv>
+
       <Divv>
-        <MyDropzone />
+        {/* <MyDropzone /> */}
+        <div>
+          <input
+            type="file"
+            onChange={(event) => {
+              onFileChange(event);
+            }}
+          />
+          <button
+            onClick={() => {
+              onFileUpload();
+            }}
+          >
+            Upload!
+          </button>
+        </div>
       </Divv>
     </>
   );
