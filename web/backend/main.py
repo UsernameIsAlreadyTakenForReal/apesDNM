@@ -42,5 +42,18 @@ app.config['CORS_HEADER'] = 'Content-Type'
 def its_morbin_time():
     return {"value": "its morbin time"}
 
+@app.route('/double', methods=['GET', 'POST'])
+def get_double():
+    value = request.json.get('value')
+    if value == "": value = 0
+    new_val = {"value": 2*int(value)}
+    return new_val
+
+@app.route('/upload', methods = ['POST'])
+def upload_file():
+    file = request.files['file']
+    print(file)
+    return "done"
+
 if __name__ == "__main__":
     app.run(debug=True, port=5000)

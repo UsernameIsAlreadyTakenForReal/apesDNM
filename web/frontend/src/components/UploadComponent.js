@@ -15,49 +15,13 @@ export default function UploadComponent() {
   const [apiData, setApiData] = useState({ value: -1 });
 
   const [state, setState] = useState({
-    selectedFile: null,
+    file: null,
   });
 
   const FETCH = {
     GET: "get",
     POST: "post",
   };
-
-  const uploader = Uploader({
-    apiKey: "free",
-  });
-
-  const options = {
-    multi: true,
-    styles: {
-      margin: "120px",
-    },
-  };
-
-  const uploaderOptions = {
-    multi: true,
-    showFinishButton: true,
-    styles: {
-      colors: {
-        primary: "#377dff",
-      },
-    },
-  };
-
-  const MyDropzone = ({ setFiles }) => (
-    <UploadDropzone
-      uploader={uploader}
-      options={uploaderOptions}
-      onUpdate={(files) =>
-        console.log(`Files: ${files.map((x) => x.fileUrl).join("\n")}`)
-      }
-      onComplete={setFiles}
-      width="600px"
-      height="375px"
-    >
-      Upload a dataset
-    </UploadDropzone>
-  );
 
   async function playFetch(method, route, setFunction) {
     await fetch(BASE_URL + route, {
@@ -74,7 +38,7 @@ export default function UploadComponent() {
     await fetch(BASE_URL + route, {
       method: method,
       headers: { "Content-Type": "application/json" },
-      body: data,
+      body: JSON.stringify(data),
     })
       .then((response) => response.json())
       .then((response) => {
@@ -82,16 +46,25 @@ export default function UploadComponent() {
       });
   }
 
-  function onFileUpload() {
-    // https://www.geeksforgeeks.org/file-uploading-in-react-js/
+  async function onFileUpload() {
     const formData = new FormData();
-    formData.append("myFile", state.selectedFile, state.selectedFile.name);
+    formData.append("file", state.file);
 
-    console.log(state.selectedFile);
+    let body = { file: state.file };
+
+    await fetch(BASE_URL + "upload", {
+      method: "post",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(body),
+    })
+      .then((response) => response.json())
+      .then((response) => {
+        setText(response);
+      });
   }
 
   function onFileChange(event) {
-    setState({ selectedFile: event.target.files[0] });
+    setState({ file: event.target.files[0] });
   }
 
   useEffect(() => {
@@ -100,122 +73,157 @@ export default function UploadComponent() {
 
   return (
     <>
-      <RowFlex justify="left">
-        <Divv>
-          <Button
-            style={{
-              background: hover1 === false ? "black" : "orange",
-              color: hover1 === false ? "white" : "black",
-              fontWeight: "bold",
-            }}
-            variant="contained"
-            color="primary"
-            size="large"
-            onClick={() => {
-              playFetch(FETCH.GET, "morbin", setApiData);
-            }}
-            onMouseEnter={() => {
-              setHover1(true);
-            }}
-            onMouseLeave={() => {
-              setHover1(false);
-            }}
-          >
-            FETCH GET
-          </Button>
-        </Divv>
+      {false ? (
+        <>
+          <RowFlex justify="left">
+            <Divv>
+              <Button
+                style={{
+                  background: hover1 === false ? "black" : "orange",
+                  color: hover1 === false ? "white" : "black",
+                  fontWeight: "bold",
+                }}
+                variant="contained"
+                color="primary"
+                size="large"
+                onClick={() => {
+                  playFetch(FETCH.GET, "morbin", setApiData);
+                }}
+                onMouseEnter={() => {
+                  setHover1(true);
+                }}
+                onMouseLeave={() => {
+                  setHover1(false);
+                }}
+              >
+                FETCH GET
+              </Button>
+            </Divv>
 
-        <Divv>
-          <Button
-            style={{
-              background: hover2 === false ? "black" : "orange",
-              color: hover2 === false ? "white" : "black",
-              fontWeight: "bold",
-            }}
-            variant="contained"
-            color="primary"
-            size="large"
-            onClick={() => {
-              setText("");
-              document.getElementById("valueField").value = 0;
-            }}
-            onMouseEnter={() => {
-              setHover2(true);
-            }}
-            onMouseLeave={() => {
-              setHover2(false);
-            }}
-          >
-            CLEAR
-          </Button>
-        </Divv>
-      </RowFlex>
+            <Divv>
+              <Button
+                style={{
+                  background: hover2 === false ? "black" : "orange",
+                  color: hover2 === false ? "white" : "black",
+                  fontWeight: "bold",
+                }}
+                variant="contained"
+                color="primary"
+                size="large"
+                onClick={() => {
+                  setText("");
+                  document.getElementById("valueField").value = 0;
+                }}
+                onMouseEnter={() => {
+                  setHover2(true);
+                }}
+                onMouseLeave={() => {
+                  setHover2(false);
+                }}
+              >
+                CLEAR
+              </Button>
+            </Divv>
+          </RowFlex>
 
-      <RowFlex justify="left">
-        <Divv>
-          <Button
-            style={{
-              background: hover3 === false ? "black" : "orange",
-              color: hover3 === false ? "white" : "black",
-              fontWeight: "bold",
-            }}
-            variant="contained"
-            color="primary"
-            size="large"
-            onClick={() => {
-              const body = {
-                value: document.getElementById("valueField").value,
-              };
+          <RowFlex justify="left">
+            <Divv>
+              <Button
+                style={{
+                  background: hover3 === false ? "black" : "orange",
+                  color: hover3 === false ? "white" : "black",
+                  fontWeight: "bold",
+                }}
+                variant="contained"
+                color="primary"
+                size="large"
+                onClick={() => {
+                  const body = {
+                    value: document.getElementById("valueField").value,
+                  };
 
-              console.log(body);
+                  playFetchWithData(FETCH.POST, "double", body, setApiData);
+                }}
+                onMouseEnter={() => {
+                  setHover3(true);
+                }}
+                onMouseLeave={() => {
+                  setHover3(false);
+                }}
+              >
+                FETCH POST with this data:
+              </Button>
+            </Divv>
 
-              playFetchWithData(
-                FETCH.POST,
-                "testing",
-                JSON.stringify(body),
-                setApiData
-              );
-            }}
-            onMouseEnter={() => {
-              setHover3(true);
-            }}
-            onMouseLeave={() => {
-              setHover3(false);
-            }}
-          >
-            FETCH POST with this data:
-          </Button>
-        </Divv>
+            <Divv>
+              <TextFieldDivv>
+                <TextField variant="outlined" id="valueField" />
+              </TextFieldDivv>
+            </Divv>
+          </RowFlex>
 
-        <Divv>
-          <TextFieldDivv>
-            <TextField variant="outlined" id="valueField" />
-          </TextFieldDivv>
-        </Divv>
-      </RowFlex>
+          <RowFlex justify="left">
+            <Divv>from backend: {text}</Divv>
 
-      <Divv>from backend: {text}</Divv>
-
-      <Divv>apiData.value: {apiData.value}</Divv>
-
-      <Divv>
-        {/* <MyDropzone /> */}
-        <div>
-          <input
-            type="file"
-            onChange={(event) => {
-              onFileChange(event);
-            }}
-          />
-          <button
-            onClick={() => {
-              onFileUpload();
-            }}
-          >
-            Upload!
-          </button>
-        </div>
+            <Divv>apiData.value: {apiData.value}</Divv>
+          </RowFlex>
+        </>
+      ) : (
+        <></>
+      )}
+      <Divv margin="30px">
+        <input
+          type="file"
+          onChange={(event) => {
+            onFileChange(event);
+          }}
+        />
+        <button
+          onClick={() => {
+            onFileUpload();
+          }}
+        >
+          Upload
+        </button>
       </Divv>
     </>
   );
 }
+
+// -------------------------- EXTRAS --------------------------
+
+// const options = {
+//   multi: true,
+//   styles: {
+//     margin: "120px",
+//   },
+// };
+
+// const uploader = Uploader({
+//   apiKey: "free",
+// });
+
+// const uploaderOptions = {
+//   multi: true,
+//   showFinishButton: true,
+//   styles: {
+//     colors: {
+//       primary: "#377dff",
+//     },
+//   },
+// };
+
+// const MyDropzone = ({ setFiles }) => (
+//   <UploadDropzone
+//     uploader={uploader}
+//     options={uploaderOptions}
+//     onUpdate={(files) =>
+//       console.log(`Files: ${files.map((x) => x.fileUrl).join("\n")}`)
+//     }
+//     onComplete={setFiles}
+//     width="600px"
+//     height="375px"
+//   >
+//     Upload a dataset
+//   </UploadDropzone>
+// );
