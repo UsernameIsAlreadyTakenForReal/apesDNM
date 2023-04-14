@@ -37,7 +37,7 @@ export default function UploadComponent() {
   async function playFetchWithData(method, route, data, setFunction) {
     await fetch(BASE_URL + route, {
       method: method,
-      headers: { "Content-Type": "application/json" },
+      // headers: { "Content-Type": "application/json" },
       body: JSON.stringify(data),
     })
       .then((response) => response.json())
@@ -50,30 +50,30 @@ export default function UploadComponent() {
     const formData = new FormData();
     formData.append("file", state.file);
 
-    let body = { file: state.file };
-
     await fetch(BASE_URL + "upload", {
       method: "post",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify(body),
+      // headers: { "Content-Type": "application/json" },
+      body: state.file,
     })
       .then((response) => response.json())
       .then((response) => {
-        setText(response);
+        setApiData(response);
       });
   }
 
   function onFileChange(event) {
+    console.log(event.target.files[0]);
     setState({ file: event.target.files[0] });
+    setText("");
   }
 
   useEffect(() => {
-    setText(apiData.value);
+    setText(apiData.msg);
   }, [apiData]);
 
   return (
     <>
-      {false ? (
+      {true ? (
         <>
           <RowFlex justify="left">
             <Divv>
@@ -161,16 +161,17 @@ export default function UploadComponent() {
               </TextFieldDivv>
             </Divv>
           </RowFlex>
-
-          <RowFlex justify="left">
-            <Divv>from backend: {text}</Divv>
-
-            <Divv>apiData.value: {apiData.value}</Divv>
-          </RowFlex>
         </>
       ) : (
         <></>
       )}
+
+      <RowFlex justify="left">
+        <Divv>from backend: {text}</Divv>
+
+        {/* <Divv>apiData.value: {apiData.value}</Divv> */}
+      </RowFlex>
+
       <Divv margin="30px">
         <input
           type="file"

@@ -31,29 +31,31 @@
 #############################################################################
 # this this kinda works but also acts a bit weird so hmmmm???
 
+import json
 from flask import Flask, request
 from flask_cors import CORS, cross_origin
 
 app = Flask(__name__)
 cors = CORS(app)
 app.config['CORS_HEADER'] = 'Content-Type'
+app.config['MAX_CONTENT_LENGTH'] = 16 * 1000 * 1000
 
 @app.route('/morbin')
 def its_morbin_time():
-    return {"value": "its morbin time"}
+    return {"msg": "its morbin time"}
 
 @app.route('/double', methods=['GET', 'POST'])
 def get_double():
     value = request.json.get('value')
     if value == "": value = 0
-    new_val = {"value": 2*int(value)}
+    new_val = {"msg": 2*int(value)}
     return new_val
 
-@app.route('/upload', methods = ['POST'])
+@app.route('/upload', methods = ['GET', 'POST'])
 def upload_file():
-    file = request.files['file']
-    print(file)
-    return "done"
+    return {"msg": "done"}
+    # file = request.files['file']
+    # return "done"
 
 if __name__ == "__main__":
     app.run(debug=True, port=5000)
