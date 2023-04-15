@@ -57,6 +57,21 @@ export default function NavbarComponent() {
 
           <Divv>
             <Link
+              to="/uploaddd"
+              style={{
+                textDecoration: "none",
+                color: route.includes("upload") ? "white" : "black",
+              }}
+              onClick={() => {
+                setRoute("uploaddd");
+              }}
+            >
+              Uploaddd
+            </Link>
+          </Divv>
+
+          <Divv>
+            <Link
               to="/about"
               style={{
                 textDecoration: "none",

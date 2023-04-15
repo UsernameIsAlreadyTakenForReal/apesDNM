@@ -14,9 +14,7 @@ export default function UploadComponent() {
   const [text, setText] = useState("");
   const [apiData, setApiData] = useState({ value: -1 });
 
-  const [state, setState] = useState({
-    file: null,
-  });
+  const [file, setFile] = useState();
 
   const FETCH = {
     GET: "get",
@@ -37,8 +35,8 @@ export default function UploadComponent() {
   async function playFetchWithData(method, route, data, setFunction) {
     await fetch(BASE_URL + route, {
       method: method,
-      // headers: { "Content-Type": "application/json" },
       body: JSON.stringify(data),
+      // headers: { "Content-Type": "application/json" },
     })
       .then((response) => response.json())
       .then((response) => {
@@ -47,24 +45,34 @@ export default function UploadComponent() {
   }
 
   async function onFileUpload() {
-    const formData = new FormData();
-    formData.append("file", state.file);
+    if (!file) {
+      return;
+    }
+
+    let fd = new FormData();
+
+    fd.append("file", file);
+    fd.append("name", "Keanu Reeves");
 
     await fetch(BASE_URL + "upload", {
       method: "post",
-      // headers: { "Content-Type": "application/json" },
-      body: state.file,
+      headers: { "content-Type": file.type, "content-length": `${file.size}` },
+      body: fd,
     })
       .then((response) => response.json())
-      .then((response) => {
-        setApiData(response);
+      .then((data) => {
+        console.log(data);
+        setApiData(data);
+      })
+      .catch((err) => {
+        console.log(err);
+        setText(err);
       });
   }
 
   function onFileChange(event) {
-    console.log(event.target.files[0]);
-    setState({ file: event.target.files[0] });
-    setText("");
+    let file = event.target.files[0];
+    setFile(file);
   }
 
   useEffect(() => {
@@ -191,7 +199,7 @@ export default function UploadComponent() {
   );
 }
 
-// -------------------------- EXTRAS --------------------------
+// -------------------------- EXTRAS #1 --------------------------
 
 // const options = {
 //   multi: true,
@@ -228,3 +236,20 @@ export default function UploadComponent() {
 //     Upload a dataset
 //   </UploadDropzone>
 // );
+
+// -------------------------- EXTRAS #2 --------------------------
+
+// async function onFileUpload() {
+//   const formData = new FormData();
+//   formData.append("file", file.file);
+
+//   await fetch(BASE_URL + "upload", {
+//     method: "post",
+//     // headers: { "Content-Type": "application/json" },
+//     body: file.file,
+//   })
+//     .then((response) => response.json())
+//     .then((response) => {
+//       setApiData(response);
+//     });
+// }

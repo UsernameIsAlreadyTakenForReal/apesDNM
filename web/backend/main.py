@@ -32,7 +32,7 @@
 # this this kinda works but also acts a bit weird so hmmmm???
 
 import json
-from flask import Flask, request
+from flask import Flask, request, jsonify
 from flask_cors import CORS, cross_origin
 
 app = Flask(__name__)
@@ -53,9 +53,26 @@ def get_double():
 
 @app.route('/upload', methods = ['GET', 'POST'])
 def upload_file():
-    return {"msg": "done"}
-    # file = request.files['file']
-    # return "done"
+    message = "hello from /upload"
+
+    # record = json.loads(request.data)
+    # print(record)
+
+    return jsonify({"msg": message})
+
+# @app.route('/uploaddd', methods = ['GET', 'POST'])
+# def upload_file():
+#     record = json.loads(request.data)
+#     with open('/tmp/data.txt', 'r') as f:
+#         data = f.read()
+#     if not data:
+#         records = [record]
+#     else:
+#         records = json.loads(data)
+#         records.append(record)
+#     with open('/tmp/data.txt', 'w') as f:
+#         f.write(json.dumps(records, indent=2))
+#     return jsonify(record)
 
 if __name__ == "__main__":
     app.run(debug=True, port=5000)
