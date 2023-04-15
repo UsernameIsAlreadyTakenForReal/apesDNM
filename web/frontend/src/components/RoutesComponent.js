@@ -6,8 +6,7 @@ import Contact from "./Contact";
 import UploadComponent from "./UploadComponent";
 import Home from "./Home";
 import NotFound from "./NotFound";
-
-import Upload from "./Upload";
+import _Uploaddd from "./_Uploaddd";
 
 export default function RoutesComponent() {
   return (
@@ -15,7 +14,7 @@ export default function RoutesComponent() {
       <Routes>
         <Route path="/" element={<Home />} />
         <Route path="/upload" element={<UploadComponent />} />
-        <Route path="/uploaddd" element={<Upload />} />
+        <Route path="/uploaddd" element={<_Uploaddd />} />
         <Route path="/about" element={<About />} />
         <Route path="/contact" element={<Contact />} />
         <Route path="*" element={<NotFound />} />

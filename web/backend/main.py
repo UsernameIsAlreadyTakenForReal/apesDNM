@@ -32,8 +32,9 @@
 # this this kinda works but also acts a bit weird so hmmmm???
 
 import json
-from flask import Flask, request, jsonify
+from flask import Flask, request, jsonify, Response
 from flask_cors import CORS, cross_origin
+from werkzeug.utils import secure_filename
 
 app = Flask(__name__)
 cors = CORS(app)
@@ -42,7 +43,7 @@ app.config['MAX_CONTENT_LENGTH'] = 16 * 1000 * 1000
 
 @app.route('/morbin')
 def its_morbin_time():
-    return {"msg": "its morbin time"}
+    return jsonify("this is a string")
 
 @app.route('/double', methods=['GET', 'POST'])
 def get_double():
@@ -53,26 +54,24 @@ def get_double():
 
 @app.route('/upload', methods = ['GET', 'POST'])
 def upload_file():
-    message = "hello from /upload"
+    # if request.method == 'POST':
+    #     f = request.files['file']
+    #     f.save(secure_filename(f.filename))
+    return "file uploaded successfully"
 
-    # record = json.loads(request.data)
-    # print(record)
-
-    return jsonify({"msg": message})
-
-# @app.route('/uploaddd', methods = ['GET', 'POST'])
-# def upload_file():
-#     record = json.loads(request.data)
-#     with open('/tmp/data.txt', 'r') as f:
-#         data = f.read()
-#     if not data:
-#         records = [record]
-#     else:
-#         records = json.loads(data)
-#         records.append(record)
-#     with open('/tmp/data.txt', 'w') as f:
-#         f.write(json.dumps(records, indent=2))
-#     return jsonify(record)
+@app.route('/uploaddd', methods = ['GET', 'POST'])
+def uploaddd_file():
+    record = json.loads(request.data)
+    with open('/tmp/data.txt', 'r') as f:
+        data = f.read()
+    if not data:
+        records = [record]
+    else:
+        records = json.loads(data)
+        records.append(record)
+    with open('/tmp/data.txt', 'w') as f:
+        f.write(json.dumps(records, indent=2))
+    return jsonify(record)
 
 if __name__ == "__main__":
     app.run(debug=True, port=5000)
