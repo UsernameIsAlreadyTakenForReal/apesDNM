@@ -1,14 +1,7 @@
 #!/bin/bash
 
-############
-## Create the first script. Need to restart terminal after running this one
-############
-tee 1script.sh << EOF
-#!/bin/bash
-
-DATE=\$(date +%c)
-echo "Starting script at \$DATE"
-
+DATE=$(date +%c)
+echo "Starting script at $DATE"
 
 ############
 ## Variables
@@ -19,10 +12,10 @@ AWS_VOLUME_TAG_NAME="APESDNM-DEV-EBS"
 
 PYTHON_VERSION=3.11.3
 CUSTOM_USERNAME="apesdnm_user"
-CUSTOM_PASSWD="tempPa55wd!"
+CUSTOM_PASSWD="tempPa55wd!" 
 
 MOUNT_DIR="/ebs_data"
-PROJECT_DIR=\${MOUNT_DIR}/project_home
+PROJECT_DIR=${MOUNT_DIR}/project_home
 
 ############
 ## Update and install stuff
@@ -47,44 +40,21 @@ wget https://www.openssl.org/source/openssl-1.1.1t.tar.gz
 tar xvf openssl-1.1.1t.tar.gz
 cd openssl-1.1*/
 ./config --prefix=/usr/local/openssl --openssldir=/usr/local/openssl
-make -j \$(nproc)
+make -j $(nproc)
 make install
 sudo ldconfig
 
-echo "export PATH=/usr/local/openssl/bin:\$PATH" >> /etc/profile.d/openssl.sh
-echo "export LD_LIBRARY_PATH=/usr/local/openssl/lib:\$LD_LIBRARY_PATH" >> /etc/profile.d/openssl.sh
-
-source /etc/profile.d/openssl.sh
+sudo tee /etc/profile.d/openssl.sh<<EOF
 export PATH=/usr/local/openssl/bin:\$PATH
 export LD_LIBRARY_PATH=/usr/local/openssl/lib:\$LD_LIBRARY_PATH
 EOF
 
-chmod 755 1script.sh
+source /etc/profile.d/openssl.sh
+export PATH=/usr/local/openssl/bin:\$PATH
+export LD_LIBRARY_PATH=/usr/local/openssl/lib:\$LD_LIBRARY_PATH
 
 
-############
-## Create the second script
-############
-tee 2script.sh << EOF
-#!/bin/bash
-
-DATE=\$(date +%c)
-echo "Starting script at \$DATE"
-
-
-############
-## Variables
-############
-AWS_REGION="eu-central-1"
-AWS_EC2_TAG_NAME="APESDNM-DEV-EC2"
-AWS_VOLUME_TAG_NAME="APESDNM-DEV-EBS"
-
-PYTHON_VERSION=3.11.3
-CUSTOM_USERNAME="apesdnm_user"
-CUSTOM_PASSWD="tempPa55wd!"
-
-MOUNT_DIR="/ebs_data"
-PROJECT_DIR=\${MOUNT_DIR}/project_home
+#### RESET
 
 ############
 ## Create user and give uid 1002, add to sudoers. Switch to user.
@@ -92,14 +62,14 @@ PROJECT_DIR=\${MOUNT_DIR}/project_home
 echo "-----------------------------------------"
 echo "---- STEP: Add user and switch to it ----"
 echo "-----------------------------------------"
-useradd -m \$CUSTOM_USERNAME -u 1002
-# echo \${CUSTOM_USERNAME}:\${CUSTOM_PASSWD} | chpasswd
-touch ~/startup/\${CUSTOM_USERNAME}-users.bak
-echo "Created by startup script somewhere around \$DATE
+useradd -m $CUSTOM_USERNAME -u 1002
+# echo ${CUSTOM_USERNAME}:${CUSTOM_PASSWD} | chpasswd
+touch ~/startup/${CUSTOM_USERNAME}-users.bak
+echo "Created by startup script somewhere around $DATE
 
-# User rules for \$CUSTOM_USERNAME
-\$CUSTOM_USERNAME    ALL=(ALL) NOPASSWD:ALL" >> ~/startup/\${CUSTOM_USERNAME}-users.bak
-# cp ~/startup/\${CUSTOM_USERNAME}-users.bak /etc/sudoers.d/\${CUSTOM_USERNAME}
+# User rules for $CUSTOM_USERNAME
+$CUSTOM_USERNAME    ALL=(ALL) NOPASSWD:ALL" >> ~/startup/${CUSTOM_USERNAME}-users.bak
+# cp ~/startup/${CUSTOM_USERNAME}-users.bak /etc/sudoers.d/${CUSTOM_USERNAME}
 
 
 ############
@@ -108,34 +78,34 @@ echo "Created by startup script somewhere around \$DATE
 echo "-----------------------------------------"
 echo "------ STEP: Attach the EBS volume ------"
 echo "-----------------------------------------"
-INSTANCE_ID=\`aws ec2 describe-instances --region \$AWS_REGION --filter Name=instance-state-name,Values=running --query "Reservations[*].Instances[?Tags[?Value=='\$AWS_EC2_TAG_NAME'].Value].InstanceId" --output text\`
-VOLUME_ID=\`aws ec2 describe-volumes --region \$AWS_REGION --query "Volumes[?Tags[?Value=='\$AWS_VOLUME_TAG_NAME'].Key].VolumeId" --output text\`
-aws ec2 attach-volume --instance-id \$INSTANCE_ID --volume-id \$VOLUME_ID --device /dev/xvdh --region \${AWS_REGION}
+INSTANCE_ID=`aws ec2 describe-instances --region $AWS_REGION --filter Name=instance-state-name,Values=running --query "Reservations[*].Instances[?Tags[?Value=='$AWS_EC2_TAG_NAME'].Value].InstanceId" --output text`
+VOLUME_ID=`aws ec2 describe-volumes --region $AWS_REGION --query "Volumes[?Tags[?Value=='$AWS_VOLUME_TAG_NAME'].Key].VolumeId" --output text`
+aws ec2 attach-volume --instance-id $INSTANCE_ID --volume-id $VOLUME_ID --device /dev/xvdh --region ${AWS_REGION}
 ## lsblk -f                         # see all volumes
 ## mkfs -t xfs /dev/xvdh            # this formats / creates a file system on the volume. FOR THE LOVE OF GOD DO NOT RUN THIS ON A VOLUME WITH EXISTING FILE SYSTEM, PLEASE, GOD, NO
 cd /
-mkdir \${MOUNT_DIR}
+mkdir ${MOUNT_DIR}
 echo "Going to mount now, but sleeping 4 seconds first"
 sleep 4
-mount /dev/xvdh \${MOUNT_DIR}
+mount /dev/xvdh ${MOUNT_DIR}
 # hopefully no chown -R ?
 
 ############
-## Install / compile Python \${PYTHON_VERSION} from source code
+## Install / compile Python ${PYTHON_VERSION} from source code
 ############
 echo "----------------------------------------------"
-echo "---- STEP: Install python \$PYTHON_VERSION ----"
+echo "---- STEP: Install python $PYTHON_VERSION ----"
 echo "----------------------------------------------"
 if [ ! -d "~/startup" ]; then
     mkdir ~/startup;
 fi
-mkdir ~/startup/python\${PYTHON_VERSION}_setup
-cd ~/startup/python\${PYTHON_VERSION}_setup
-wget https://www.python.org/ftp/python/\${PYTHON_VERSION}/Python-\${PYTHON_VERSION}.tgz
-tar xzf Python-\${PYTHON_VERSION}.tgz
-rm -f Python-\${PYTHON_VERSION}.tgz
-cd Python-\${PYTHON_VERSION}
-LDFLAGS="\${LDFLAGS} -Wl,-rpath=/usr/local/openssl/lib" ./configure --with-openssl=/usr/local/openssl 
+mkdir ~/startup/python${PYTHON_VERSION}_setup
+cd ~/startup/python${PYTHON_VERSION}_setup
+wget https://www.python.org/ftp/python/${PYTHON_VERSION}/Python-${PYTHON_VERSION}.tgz
+tar xzf Python-${PYTHON_VERSION}.tgz
+rm -f Python-${PYTHON_VERSION}.tgz
+cd Python-${PYTHON_VERSION}
+LDFLAGS="${LDFLAGS} -Wl,-rpath=/usr/local/openssl/lib" ./configure --with-openssl=/usr/local/openssl 
 make
 sudo make altinstall
 
@@ -145,11 +115,11 @@ pip3.11 install --upgrade pip
 # sudo ln -s /usr/local/bin/python3.11 /bin/python3 -f
 
 ## See if the python venv exists on the EBS
-if [ -d \${PROJECT_DIR}/apesdnm_python_venv ]; then
+if [ -d ${PROJECT_DIR}/apesdnm_python_venv ]; then
     echo "Python venv exists on EBS."
 else
     echo "Python venv does not exist on EBS. Creating..."
-    sudo python3.11 -m venv \${PROJECT_DIR}/apesdnm_python_venv
+    sudo python3.11 -m venv ${PROJECT_DIR}/apesdnm_python_venv
 fi
 
 ############
@@ -187,11 +157,36 @@ sudo chmod 600 ~/.ssh/id_ed25519
 echo "-----------------------------------------"
 echo "--------- STEP: Clone repository --------"
 echo "-----------------------------------------"
-mkdir \$PROJECT_DIR
-cd \$PROJECT_DIR
+mkdir $PROJECT_DIR
+cd $PROJECT_DIR
 git clone git@github.com:UsernameIsAlreadyTakenForReal/apesDNM.git
 cd apesDNM
 git checkout feature/cloud_project
-EOF
 
-chmod 755 2script.sh
+# ############
+# ## Python restore
+# ############
+# echo "---- STEP: Install python dependencies ----"
+# sudo source /ebs_data/apesdnm_python_venv/bin/activate
+# pip install -r requirements.txt
+
+# Installing collected packages: setuptools, pip
+# WARNING: The script pip3.11 is installed in '/usr/local/bin' which is not on PATH.
+# Consider adding this directory to PATH or, if you prefer to suppress this warning, use --no-warn-script-location.
+# Successfully installed pip-22.3.1 setuptools-65.5.0
+# WARNING: Running pip as the 'root' user can result in broken permissions and conflicting behaviour with the system package manager. It is recommended to use a virtual environment instead: https://pip.pypa.io/warnings/venv
+
+## userdel -r ${CUSTOM_USERNAME}
+
+
+
+############
+## Finalize script
+############
+echo "----------------------------------------"
+echo "--------- STEP: Finalize script --------"
+echo "----------------------------------------"
+
+## reboot
+
+https://computingforgeeks.com/install-python-3-on-centos-rhel-7/?utm_content=cmp-true
