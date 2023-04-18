@@ -5,6 +5,8 @@ import { TextField, Button } from "@material-ui/core";
 const BASE_URL = process.env.REACT_APP_BACKEND;
 
 export default function UploadComponent() {
+  const [hover0, setHover0] = useState(false);
+
   const [hover1, setHover1] = useState(false);
   const [text1, setText1] = useState("");
 
@@ -13,6 +15,8 @@ export default function UploadComponent() {
 
   const [hover3, setHover3] = useState(false);
   const [text3, setText3] = useState("");
+
+  const [file, setFile] = useState(null);
 
   function clearAllData() {
     setText1("");
@@ -55,12 +59,25 @@ export default function UploadComponent() {
     console.log(jsonData);
   }
 
-  async function onClick3Handle() {
-    const response = await fetch(BASE_URL + "morbin", {
-      method: "get",
+  async function onUpdateHandler() {
+    if (!file) return;
+    console.log("file is " + file.name);
+    console.log("type is " + file.type);
+
+    console.log(file);
+
+    let fd = new FormData();
+    fd.append("file", file);
+
+    const response = await fetch(BASE_URL + "upload", {
+      method: "post",
+      headers: { "Content-Type": file.type },
+      body: fd,
     });
+
     const jsonData = await response.json();
-    setText1(jsonData.message);
+    // setText3(jsonData.message);
+    console.log(jsonData);
   }
 
   return (
@@ -69,8 +86,8 @@ export default function UploadComponent() {
         <Divv>
           <Button
             style={{
-              background: "black",
-              color: "white",
+              background: hover0 === false ? "black" : "orange",
+              color: hover0 === false ? "white" : "black",
               fontWeight: "bold",
             }}
             variant="contained"
@@ -78,6 +95,12 @@ export default function UploadComponent() {
             size="large"
             onClick={() => {
               clearAllData();
+            }}
+            onMouseEnter={() => {
+              setHover0(true);
+            }}
+            onMouseLeave={() => {
+              setHover0(false);
             }}
           >
             CLEAR ALL
@@ -156,28 +179,32 @@ export default function UploadComponent() {
         <Divv>
           <Button
             style={{
-              background: hover2 === false ? "black" : "orange",
-              color: hover2 === false ? "white" : "black",
+              background: hover3 === false ? "black" : "orange",
+              color: hover3 === false ? "white" : "black",
               fontWeight: "bold",
             }}
             variant="contained"
             color="primary"
             size="large"
             onClick={() => {
-              onClick3Handle();
+              console.clear();
+              onUpdateHandler();
             }}
             onMouseEnter={() => {
-              setHover2(true);
+              setHover3(true);
             }}
             onMouseLeave={() => {
-              setHover2(false);
+              setHover3(false);
             }}
           >
             FETCH UPL
           </Button>
         </Divv>
 
-        <input type="file"></input>
+        <input
+          type="file"
+          onChange={(event) => setFile(event.target.files[0])}
+        ></input>
 
         <Divv>from backend: {text3}</Divv>
       </RowFlex>
