@@ -205,7 +205,7 @@ else
     mkdir \$PROJECT_DIR
     cd \$PROJECT_DIR
     git clone git@github.com:UsernameIsAlreadyTakenForReal/apesDNM.git
-    cd \$PROJECT_DIR/apesDNM
+    cd apesDNM
     git checkout feature/cloud_project
 fi
 EOF
@@ -273,8 +273,12 @@ CUSTOM_PASSWD="tempPa55wd!"
 
 MOUNT_DIR="/ebs_data"
 PROJECT_DIR=\${MOUNT_DIR}/project_home
+NODE_CACHE_DIR=\${PROJECT_DIR}/node_cache
 
-cd PROJECT_DIR=\${MOUNT_DIR}/project_home
+mkdir \${NODE_CACHE_DIR}
+
+cd \${PROJECT_DIR}/apesDNM
+echo "cache=\${NODE_CACHE_DIR}" >> .npmrc
 npm install
 EOF
 
