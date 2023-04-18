@@ -11,7 +11,7 @@ app.config['CORS_HEADER'] = 'Content-Type'
 def its_morbin_time():
     return { "message": "it's morbin time" }
 
-@app.route('/double', methods=['GET', 'POST'])
+@app.route('/double', methods=['POST'])
 def get_double():
     json1 = json.loads(json.dumps(request.get_json()))
     print(json1["value1"] + "; " +  json1["value2"])
@@ -19,10 +19,12 @@ def get_double():
 
 @app.route('/upload', methods=['GET', 'POST'])
 def upload_file():
-    print("we got here yes")
-    default_value = '0'
-    file = request.form.get("file", default_value)
-    return file
+    print("hello from upload_files()")
+    default_value = 'alabala'
+    file = request.form.get("file") or default_value
+    file_the_good_one = request.files.get("file")
+    # https://stackoverflow.com/questions/51765498/flask-file-upload-unable-to-get-form-data
+    return file_the_good_one
 
 if __name__ == "__main__":
     app.run(debug=True, port=5000)

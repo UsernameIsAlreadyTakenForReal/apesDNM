@@ -32,6 +32,7 @@ export default function UploadComponent() {
     });
     const jsonData = await response.json();
     setText1(jsonData.message);
+    console.log(jsonData);
   }
 
   async function onClick2Handle() {
@@ -64,20 +65,19 @@ export default function UploadComponent() {
     console.log("file is " + file.name);
     console.log("type is " + file.type);
 
-    console.log(file);
-
     let fd = new FormData();
     fd.append("file", file);
 
     const response = await fetch(BASE_URL + "upload", {
       method: "post",
-      headers: { "Content-Type": file.type },
       body: fd,
     });
 
-    const jsonData = await response.json();
-    // setText3(jsonData.message);
-    console.log(jsonData);
+    const blobbb = await response.text();
+    const text = await new Response(blobbb).text();
+
+    console.log(blobbb);
+    console.log(text);
   }
 
   return (
