@@ -195,3 +195,36 @@ git checkout feature/cloud_project
 EOF
 
 chmod 755 2script.sh
+
+############
+## Create the pip restore script
+############
+tee pip_script.sh << EOF
+#!/bin/bash
+
+DATE=\$(date +%c)
+echo "Starting script at \$DATE"
+
+############
+## Variables
+############
+AWS_REGION="eu-central-1"
+AWS_EC2_TAG_NAME="APESDNM-DEV-EC2"
+AWS_VOLUME_TAG_NAME="APESDNM-DEV-EBS"
+
+PYTHON_VERSION=3.11.3
+CUSTOM_USERNAME="apesdnm_user"
+CUSTOM_PASSWD="tempPa55wd!"
+
+MOUNT_DIR="/ebs_data"
+PROJECT_DIR=\${MOUNT_DIR}/project_home
+## if no python env found
+/usr/local/bin/python3.11 -m pip install -r requirements.txt --no-cache-dir
+## if python env found
+source \${PROJECT_DIR}/apesdnm_python_venv/bin/activate 
+pip install -r requirements.txt --no-cache-dir
+EOF
+
+## clone if folder doesn't exist
+## pip install reqs as user!!
+## next: npm
