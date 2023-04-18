@@ -1,6 +1,11 @@
 #!/bin/bash
 
 ############
+## Variables
+############
+CUSTOM_USERNAME="apesdnm_user"
+
+############
 ## Create the first script. Need to restart terminal after running this one
 ############
 tee 1script.sh << EOF
@@ -18,6 +23,7 @@ AWS_EC2_TAG_NAME="APESDNM-DEV-EC2"
 AWS_VOLUME_TAG_NAME="APESDNM-DEV-EBS"
 
 PYTHON_VERSION=3.11.3
+NODEJS_VERSION=v16.20.0
 CUSTOM_USERNAME="apesdnm_user"
 CUSTOM_PASSWD="tempPa55wd!"
 
@@ -80,6 +86,7 @@ AWS_EC2_TAG_NAME="APESDNM-DEV-EC2"
 AWS_VOLUME_TAG_NAME="APESDNM-DEV-EBS"
 
 PYTHON_VERSION=3.11.3
+NODEJS_VERSION=v16.20.0
 CUSTOM_USERNAME="apesdnm_user"
 CUSTOM_PASSWD="tempPa55wd!"
 
@@ -99,7 +106,7 @@ echo "Created by startup script somewhere around \$DATE
 
 # User rules for \$CUSTOM_USERNAME
 \$CUSTOM_USERNAME    ALL=(ALL) NOPASSWD:ALL" >> ~/startup/\${CUSTOM_USERNAME}-users.bak
-# cp ~/startup/\${CUSTOM_USERNAME}-users.bak /etc/sudoers.d/\${CUSTOM_USERNAME}
+# cp ~/startup/\${CUSTOM_USERNAME}-users.bak /etc/sudoers.d/\${CUSTOM_USERNAME} # keeping this here but don't think we'll use it
 
 
 ############
@@ -120,6 +127,14 @@ sleep 4
 mount /dev/xvdh \${MOUNT_DIR}
 # hopefully no chown -R ?
 
+
+############
+## Install Node.js \${NODEJS_VERSION}
+############
+curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.39.3/install.sh | bash
+. ~/.nvm/nvm.sh
+nvm install \${NODEJS_VERSION}
+
 ############
 ## Install / compile Python \${PYTHON_VERSION} from source code
 ############
@@ -138,11 +153,6 @@ cd Python-\${PYTHON_VERSION}
 LDFLAGS="\${LDFLAGS} -Wl,-rpath=/usr/local/openssl/lib" ./configure --with-openssl=/usr/local/openssl 
 make
 sudo make altinstall
-
-pip3.11 install --upgrade pip
-
-## Add 
-# sudo ln -s /usr/local/bin/python3.11 /bin/python3 -f
 
 ## See if the python venv exists on the EBS
 if [ -d \${PROJECT_DIR}/apesdnm_python_venv ]; then
@@ -187,11 +197,17 @@ sudo chmod 600 ~/.ssh/id_ed25519
 echo "-----------------------------------------"
 echo "--------- STEP: Clone repository --------"
 echo "-----------------------------------------"
-mkdir \$PROJECT_DIR
-cd \$PROJECT_DIR
-git clone git@github.com:UsernameIsAlreadyTakenForReal/apesDNM.git
-cd apesDNM
-git checkout feature/cloud_project
+
+if [ -d \${PROJECT_DIR}/apesDNM ]; then
+    echo "The project is already cloned"
+else
+    echo "The project is not cloned. Cloning..."
+    mkdir \$PROJECT_DIR
+    cd \$PROJECT_DIR
+    git clone git@github.com:UsernameIsAlreadyTakenForReal/apesDNM.git
+    cd \$PROJECT_DIR/apesDNM
+    git checkout feature/cloud_project
+fi
 EOF
 
 chmod 755 2script.sh
@@ -213,17 +229,70 @@ AWS_EC2_TAG_NAME="APESDNM-DEV-EC2"
 AWS_VOLUME_TAG_NAME="APESDNM-DEV-EBS"
 
 PYTHON_VERSION=3.11.3
+NODEJS_VERSION=v16.20.0
 CUSTOM_USERNAME="apesdnm_user"
 CUSTOM_PASSWD="tempPa55wd!"
 
 MOUNT_DIR="/ebs_data"
 PROJECT_DIR=\${MOUNT_DIR}/project_home
-## if no python env found
-/usr/local/bin/python3.11 -m pip install -r requirements.txt --no-cache-dir
-## if python env found
-source \${PROJECT_DIR}/apesdnm_python_venv/bin/activate 
-pip install -r requirements.txt --no-cache-dir
+
+if [ -d \${PROJECT_DIR}/apesdnm_python_venv ]; then
+    echo "Python venv exists on EBS."
+    source \${PROJECT_DIR}/apesdnm_python_venv/bin/activate
+    pip install --upgrade pip --no-cache-dir
+    pip install -r requirements.txt --no-cache-dir
+else
+    echo "Python venv does not exist on EBS. It should be here, tho..."
+    sudo python3.11 -m venv \${PROJECT_DIR}/apesdnm_python_venv
+    source \${PROJECT_DIR}/apesdnm_python_venv/bin/activate
+    pip install --upgrade pip --no-cache-dir
+    pip install -r requirements.txt --no-cache-dir
+fi
 EOF
+
+############
+## Create the node restore script
+############
+tee nodejs_script.sh << EOF
+#!/bin/bash
+
+DATE=\$(date +%c)
+echo "Starting script at \$DATE"
+
+############
+## Variables
+############
+AWS_REGION="eu-central-1"
+AWS_EC2_TAG_NAME="APESDNM-DEV-EC2"
+AWS_VOLUME_TAG_NAME="APESDNM-DEV-EBS"
+
+PYTHON_VERSION=3.11.3
+NODEJS_VERSION=v16.20.0
+CUSTOM_USERNAME="apesdnm_user"
+CUSTOM_PASSWD="tempPa55wd!"
+
+MOUNT_DIR="/ebs_data"
+PROJECT_DIR=\${MOUNT_DIR}/project_home
+
+cd PROJECT_DIR=\${MOUNT_DIR}/project_home
+npm install
+EOF
+
+
+############
+## Give the pip and node scripts to the user
+############
+if [ ! -d "/home/$CUSTOM_USERNAME/startup" ]; then
+    mkdir /home/${CUSTOM_USERNAME}/startup;
+fi
+
+cp pip_script.sh /home/${CUSTOM_USERNAME}/startup/pip_script.sh
+cp nodejs_script.sh /home/${CUSTOM_USERNAME}/startup/nodejs_script.sh
+
+chmod 755 /home/${CUSTOM_USERNAME}/startup/pip_script.sh
+chmod 755 /home/${CUSTOM_USERNAME}/startup/nodejs_script.sh
+chown apesdnm_user /home/${CUSTOM_USERNAME}/startup/pip_script.sh
+chown apesdnm_user /home/${CUSTOM_USERNAME}/startup/nodejs_script.sh
 
 ## clone if folder doesn't exist
 ## pip install reqs as user!!
