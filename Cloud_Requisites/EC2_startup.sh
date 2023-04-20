@@ -208,6 +208,23 @@ else
     cd apesDNM
     git checkout feature/cloud_project
 fi
+
+source ~/.bashrc
+
+############
+## Give the pip and node scripts to the user
+############
+if [ ! -d "/home/\$CUSTOM_USERNAME/startup" ]; then
+    mkdir /home/\${CUSTOM_USERNAME}/startup;
+fi
+
+cp pip_script.sh /home/\${CUSTOM_USERNAME}/startup/pip_script.sh
+cp nodejs_script.sh /home/\${CUSTOM_USERNAME}/startup/nodejs_script.sh
+
+chmod 755 /home/\${CUSTOM_USERNAME}/startup/pip_script.sh
+chmod 755 /home/\${CUSTOM_USERNAME}/startup/nodejs_script.sh
+chown apesdnm_user /home/\${CUSTOM_USERNAME}/startup/pip_script.sh
+chown apesdnm_user /home/\${CUSTOM_USERNAME}/startup/nodejs_script.sh
 EOF
 
 chmod 755 2script.sh
@@ -282,21 +299,6 @@ echo "cache=\${NODE_CACHE_DIR}" >> .npmrc
 npm install
 EOF
 
-
-############
-## Give the pip and node scripts to the user
-############
-if [ ! -d "/home/$CUSTOM_USERNAME/startup" ]; then
-    mkdir /home/${CUSTOM_USERNAME}/startup;
-fi  
-
-cp pip_script.sh /home/${CUSTOM_USERNAME}/startup/pip_script.sh
-cp nodejs_script.sh /home/${CUSTOM_USERNAME}/startup/nodejs_script.sh
-
-chmod 755 /home/${CUSTOM_USERNAME}/startup/pip_script.sh
-chmod 755 /home/${CUSTOM_USERNAME}/startup/nodejs_script.sh
-chown apesdnm_user /home/${CUSTOM_USERNAME}/startup/pip_script.sh
-chown apesdnm_user /home/${CUSTOM_USERNAME}/startup/nodejs_script.sh
 
 ## clone if folder doesn't exist
 ## pip install reqs as user!!
