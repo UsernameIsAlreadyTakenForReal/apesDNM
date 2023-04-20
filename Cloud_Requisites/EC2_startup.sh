@@ -150,7 +150,7 @@ wget https://www.python.org/ftp/python/\${PYTHON_VERSION}/Python-\${PYTHON_VERSI
 tar xzf Python-\${PYTHON_VERSION}.tgz
 rm -f Python-\${PYTHON_VERSION}.tgz
 cd Python-\${PYTHON_VERSION}
-LDFLAGS="\${LDFLAGS} -Wl,-rpath=/usr/local/openssl/lib" ./configure --with-openssl=/usr/local/openssl 
+LDFLAGS="\${LDFLAGS} -Wl,-rpath=/usr/local/openssl/lib" ./configure --with-openssl=/usr/local/openssl
 make
 sudo make altinstall
 
@@ -288,7 +288,7 @@ EOF
 ############
 if [ ! -d "/home/$CUSTOM_USERNAME/startup" ]; then
     mkdir /home/${CUSTOM_USERNAME}/startup;
-fi
+fi  
 
 cp pip_script.sh /home/${CUSTOM_USERNAME}/startup/pip_script.sh
 cp nodejs_script.sh /home/${CUSTOM_USERNAME}/startup/nodejs_script.sh
