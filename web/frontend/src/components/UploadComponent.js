@@ -1,6 +1,7 @@
 import { Divv, TextFieldDivv, RowFlex } from "./StyledComponents";
 import { useState, useEffect } from "react";
 import { TextField, Button } from "@material-ui/core";
+import { TimerOutlined } from "@material-ui/icons";
 
 const BASE_URL = process.env.REACT_APP_BACKEND;
 
@@ -15,8 +16,13 @@ export default function UploadComponent() {
 
   const [hover3, setHover3] = useState(false);
   const [text3, setText3] = useState("");
+  const [btnText, setBtnText] = useState("FETCH UPL");
+  const [loading, setLoading] = useState(false);
+  const [loaded, setLoaded] = useState(false);
 
   const [file, setFile] = useState(null);
+
+  let count = 0;
 
   function clearAllData() {
     setText1("");
@@ -61,8 +67,13 @@ export default function UploadComponent() {
   }
 
   async function onUploadHandler() {
-    if (!file) return;
-    setText3("loading...");
+    if (!file) {
+      setText3("Please choose a file");
+      return;
+    }
+
+    setLoading(true);
+
     console.log("file is " + file.name);
     console.log("type is " + file.type);
 
@@ -80,9 +91,35 @@ export default function UploadComponent() {
     });
 
     const data = await response.text();
-    setText3("OK");
+    setLoading(false);
+    setLoaded(true);
+    setBtnText("FILE LOADED");
+    setText3(data);
     console.log(data);
   }
+
+  useEffect(() => {
+    const interval = setInterval(() => {
+      if (!loading) {
+        return;
+      }
+      if (count % 12 === 0) setBtnText("╞▰══════╡");
+      if (count % 12 === 1) setBtnText("╞═▰═════╡");
+      if (count % 12 === 2) setBtnText("╞══▰════╡");
+      if (count % 12 === 3) setBtnText("╞═══▰═══╡");
+      if (count % 12 === 4) setBtnText("╞════▰══╡");
+      if (count % 12 === 5) setBtnText("╞═════▰═╡");
+      if (count % 12 === 6) setBtnText("╞══════▰╡");
+      if (count % 12 === 7) setBtnText("╞═════▰═╡");
+      if (count % 12 === 8) setBtnText("╞════▰══╡");
+      if (count % 12 === 9) setBtnText("╞═══▰═══╡");
+      if (count % 12 === 10) setBtnText("╞══▰════╡");
+      if (count % 12 === 11) setBtnText("╞═▰═════╡");
+      count = count + 1;
+    }, 100);
+
+    return () => clearInterval(interval);
+  }, [loading]);
 
   return (
     <>
@@ -183,8 +220,14 @@ export default function UploadComponent() {
         <Divv>
           <Button
             style={{
-              background: hover3 === false ? "black" : "orange",
-              color: hover3 === false ? "white" : "black",
+              background: loading
+                ? "orange"
+                : loaded
+                ? "green"
+                : !hover3
+                ? "black"
+                : "orange",
+              color: loading ? "black" : hover3 === false ? "white" : "black",
               fontWeight: "bold",
             }}
             variant="contained"
@@ -201,13 +244,19 @@ export default function UploadComponent() {
               setHover3(false);
             }}
           >
-            FETCH UPL
+            {btnText}
           </Button>
         </Divv>
 
         <input
           type="file"
-          onChange={(event) => setFile(event.target.files[0])}
+          onChange={(event) => {
+            setFile(event.target.files[0]);
+            setBtnText("FETCH UPL");
+            setLoading(false);
+            setLoaded(false);
+            setText3("");
+          }}
         ></input>
 
         <Divv>from backend: {text3}</Divv>

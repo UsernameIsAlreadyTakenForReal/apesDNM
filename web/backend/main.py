@@ -21,12 +21,13 @@ def get_double():
 def upload_file():
     print("hello from upload_files()")
 
-    for y in range(10):
+    for _ in range(25):
         for x in range(10000):
             print(x)
 
+    file = request.form['file']
+
     return "ok"
-    return request.form['file']
 
 if __name__ == "__main__":
     app.run(debug=True, port=5000)
