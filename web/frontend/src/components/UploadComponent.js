@@ -30,8 +30,8 @@ export default function UploadComponent() {
     const response = await fetch(BASE_URL + "morbin", {
       method: "get",
     });
-    const jsonData = await response.json();
-    setText1(jsonData.message);
+    const jsonData = await response.text();
+    setText1(jsonData);
     console.log(jsonData);
   }
 
@@ -55,23 +55,21 @@ export default function UploadComponent() {
       body: data,
     });
 
-    const jsonData = await response.json();
-    setText2(jsonData.message);
+    const jsonData = await response.text();
+    setText2(jsonData);
     console.log(jsonData);
   }
 
   async function onUploadHandler() {
     if (!file) return;
+    setText3("loading...");
     console.log("file is " + file.name);
     console.log("type is " + file.type);
 
-    // let fd = new FormData();
-    // fd.append("file", file, "file");
+    let reader = new FileReader();
+    reader.readAsText(file);
 
-    let blob,
-      reader = new FileReader();
-
-    reader.readAsDataURL(file);
+    console.log(reader);
 
     let fd = new FormData();
     fd.append("file", reader);
@@ -81,9 +79,9 @@ export default function UploadComponent() {
       body: fd,
     });
 
-    const jsonData = await response.text();
-    setText3(jsonData);
-    console.log(jsonData);
+    const data = await response.text();
+    setText3("OK");
+    console.log(data);
   }
 
   return (
