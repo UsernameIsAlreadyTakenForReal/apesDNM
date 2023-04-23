@@ -20,11 +20,11 @@ def get_double():
 @app.route('/upload', methods=['GET', 'POST'])
 def upload_file():
     print("hello from upload_files()")
-    default_value = 'alabala'
-    file = request.form.get("file") or default_value
-    file_the_good_one = request.files.get("file")
-    # https://stackoverflow.com/questions/51765498/flask-file-upload-unable-to-get-form-data
-    return file_the_good_one
+    file = request.form['file'] or "alabala"
+    if file == "alabala": 
+        return "no bueno"
+    else:
+        return "BUENOO!!"
 
 if __name__ == "__main__":
     app.run(debug=True, port=5000)

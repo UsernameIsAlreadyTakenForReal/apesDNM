@@ -60,24 +60,30 @@ export default function UploadComponent() {
     console.log(jsonData);
   }
 
-  async function onUpdateHandler() {
+  async function onUploadHandler() {
     if (!file) return;
     console.log("file is " + file.name);
     console.log("type is " + file.type);
 
+    // let fd = new FormData();
+    // fd.append("file", file, "file");
+
+    let blob,
+      reader = new FileReader();
+
+    reader.readAsDataURL(file);
+
     let fd = new FormData();
-    fd.append("file", file);
+    fd.append("file", reader);
 
     const response = await fetch(BASE_URL + "upload", {
       method: "post",
       body: fd,
     });
 
-    const blobbb = await response.text();
-    const text = await new Response(blobbb).text();
-
-    console.log(blobbb);
-    console.log(text);
+    const jsonData = await response.text();
+    setText3(jsonData);
+    console.log(jsonData);
   }
 
   return (
@@ -188,7 +194,7 @@ export default function UploadComponent() {
             size="large"
             onClick={() => {
               console.clear();
-              onUpdateHandler();
+              onUploadHandler();
             }}
             onMouseEnter={() => {
               setHover3(true);
