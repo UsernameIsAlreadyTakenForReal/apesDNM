@@ -1,0 +1,2 @@
+project_solution_ekg_1_model_filename = 'model.pth'
+project_solution_ekg_1_training_script = 'anomaly_detection_with_LSETM_Autoencoder.py'
