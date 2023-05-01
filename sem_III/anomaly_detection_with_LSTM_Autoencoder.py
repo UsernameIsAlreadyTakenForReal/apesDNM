@@ -97,7 +97,7 @@ all_test_data = np.c_[test_data, test_labels]
 df = pd.DataFrame(all_train_data)
 df_2 = pd.DataFrame(all_test_data)
 
-df = df.append(df_2)
+df = df._append(df_2)
 
 CLASS_NORMAL = 1
 class_names = ['Normal','R on T','PVC','SP','UB']
