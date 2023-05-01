@@ -1,29 +1,41 @@
 import { useEffect, useState } from "react";
-import { Divv } from "./StyledComponents";
+import { Divv, RowFlex } from "./StyledComponents";
 import {
-  TextField,
   Button,
   FormControl,
   InputLabel,
   MenuItem,
   Select,
-  FormHelperText,
-} from "@material-ui/core";
+} from "@mui/material";
 
 const BASE_URL = process.env.REACT_APP_BACKEND;
-
-async function getItems() {
-  const response = await fetch(BASE_URL + "datasets");
-  const data = await response.text();
-  console.log(data);
-}
 
 export default function UploadComponent() {
   const [items, setItems] = useState([]);
 
+  const [hover1, setHover1] = useState(false);
+  const [value, setValue] = useState("");
+
+  async function getItems() {
+    const response = await fetch(BASE_URL + "datasets", {
+      method: "get",
+    });
+    const data = await response.json();
+    setItems(data);
+  }
+
+  async function getItem() {
+    if (value === "") return;
+    console.log(BASE_URL + "datasets/?id=" + value);
+    const response = await fetch(BASE_URL + "datasets/?id=" + value, {
+      method: "post",
+    });
+    const data = await response.text();
+    console.log(data);
+  }
+
   useEffect(() => {
     getItems();
-    console.log("hello");
   }, []);
 
   return (
@@ -33,31 +45,59 @@ export default function UploadComponent() {
         new one.
       </Divv>
 
-      <Divv>
-        <FormControl style={{ minWidth: "56%" }} variant="outlined">
-          <InputLabel id="deptSelect">Datasets</InputLabel>
+      <RowFlex justify="left">
+        <FormControl sx={{ width: "50%", margin: "20px" }} variant="outlined">
+          <InputLabel id="itemSelect">Datasets</InputLabel>
           <Select
             labelId="itemId"
             id="item"
-            label="item select"
-            onChange={() => console.log("label changed")}
+            label="itemSelect"
+            onChange={(event) => {
+              console.log("Now selected", event.target.value);
+              setValue(event.target.value);
+            }}
           >
             <MenuItem key="0" value="" disabled>
               Choose a method
             </MenuItem>
             {items.map((item) => {
               return (
-                <MenuItem key={item.id} value={item.message}>
-                  {item.message}
+                <MenuItem key={item.id} value={item.id}>
+                  {item.method}
                 </MenuItem>
               );
             })}
           </Select>
-          <FormHelperText>
-            Please select a dataset from the ones previously processed
-          </FormHelperText>
+          {/* <FormHelperText>
+              Please select a dataset from the ones previously processed
+            </FormHelperText> */}
         </FormControl>
-      </Divv>
+
+        <Button
+          style={{
+            background: hover1 === false ? "black" : "orange",
+            color: hover1 === false ? "white" : "black",
+            fontWeight: "bold",
+          }}
+          variant="contained"
+          color="primary"
+          size="large"
+          onClick={() => {
+            if (value === "") return;
+            console.log("Fetching request for method", value);
+
+            getItem();
+          }}
+          onMouseEnter={() => {
+            setHover1(true);
+          }}
+          onMouseLeave={() => {
+            setHover1(false);
+          }}
+        >
+          Get data
+        </Button>
+      </RowFlex>
     </>
   );
 }

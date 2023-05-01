@@ -2,7 +2,7 @@ import { UploadButton, UploadDropzone } from "react-uploader";
 import { Uploader } from "uploader";
 import { Divv, TextFieldDivv, RowFlex } from "./StyledComponents";
 import { useState, useEffect } from "react";
-import { TextField, Button } from "@material-ui/core";
+import { TextField, Button } from "@mui/material";
 
 const BASE_URL = process.env.REACT_APP_BACKEND;
 

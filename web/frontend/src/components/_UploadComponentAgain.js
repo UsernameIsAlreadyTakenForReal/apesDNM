@@ -1,7 +1,6 @@
 import { Divv, TextFieldDivv, RowFlex } from "./StyledComponents";
 import { useState, useEffect } from "react";
-import { TextField, Button } from "@material-ui/core";
-import { TimerOutlined } from "@material-ui/icons";
+import { TextField, Button } from "@mui/material";
 
 const BASE_URL = process.env.REACT_APP_BACKEND;
 
