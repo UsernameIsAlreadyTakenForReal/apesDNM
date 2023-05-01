@@ -5,7 +5,7 @@ from flask.json import jsonify
 app = Flask(__name__)
 CORS(app)
 
-@app.route('/datasets', methods=['GET'])
+@app.route('/datasets', methods=['GET', 'POST'])
 def getDatasets():
     datasets = [
         { "id": 1, "method": "NN de mana ca saracii" },
@@ -16,12 +16,10 @@ def getDatasets():
     datasets = jsonify(datasets)
     return datasets
 
-@app.route('/datasets/<id>', methods=['GET', 'POST'])
-def getDataset(id):
-    id = request.args.get('id')
-    print(id)
-    return "ok"
-
+@app.route('/dataset', methods=['GET', 'POST'])
+def getSingularDataset():
+    id = request.args["id"]
+    return id
 
 if __name__ == "__main__":
     app.run(debug=True, port=5000)

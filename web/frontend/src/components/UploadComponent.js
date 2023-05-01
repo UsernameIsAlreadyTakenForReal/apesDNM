@@ -18,16 +18,18 @@ export default function UploadComponent() {
 
   async function getItems() {
     const response = await fetch(BASE_URL + "datasets", {
+      // mode: "no-cors",
       method: "get",
     });
     const data = await response.json();
     setItems(data);
   }
 
-  async function getItem() {
+  async function getSingularItem() {
     if (value === "") return;
-    console.log(BASE_URL + "datasets/?id=" + value);
-    const response = await fetch(BASE_URL + "datasets/?id=" + value, {
+    console.log(BASE_URL + "dataset?id=" + value);
+    const response = await fetch(BASE_URL + "dataset?id=" + value, {
+      // mode: "no-cors",
       method: "post",
     });
     const data = await response.text();
@@ -86,7 +88,7 @@ export default function UploadComponent() {
             if (value === "") return;
             console.log("Fetching request for method", value);
 
-            getItem();
+            getSingularItem();
           }}
           onMouseEnter={() => {
             setHover1(true);
