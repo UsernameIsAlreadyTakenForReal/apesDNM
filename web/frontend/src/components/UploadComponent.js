@@ -12,13 +12,13 @@ const BASE_URL = process.env.REACT_APP_BACKEND;
 
 export default function UploadComponent() {
   const [items, setItems] = useState([]);
+  const [singularItem, setSingularItem] = useState([]);
 
   const [hover1, setHover1] = useState(false);
   const [value, setValue] = useState("");
 
   async function getItems() {
     const response = await fetch(BASE_URL + "datasets", {
-      // mode: "no-cors",
       method: "get",
     });
     const data = await response.json();
@@ -29,11 +29,10 @@ export default function UploadComponent() {
     if (value === "") return;
     console.log(BASE_URL + "dataset?id=" + value);
     const response = await fetch(BASE_URL + "dataset?id=" + value, {
-      // mode: "no-cors",
       method: "post",
     });
     const data = await response.text();
-    console.log(data);
+    setSingularItem(data);
   }
 
   useEffect(() => {
@@ -100,6 +99,8 @@ export default function UploadComponent() {
           Get data
         </Button>
       </RowFlex>
+
+      {singularItem.length ? JSON.stringify(singularItem) : <></>}
     </>
   );
 }
