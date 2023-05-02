@@ -5,18 +5,18 @@ from flask.json import jsonify
 app = Flask(__name__)
 CORS(app)
 
-@app.route('/datasets', methods=['GET', 'POST'])
+@app.route('/datatypes', methods=['GET', 'POST'])
 def getDatasets():
     datasets = [
-        { "id": 1, "method": "NN de mana ca saracii" },
-        { "id": 2, "method": "LSTM" },
-        { "id": 3, "method": "CUDA" },
-        { "id": 4, "method": "Some other method we copied from some other place" },
+        { "id": 1, "method": "EKG" },
+        { "id": 2, "method": "RAL" },
+        { "id": 3, "method": "IMG" },
+        { "id": 4, "method": "I don't know..." },
     ]
     datasets = jsonify(datasets)
     return datasets
 
-@app.route('/dataset', methods=['GET', 'POST'])
+@app.route('/datatype', methods=['GET', 'POST'])
 def getSingularDataset():
     id = request.args["id"]
     method = ""

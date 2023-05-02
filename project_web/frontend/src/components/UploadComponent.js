@@ -8,6 +8,8 @@ import {
   Select,
 } from "@mui/material";
 
+import { Input } from "@mui/material";
+
 const BASE_URL = process.env.REACT_APP_BACKEND;
 
 export default function UploadComponent() {
@@ -18,7 +20,7 @@ export default function UploadComponent() {
   const [value, setValue] = useState("");
 
   async function getItems() {
-    const response = await fetch(BASE_URL + "datasets", {
+    const response = await fetch(BASE_URL + "datatypes", {
       method: "get",
     });
     const data = await response.json();
@@ -27,8 +29,8 @@ export default function UploadComponent() {
 
   async function getSingularItem() {
     if (value === "") return;
-    console.log(BASE_URL + "dataset?id=" + value);
-    const response = await fetch(BASE_URL + "dataset?id=" + value, {
+    console.log(BASE_URL + "datatype?id=" + value);
+    const response = await fetch(BASE_URL + "datatype?id=" + value, {
       method: "post",
     });
     const data = await response.text();
@@ -41,14 +43,11 @@ export default function UploadComponent() {
 
   return (
     <>
-      <Divv>
-        This is the upload page. Select one of the existing datasets or choose a
-        new one.
-      </Divv>
+      <Divv>Select one of the existing types of data.</Divv>
 
       <RowFlex justify="left">
-        <FormControl sx={{ width: "50%", margin: "20px" }} variant="outlined">
-          <InputLabel id="itemSelect">Datasets</InputLabel>
+        <FormControl sx={{ width: "30%", margin: "20px" }} variant="outlined">
+          <InputLabel id="itemSelect">Data type</InputLabel>
           <Select
             labelId="itemId"
             id="item"
@@ -70,10 +69,25 @@ export default function UploadComponent() {
             })}
           </Select>
           {/* <FormHelperText>
-              Please select a dataset from the ones previously processed
+              Please select a data type from the ones previously processed
             </FormHelperText> */}
         </FormControl>
+      </RowFlex>
 
+      <input
+        accept="image/*"
+        className={classes.input}
+        style={{ display: "none" }}
+        id="raised-button-file"
+        multiple
+        type="file"
+      />
+      <label htmlFor="raised-button-file">
+        <Button variant="raised" component="span" className={classes.button}>
+          Upload
+        </Button>
+      </label>
+      <Divv>
         <Button
           style={{
             background: hover1 === false ? "black" : "orange",
@@ -96,11 +110,11 @@ export default function UploadComponent() {
             setHover1(false);
           }}
         >
-          Get data
+          Upload data
         </Button>
-      </RowFlex>
+      </Divv>
 
-      {singularItem.length ? JSON.stringify(singularItem) : <></>}
+      {/* {singularItem.length ? JSON.stringify(singularItem) : <></>} */}
     </>
   );
 }
