@@ -245,102 +245,11 @@ model = model.to(device)
 
 
 ###############################################################################
-## ----------------------- Train model chu chuuuuuuuuuuu ----------------------
-###############################################################################
-def train_model(model, train_dataset, val_dataset, n_epochs):
-  optimizer = torch.optim.Adam(model.parameters(), lr=1e-3)
-  criterion = nn.L1Loss(reduction='sum').to(device)
-  history = dict(train=[], val=[])
-
-  best_model_wts = copy.deepcopy(model.state_dict())
-  best_loss = 10000.0
-
-  for epoch in range(1, n_epochs + 1):
-    time_temp = datetime.now()
-    print("begin train_model epoch {i}".format(i=epoch))
-    model = model.train()
-
-    train_losses = []
-    for seq_true in train_dataset:
-      optimizer.zero_grad()
-
-      seq_true = seq_true.to(device)
-      seq_pred = model(seq_true)
-
-      loss = criterion(seq_pred, seq_true)
-
-      loss.backward()
-      optimizer.step()
-
-      train_losses.append(loss.item())
-
-    val_losses = []
-    model = model.eval()
-    with torch.no_grad():
-      for seq_true in val_dataset:
-
-        seq_true = seq_true.to(device)
-        seq_pred = model(seq_true)
-
-        loss = criterion(seq_pred, seq_true)
-        val_losses.append(loss.item())
-
-    train_loss = np.mean(train_losses)
-    val_loss = np.mean(val_losses)
-
-    history['train'].append(train_loss)
-    history['val'].append(val_loss)
-
-    if val_loss < best_loss:
-      best_loss = val_loss
-      best_model_wts = copy.deepcopy(model.state_dict())
-
-    print(f'Epoch {epoch}: train loss {train_loss} val loss {val_loss}')
-    time_per_epoch = (datetime.now() - time_temp).seconds
-    print(time_per_epoch)
-
-  model.load_state_dict(best_model_wts)
-  return model.eval(), history
-
-
-## We'll get the version of the model with the smallest validation error. Let's do some training:
-
-f1_time = datetime.now()
-number_of_epochs = 20
-
-model, history = train_model(
-  model,
-  train_dataset,
-  val_dataset,
-  # n_epochs=150
-  n_epochs=number_of_epochs
-)
-
-f2_time = datetime.now()
-difference = f2_time - f1_time
-seconds_in_day = 24 * 60 * 60
-divmod(difference.days * seconds_in_day + difference.seconds, 60)
-device
-
-ax = plt.figure().gca()
-ax.plot(history['train'])
-ax.plot(history['val'])
-plt.ylabel('Loss')
-plt.xlabel('Epoch')
-plt.legend(['train', 'test'])
-plt.title('Loss over training epochs')
-plt.show();
-
-## Let's store the model for later use:
-MODEL_PATH = 'model.pth'
-torch.save(model, MODEL_PATH)
-
-print("It took {time} for {number} epochs".format(time=difference, number=number_of_epochs))
-
-
-###############################################################################
 ## ------------------------ Test model chu chuuuuuuuuuuu ----------------------
 ###############################################################################
+
+# import model
+model = torch.load('apes_solution_ekg_1_model.pth', map_location=lambda storage, loc: storage.cuda(1))
 
 def predict(model, dataset):
   predictions, losses = [], []

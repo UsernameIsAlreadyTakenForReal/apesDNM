@@ -19,19 +19,11 @@ import torch.nn.functional as F
 import torch;
 torch.__version__
 
-
-## This one is for anomaly_detection following the tutorial:
-## https://curiousily.com/posts/time-series-anomaly-detection-using-lstm-autoencoder-with-pytorch-in-python/
-## For each instruction in the tutorial, I included the comment above it, or something similar, so one can
-## ctrl+f anad find it easily on the website, since the website uses some shit we do not posses
-
 RANDOM_SEED = 42
 np.random.seed(RANDOM_SEED)
 torch.manual_seed(RANDOM_SEED)
 
 device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
-# device = torch.device("cpu")
-# device = "cpu"
 
 ###############################################################################
 ## --------------------------- Getting the datasets ---------------------------
@@ -332,90 +324,7 @@ plt.title('Loss over training epochs')
 plt.show();
 
 ## Let's store the model for later use:
-MODEL_PATH = 'model.pth'
+MODEL_PATH = 'apes_solution_ekg_1_model.pth'
 torch.save(model, MODEL_PATH)
 
 print("It took {time} for {number} epochs".format(time=difference, number=number_of_epochs))
-
-
-###############################################################################
-## ------------------------ Test model chu chuuuuuuuuuuu ----------------------
-###############################################################################
-
-def predict(model, dataset):
-  predictions, losses = [], []
-  criterion = nn.L1Loss(reduction='sum').to(device)
-  with torch.no_grad():
-    model = model.eval()
-    for seq_true in dataset:
-      seq_true = seq_true.to(device)
-      seq_pred = model(seq_true)
-      loss = criterion(seq_pred, seq_true)
-      predictions.append(seq_pred.cpu().numpy().flatten())
-      losses.append(loss.item())
-  return predictions, losses
-
-_, losses = predict(model, train_dataset)
-sns.displot(losses, bins=50, kde=True)
-
-# Using the threshold, we can turn the problem into a simple binary classification task:
-# If the reconstruction loss for an example is below the threshold, we’ll classify it
-#   as a normal heartbeat
-# Alternatively, if the loss is higher than the threshold, we’ll classify it as an anomaly
-THRESHOLD = 26
-
-# normal heartbeats
-predictions, pred_losses = predict(model, test_normal_dataset)
-sns.displot(pred_losses, bins=50, kde=True);
-correct = sum(l <= THRESHOLD for l in pred_losses)
-print(f'Correct normal predictions: {correct}/{len(test_normal_dataset)}')
-
-
-# anomalies
-anomaly_dataset = test_anomaly_dataset[:len(test_normal_dataset)]
-predictions, pred_losses = predict(model, anomaly_dataset)
-sns.displot(pred_losses, bins=50, kde=True);
-correct = sum(l > THRESHOLD for l in pred_losses)
-print(f'Correct anomaly predictions: {correct}/{len(anomaly_dataset)}')
-
-plt.figure(1)
-plt.plot(test_normal_dataset[0])
-plt.plot(predictions[0])
-plt.legend(['beat', 'prediction'])
-plt.title('Beat and prediction')
-plt.show()
-
-###############################################################################
-# CONFUSION MATRIX
-###############################################################################
-
-import matplotlib.pyplot as plt
-import numpy
-from sklearn import metrics
-
-actual = numpy.random.binomial(1,.9,size = 150)
-predicted = numpy.random.binomial(1,.9,size = 150)
-
-confusion_matrix = metrics.confusion_matrix(actual, predicted)
-
-cm_display = metrics.ConfusionMatrixDisplay(confusion_matrix = confusion_matrix, display_labels = ["Anomaly", "Normal"])
-
-cm_display.plot()
-plt.show()
-
-
-
-from mlxtend.plotting import plot_confusion_matrix
-import matplotlib.pyplot as plt
-import numpy as np
-
-class_names = ['Anomaly', 'Normal']
-
-binary1 = np.array([[123, 22],
-                    [0, 145]])
-
-fig, ax = plot_confusion_matrix(conf_mat=binary1,
-                                colorbar=True,
-                                show_absolute=True,
-                                class_names=class_names)
-plt.show()
