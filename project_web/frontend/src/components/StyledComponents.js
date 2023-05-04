@@ -5,6 +5,15 @@ export const Divv = styled.div`
   font-family: ${(props) => (props.font ? props.font : "Franklin Gothic")};
   font-size: ${(props) => (props.size ? props.size : "27.5px")};
   color: ${(props) => (props.color ? props.color : "black")};
+
+  margin-left: ${(props) =>
+    props.left ? props.left : props.margin ? props.margin : "25px"};
+  margin-right: ${(props) =>
+    props.right ? props.right : props.margin ? props.margin : "25px"};
+  margin-top: ${(props) =>
+    props.top ? props.top : props.margin ? props.margin : "25px"};
+  margin-bottom: ${(props) =>
+    props.bottom ? props.bottom : props.margin ? props.margin : "25px"};
 `;
 
 export const ButtonDivv = styled.div`

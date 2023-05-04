@@ -11,7 +11,7 @@ def getDatasets():
         { "id": 1, "method": "EKG" },
         { "id": 2, "method": "RAL" },
         { "id": 3, "method": "IMG" },
-        { "id": 4, "method": "I don't know..." },
+        { "id": 4, "method": "I don't know my data type..." },
     ]
     datasets = jsonify(datasets)
     return datasets

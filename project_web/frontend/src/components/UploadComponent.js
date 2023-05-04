@@ -3,12 +3,26 @@ import { Divv, RowFlex } from "./StyledComponents";
 import {
   Button,
   FormControl,
+  FormHelperText,
   InputLabel,
   MenuItem,
   Select,
 } from "@mui/material";
 
 import { Input } from "@mui/material";
+import styled from "styled-components";
+
+const Labell = styled.label`
+  display: inline-block;
+  // border: 1px solid #ccc;
+
+  border-radius: 15px;
+  padding: 15px 15px;
+  cursor: pointer;
+`;
+const Inputt = styled.input`
+  display: none;
+`;
 
 const BASE_URL = process.env.REACT_APP_BACKEND;
 
@@ -18,6 +32,8 @@ export default function UploadComponent() {
 
   const [hover1, setHover1] = useState(false);
   const [value, setValue] = useState("");
+
+  const [hover2, setHover2] = useState(false);
 
   async function getItems() {
     const response = await fetch(BASE_URL + "datatypes", {
@@ -45,7 +61,7 @@ export default function UploadComponent() {
     <>
       <Divv>Select one of the existing types of data.</Divv>
 
-      <RowFlex justify="left">
+      <div style={{ flexDirection: "horizontal" }}>
         <FormControl sx={{ width: "30%", margin: "20px" }} variant="outlined">
           <InputLabel id="itemSelect">Data type</InputLabel>
           <Select
@@ -68,26 +84,34 @@ export default function UploadComponent() {
               );
             })}
           </Select>
-          {/* <FormHelperText>
+          {/* {value === "" ? (
+            <FormHelperText>
               Please select a data type from the ones previously processed
-            </FormHelperText> */}
+            </FormHelperText>
+          ) : (
+            <></>
+          )} */}
         </FormControl>
-      </RowFlex>
+        <Divv top="0px">
+          <Labell
+            class="custom-file-upload"
+            style={{
+              display: "inline-block",
+              background: hover2 === false ? "white" : "grey",
+              color: hover2 === false ? "black" : "white",
+              transition: "color 0.4s linear",
+              transition: "background 0.4s linear",
+            }}
+            onMouseEnter={() => setHover2(true)}
+            onMouseLeave={() => setHover2(false)}
+          >
+            <Inputt type="file" />
+            Click here to upload the file...
+          </Labell>
+        </Divv>{" "}
+      </div>
 
-      <input
-        accept="image/*"
-        className={classes.input}
-        style={{ display: "none" }}
-        id="raised-button-file"
-        multiple
-        type="file"
-      />
-      <label htmlFor="raised-button-file">
-        <Button variant="raised" component="span" className={classes.button}>
-          Upload
-        </Button>
-      </label>
-      <Divv>
+      <Divv top="0px">
         <Button
           style={{
             background: hover1 === false ? "black" : "orange",
