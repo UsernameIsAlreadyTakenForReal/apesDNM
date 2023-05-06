@@ -1,13 +1,14 @@
 import sys
+from apes_static_definitions import Shared_Definitions
 
 n = len(sys.argv)
 print("Total number of arguments passed: ", n)
 
 print("\nName of Python script:", sys.argv[0])
 
-print("\nArguments passed:", end = " ")
+print("\nArguments passed:", end=" ")
 for i in range(1, n):
-    print(sys.argv[i], end = " ")
+    print(sys.argv[i], end=" ")
 
 Sum = 0
 # Using argparse module
@@ -16,9 +17,10 @@ for i in range(1, n):
 
 print("\n\nResult:", Sum)
 
-# if ("ekg"):
-#     print("ekg")
-# elif ("ral"):
-#     print("ral")
-# elif ("img"):
-#     print("img")
+shared_definitions = Shared_Definitions()
+
+from type_ekg.test import test
+
+t = test(shared_definitions)
+
+t.get_project_solution_model_filename()

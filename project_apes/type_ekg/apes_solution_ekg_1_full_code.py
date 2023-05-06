@@ -19,6 +19,10 @@ import torch.nn.functional as F
 import torch;
 torch.__version__
 
+import apes_static_definitions
+
+apes_static_definitions.project_solution_ekg_1_model_filename
+
 
 ## This one is for anomaly_detection following the tutorial:
 ## https://curiousily.com/posts/time-series-anomaly-detection-using-lstm-autoencoder-with-pytorch-in-python/
