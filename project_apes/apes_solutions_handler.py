@@ -17,10 +17,13 @@ for i in range(1, n):
 
 print("\n\nResult:", Sum)
 
+
+# with open("type_ekg/apes_solution_ekg_1_do.py") as f:
+#     exec(f.read())
+
+from type_ekg.iar import solution_ekg_1
+from helpers_aiders_and_conveniencers.logger import Logger
+
 shared_definitions = Shared_Definitions()
-
-from type_ekg.test import test
-
-t = test(shared_definitions)
-
-t.get_project_solution_model_filename()
+Logger = Logger()
+test_solution = solution_ekg_1(shared_definitions, Logger)
