@@ -84,7 +84,7 @@ class Decoder(nn.Module):
 
 ## Time to wrap everything into an easy to use module:
 class RecurrentAutoencoder(nn.Module):
-    def __init__(self, seq_len, n_features, embedding_dim=64):
+    def __init__(self, device, seq_len, n_features, embedding_dim=64):
         super(RecurrentAutoencoder, self).__init__()
 
         self.encoder = Encoder(seq_len, n_features, embedding_dim).to(device)
@@ -228,20 +228,20 @@ class solution_ekg_1:
         THRESHOLD = 26
 
         # normal heartbeats
-        predictions, pred_losses = self.predict(model, test_normal_dataset)
+        predictions, pred_losses = self.predict(model, self.test_normal_dataset)
         sns.displot(pred_losses, bins=50, kde=True)
         correct = sum(l <= THRESHOLD for l in pred_losses)
-        print(f"Correct normal predictions: {correct}/{len(test_normal_dataset)}")
+        print(f"Correct normal predictions: {correct}/{len(self.test_normal_dataset)}")
 
         # anomalies
-        anomaly_dataset = test_anomaly_dataset[: len(test_normal_dataset)]
-        predictions, pred_losses = predict(model, anomaly_dataset)
+        anomaly_dataset = self.test_anomaly_dataset[: len(self.test_normal_dataset)]
+        predictions, pred_losses = self.predict(model, anomaly_dataset)
         sns.displot(pred_losses, bins=50, kde=True)
         correct = sum(l > THRESHOLD for l in pred_losses)
         print(f"Correct anomaly predictions: {correct}/{len(anomaly_dataset)}")
 
         plt.figure(1)
-        plt.plot(test_normal_dataset[0])
+        plt.plot(self.test_normal_dataset[0])
         plt.plot(predictions[0])
         plt.legend(["beat", "prediction"])
         plt.title("Beat and prediction")
@@ -262,7 +262,7 @@ class solution_ekg_1:
 
     def create_model(self, seq_len, n_features):
         print("begin autoencoder model definitions")
-        model = RecurrentAutoencoder(seq_len, n_features, 128)
+        model = RecurrentAutoencoder(self.device, seq_len, n_features, 128)
         model = model.to(self.device)
 
     def create_dataset(df):
@@ -271,8 +271,10 @@ class solution_ekg_1:
         n_seq, seq_len, n_features = torch.stack(dataset).shape
         return dataset, seq_len, n_features
 
-    def split_datasets(self):
-        train_dataset, seq_len, n_features = self.create_dataset(train_df)
-        val_dataset, _, _ = self.create_dataset(val_df)
-        test_normal_dataset, _, _ = self.create_dataset(test_df)
-        test_anomaly_dataset, _, _ = self.create_dataset(anomaly_df)
+    def split_datasets(self, train_df, val_df, test_df, anomaly_df):
+        self.train_dataset, self.seq_len, self.n_features = self.create_dataset(
+            train_df
+        )
+        self.val_dataset, _, _ = self.create_dataset(val_df)
+        self.test_normal_dataset, _, _ = self.create_dataset(test_df)
+        self.test_anomaly_dataset, _, _ = self.create_dataset(anomaly_df)
