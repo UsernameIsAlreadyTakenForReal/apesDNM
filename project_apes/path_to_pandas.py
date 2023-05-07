@@ -6,6 +6,8 @@ import torch
 import zipfile
 import os
 
+
+os.system("cls" if os.name == "nt" else "clear")
 RANDOM_SEED = 42
 np.random.seed(RANDOM_SEED)
 torch.manual_seed(RANDOM_SEED)
@@ -26,11 +28,11 @@ def unarchive(path, delete_after_unarchiving):
 
 
 def filetype_processing(path):
-    suffix = pathlib.Path(path).suffix
-
-    match suffix:
+    match pathlib.Path(path).suffix:
         case ".csv":
-            return "csv"
+            df = pd.read_csv(path)
+            df = df.sample(frac=1).reset_index(drop=True)
+            return df
         case ".arff":
             return "arff"
         case ".txt":
@@ -42,8 +44,6 @@ def filetype_processing(path):
 
 
 def path_to_pandas(path):
-    print("hello from path_to_pandas()")
-
     # path must be provided
     if path == "":
         return
@@ -51,26 +51,28 @@ def path_to_pandas(path):
     # if archive is provided, unarchive and get all files from dir
     if ".zip" in path:
         path = unarchive(path, False)
-        paths = os.listdir(path)
+        # paths = os.listdir(path)
+        paths = [path + "\\" + p for p in os.listdir(path)]
+        print(paths)
     else:
         paths = path.split(";")
 
-    print(paths)
+    print("all paths are", paths)
 
     if len(paths) == 1:
-        print("One file: ", paths[0])
+        full_path0 = paths[0]
 
-        pandas1 = filetype_processing(paths[0])
-
-        print(pandas1)
+        df = filetype_processing(full_path0)
+        print(df.shape)
 
     elif len(paths) == 2:
-        print("Two files: ", paths[0], ", ", paths[1])
+        full_path0 = paths[0]
+        full_path1 = paths[1]
 
-        pandas1 = filetype_processing(paths[0])
-        pandas2 = filetype_processing(paths[1])
-
-        print(pandas1, "and", pandas2)
+        df1 = filetype_processing(full_path0)
+        df2 = filetype_processing(full_path1)
+        print(df1.shape)
+        print(df2.shape)
 
     else:
         print("You have provided more than two files.")
