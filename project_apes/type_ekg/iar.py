@@ -102,13 +102,17 @@ class solution_ekg_1:
         self.Logger = Logger
         self.device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 
-        Logger.info("Creating object of type solution_ekg_1")
+        Logger.info(self, "Creating object of type solution_ekg_1")
         self.project_solution_model_filename = (
             shared_definitions.project_solution_ekg_1_model_filename
         )
         self.project_solution_training_script = (
             shared_definitions.project_solution_ekg_1_training_script
         )
+
+    def set_dataset(self, train_dataset, val_dataset):
+        self.train_dataset = train_dataset
+        self.val_dataset = val_dataset
 
     def train_model_helper(self, model, train_dataset, val_dataset, n_epochs):
         optimizer = torch.optim.Adam(model.parameters(), lr=1e-3)
@@ -200,13 +204,13 @@ class solution_ekg_1:
             )
         )
 
-    def predict(model, dataset):
+    def predict(self, model, dataset):
         predictions, losses = [], []
         criterion = nn.L1Loss(reduction="sum").to(self.device)
         with torch.no_grad():
             model = model.eval()
             for seq_true in dataset:
-                seq_true = seq_true.to(device)
+                seq_true = seq_true.to(self.device)
                 seq_pred = model(seq_true)
                 loss = criterion(seq_pred, seq_true)
                 predictions.append(seq_pred.cpu().numpy().flatten())
@@ -224,7 +228,7 @@ class solution_ekg_1:
         THRESHOLD = 26
 
         # normal heartbeats
-        predictions, pred_losses = predict(model, test_normal_dataset)
+        predictions, pred_losses = self.predict(model, test_normal_dataset)
         sns.displot(pred_losses, bins=50, kde=True)
         correct = sum(l <= THRESHOLD for l in pred_losses)
         print(f"Correct normal predictions: {correct}/{len(test_normal_dataset)}")
@@ -260,3 +264,15 @@ class solution_ekg_1:
         print("begin autoencoder model definitions")
         model = RecurrentAutoencoder(seq_len, n_features, 128)
         model = model.to(self.device)
+
+    def create_dataset(df):
+        sequences = df.astype(np.float32).to_numpy().tolist()
+        dataset = [torch.tensor(s).unsqueeze(1).float() for s in sequences]
+        n_seq, seq_len, n_features = torch.stack(dataset).shape
+        return dataset, seq_len, n_features
+
+    def split_datasets(self):
+        train_dataset, seq_len, n_features = self.create_dataset(train_df)
+        val_dataset, _, _ = self.create_dataset(val_df)
+        test_normal_dataset, _, _ = self.create_dataset(test_df)
+        test_anomaly_dataset, _, _ = self.create_dataset(anomaly_df)

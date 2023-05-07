@@ -27,3 +27,5 @@ from helpers_aiders_and_conveniencers.logger import Logger
 shared_definitions = Shared_Definitions()
 Logger = Logger()
 test_solution = solution_ekg_1(shared_definitions, Logger)
+
+dataset = 0

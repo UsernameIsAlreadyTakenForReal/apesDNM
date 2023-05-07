@@ -5,5 +5,5 @@ class Logger:
     def __init__(self):
         pass
 
-    def info(self, text_to_log):
-        print(str(datetime.now()) + " -- " + text_to_log)
+    def info(self, sender, text_to_log):
+        print(str(datetime.now()) + " -- " + str(sender) + " -- " + text_to_log)
