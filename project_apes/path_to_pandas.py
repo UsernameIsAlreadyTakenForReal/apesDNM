@@ -5,7 +5,7 @@ import pandas as pd
 import torch
 import zipfile
 import os
-
+from scipy.io.arff import loadarff
 
 os.system("cls" if os.name == "nt" else "clear")
 RANDOM_SEED = 42
@@ -14,6 +14,11 @@ torch.manual_seed(RANDOM_SEED)
 
 example_path01 = "C:\\Users\\danieldum\\Desktop\\ekg datasets\\mitbih_one.zip"
 example_path02 = "C:\\Users\\danieldum\\Desktop\\ekg datasets\\mitbih_two.zip"
+
+example_path01 = (
+    r"C:\Users\danieldum\Desktop\ekg datasets\Dataset - ECG5000\ECG5000_TEST.arff"
+)
+print(example_path01)
 
 
 def unarchive(path, delete_after_unarchiving):
@@ -27,14 +32,36 @@ def unarchive(path, delete_after_unarchiving):
     return new_path
 
 
-def filetype_processing(path):
+def filetype_processing(path, train_and_test):
     match pathlib.Path(path).suffix:
         case ".csv":
             df = pd.read_csv(path)
             df = df.sample(frac=1).reset_index(drop=True)
             return df
         case ".arff":
-            return "arff"
+            raw_data = loadarff(path)
+            df = pd.DataFrame(raw_data[0])
+
+            x, y = df.shape
+
+            data = arff.load(path)
+
+            train_list = []
+            train_class_list = []
+            train_number_of_entries = 0
+
+            for row in data:
+                train_number_of_entries = train_number_of_entries + 1
+                temp_row = []
+                for i in range(0, y):
+                    temp_row.append(row[i])
+                train_class_list.append(int(row.target))
+                train_list.append(temp_row)
+
+            train_data = np.zeros((train_number_of_entries, y))
+            train_labels = np.array(train_class_list)
+
+            return df
         case ".txt":
             return "txt"
         case ".npz":
@@ -51,8 +78,7 @@ def path_to_pandas(path):
     # if archive is provided, unarchive and get all files from dir
     if ".zip" in path:
         path = unarchive(path, False)
-        # paths = os.listdir(path)
-        paths = [path + "\\" + p for p in os.listdir(path)]
+        paths = [path + os.sep + p for p in os.listdir(path)]
         print(paths)
     else:
         paths = path.split(";")
@@ -62,15 +88,12 @@ def path_to_pandas(path):
     if len(paths) == 1:
         full_path0 = paths[0]
 
-        df = filetype_processing(full_path0)
+        df = filetype_processing(full_path0, True)
         print(df.shape)
 
     elif len(paths) == 2:
-        full_path0 = paths[0]
-        full_path1 = paths[1]
-
-        df1 = filetype_processing(full_path0)
-        df2 = filetype_processing(full_path1)
+        df1 = filetype_processing(paths[0], False)
+        df2 = filetype_processing(paths[1], False)
         print(df1.shape)
         print(df2.shape)
 
@@ -79,6 +102,3 @@ def path_to_pandas(path):
 
 
 path_to_pandas(example_path01)
-print(" ----------------------------------- ")
-path_to_pandas(example_path02)
-print("end")
