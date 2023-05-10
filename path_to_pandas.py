@@ -1,4 +1,5 @@
 import arff
+import math
 import pathlib
 import numpy as np
 import pandas as pd
@@ -32,12 +33,20 @@ def unarchive(path, delete_after_unarchiving):
     return new_path
 
 
-def filetype_processing(path, train_and_test):
+def filetype_processing(path, separate_train_and_test):
     match pathlib.Path(path).suffix:
         case ".csv":
             df = pd.read_csv(path)
-            df = df.sample(frac=1).reset_index(drop=True)
-            return df
+            df = df.sample(frac=1).reset_index(drop=True)  ## shuffles the rows
+
+            if separate_train_and_test == False:
+                return df, None
+            else:
+                x, y = df.shape()
+                df_train = df.head(math.floor(0.2 * x))
+                df_test = df.tail(x - math.floor(0.2 * x))
+                return df_train, df_test
+
         case ".arff":
             raw_data = loadarff(path)
             df = pd.DataFrame(raw_data[0])
