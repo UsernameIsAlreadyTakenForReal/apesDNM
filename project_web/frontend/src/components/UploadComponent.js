@@ -15,8 +15,12 @@ const Label = styled.label`
   display: inline-block;
   // border: 1px solid #ccc;
 
-  border-radius: 5px;
-  padding: 15px 15px;
+  border-radius: 25px;
+  padding: 12.5px 12.5px;
+
+  padding-left: 40px;
+  padding-right: 40px;
+
   cursor: pointer;
 `;
 
@@ -46,7 +50,7 @@ export default function UploadComponent() {
     console.log(event.target.files[0]);
   };
 
-  const onClickSubmit = async () => {
+  const onFileSubmit = async () => {
     const formData = new FormData();
     formData.append("file", selectedFile);
 
@@ -69,11 +73,13 @@ export default function UploadComponent() {
       <div
         style={{
           border: "1px solid #ccc",
-          width: "40%",
+          width: "50%",
           textAlign: "center",
         }}
       >
-        <Divv bottom="0px">Select one of the existing types of data...</Divv>
+        <Divv bottom="0px" style={{ padding: "12.5px 12.5px" }}>
+          Select one of the existing datasets...
+        </Divv>
 
         <form>
           <div>
@@ -117,13 +123,11 @@ export default function UploadComponent() {
               color="primary"
               size="large"
               onClick={() => {
-                if (selectedFile === null) {
-                  console.log("You need to select a file first...");
+                if (value === "") {
+                  console.log("You need to select a method first...");
                   return;
                 }
-                console.log("sending over file", selectedFile.name);
-
-                onClickSubmit();
+                console.log("sending over method", value);
               }}
               onMouseEnter={() => {
                 setHover1(true);
@@ -145,7 +149,7 @@ export default function UploadComponent() {
           <Label
             style={{
               display: "inline-block",
-              background: hover2 === false ? "white" : "orange",
+              background: hover2 === false ? "white" : "#F4BB44",
               color: hover2 === false ? "black" : "black",
               transition: "color 0.4s linear",
               transition: "background 0.4s linear",
@@ -160,8 +164,22 @@ export default function UploadComponent() {
               type="file"
               onChange={(event) => onFileChange(event)}
             />
-            or click here to upload a new file... {}
+            ...or click here to upload a new file.
           </Label>
+        </Divv>
+
+        <Divv top="0px" size="22.5px">
+          You have uploaded: {selectedFile ? selectedFile.name : ""}
+        </Divv>
+
+        <Divv size="22.5px">
+          in case of one file - what would you like the percentage of train/test
+          data to be?
+        </Divv>
+        <Divv size="22.5px">what is the label column called?</Divv>
+        <Divv size="22.5px">what is non-anomaly value of the label?</Divv>
+        <Divv size="22.5px">
+          would it be fine to save this file to our database?
         </Divv>
 
         <Divv top="0px">
@@ -181,7 +199,7 @@ export default function UploadComponent() {
               }
               console.log("sending over file", selectedFile.name);
 
-              onClickSubmit();
+              onFileSubmit();
             }}
             onMouseEnter={() => {
               setHover3(true);
