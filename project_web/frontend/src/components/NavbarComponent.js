@@ -85,7 +85,7 @@ export default function NavbarComponent() {
             </Link>
           </Divv>
 
-          <Divv>
+          {/* <Divv>
             <Link
               style={{
                 textDecoration: "none",
@@ -97,7 +97,7 @@ export default function NavbarComponent() {
             >
               Clear console
             </Link>
-          </Divv>
+          </Divv> */}
         </RowFlex>
       </Nav>
     </>
