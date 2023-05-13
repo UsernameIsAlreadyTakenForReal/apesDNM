@@ -15,7 +15,7 @@ const Label = styled.label`
   display: inline-block;
   // border: 1px solid #ccc;
 
-  border-radius: 15px;
+  border-radius: 5px;
   padding: 15px 15px;
   cursor: pointer;
 `;
@@ -29,6 +29,7 @@ export default function UploadComponent() {
   const [value, setValue] = useState("");
 
   const [hover2, setHover2] = useState(false);
+  const [hover3, setHover3] = useState(false);
 
   const [selectedFile, setSelectedFile] = useState(null);
 
@@ -64,41 +65,110 @@ export default function UploadComponent() {
   }, []);
 
   return (
-    <>
-      <Divv bottom="0px">Select one of the existing types of data...</Divv>
+    <div style={{ display: "flex" }}>
+      <div
+        style={{
+          border: "1px solid #ccc",
+          width: "40%",
+          textAlign: "center",
+        }}
+      >
+        <Divv bottom="0px">Select one of the existing types of data...</Divv>
 
-      <form>
-        <div style={{ flexDirection: "horizontal" }}>
-          <FormControl sx={{ width: "30%", margin: "20px" }} variant="outlined">
-            <InputLabel id="itemSelect">Data type</InputLabel>
-            <Select
-              labelId="itemId"
-              id="item"
-              label="itemSelect"
-              onChange={(event) => {
-                console.log("Now selected", event.target.value);
-                setValue(event.target.value);
+        <form>
+          <div>
+            <FormControl
+              sx={{ width: "50%", margin: "20px" }}
+              variant="outlined"
+            >
+              <InputLabel id="itemSelect">Data type</InputLabel>
+              <Select
+                labelId="itemId"
+                id="item"
+                label="itemSelect"
+                onChange={(event) => {
+                  console.log("Now selected", event.target.value);
+
+                  setValue(event.target.value);
+                }}
+              >
+                <MenuItem key="0" value="" disabled>
+                  Choose a method
+                </MenuItem>
+                {items.map((item) => {
+                  return (
+                    <MenuItem key={item.id} value={item.method}>
+                      {item.method}
+                    </MenuItem>
+                  );
+                })}
+              </Select>
+            </FormControl>
+          </div>
+
+          <Divv top="0px">
+            <Button
+              style={{
+                background: hover1 === false ? "black" : "orange",
+                color: hover1 === false ? "white" : "black",
+                fontWeight: "bold",
+              }}
+              variant="contained"
+              color="primary"
+              size="large"
+              onClick={() => {
+                if (selectedFile === null) {
+                  console.log("You need to select a file first...");
+                  return;
+                }
+                console.log("sending over file", selectedFile.name);
+
+                onClickSubmit();
+              }}
+              onMouseEnter={() => {
+                setHover1(true);
+              }}
+              onMouseLeave={() => {
+                setHover1(false);
               }}
             >
-              <MenuItem key="0" value="" disabled>
-                Choose a method
-              </MenuItem>
-              {items.map((item) => {
-                return (
-                  <MenuItem key={item.id} value={item.id}>
-                    {item.method}
-                  </MenuItem>
-                );
-              })}
-            </Select>
-          </FormControl>
-        </div>
+              Upload data
+            </Button>
+          </Divv>
+        </form>
+      </div>
+
+      <div
+        style={{ border: "1px solid #ccc", width: "50%", textAlign: "center" }}
+      >
+        <Divv>
+          <Label
+            style={{
+              display: "inline-block",
+              background: hover2 === false ? "white" : "orange",
+              color: hover2 === false ? "black" : "black",
+              transition: "color 0.4s linear",
+              transition: "background 0.4s linear",
+            }}
+            onMouseEnter={() => setHover2(true)}
+            onMouseLeave={() => setHover2(false)}
+          >
+            <input
+              style={{
+                display: "none",
+              }}
+              type="file"
+              onChange={(event) => onFileChange(event)}
+            />
+            or click here to upload a new file... {}
+          </Label>
+        </Divv>
 
         <Divv top="0px">
           <Button
             style={{
-              background: hover1 === false ? "black" : "orange",
-              color: hover1 === false ? "white" : "black",
+              background: hover3 === false ? "black" : "orange",
+              color: hover3 === false ? "white" : "black",
               fontWeight: "bold",
             }}
             variant="contained"
@@ -114,39 +184,16 @@ export default function UploadComponent() {
               onClickSubmit();
             }}
             onMouseEnter={() => {
-              setHover1(true);
+              setHover3(true);
             }}
             onMouseLeave={() => {
-              setHover1(false);
+              setHover3(false);
             }}
           >
-            Upload data
+            Upload file
           </Button>
         </Divv>
-      </form>
-
-      <Divv top="0px">
-        <Label
-          style={{
-            display: "inline-block",
-            background: hover2 === false ? "white" : "orange",
-            color: hover2 === false ? "black" : "black",
-            transition: "color 0.4s linear",
-            transition: "background 0.4s linear",
-          }}
-          onMouseEnter={() => setHover2(true)}
-          onMouseLeave={() => setHover2(false)}
-        >
-          <input
-            style={{
-              display: "none",
-            }}
-            type="file"
-            onChange={(event) => onFileChange(event)}
-          />
-          or click here to upload a new file...
-        </Label>
-      </Divv>
-    </>
+      </div>
+    </div>
   );
 }

@@ -2,7 +2,7 @@ import styled from "styled-components";
 import { Link } from "react-router-dom";
 import { useState } from "react";
 
-import { Divv } from "./StyledComponents";
+import { Divv, RowFlex } from "./StyledComponents";
 
 export default function NavbarComponent() {
   const [route, setRoute] = useState("");
@@ -12,13 +12,6 @@ export default function NavbarComponent() {
     height: 80px;
     display: flex;
     justify-content: space-between;
-  `;
-
-  const RowFlex = styled.div`
-    display: flex;
-    flex-direction: row;
-    justify-content: center;
-    align-items: center;
   `;
 
   return (
