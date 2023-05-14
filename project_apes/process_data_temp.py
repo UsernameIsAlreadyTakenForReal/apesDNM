@@ -70,7 +70,7 @@ train_df, val_df = train_test_split(normal_df, test_size=0.15, random_state=RAND
 val_df, test_df = train_test_split(val_df, test_size=0.33, random_state=RANDOM_SEED)
 
 
-from type_ekg.iar import solution_ekg_1
+from type_ekg.apes_solution_ekg_1_train import solution_ekg_1
 from helpers_aiders_and_conveniencers.logger import Logger
 
 Logger = Logger()
@@ -86,5 +86,7 @@ test_anomaly_dataset, _, _ = test_solution.create_dataset(anomaly_df)
 # seq_len, n_features = test_solution.create_dataset()
 test_solution.create_model(seq_len, n_features)
 
-# test_solution.train(train_dataset, val_dataset, 1)
+test_solution.train(train_dataset, val_dataset, 3)
 test_solution.save_model()
+
+test_solution.test(train_dataset, test_normal_dataset, test_anomaly_dataset)

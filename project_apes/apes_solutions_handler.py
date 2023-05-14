@@ -24,7 +24,7 @@ print("\n\nResult:", Sum)
 
 
 ##### open as classes
-from type_ekg.iar import solution_ekg_1
+from type_ekg.apes_solution_ekg_1_train import solution_ekg_1
 from helpers_aiders_and_conveniencers.logger import Logger
 
 Logger = Logger()
