@@ -1,6 +1,7 @@
 import sys
 from apes_static_definitions import Shared_Definitions
 
+##### Arguments
 n = len(sys.argv)
 print("Total number of arguments passed: ", n)
 
@@ -17,10 +18,12 @@ for i in range(1, n):
 
 print("\n\nResult:", Sum)
 
-
+##### open as if concatenated to main
 # with open("type_ekg/apes_solution_ekg_1_do.py") as f:
 #     exec(f.read())
 
+
+##### open as classes
 from type_ekg.iar import solution_ekg_1
 from helpers_aiders_and_conveniencers.logger import Logger
 

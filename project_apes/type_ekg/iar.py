@@ -102,17 +102,14 @@ class solution_ekg_1:
         self.Logger = Logger
         self.device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 
-        Logger.info(self, "Creating object of type solution_ekg_1")
+        self.Logger.info(self, "Creating object of type solution_ekg_1")
+        self.shared_definitions = shared_definitions
         self.project_solution_model_filename = (
             shared_definitions.project_solution_ekg_1_model_filename
         )
         self.project_solution_training_script = (
             shared_definitions.project_solution_ekg_1_training_script
         )
-
-    def set_dataset(self, train_dataset, val_dataset):
-        self.train_dataset = train_dataset
-        self.val_dataset = val_dataset
 
     def train_model_helper(self, model, train_dataset, val_dataset, n_epochs):
         optimizer = torch.optim.Adam(model.parameters(), lr=1e-3)
@@ -168,22 +165,24 @@ class solution_ekg_1:
         model.load_state_dict(best_model_wts)
         return model.eval(), history
 
-    def train(self, epochs):
+    def train(self, train_dataset, val_dataset, epochs):
         f1_time = datetime.now()
-        number_of_epochs = epochs
+
+        info_message = "train -- Begin training"
+        self.Logger.info(self, info_message)
 
         model, history = self.train_model_helper(
-            model,
-            self.train_dataset,
-            self.val_dataset,
-            n_epochs=number_of_epochs,
+            self.model,
+            train_dataset,
+            val_dataset,
+            n_epochs=epochs,
         )
+        self.model = model
 
         f2_time = datetime.now()
         difference = f2_time - f1_time
         seconds_in_day = 24 * 60 * 60
         divmod(difference.days * seconds_in_day + difference.seconds, 60)
-        self.device
 
         ax = plt.figure().gca()
         ax.plot(history["train"])
@@ -194,15 +193,28 @@ class solution_ekg_1:
         plt.title("Loss over training epochs")
         plt.show()
 
-        ## Let's store the model for later use:
-        MODEL_PATH = self.project_solution_model_filename
-        torch.save(model, MODEL_PATH)
-
-        print(
-            "It took {time} for {number} epochs".format(
-                time=difference, number=number_of_epochs
-            )
+        info_message = "It took {time} for {number} epochs".format(
+            time=difference, number=epochs
         )
+        self.Logger.info(self, info_message)
+
+    def save_model(self, filename="", path=""):
+        MODEL_SAVE_PATH = ""
+        if filename and path:
+            MODEL_SAVE_PATH += filename + path
+        elif filename:
+            MODEL_SAVE_PATH += filename
+        else:
+            MODEL_SAVE_PATH = (
+                self.shared_definitions.ROOT_DIR
+                + "/type_ekg"
+                + self.project_solution_model_filename
+            )
+        info_message = "Saving model at " + MODEL_SAVE_PATH
+        self.Logger.info(self, info_message)
+
+        torch.save(self.model, MODEL_SAVE_PATH)
+        pass
 
     def predict(self, model, dataset):
         predictions, losses = [], []
@@ -261,20 +273,25 @@ class solution_ekg_1:
         plt.show()
 
     def create_model(self, seq_len, n_features):
-        print("begin autoencoder model definitions")
-        model = RecurrentAutoencoder(self.device, seq_len, n_features, 128)
-        model = model.to(self.device)
+        info_message = "create_model -- Begin autoencoder model creation"
+        self.Logger.info(self, info_message)
 
-    def create_dataset(df):
+        self.model = RecurrentAutoencoder(self.device, seq_len, n_features, 128)
+        self.model = self.model.to(self.device)
+
+        info_message = "create_model -- Ended autoencoder model creation"
+        self.Logger.info(self, info_message)
+
+    def create_dataset(self, df):
         sequences = df.astype(np.float32).to_numpy().tolist()
         dataset = [torch.tensor(s).unsqueeze(1).float() for s in sequences]
         n_seq, seq_len, n_features = torch.stack(dataset).shape
         return dataset, seq_len, n_features
 
-    def split_datasets(self, train_df, val_df, test_df, anomaly_df):
-        self.train_dataset, self.seq_len, self.n_features = self.create_dataset(
-            train_df
-        )
-        self.val_dataset, _, _ = self.create_dataset(val_df)
-        self.test_normal_dataset, _, _ = self.create_dataset(test_df)
-        self.test_anomaly_dataset, _, _ = self.create_dataset(anomaly_df)
+    # def split_datasets(self, train_df, val_df, test_df, anomaly_df):
+    #     self.train_dataset, self.seq_len, self.n_features = self.create_dataset(
+    #         train_df
+    #     )
+    #     self.val_dataset, _, _ = self.create_dataset(val_df)
+    #     self.test_normal_dataset, _, _ = self.create_dataset(test_df)
+    #     self.test_anomaly_dataset, _, _ = self.create_dataset(anomaly_df)
