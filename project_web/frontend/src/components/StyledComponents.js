@@ -35,13 +35,6 @@ export const MarginDivv = styled.div`
   margin-top: 10px;
 `;
 
-export const RowFlex = styled.div`
-  display: flex;
-  flex-direction: row;
-  justify-content: ${(props) => (props.justify ? props.justify : "center")};
-  align-items: ${(props) => (props.align ? props.align : "center")};
-`;
-
 export const TextFieldDivv = styled.div`
   margin-top: 10px;
   padding: 5px;
@@ -72,4 +65,18 @@ export const TextFieldFlex = styled.div`
 
   justify-content: ${(props) => (props.justify ? props.justify : "center")};
   align-items: ${(props) => (props.align ? props.align : "center")};
+`;
+
+export const RowFlex = styled.div`
+  display: flex;
+  flex-direction: row;
+  justify-content: ${(props) => (props.justify ? props.justify : "center")};
+  align-items: ${(props) => (props.align ? props.align : "center")};
+`;
+
+export const Nav = styled.nav`
+  background: grey;
+  height: 80px;
+  display: flex;
+  justify-content: space-between;
 `;

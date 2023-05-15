@@ -9,6 +9,7 @@ import {
   MenuItem,
   Select,
   TextField,
+  Checkbox,
 } from "@mui/material";
 
 const BASE_URL = process.env.REACT_APP_BACKEND;
@@ -160,12 +161,22 @@ export default function UploadComponent() {
         </Divv>
 
         <Divv top="0px" size="22.5px">
-          You have uploaded
           {selectedFile ? (
-            ": " + selectedFile.name
+            "You have uploaded: " + selectedFile.name
           ) : (
-            <span id="upload-something-here-start">:&nbsp;&nbsp;</span>
+            <span id="upload-something-here-start">
+              You have uploaded:&nbsp;&nbsp;
+            </span>
           )}
+          <Xarrow
+            showXarrow={showXarrow}
+            start="upload-something-here-start"
+            end="upload-something-here-end"
+            startAnchor="right"
+            endAnchor="bottom"
+            curveness="2.5"
+            color="#FF5733"
+          ></Xarrow>
         </Divv>
 
         <TextFieldFlex>
@@ -176,21 +187,59 @@ export default function UploadComponent() {
               <TextField
                 error={false}
                 helperText={false ? "emptyTitleMessage" : ""}
-                id="percentageField"
+                id="percentage-field"
                 variant="outlined"
-                label="Percentage"
+                label="Percentage of Train Data"
               />
             </Divv>
           </Divv>
         </TextFieldFlex>
 
-        <Divv size="22.5px">what is the label column called?</Divv>
-        <Divv size="22.5px">what is non-anomaly value of the label?</Divv>
-        <Divv size="22.5px">
-          would it be fine to save this file to our database?
-        </Divv>
+        <TextFieldFlex style={{ marginTop: "10px" }}>
+          <Divv size="22.5px">
+            what is the label column called?
+            <Divv bottom="0px">
+              <TextField
+                error={false}
+                helperText={false ? "emptyTitleMessage" : ""}
+                id="label-column-field"
+                variant="outlined"
+                label="Label Column"
+              />
+            </Divv>
+          </Divv>
+        </TextFieldFlex>
 
-        <Divv top="0px">
+        <TextFieldFlex style={{ marginTop: "10px" }}>
+          <Divv size="22.5px">
+            what is normal (non-anomaly) value of the label?
+            <Divv bottom="0px">
+              <TextField
+                error={false}
+                helperText={false ? "emptyTitleMessage" : ""}
+                id="non-anomaly-value-field"
+                variant="outlined"
+                label="Normal Field Value"
+              />
+            </Divv>
+          </Divv>
+        </TextFieldFlex>
+
+        <TextFieldFlex style={{ marginTop: "10px" }}>
+          <Checkbox
+            onChange={() => {
+              console.log("hi");
+            }}
+            id="passCheckBox"
+            color="default"
+          />
+          <Divv size="22.5px">
+            save my data for future uses
+            <Divv bottom="0px"></Divv>
+          </Divv>
+        </TextFieldFlex>
+
+        <Divv>
           <Button
             style={{
               background: hover3 === false ? "black" : "orange",
@@ -220,16 +269,6 @@ export default function UploadComponent() {
           </Button>
         </Divv>
       </div>
-
-      <Xarrow
-        showXarrow={showXarrow}
-        start="upload-something-here-start"
-        end="upload-something-here-end"
-        startAnchor="right"
-        endAnchor="bottom"
-        curveness="2.5"
-        color="#FF5733"
-      ></Xarrow>
     </div>
   );
 }

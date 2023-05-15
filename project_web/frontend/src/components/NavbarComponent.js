@@ -1,18 +1,13 @@
-import styled from "styled-components";
 import { Link } from "react-router-dom";
-import { useState } from "react";
-
-import { Divv, RowFlex } from "./StyledComponents";
+import { Divv, RowFlex, Nav } from "./StyledComponents";
+import { useEffect } from "react";
 
 export default function NavbarComponent() {
-  const [route, setRoute] = useState("");
+  useEffect(() => {
+    console.log(window.location);
 
-  const Nav = styled.nav`
-    background: grey;
-    height: 80px;
-    display: flex;
-    justify-content: space-between;
-  `;
+    console.log(window.location.href);
+  }, []);
 
   return (
     <>
@@ -23,10 +18,7 @@ export default function NavbarComponent() {
               to="/"
               style={{
                 textDecoration: "none",
-                color: route === "" ? "white" : "black",
-              }}
-              onClick={() => {
-                setRoute("");
+                color: window.location.pathname === "/" ? "white" : "black",
               }}
             >
               APESDNM
@@ -38,10 +30,12 @@ export default function NavbarComponent() {
               to="/upload"
               style={{
                 textDecoration: "none",
-                color: route.includes("upload") ? "white" : "black",
+                color: window.location.href.includes("upload")
+                  ? "white"
+                  : "black",
               }}
               onClick={() => {
-                setRoute("upload");
+                console.log(window.location);
               }}
             >
               Upload
@@ -53,10 +47,9 @@ export default function NavbarComponent() {
               to="/about"
               style={{
                 textDecoration: "none",
-                color: route.includes("about") ? "white" : "black",
-              }}
-              onClick={() => {
-                setRoute("about");
+                color: window.location.href.includes("about")
+                  ? "white"
+                  : "black",
               }}
             >
               About
@@ -68,29 +61,14 @@ export default function NavbarComponent() {
               to="/contact"
               style={{
                 textDecoration: "none",
-                color: route.includes("contact") ? "white" : "black",
-              }}
-              onClick={() => {
-                setRoute("contact");
+                color: window.location.href.includes("contact")
+                  ? "white"
+                  : "black",
               }}
             >
               Contact
             </Link>
           </Divv>
-
-          {/* <Divv>
-            <Link
-              style={{
-                textDecoration: "none",
-                color: "black",
-              }}
-              onClick={() => {
-                console.clear();
-              }}
-            >
-              Clear console
-            </Link>
-          </Divv> */}
         </RowFlex>
       </Nav>
     </>
