@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { Divv, RowFlex, Label } from "./StyledComponents";
+import { Divv, TextFieldFlex, Label } from "./StyledComponents";
 import Xarrow from "react-xarrows";
 
 import {
@@ -24,6 +24,8 @@ export default function UploadComponent() {
 
   const [selectedFile, setSelectedFile] = useState(null);
 
+  const [showXarrow, setShowXarrow] = useState(true);
+
   async function getItems() {
     const response = await fetch(BASE_URL + "datatypes", {
       method: "get",
@@ -35,6 +37,7 @@ export default function UploadComponent() {
   const onFileChange = (event) => {
     setSelectedFile(event.target.files[0]);
     console.log(event.target.files[0]);
+    setShowXarrow(false);
   };
 
   const onFileSubmit = async () => {
@@ -159,20 +162,13 @@ export default function UploadComponent() {
         <Divv top="0px" size="22.5px">
           You have uploaded
           {selectedFile ? (
-            ":" + selectedFile.name
+            ": " + selectedFile.name
           ) : (
             <span id="upload-something-here-start">:&nbsp;&nbsp;</span>
           )}
         </Divv>
 
-        <RowFlex
-          style={{
-            marginLeft: "10px",
-            marginRight: "10px",
-            border: "1px solid #ccc",
-            borderRadius: "25px",
-          }}
-        >
+        <TextFieldFlex>
           <Divv size="22.5px">
             in case of one file - what would you like the percentage of train
             data to be?
@@ -186,7 +182,8 @@ export default function UploadComponent() {
               />
             </Divv>
           </Divv>
-        </RowFlex>
+        </TextFieldFlex>
+
         <Divv size="22.5px">what is the label column called?</Divv>
         <Divv size="22.5px">what is non-anomaly value of the label?</Divv>
         <Divv size="22.5px">
@@ -225,12 +222,13 @@ export default function UploadComponent() {
       </div>
 
       <Xarrow
+        showXarrow={showXarrow}
         start="upload-something-here-start"
         end="upload-something-here-end"
         startAnchor="right"
         endAnchor="bottom"
-        curveness="0.5"
-        color="black"
+        curveness="2.5"
+        color="#FF5733"
       ></Xarrow>
     </div>
   );

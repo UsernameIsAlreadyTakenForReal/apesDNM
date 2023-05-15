@@ -49,7 +49,7 @@ export const TextFieldDivv = styled.div`
 
 export const Label = styled.label`
   display: inline-block;
-  // border: 1px solid #ccc;
+  border: 1px solid #ccc;
 
   border-radius: 25px;
   padding: 12.5px 12.5px;
@@ -58,4 +58,18 @@ export const Label = styled.label`
   padding-right: 40px;
 
   cursor: pointer;
+`;
+
+export const TextFieldFlex = styled.div`
+  border: 1px solid #ccc;
+  border-radius: 25px;
+
+  margin-left: 10px;
+  margin-right: 10px;
+
+  display: flex;
+  flex-direction: row;
+
+  justify-content: ${(props) => (props.justify ? props.justify : "center")};
+  align-items: ${(props) => (props.align ? props.align : "center")};
 `;
