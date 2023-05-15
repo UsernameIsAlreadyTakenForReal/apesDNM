@@ -46,3 +46,16 @@ export const TextFieldDivv = styled.div`
   margin-top: 10px;
   padding: 5px;
 `;
+
+export const Label = styled.label`
+  display: inline-block;
+  // border: 1px solid #ccc;
+
+  border-radius: 25px;
+  padding: 12.5px 12.5px;
+
+  padding-left: 40px;
+  padding-right: 40px;
+
+  cursor: pointer;
+`;

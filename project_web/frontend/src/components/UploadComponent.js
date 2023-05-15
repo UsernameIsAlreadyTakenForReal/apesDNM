@@ -1,28 +1,15 @@
 import { useEffect, useState } from "react";
-import { Divv } from "./StyledComponents";
+import { Divv, RowFlex, Label } from "./StyledComponents";
+import Xarrow from "react-xarrows";
+
 import {
   Button,
   FormControl,
   InputLabel,
   MenuItem,
   Select,
+  TextField,
 } from "@mui/material";
-
-import styled from "styled-components";
-import { RowFlex } from "./StyledComponents";
-
-const Label = styled.label`
-  display: inline-block;
-  // border: 1px solid #ccc;
-
-  border-radius: 25px;
-  padding: 12.5px 12.5px;
-
-  padding-left: 40px;
-  padding-right: 40px;
-
-  cursor: pointer;
-`;
 
 const BASE_URL = process.env.REACT_APP_BACKEND;
 
@@ -136,7 +123,7 @@ export default function UploadComponent() {
                 setHover1(false);
               }}
             >
-              Upload data
+              Use this dataset
             </Button>
           </Divv>
         </form>
@@ -164,18 +151,42 @@ export default function UploadComponent() {
               type="file"
               onChange={(event) => onFileChange(event)}
             />
-            ...or click here to upload a new file.
+            ...or click here to upload a new{" "}
+            <span id="upload-something-here-end">file</span>.
           </Label>
         </Divv>
 
         <Divv top="0px" size="22.5px">
-          You have uploaded: {selectedFile ? selectedFile.name : ""}
+          You have uploaded
+          {selectedFile ? (
+            ":" + selectedFile.name
+          ) : (
+            <span id="upload-something-here-start">:&nbsp;&nbsp;</span>
+          )}
         </Divv>
 
-        <Divv size="22.5px">
-          in case of one file - what would you like the percentage of train/test
-          data to be?
-        </Divv>
+        <RowFlex
+          style={{
+            marginLeft: "10px",
+            marginRight: "10px",
+            border: "1px solid #ccc",
+            borderRadius: "25px",
+          }}
+        >
+          <Divv size="22.5px">
+            in case of one file - what would you like the percentage of train
+            data to be?
+            <Divv bottom="0px">
+              <TextField
+                error={false}
+                helperText={false ? "emptyTitleMessage" : ""}
+                id="percentageField"
+                variant="outlined"
+                label="Percentage"
+              />
+            </Divv>
+          </Divv>
+        </RowFlex>
         <Divv size="22.5px">what is the label column called?</Divv>
         <Divv size="22.5px">what is non-anomaly value of the label?</Divv>
         <Divv size="22.5px">
@@ -212,6 +223,15 @@ export default function UploadComponent() {
           </Button>
         </Divv>
       </div>
+
+      <Xarrow
+        start="upload-something-here-start"
+        end="upload-something-here-end"
+        startAnchor="right"
+        endAnchor="bottom"
+        curveness="0.5"
+        color="black"
+      ></Xarrow>
     </div>
   );
 }
