@@ -20,10 +20,6 @@ import torch
 
 torch.__version__
 
-import apes_static_definitions
-
-apes_static_definitions.project_solution_ekg_1_model_filename
-
 
 ## This one is for anomaly_detection following the tutorial:
 ## https://curiousily.com/posts/time-series-anomaly-detection-using-lstm-autoencoder-with-pytorch-in-python/
@@ -43,7 +39,7 @@ device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 ###############################################################################
 
 ## Train data (500 entries)
-file_path = "../../Dataset - ECG5000/ECG5000_TRAIN.arff"
+file_path = "../../../Dataset - ECG5000/ECG5000_TRAIN.arff"
 data = arff.load(file_path)
 
 train_list = []
@@ -70,7 +66,7 @@ all_train_data = np.c_[train_data, train_labels]
 
 
 ## Test data (4500 entries)
-file_path = "../../Dataset - ECG5000/ECG5000_TEST.arff"
+file_path = "../../../Dataset - ECG5000/ECG5000_TEST.arff"
 data = arff.load(file_path)
 
 test_list = []
