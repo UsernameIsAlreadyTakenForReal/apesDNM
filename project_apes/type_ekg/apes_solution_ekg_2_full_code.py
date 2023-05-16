@@ -25,7 +25,8 @@ from keras.layers import Input
 from keras.models import Model
 
 # from keras.layers.normalization import BatchNormalization
-from tensorflow.keras.layers import BatchNormalization
+from tensorflow import keras
+from keras.layers import BatchNormalization
 import keras
 from keras.callbacks import EarlyStopping, ModelCheckpoint
 
