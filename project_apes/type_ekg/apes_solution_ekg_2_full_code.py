@@ -6,11 +6,6 @@
 
 
 import os
-
-for dirname, _, filenames in os.walk("../../../Dataset - ECG_Heartbeat"):
-    for filename in filenames:
-        print(os.path.join(dirname, filename))
-
 import numpy as np
 import pandas as pd
 import seaborn as sns
@@ -34,6 +29,14 @@ from tensorflow.keras.layers import BatchNormalization
 import keras
 from keras.callbacks import EarlyStopping, ModelCheckpoint
 
+from datetime import datetime
+
+for dirname, _, filenames in os.walk("../../../Dataset - ECG_Heartbeat"):
+    for filename in filenames:
+        print(os.path.join(dirname, filename))
+
+
+time_dataset_manipulation_begin = datetime.now()
 train_df = pd.read_csv("../../../Dataset - ECG_Heartbeat/mitbih_train.csv", header=None)
 test_df = pd.read_csv("../../../Dataset - ECG_Heartbeat/mitbih_test.csv", header=None)
 
@@ -42,7 +45,7 @@ equilibre = train_df[187].value_counts()
 print(equilibre)
 
 
-# We can underligned a huge difference in the balanced of the classes. After some try i have decided to choose the resample technique more than the class weights for the algorithms.
+# We can underligne a huge difference in the balanced of the classes. After some try i have decided to choose the resample technique more than the class weights for the algorithms.
 
 plt.figure(figsize=(20, 10))
 my_circle = plt.Circle((0, 0), 0.7, color="white")
@@ -148,8 +151,13 @@ plt.plot(bruiter)
 
 plt.show()
 
+time_dataset_manipulation = (datetime.now() - time_dataset_manipulation_begin).seconds
+print(
+    f"Took {time_dataset_manipulation} seconds to manipulate dataset (show graphs n shit)."
+)
 
 ####
+time_dataset_split_begin = datetime.now()
 target_train = train_df[187]
 target_test = test_df[187]
 y_train = to_categorical(target_train)
@@ -162,6 +170,9 @@ for i in range(len(X_train)):
     X_train[i, :186] = add_gaussian_noise(X_train[i, :186])
 X_train = X_train.reshape(len(X_train), X_train.shape[1], 1)
 X_test = X_test.reshape(len(X_test), X_test.shape[1], 1)
+
+time_dataset_split = (datetime.now() - time_dataset_split_begin).seconds
+print(f"Took {time_dataset_split} seconds to split dataset.")
 
 
 def network(X_train, y_train, X_test, y_test):
@@ -239,11 +250,20 @@ def evaluate_model(history, X_test, y_test, model):
     cnf_matrix = confusion_matrix(y_true, prediction)
 
 
+time_model_begin = datetime.now()
 model, history = network(X_train, y_train, X_test, y_test)
+time_model = (datetime.now() - time_model_begin).seconds
+print(f"Took {time_model} seconds to create model.")
 
-
+time_model_eval_begin = datetime.now()
 evaluate_model(history, X_test, y_test, model)
+time_model_eval = (datetime.now() - time_model_eval_begin).seconds
+print(f"Took {time_model_eval} seconds to evaluate model.")
+
+time_model_predict_begin = datetime.now()
 y_pred = model.predict(X_test)
+time_model_predict = (datetime.now() - time_model_predict_begin).seconds
+print(f"Took {time_model_predict} seconds to predict with model.")
 
 
 import itertools
@@ -286,8 +306,11 @@ def plot_confusion_matrix(
 
 
 # Compute confusion matrix
+time_confusion_matrix_begin = datetime.now()
 cnf_matrix = confusion_matrix(y_test.argmax(axis=1), y_pred.argmax(axis=1))
 np.set_printoptions(precision=2)
+time_confusion_matrix = (datetime.now() - time_confusion_matrix_begin).seconds
+print(f"Took {time_confusion_matrix} seconds to compute confusion matrix.")
 
 # Plot non-normalized confusion matrix
 plt.figure(figsize=(10, 10))
