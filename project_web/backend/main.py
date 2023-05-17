@@ -17,11 +17,14 @@ def getDatasets():
 @app.route("/upload", methods=["POST"])
 def upload_file():
     file = request.files["file"]
+    label_column = request.form["labelColumn"]
     df = pd.read_csv(file)
 
     x, y = df.shape
 
-    return "shape of file is " + str(x) + " and " + str(y)
+    return (
+        "shape of file is " + str(x) + " and " + str(y) + "and label is " + label_column
+    )
 
 
 if __name__ == "__main__":

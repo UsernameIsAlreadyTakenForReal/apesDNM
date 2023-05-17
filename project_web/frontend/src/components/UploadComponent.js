@@ -39,6 +39,8 @@ export default function UploadComponent() {
   const [normalLabelError, setNormalLabelError] = useState(false);
   const [normalLabelErrorMessage, setNormalLabelErrorMessage] = useState("");
 
+  const [saveData, setSaveData] = useState(false);
+
   async function getItems() {
     const response = await fetch(BASE_URL + "datatypes", {
       method: "get",
@@ -56,41 +58,61 @@ export default function UploadComponent() {
   const onFileSubmit = async () => {
     setPercentageError(false);
     setLabelColumnError(false);
+    setNormalLabelError(false);
 
+    // file logic
     if (!selectedFile) {
       setShowXarrow(true);
       return;
     }
 
+    // percentage logic
     const percentage = document.getElementById("percentage-field").value;
-
-    console.log("value is", percentage);
 
     if (percentage.length === 0) {
       setPercentageError(true);
-      setPercentageErrorMessage("percentage cannot be empty.");
+      setPercentageErrorMessage("percentage cannot be empty");
       return;
     }
 
-    if (
-      !(percentage > 0 && percentage < 1) &&
-      !(percentage > 0 && percentage < 100)
-    ) {
+    if (percentage < 0 || percentage > 1) {
       setPercentageError(true);
-      setPercentageErrorMessage("percentage must be between 0-1 or 0-100.");
+      setPercentageErrorMessage("percentage must be between 0-1");
       return;
     }
 
-    if (percentage > 0 && percentage < 100) {
-      percentage = percentage / 100;
+    // label column logic
+    const labelColumn = document.getElementById("label-column-field").value;
+
+    if (labelColumn === "") {
+      setLabelColumnError(true);
+      setLabelColumnErrorMessage("unlabeled sets are not supported");
+      return;
     }
 
-    console.log("testign....");
-    console.log(percentage);
-    return;
+    // normal value logic
+    const normalValue = document.getElementById("normal-value-field").value;
+
+    if (normalValue === "") {
+      setNormalLabelError(true);
+      setNormalLabelErrorMessage("a normal label must be provided");
+      return;
+    }
 
     const formData = new FormData();
     formData.append("file", selectedFile);
+    formData.append("percentage", percentage);
+    formData.append("labelColumn", labelColumn);
+    formData.append("normalValue", normalValue);
+    formData.append("saveData", saveData);
+
+    console.log({
+      file: formData,
+      percentage: percentage,
+      labelColumn: labelColumn,
+      normalValue: normalValue,
+      saveData: saveData,
+    });
 
     const response = await fetch("/upload", {
       method: "POST",
@@ -98,8 +120,7 @@ export default function UploadComponent() {
     });
 
     const resp = await response.text();
-
-    // console.log(resp);
+    console.log(resp);
   };
 
   useEffect(() => {
@@ -268,9 +289,9 @@ export default function UploadComponent() {
           </Divv>
           <TextField
             style={{ margin: "25px", width: "40%" }}
-            error={false}
-            helperText={false ? "emptyTitleMessage" : ""}
-            id="non-anomaly-value-field"
+            error={normalLabelError}
+            helperText={normalLabelError ? normalLabelErrorMessage : ""}
+            id="normal-value-field"
             variant="outlined"
             label="normal field label"
           />
@@ -282,7 +303,13 @@ export default function UploadComponent() {
           </Divv>
           <FormControlLabel
             style={{ margin: "25px", width: "40%" }}
-            control={<Checkbox id="save-data-checkbox" color="default" />}
+            control={
+              <Checkbox
+                id="save-data-checkbox"
+                color="default"
+                onChange={() => setSaveData(!saveData)}
+              />
+            }
             label="save my data for future uses"
           />
         </TextFieldFlex>
