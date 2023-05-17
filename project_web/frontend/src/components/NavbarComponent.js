@@ -1,14 +1,8 @@
-import { Link } from "react-router-dom";
+import { Link, useLocation } from "react-router-dom";
 import { Divv, RowFlex, Nav } from "./StyledComponents";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 
 export default function NavbarComponent() {
-  useEffect(() => {
-    console.log(window.location);
-
-    console.log(window.location.href);
-  }, []);
-
   return (
     <>
       <Nav>
@@ -18,7 +12,7 @@ export default function NavbarComponent() {
               to="/"
               style={{
                 textDecoration: "none",
-                color: window.location.pathname === "/" ? "white" : "black",
+                color: useLocation().pathname === "/" ? "white" : "black",
               }}
             >
               APESDNM
@@ -30,12 +24,7 @@ export default function NavbarComponent() {
               to="/upload"
               style={{
                 textDecoration: "none",
-                color: window.location.href.includes("upload")
-                  ? "white"
-                  : "black",
-              }}
-              onClick={() => {
-                console.log(window.location);
+                color: useLocation().pathname === "/upload" ? "white" : "black",
               }}
             >
               Upload
@@ -47,9 +36,7 @@ export default function NavbarComponent() {
               to="/about"
               style={{
                 textDecoration: "none",
-                color: window.location.href.includes("about")
-                  ? "white"
-                  : "black",
+                color: useLocation().pathname === "/about" ? "white" : "black",
               }}
             >
               About
@@ -61,9 +48,8 @@ export default function NavbarComponent() {
               to="/contact"
               style={{
                 textDecoration: "none",
-                color: window.location.href.includes("contact")
-                  ? "white"
-                  : "black",
+                color:
+                  useLocation().pathname === "/contact" ? "white" : "black",
               }}
             >
               Contact
