@@ -55,6 +55,19 @@ export default function NavbarComponent() {
               Contact
             </Link>
           </Divv>
+
+          <Divv>
+            <Link
+              to="/testing"
+              style={{
+                textDecoration: "none",
+                color:
+                  useLocation().pathname === "/testing" ? "white" : "black",
+              }}
+            >
+              Testing
+            </Link>
+          </Divv>
         </RowFlex>
       </Nav>
     </>

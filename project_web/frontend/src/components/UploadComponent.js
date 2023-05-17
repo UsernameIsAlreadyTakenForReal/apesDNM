@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { Divv, TextFieldFlex, Label } from "./StyledComponents";
+import { Divv, TextFieldFlex, Label, RowFlex } from "./StyledComponents";
 import Xarrow from "react-xarrows";
 
 import {
@@ -10,6 +10,8 @@ import {
   Select,
   TextField,
   Checkbox,
+  FormControlLabel,
+  FormGroup,
 } from "@mui/material";
 
 const BASE_URL = process.env.REACT_APP_BACKEND;
@@ -180,63 +182,64 @@ export default function UploadComponent() {
         </Divv>
 
         <TextFieldFlex>
-          <Divv size="22.5px">
+          <Divv size="22.5px" style={{ margin: "25px", width: "60%" }}>
             in case of one file - what would you like the percentage of train
             data to be?
-            <Divv bottom="0px">
-              <TextField
-                error={false}
-                helperText={false ? "emptyTitleMessage" : ""}
-                id="percentage-field"
-                variant="outlined"
-                label="Percentage of Train Data"
-              />
-            </Divv>
           </Divv>
-        </TextFieldFlex>
-
-        <TextFieldFlex style={{ marginTop: "10px" }}>
-          <Divv size="22.5px">
-            what is the label column called?
-            <Divv bottom="0px">
-              <TextField
-                error={false}
-                helperText={false ? "emptyTitleMessage" : ""}
-                id="label-column-field"
-                variant="outlined"
-                label="Label Column"
-              />
-            </Divv>
-          </Divv>
-        </TextFieldFlex>
-
-        <TextFieldFlex style={{ marginTop: "10px" }}>
-          <Divv size="22.5px">
-            what is normal (non-anomaly) value of the label?
-            <Divv bottom="0px">
-              <TextField
-                error={false}
-                helperText={false ? "emptyTitleMessage" : ""}
-                id="non-anomaly-value-field"
-                variant="outlined"
-                label="Normal Field Value"
-              />
-            </Divv>
-          </Divv>
-        </TextFieldFlex>
-
-        <TextFieldFlex style={{ marginTop: "10px" }}>
-          <Checkbox
-            onChange={() => {
-              console.log("hi");
-            }}
-            id="passCheckBox"
-            color="default"
+          <TextField
+            style={{ margin: "25px", width: "40%" }}
+            error={false}
+            helperText={false ? "emptyTitleMessage" : ""}
+            id="percentage-field"
+            variant="outlined"
+            label="Percentage of Train Data"
           />
-          <Divv size="22.5px">
-            save my data for future uses
-            <Divv bottom="0px"></Divv>
+        </TextFieldFlex>
+
+        <TextFieldFlex style={{ marginTop: "10px" }}>
+          <Divv size="22.5px" style={{ margin: "25px", width: "60%" }}>
+            what is the label column called?
           </Divv>
+          <TextField
+            style={{ margin: "25px", width: "40%" }}
+            error={false}
+            helperText={false ? "emptyTitleMessage" : ""}
+            id="label-column-field"
+            variant="outlined"
+            label="Label Column"
+          />
+        </TextFieldFlex>
+
+        <TextFieldFlex style={{ marginTop: "10px" }}>
+          <Divv size="22.5px" style={{ margin: "25px", width: "60%" }}>
+            what is normal (non-anomaly) value of the label?
+          </Divv>
+          <TextField
+            style={{ margin: "25px", width: "40%" }}
+            error={false}
+            helperText={false ? "emptyTitleMessage" : ""}
+            id="non-anomaly-value-field"
+            variant="outlined"
+            label="Normal Field Value"
+          />
+        </TextFieldFlex>
+
+        <TextFieldFlex style={{ marginTop: "10px" }}>
+          <Divv size="22.5px" style={{ margin: "25px", width: "60%" }}>
+            {/* save my data for future uses */}
+          </Divv>
+          <FormGroup>
+            <FormControlLabel
+              control={
+                <Checkbox
+                  style={{ margin: "25px", width: "40%" }}
+                  id="save-data-checkbox"
+                  color="default"
+                />
+              }
+              label="save my data"
+            />
+          </FormGroup>
         </TextFieldFlex>
 
         <Divv>
