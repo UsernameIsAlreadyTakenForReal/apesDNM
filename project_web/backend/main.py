@@ -23,7 +23,12 @@ def upload_file():
     x, y = df.shape
 
     return (
-        "shape of file is " + str(x) + " and " + str(y) + "and label is " + label_column
+        "shape of file is "
+        + str(x)
+        + " and "
+        + str(y)
+        + " and label is "
+        + label_column
     )
 
 
