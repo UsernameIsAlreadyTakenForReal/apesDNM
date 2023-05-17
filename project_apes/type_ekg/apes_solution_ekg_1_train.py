@@ -168,7 +168,7 @@ class solution_ekg_1:
     def train(self, train_dataset, val_dataset, epochs):
         f1_time = datetime.now()
 
-        info_message = "train -- Begin training"
+        info_message = "Begining training"
         self.Logger.info(self, info_message)
 
         model, history = self.train_model_helper(
@@ -193,7 +193,7 @@ class solution_ekg_1:
         plt.title("Loss over training epochs")
         plt.show()
 
-        info_message = "It took {time} for {number} epochs".format(
+        info_message = "Training - it took {time} for {number} epochs".format(
             time=difference, number=epochs
         )
         self.Logger.info(self, info_message)
@@ -292,14 +292,6 @@ class solution_ekg_1:
         dataset = [torch.tensor(s).unsqueeze(1).float() for s in sequences]
         n_seq, seq_len, n_features = torch.stack(dataset).shape
         return dataset, seq_len, n_features
-
-    # def split_datasets(self, train_df, val_df, test_df, anomaly_df):
-    #     self.train_dataset, self.seq_len, self.n_features = self.create_dataset(
-    #         train_df
-    #     )
-    #     self.val_dataset, _, _ = self.create_dataset(val_df)
-    #     self.test_normal_dataset, _, _ = self.create_dataset(test_df)
-    #     self.test_anomaly_dataset, _, _ = self.create_dataset(anomaly_df)
 
     def load_model(self, filename="", path=""):
         if filename != "" and path != "":
