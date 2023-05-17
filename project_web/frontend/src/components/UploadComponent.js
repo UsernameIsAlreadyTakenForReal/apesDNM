@@ -27,7 +27,17 @@ export default function UploadComponent() {
 
   const [selectedFile, setSelectedFile] = useState(null);
 
-  const [showXarrow, setShowXarrow] = useState(true);
+  const [showXarrow, setShowXarrow] = useState(false);
+
+  // errors
+  const [percentageError, setPercentageError] = useState(false);
+  const [percentageErrorMessage, setPercentageErrorMessage] = useState("");
+
+  const [labelColumnError, setLabelColumnError] = useState(false);
+  const [labelColumnErrorMessage, setLabelColumnErrorMessage] = useState("");
+
+  const [normalLabelError, setNormalLabelError] = useState(false);
+  const [normalLabelErrorMessage, setNormalLabelErrorMessage] = useState("");
 
   async function getItems() {
     const response = await fetch(BASE_URL + "datatypes", {
@@ -44,6 +54,41 @@ export default function UploadComponent() {
   };
 
   const onFileSubmit = async () => {
+    setPercentageError(false);
+    setLabelColumnError(false);
+
+    if (!selectedFile) {
+      setShowXarrow(true);
+      return;
+    }
+
+    const percentage = document.getElementById("percentage-field").value;
+
+    console.log("value is", percentage);
+
+    if (percentage.length === 0) {
+      setPercentageError(true);
+      setPercentageErrorMessage("percentage cannot be empty.");
+      return;
+    }
+
+    if (
+      !(percentage > 0 && percentage < 1) &&
+      !(percentage > 0 && percentage < 100)
+    ) {
+      setPercentageError(true);
+      setPercentageErrorMessage("percentage must be between 0-1 or 0-100.");
+      return;
+    }
+
+    if (percentage > 0 && percentage < 100) {
+      percentage = percentage / 100;
+    }
+
+    console.log("testign....");
+    console.log(percentage);
+    return;
+
     const formData = new FormData();
     formData.append("file", selectedFile);
 
@@ -54,7 +99,7 @@ export default function UploadComponent() {
 
     const resp = await response.text();
 
-    console.log(resp);
+    // console.log(resp);
   };
 
   useEffect(() => {
@@ -162,24 +207,31 @@ export default function UploadComponent() {
           </Label>
         </Divv>
 
-        <Divv top="0px" size="22.5px">
-          {selectedFile ? (
-            "You have uploaded: " + selectedFile.name
-          ) : (
-            <span id="upload-something-here-start">
-              You have uploaded:&nbsp;&nbsp;
-            </span>
-          )}
-          <Xarrow
-            showXarrow={showXarrow}
-            start="upload-something-here-start"
-            end="upload-something-here-end"
-            startAnchor="right"
-            endAnchor="bottom"
-            curveness="2.5"
-            color="#FF5733"
-          ></Xarrow>
-        </Divv>
+        {selectedFile ? (
+          <Divv top="0px" size="22.5px">
+            {"You have uploaded: " + selectedFile.name}
+          </Divv>
+        ) : showXarrow ? (
+          <div style={{ transition: "color 0.4s linear" }}>
+            <Divv top="0px" size="22.5px">
+              <span id="upload-something-here-start">
+                upload a file first&nbsp;&nbsp;
+              </span>
+
+              <Xarrow
+                showXarrow={showXarrow}
+                start="upload-something-here-start"
+                end="upload-something-here-end"
+                startAnchor="right"
+                endAnchor="bottom"
+                curveness="2.5"
+                color="#FF5733"
+              ></Xarrow>
+            </Divv>
+          </div>
+        ) : (
+          <></>
+        )}
 
         <TextFieldFlex>
           <Divv size="22.5px" style={{ margin: "25px", width: "60%" }}>
@@ -188,11 +240,11 @@ export default function UploadComponent() {
           </Divv>
           <TextField
             style={{ margin: "25px", width: "40%" }}
-            error={false}
-            helperText={false ? "emptyTitleMessage" : ""}
+            error={percentageError}
+            helperText={percentageError ? percentageErrorMessage : ""}
             id="percentage-field"
             variant="outlined"
-            label="Percentage of Train Data"
+            label="percentage of train data"
           />
         </TextFieldFlex>
 
@@ -202,11 +254,11 @@ export default function UploadComponent() {
           </Divv>
           <TextField
             style={{ margin: "25px", width: "40%" }}
-            error={false}
-            helperText={false ? "emptyTitleMessage" : ""}
+            error={labelColumnError}
+            helperText={labelColumnError ? labelColumnErrorMessage : ""}
             id="label-column-field"
             variant="outlined"
-            label="Label Column"
+            label="label column"
           />
         </TextFieldFlex>
 
@@ -220,7 +272,7 @@ export default function UploadComponent() {
             helperText={false ? "emptyTitleMessage" : ""}
             id="non-anomaly-value-field"
             variant="outlined"
-            label="Normal Field Value"
+            label="normal field label"
           />
         </TextFieldFlex>
 
@@ -228,18 +280,11 @@ export default function UploadComponent() {
           <Divv size="22.5px" style={{ margin: "25px", width: "60%" }}>
             {/* save my data for future uses */}
           </Divv>
-          <FormGroup>
-            <FormControlLabel
-              control={
-                <Checkbox
-                  style={{ margin: "25px", width: "40%" }}
-                  id="save-data-checkbox"
-                  color="default"
-                />
-              }
-              label="save my data"
-            />
-          </FormGroup>
+          <FormControlLabel
+            style={{ margin: "25px", width: "40%" }}
+            control={<Checkbox id="save-data-checkbox" color="default" />}
+            label="save my data for future uses"
+          />
         </TextFieldFlex>
 
         <Divv>
@@ -252,15 +297,7 @@ export default function UploadComponent() {
             variant="contained"
             color="primary"
             size="large"
-            onClick={() => {
-              if (selectedFile === null) {
-                console.log("You need to select a file first...");
-                return;
-              }
-              console.log("sending over file", selectedFile.name);
-
-              onFileSubmit();
-            }}
+            onClick={() => onFileSubmit()}
             onMouseEnter={() => {
               setHover3(true);
             }}
