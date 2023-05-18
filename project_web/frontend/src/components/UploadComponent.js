@@ -26,10 +26,14 @@ export default function UploadComponent() {
   const [hover3, setHover3] = useState(false);
 
   const [selectedFile, setSelectedFile] = useState(null);
+  const [selectedFile2, setSelectedFile2] = useState(null);
 
   const [showXarrow, setShowXarrow] = useState(false);
 
   // errors
+  const [fileSelError, setFileSelError] = useState(false);
+  const [fileSelErrorMessage, setFileSelErrorMessage] = useState(false);
+
   const [percentageError, setPercentageError] = useState(false);
   const [percentageErrorMessage, setPercentageErrorMessage] = useState("");
 
@@ -50,8 +54,20 @@ export default function UploadComponent() {
   }
 
   const onFileChange = (event) => {
-    setSelectedFile(event.target.files[0]);
-    console.log(event.target.files[0]);
+    setSelectedFile(null);
+    setSelectedFile2(null);
+
+    // console.log(event.target.files.length);
+    if (event.target.files.length > 2) {
+      setFileSelError(true);
+      setShowXarrow(true);
+      setFileSelErrorMessage("two files max can be selected");
+      return;
+    }
+
+    if (event.target.files[0]) setSelectedFile(event.target.files[0]);
+    if (event.target.files[1]) setSelectedFile2(event.target.files[1]);
+
     setShowXarrow(false);
   };
 
@@ -62,7 +78,9 @@ export default function UploadComponent() {
 
     // file logic
     if (!selectedFile) {
+      setFileSelError(true);
       setShowXarrow(true);
+      setFileSelErrorMessage("upload a file first");
       return;
     }
 
@@ -209,8 +227,8 @@ export default function UploadComponent() {
             style={{
               display: "inline-block",
               background: hover2 === false ? "white" : "#F4BB44",
-              color: hover2 === false ? "black" : "black",
-              transition: "color 0.4s linear",
+              // color: hover2 === false ? "black" : "black",
+              // transition: "color 0.4s linear",
               transition: "background 0.4s linear",
             }}
             onMouseEnter={() => setHover2(true)}
@@ -222,21 +240,27 @@ export default function UploadComponent() {
               }}
               type="file"
               onChange={(event) => onFileChange(event)}
+              multiple
             />
-            ...or click here to upload a new{" "}
-            <span id="upload-something-here-end">file</span>.
+            ...or click here to upload the input{" "}
+            <span id="upload-something-here-end">file(s)</span>
           </Label>
         </Divv>
 
         {selectedFile ? (
           <Divv top="0px" size="22.5px">
-            {"You have uploaded: " + selectedFile.name}
+            {selectedFile2
+              ? "You have uploaded: " +
+                selectedFile.name +
+                ", " +
+                selectedFile2.name
+              : "You have uploaded: " + selectedFile.name}
           </Divv>
-        ) : showXarrow ? (
+        ) : fileSelError ? (
           <div style={{ transition: "color 0.4s linear" }}>
             <Divv top="0px" size="22.5px">
               <span id="upload-something-here-start">
-                upload a file first&nbsp;&nbsp;
+                {fileSelErrorMessage}&nbsp;&nbsp;
               </span>
 
               <Xarrow
@@ -255,7 +279,14 @@ export default function UploadComponent() {
         )}
 
         <TextFieldFlex>
-          <Divv size="22.5px" style={{ margin: "25px", width: "60%" }}>
+          <Divv
+            size="22.5px"
+            color={selectedFile2 ? "lightgray" : "black"}
+            style={{
+              margin: "25px",
+              width: "60%",
+            }}
+          >
             in case of one file - what would you like the percentage of train
             data to be?
           </Divv>
@@ -266,6 +297,7 @@ export default function UploadComponent() {
             id="percentage-field"
             variant="outlined"
             label="percentage of train data"
+            disabled={selectedFile2 ? true : false}
           />
         </TextFieldFlex>
 
