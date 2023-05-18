@@ -1,0 +1,33 @@
+ECG_Heartbeat
+	- Classes: ['N': 0, 'S': 1, 'V': 2, 'F': 3, 'Q': 4]
+	- Number of Samples: 109446
+	- Sampling Frequency: 125Hz
+	- Data Source: Physionet's MIT-BIH Arrhythmia Dataset
+	- mitbih_test
+		- rows (21892): 
+			- 21892 entries
+		- columnes (188):	
+			- 187 values per entry
+			- 1 class per entry
+	- mitbih_train
+		- rows (87554)
+			- 87554 entries
+		- columnes (188):	
+			- 187 values per entry
+			- 1 class per entry
+	- ptbdb_abnormal
+		- rows (10506)
+			- 10506 entries
+		- columnes (188):	
+			- 187 values per entry
+			- 1 class per entry
+	- ptbdb_normal
+		- rows (4046)
+			- 4046 entries
+		- columnes (188):	
+			- 187 values per entry
+			- 1 class per entry
+
+
+ECG5000
+	 - Classes: ["Normal", "R on T", "PVC", "SP", "UB"]

@@ -38,7 +38,9 @@ for dirname, _, filenames in os.walk("../../../Dataset - ECG_Heartbeat"):
 
 
 time_dataset_manipulation_begin = datetime.now()
-train_df = pd.read_csv("../../../Dataset - ECG_Heartbeat/mitbih_train.csv", header=None)
+train_df = pd.read_csv(
+    "../../../Dataset - ECG_Heartbeat/mitbih_train.csv", header=None
+)  # header=None for it to pick up row 1 too
 test_df = pd.read_csv("../../../Dataset - ECG_Heartbeat/mitbih_test.csv", header=None)
 
 train_df[187] = train_df[187].astype(int)
