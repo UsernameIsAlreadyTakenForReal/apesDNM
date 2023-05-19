@@ -11,28 +11,30 @@ import {
   TextField,
   Checkbox,
   FormControlLabel,
-  FormGroup,
+  CircularProgress,
 } from "@mui/material";
 
 const BASE_URL = process.env.REACT_APP_BACKEND;
 
 export default function UploadComponent() {
-  const [items, setItems] = useState([]);
+  const [existingDatasets, setExistingDatasets] = useState([]);
 
-  const [hover1, setHover1] = useState(false);
-  const [value, setValue] = useState("");
+  const [existingDatasetButtonHover, setExistingDatasetButtonHover] =
+    useState(false);
+  const [comboboxMethod, setComboboxMethod] = useState("");
 
-  const [hover2, setHover2] = useState(false);
-  const [hover3, setHover3] = useState(false);
+  const [fileInputHover, setFileInputHover] = useState(false);
+  const [fileUploadButtonHover, setFileUploadButtonHover] = useState(false);
 
-  const [selectedFile, setSelectedFile] = useState(null);
+  const [selectedFile1, setSelectedFile1] = useState(null);
   const [selectedFile2, setSelectedFile2] = useState(null);
 
   const [showXarrow, setShowXarrow] = useState(false);
 
   // errors
-  const [fileSelError, setFileSelError] = useState(false);
-  const [fileSelErrorMessage, setFileSelErrorMessage] = useState(false);
+  const [fileSelectionError, setFileSelectionError] = useState(false);
+  const [fileSelectionErrorMessage, setFileSelectionErrorMessage] =
+    useState(false);
 
   const [percentageError, setPercentageError] = useState(false);
   const [percentageErrorMessage, setPercentageErrorMessage] = useState("");
@@ -45,25 +47,31 @@ export default function UploadComponent() {
 
   const [saveData, setSaveData] = useState(false);
 
-  async function getItems() {
+  async function getExistingDatasetItems() {
     const response = await fetch(BASE_URL + "datatypes", {
       method: "get",
     });
     const data = await response.json();
-    setItems(data);
+    setExistingDatasets(data);
   }
 
   async function onFileChange(event) {
-    setSelectedFile(null);
+    setFileSelectionError(false);
+    setFileSelectionErrorMessage("");
+
+    setSelectedFile1(null);
     setSelectedFile2(null);
 
     // console.log(event.target.files.length);
     if (event.target.files.length > 2) {
-      setFileSelError(true);
       setShowXarrow(true);
-      setFileSelErrorMessage("two files max can be selected");
+      setFileSelectionError(true);
+      setFileSelectionErrorMessage("two files max can be selected");
       return;
     }
+
+    if (event.target.files[0]) setSelectedFile1(event.target.files[0]);
+    if (event.target.files[1]) setSelectedFile2(event.target.files[1]);
 
     if (
       event.target.files[0].name.includes(".zip") ||
@@ -73,8 +81,8 @@ export default function UploadComponent() {
     ) {
       console.log("archive");
       if (event.target.files[1]) {
-        setFileSelError(true);
-        setFileSelErrorMessage("if sending archives, send only one");
+        setFileSelectionError(true);
+        setFileSelectionErrorMessage("if sending archives, send only one");
         setShowXarrow(true);
         return;
       }
@@ -91,10 +99,6 @@ export default function UploadComponent() {
       console.log(resp);
     }
 
-    if (event.target.files[0]) setSelectedFile(event.target.files[0]);
-
-    if (event.target.files[1]) setSelectedFile2(event.target.files[1]);
-
     setShowXarrow(false);
   }
 
@@ -104,10 +108,10 @@ export default function UploadComponent() {
     setNormalLabelError(false);
 
     // file logic
-    if (!selectedFile) {
-      setFileSelError(true);
+    if (!selectedFile1) {
       setShowXarrow(true);
-      setFileSelErrorMessage("upload a file first");
+      setFileSelectionError(true);
+      setFileSelectionErrorMessage("upload a file first");
       return;
     }
 
@@ -145,7 +149,7 @@ export default function UploadComponent() {
     }
 
     const formData = new FormData();
-    formData.append("file", selectedFile);
+    formData.append("file", selectedFile1);
     formData.append("percentage", percentage);
     formData.append("labelColumn", labelColumn);
     formData.append("normalValue", normalValue);
@@ -169,7 +173,7 @@ export default function UploadComponent() {
   };
 
   useEffect(() => {
-    getItems();
+    getExistingDatasetItems();
   }, []);
 
   return (
@@ -199,13 +203,13 @@ export default function UploadComponent() {
                 onChange={(event) => {
                   console.log("Now selected", event.target.value);
 
-                  setValue(event.target.value);
+                  setComboboxMethod(event.target.value);
                 }}
               >
                 <MenuItem key="0" value="" disabled>
                   Choose a method
                 </MenuItem>
-                {items.map((item) => {
+                {existingDatasets.map((item) => {
                   return (
                     <MenuItem key={item.id} value={item.method}>
                       {item.method}
@@ -219,25 +223,26 @@ export default function UploadComponent() {
           <Divv top="0px">
             <Button
               style={{
-                background: hover1 === false ? "black" : "orange",
-                color: hover1 === false ? "white" : "black",
+                background:
+                  existingDatasetButtonHover === false ? "black" : "orange",
+                color: existingDatasetButtonHover === false ? "white" : "black",
                 fontWeight: "bold",
               }}
               variant="contained"
               color="primary"
               size="large"
               onClick={() => {
-                if (value === "") {
+                if (comboboxMethod === "") {
                   console.log("You need to select a method first...");
                   return;
                 }
-                console.log("sending over method", value);
+                console.log("sending over method", comboboxMethod);
               }}
               onMouseEnter={() => {
-                setHover1(true);
+                setExistingDatasetButtonHover(true);
               }}
               onMouseLeave={() => {
-                setHover1(false);
+                setExistingDatasetButtonHover(false);
               }}
             >
               Use this dataset
@@ -253,13 +258,11 @@ export default function UploadComponent() {
           <Label
             style={{
               display: "inline-block",
-              background: hover2 === false ? "white" : "#F4BB44",
-              // color: hover2 === false ? "black" : "black",
-              // transition: "color 0.4s linear",
+              background: fileInputHover === false ? "white" : "#F4BB44",
               transition: "background 0.4s linear",
             }}
-            onMouseEnter={() => setHover2(true)}
-            onMouseLeave={() => setHover2(false)}
+            onMouseEnter={() => setFileInputHover(true)}
+            onMouseLeave={() => setFileInputHover(false)}
           >
             <input
               style={{
@@ -274,24 +277,24 @@ export default function UploadComponent() {
           </Label>
         </Divv>
 
-        {selectedFile ? (
+        {selectedFile1 ? (
           <Divv top="0px" size="22.5px">
             {selectedFile2
               ? "You have uploaded: " +
-                selectedFile.name +
+                selectedFile1.name +
                 ", " +
                 selectedFile2.name
-              : "You have uploaded: " + selectedFile.name}
+              : "You have uploaded: " + selectedFile1.name}
           </Divv>
-        ) : fileSelError ? (
+        ) : fileSelectionError ? (
           <div style={{ transition: "color 0.4s linear" }}>
-            <Divv top="0px" size="22.5px">
+            <Divv top="0px" size="22.5px" style={{ color: "red" }}>
               <span id="upload-something-here-start">
-                {fileSelErrorMessage}&nbsp;&nbsp;
+                {fileSelectionErrorMessage}&nbsp;&nbsp;
               </span>
 
               <Xarrow
-                showXarrow={showXarrow}
+                showXarrow={false}
                 start="upload-something-here-start"
                 end="upload-something-here-end"
                 startAnchor="right"
@@ -376,8 +379,8 @@ export default function UploadComponent() {
         <Divv>
           <Button
             style={{
-              background: hover3 === false ? "black" : "orange",
-              color: hover3 === false ? "white" : "black",
+              background: fileUploadButtonHover === false ? "black" : "orange",
+              color: fileUploadButtonHover === false ? "white" : "black",
               fontWeight: "bold",
             }}
             variant="contained"
@@ -385,10 +388,10 @@ export default function UploadComponent() {
             size="large"
             onClick={() => onFileSubmit()}
             onMouseEnter={() => {
-              setHover3(true);
+              setFileUploadButtonHover(true);
             }}
             onMouseLeave={() => {
-              setHover3(false);
+              setFileUploadButtonHover(false);
             }}
           >
             Upload file
