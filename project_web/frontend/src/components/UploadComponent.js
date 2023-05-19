@@ -18,10 +18,9 @@ const BASE_URL = process.env.REACT_APP_BACKEND;
 
 export default function UploadComponent() {
   const [existingDatasets, setExistingDatasets] = useState([]);
-
   const [existingDatasetButtonHover, setExistingDatasetButtonHover] =
     useState(false);
-  const [comboboxMethod, setComboboxMethod] = useState("");
+  const [selectedDataset, setSelectedDataset] = useState("");
 
   const [fileInputHover, setFileInputHover] = useState(false);
   const [fileUploadButtonHover, setFileUploadButtonHover] = useState(false);
@@ -31,7 +30,11 @@ export default function UploadComponent() {
 
   const [showXarrow, setShowXarrow] = useState(false);
 
-  // errors
+  const [saveDataCheckbox, setSaveDataCheckbox] = useState(false);
+
+  const [loading, setLoading] = useState(false);
+
+  // --------------------------------- errors --------------------------------
   const [fileSelectionError, setFileSelectionError] = useState(false);
   const [fileSelectionErrorMessage, setFileSelectionErrorMessage] =
     useState(false);
@@ -45,10 +48,17 @@ export default function UploadComponent() {
   const [normalLabelError, setNormalLabelError] = useState(false);
   const [normalLabelErrorMessage, setNormalLabelErrorMessage] = useState("");
 
-  const [saveData, setSaveData] = useState(false);
+  function resetAllFormErrors() {
+    setFileSelectionError(false);
+    setPercentageError(false);
+    setLabelColumnError(false);
+    setNormalLabelError(false);
+  }
+
+  // -------------------------------------------------------------------------
 
   async function getExistingDatasetItems() {
-    const response = await fetch(BASE_URL + "datatypes", {
+    const response = await fetch(BASE_URL + "datasets", {
       method: "get",
     });
     const data = await response.json();
@@ -56,17 +66,18 @@ export default function UploadComponent() {
   }
 
   async function onFileChange(event) {
-    setFileSelectionError(false);
-    setFileSelectionErrorMessage("");
-
     setSelectedFile1(null);
     setSelectedFile2(null);
 
-    // console.log(event.target.files.length);
+    resetAllFormErrors();
+
     if (event.target.files.length > 2) {
       setShowXarrow(true);
       setFileSelectionError(true);
-      setFileSelectionErrorMessage("two files max can be selected");
+      setFileSelectionErrorMessage("two files max can be selected...");
+
+      setSelectedFile1(null);
+      setSelectedFile2(null);
       return;
     }
 
@@ -79,24 +90,30 @@ export default function UploadComponent() {
       event.target.files[1].name.includes(".zip") ||
       event.target.files[1].name.includes(".rar")
     ) {
-      console.log("archive");
-      if (event.target.files[1]) {
+      if (event.target.files[0] && event.target.files[1]) {
         setFileSelectionError(true);
-        setFileSelectionErrorMessage("if sending archives, send only one");
+        setFileSelectionErrorMessage(
+          "if sending archives, send only one file..."
+        );
         setShowXarrow(true);
+
+        setSelectedFile1(null);
+        setSelectedFile2(null);
         return;
       }
 
       const formData = new FormData();
       formData.append("file", event.target.files[0]);
 
-      const response = await fetch("/unarchive", {
-        method: "POST",
-        body: formData,
-      });
+      // find out if we have one or two files in the archive
 
-      const resp = await response.text();
-      console.log(resp);
+      // const response = await fetch("/unarchive", {
+      //   method: "POST",
+      //   body: formData,
+      // });
+
+      // const resp = await response.text();
+      // console.log(resp);
     }
 
     setShowXarrow(false);
@@ -107,61 +124,69 @@ export default function UploadComponent() {
     setLabelColumnError(false);
     setNormalLabelError(false);
 
-    // file logic
+    // ----------------------------- file logic ------------------------------
     if (!selectedFile1) {
       setShowXarrow(true);
       setFileSelectionError(true);
-      setFileSelectionErrorMessage("upload a file first");
+      setFileSelectionErrorMessage("upload a file first...");
       return;
     }
 
-    // percentage logic
-    const percentage = document.getElementById("percentage-field").value;
+    // --------------------------- percentage logic --------------------------
+    const trainDataPercentage =
+      document.getElementById("percentage-field").value;
 
-    if (percentage.length === 0) {
-      setPercentageError(true);
-      setPercentageErrorMessage("percentage cannot be empty");
-      return;
+    if (!selectedFile2) {
+      if (trainDataPercentage.length === 0) {
+        setPercentageError(true);
+        setPercentageErrorMessage("percentage cannot be empty...");
+        return;
+      }
+
+      if (trainDataPercentage < 0 || trainDataPercentage > 1) {
+        setPercentageError(true);
+        setPercentageErrorMessage("percentage must be between 0-1...");
+        return;
+      }
     }
 
-    if (percentage < 0 || percentage > 1) {
-      setPercentageError(true);
-      setPercentageErrorMessage("percentage must be between 0-1");
-      return;
-    }
-
-    // label column logic
+    // ------------------------- label column logic --------------------------
     const labelColumn = document.getElementById("label-column-field").value;
 
     if (labelColumn === "") {
       setLabelColumnError(true);
-      setLabelColumnErrorMessage("unlabeled sets are not supported");
+      setLabelColumnErrorMessage("unlabeled sets are not supported...");
       return;
     }
 
-    // normal value logic
-    const normalValue = document.getElementById("normal-value-field").value;
+    // ------------------------- normal value logic --------------------------
+    const normalLabel = document.getElementById("normal-value-field").value;
 
-    if (normalValue === "") {
+    if (normalLabel === "") {
       setNormalLabelError(true);
-      setNormalLabelErrorMessage("a normal label must be provided");
+      setNormalLabelErrorMessage("a normal label value must be provided...");
       return;
     }
 
     const formData = new FormData();
-    formData.append("file", selectedFile1);
-    formData.append("percentage", percentage);
-    formData.append("labelColumn", labelColumn);
-    formData.append("normalValue", normalValue);
-    formData.append("saveData", saveData);
 
-    console.log({
-      file: formData,
-      percentage: percentage,
-      labelColumn: labelColumn,
-      normalValue: normalValue,
-      saveData: saveData,
-    });
+    formData.append("file1", selectedFile1);
+    if (selectedFile2) {
+      formData.append("file2", selectedFile2);
+    }
+
+    formData.append("percentage", trainDataPercentage);
+    formData.append("labelColumn", labelColumn);
+    formData.append("normalLabel", normalLabel);
+    formData.append("saveData", saveDataCheckbox);
+
+    // console.log({
+    //   file: formData,
+    //   percentage: trainDataPercentage,
+    //   labelColumn: labelColumn,
+    //   normalLabel: normalLabel,
+    //   saveData: saveDataCheckbox,
+    // });
 
     const response = await fetch("/upload", {
       method: "POST",
@@ -203,7 +228,7 @@ export default function UploadComponent() {
                 onChange={(event) => {
                   console.log("Now selected", event.target.value);
 
-                  setComboboxMethod(event.target.value);
+                  setSelectedDataset(event.target.value);
                 }}
               >
                 <MenuItem key="0" value="" disabled>
@@ -232,11 +257,11 @@ export default function UploadComponent() {
               color="primary"
               size="large"
               onClick={() => {
-                if (comboboxMethod === "") {
+                if (selectedDataset === "") {
                   console.log("You need to select a method first...");
                   return;
                 }
-                console.log("sending over method", comboboxMethod);
+                console.log("sending over method", selectedDataset);
               }}
               onMouseEnter={() => {
                 setExistingDatasetButtonHover(true);
@@ -277,7 +302,7 @@ export default function UploadComponent() {
           </Label>
         </Divv>
 
-        {selectedFile1 ? (
+        {selectedFile1 && !fileSelectionError ? (
           <Divv top="0px" size="22.5px">
             {selectedFile2
               ? "You have uploaded: " +
@@ -311,7 +336,7 @@ export default function UploadComponent() {
         <TextFieldFlex>
           <Divv
             size="22.5px"
-            color={selectedFile2 ? "lightgray" : "black"}
+            color={selectedFile2 && !fileSelectionError ? "lightgray" : "black"}
             style={{
               margin: "25px",
               width: "60%",
@@ -327,7 +352,7 @@ export default function UploadComponent() {
             id="percentage-field"
             variant="outlined"
             label="percentage of train data"
-            disabled={selectedFile2 ? true : false}
+            disabled={selectedFile2 && !fileSelectionError ? true : false}
           />
         </TextFieldFlex>
 
@@ -369,7 +394,7 @@ export default function UploadComponent() {
               <Checkbox
                 id="save-data-checkbox"
                 color="default"
-                onChange={() => setSaveData(!saveData)}
+                onChange={() => setSaveDataCheckbox(!saveDataCheckbox)}
               />
             }
             label="save my data for future uses"

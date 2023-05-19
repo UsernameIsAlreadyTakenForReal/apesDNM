@@ -15,7 +15,7 @@ app = Flask(__name__)
 CORS(app)
 
 
-@app.route("/datatypes", methods=["GET", "POST"])
+@app.route("/datasets", methods=["GET", "POST"])
 def getDatasets():
     return jsonify(data.datasets)
 
@@ -43,8 +43,7 @@ def unarchive():
 
 @app.route("/upload", methods=["POST"])
 def upload_file():
-    sleep(10)
-
+    # sleep(10)
     file = request.files["file"]
     label_column = request.form["labelColumn"]
     print(file.filename)
