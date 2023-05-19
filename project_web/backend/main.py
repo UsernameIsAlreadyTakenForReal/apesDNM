@@ -1,11 +1,15 @@
+from time import sleep
 from flask import Flask, request
 from flask_cors import CORS
 from flask.json import jsonify
-import pandas as pd
+from io import BytesIO
 
+import pandas as pd
 import data
-import path_to_pandas as ptp
-import pathlib
+import patoolib
+import os
+
+import tempfile
 
 app = Flask(__name__)
 CORS(app)
@@ -20,14 +24,27 @@ def getDatasets():
 def unarchive():
     file = request.files["file"]
 
-    result = ptp.unarchive(file, False)
-    print(result)
+    temp_dir = tempfile.gettempdir()  # Get the system's temporary directory
+    temp_file_path = os.path.join(temp_dir, file.filename)
+    file.save(temp_file_path)
+    # return temp_file_path
 
-    return "ok"
+    # temp_file = tempfile.NamedTemporaryFile(delete=False)
+    # temp_file.write(file.read())
+    # temp_file.close()
+
+    # temp_folder = tempfile.mkdtemp()
+
+    patoolib.extract_archive(temp_file_path, outdir="extracted")
+    extracted_items = os.listdir("extracted")
+
+    return len(extracted_items)
 
 
 @app.route("/upload", methods=["POST"])
 def upload_file():
+    sleep(10)
+
     file = request.files["file"]
     label_column = request.form["labelColumn"]
     print(file.filename)

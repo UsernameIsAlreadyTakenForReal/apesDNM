@@ -53,7 +53,7 @@ export default function UploadComponent() {
     setItems(data);
   }
 
-  const onFileChange = (event) => {
+  async function onFileChange(event) {
     setSelectedFile(null);
     setSelectedFile2(null);
 
@@ -65,11 +65,38 @@ export default function UploadComponent() {
       return;
     }
 
+    if (
+      event.target.files[0].name.includes(".zip") ||
+      event.target.files[0].name.includes(".rar") ||
+      event.target.files[1].name.includes(".zip") ||
+      event.target.files[1].name.includes(".rar")
+    ) {
+      console.log("archive");
+      if (event.target.files[1]) {
+        setFileSelError(true);
+        setFileSelErrorMessage("if sending archives, send only one");
+        setShowXarrow(true);
+        return;
+      }
+
+      const formData = new FormData();
+      formData.append("file", event.target.files[0]);
+
+      const response = await fetch("/unarchive", {
+        method: "POST",
+        body: formData,
+      });
+
+      const resp = await response.text();
+      console.log(resp);
+    }
+
     if (event.target.files[0]) setSelectedFile(event.target.files[0]);
+
     if (event.target.files[1]) setSelectedFile2(event.target.files[1]);
 
     setShowXarrow(false);
-  };
+  }
 
   const onFileSubmit = async () => {
     setPercentageError(false);
