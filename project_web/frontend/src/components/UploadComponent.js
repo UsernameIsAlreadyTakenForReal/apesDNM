@@ -51,23 +51,19 @@ export default function UploadComponent() {
   const [normalLabelError, setNormalLabelError] = useState(false);
   const [normalLabelErrorMessage, setNormalLabelErrorMessage] = useState("");
 
-  function resetAllFormErrors() {
+  function resetAllFormErrorsAndData() {
     setFileSelectionError(false);
     setPercentageError(false);
     setLabelColumnError(false);
     setNormalLabelError(false);
+
+    document.getElementById("percentage-field").value = "";
+    document.getElementById("label-column-field").value = "";
+    document.getElementById("normal-value-field").value = "";
+    setSaveDataCheckbox(false);
   }
 
   // -------------------------------------------------------------------------
-
-  const buttonSx = {
-    ...(success && {
-      bgcolor: green[500],
-      "&:hover": {
-        bgcolor: green[700],
-      },
-    }),
-  };
 
   async function getExistingDatasetItems() {
     const response = await fetch(BASE_URL + "datasets", {
@@ -79,7 +75,7 @@ export default function UploadComponent() {
 
   async function onFileChange(event) {
     console.log(event.target.files);
-    resetAllFormErrors();
+    resetAllFormErrorsAndData();
     setSelectedFiles(event.target.files);
 
     if (event.target.files.length > 2) {
@@ -410,6 +406,7 @@ export default function UploadComponent() {
             style={{ margin: "25px", width: "40%" }}
             control={
               <Checkbox
+                checked={saveDataCheckbox}
                 id="save-data-checkbox"
                 color="default"
                 onChange={() => setSaveDataCheckbox(!saveDataCheckbox)}
@@ -420,30 +417,27 @@ export default function UploadComponent() {
         </TextFieldFlex>
 
         <Divv>
-          <Box sx={{ m: 1, position: "relative" }}>
-            <Button
-              style={{
-                background:
-                  fileUploadButtonHover === false ? "black" : "orange",
-                color: fileUploadButtonHover === false ? "white" : "black",
-                fontWeight: "bold",
-              }}
-              // sx={buttonSx}
-              disabled={loading}
-              variant="contained"
-              color="primary"
-              size="large"
-              onClick={() => onFileSubmit()}
-              onMouseEnter={() => {
-                setFileUploadButtonHover(true);
-              }}
-              onMouseLeave={() => {
-                setFileUploadButtonHover(false);
-              }}
-            >
-              Upload file
-            </Button>
-            {loading && (
+          <Button
+            style={{
+              background: fileUploadButtonHover === false ? "black" : "orange",
+              color: fileUploadButtonHover === false ? "white" : "black",
+              fontWeight: "bold",
+            }}
+            disabled={loading === true}
+            variant="contained"
+            color="primary"
+            size="large"
+            onClick={() => onFileSubmit()}
+            onMouseEnter={() => {
+              setFileUploadButtonHover(true);
+            }}
+            onMouseLeave={() => {
+              setFileUploadButtonHover(false);
+            }}
+          >
+            Upload file
+          </Button>
+          {/* {loading && (
               <CircularProgress
                 size={24}
                 sx={{
@@ -455,8 +449,7 @@ export default function UploadComponent() {
                   marginLeft: "-12px",
                 }}
               />
-            )}
-          </Box>
+            )} */}
         </Divv>
       </div>
     </div>

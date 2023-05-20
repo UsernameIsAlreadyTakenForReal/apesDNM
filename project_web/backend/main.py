@@ -53,7 +53,7 @@ def upload_file():
         string0 = "shape of " + file0.filename + " is (" + str(x) + ", " + str(y) + ")"
 
     if file1 is None:
-        return string0
+        return string0, 201
     else:
         if ".csv" in file1.filename:
             df = pd.read_csv(file1)
@@ -62,7 +62,7 @@ def upload_file():
                 "shape of " + file1.filename + " is (" + str(x) + ", " + str(y) + ")"
             )
 
-        return string0 + ", " + string1
+        return string0 + ", " + string1, 201
 
 
 if __name__ == "__main__":
