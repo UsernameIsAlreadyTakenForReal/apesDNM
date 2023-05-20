@@ -86,18 +86,18 @@ export const Nav = styled.nav`
 
 export const WrapperDiv = styled.div`
   position: fixed;
-  top: 40%;
-  left: 40%;
+  top: 42%;
+  left: 42%;
 
   border-radius: 7px;
   border-style: solid;
   border-width: thin;
 
   background: white;
-  padding: 20px;
+  // padding: 20px;
 
-  width: 7.5%;
-  height: 7.5vh;
+  width: 19%;
+  height: 19vh;
 
   display: flex;
   justify-content: center;

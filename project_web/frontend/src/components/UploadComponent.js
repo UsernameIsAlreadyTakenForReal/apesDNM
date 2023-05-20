@@ -435,32 +435,16 @@ export default function UploadComponent() {
           >
             Upload file
           </Button>
-          {/* {loading && (
-              <CircularProgress
-                size={24}
-                sx={{
-                  color: green[500],
-                  position: "absolute",
-                  top: "50%",
-                  left: "50%",
-                  marginTop: "-12px",
-                  marginLeft: "-12px",
-                }}
-              />
-            )} */}
         </Divv>
       </div>
 
-      <div
+      <WrapperDiv
         style={{
-          display: loading ? "flex" : "none",
-          justifyContent: "center",
-          alignItems: "center",
-          height: "100vh",
+          display: loading ? "" : "none",
         }}
       >
-        <CircularProgress></CircularProgress>
-      </div>
+        <CircularProgress />
+      </WrapperDiv>
     </div>
   );
 }
