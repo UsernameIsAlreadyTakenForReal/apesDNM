@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import * as React from "react";
-import { Divv, TextFieldFlex, Label } from "./StyledComponents";
+import { Divv, TextFieldFlex, Label, WrapperDiv } from "./StyledComponents";
 import { green } from "@mui/material/colors";
 import Xarrow from "react-xarrows";
 
@@ -14,7 +14,6 @@ import {
   Checkbox,
   FormControlLabel,
   CircularProgress,
-  Box,
 } from "@mui/material";
 
 const BASE_URL = process.env.REACT_APP_BACKEND;
@@ -35,7 +34,6 @@ export default function UploadComponent() {
   const [saveDataCheckbox, setSaveDataCheckbox] = useState(false);
 
   const [loading, setLoading] = useState(false);
-  const [success, setSuccess] = React.useState(false);
 
   // --------------------------------- errors --------------------------------
   const [fileSelectionError, setFileSelectionError] = useState(false);
@@ -191,22 +189,15 @@ export default function UploadComponent() {
     });
 
     setLoading(true);
-    setSuccess(false);
-    console.log("loading is true");
 
     const response = await fetch("/upload", {
       method: "POST",
       body: formData,
     });
 
-    console.log(response);
-
     const resp = await response.text();
-    console.log(resp);
 
     setLoading(false);
-    setSuccess(true);
-    console.log("loading is false");
   }
 
   useEffect(() => {
@@ -218,7 +209,7 @@ export default function UploadComponent() {
       <div
         style={{
           border: "1px solid #ccc",
-          width: "50%",
+          width: "45%",
           textAlign: "center",
         }}
       >
@@ -289,7 +280,11 @@ export default function UploadComponent() {
       </div>
 
       <div
-        style={{ border: "1px solid #ccc", width: "50%", textAlign: "center" }}
+        style={{
+          border: "1px solid #ccc",
+          width: "55%",
+          textAlign: "center",
+        }}
       >
         <Divv>
           <Label
@@ -323,8 +318,13 @@ export default function UploadComponent() {
                 selectedFiles[1].name
               : "you have uploaded: " + selectedFiles[0].name}
           </Divv>
-        ) : fileSelectionError ? (
-          <div style={{ transition: "color 0.4s linear" }}>
+        ) : (
+          <div
+            style={{
+              display: fileSelectionError ? "" : "none",
+              transition: "color 0.4s linear",
+            }}
+          >
             <Divv top="0px" size="22.5px" style={{ color: "red" }}>
               <span id="upload-something-here-start">
                 {fileSelectionErrorMessage}&nbsp;&nbsp;
@@ -341,8 +341,6 @@ export default function UploadComponent() {
               ></Xarrow>
             </Divv>
           </div>
-        ) : (
-          <></>
         )}
 
         <TextFieldFlex>
@@ -451,6 +449,17 @@ export default function UploadComponent() {
               />
             )} */}
         </Divv>
+      </div>
+
+      <div
+        style={{
+          display: loading ? "flex" : "none",
+          justifyContent: "center",
+          alignItems: "center",
+          height: "100vh",
+        }}
+      >
+        <CircularProgress></CircularProgress>
       </div>
     </div>
   );

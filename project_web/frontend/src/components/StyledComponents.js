@@ -84,6 +84,26 @@ export const Nav = styled.nav`
   justify-content: space-between;
 `;
 
+export const WrapperDiv = styled.div`
+  position: fixed;
+  top: 40%;
+  left: 40%;
+
+  border-radius: 7px;
+  border-style: solid;
+  border-width: thin;
+
+  background: white;
+  padding: 20px;
+
+  width: 7.5%;
+  height: 7.5vh;
+
+  display: flex;
+  justify-content: center;
+  align-items: center;
+`;
+
 export function LinearBuffer() {
   const [progress, setProgress] = React.useState(0);
   const [buffer, setBuffer] = React.useState(10);
