@@ -43,25 +43,27 @@ def unarchive():
 
 @app.route("/upload", methods=["POST"])
 def upload_file():
-    # sleep(10)
-    file = request.files["file"]
+    sleep(10)
+    return
+
+    file1 = request.files["file1"]
+    file2 = request.files["file2"] or ""
     label_column = request.form["labelColumn"]
-    print(file.filename)
-    if ".csv" in file.filename:
-        df = pd.read_csv(file)
+    string1 = ""
+    string2 = ""
 
+    print(file1.filename)
+    if ".csv" in file1.filename:
+        df = pd.read_csv(file1)
         x, y = df.shape
+        string1 = "shape of file1 is " + str(x) + " and " + str(y)
 
-        return (
-            "shape of file is "
-            + str(x)
-            + " and "
-            + str(y)
-            + " and label is "
-            + label_column
-        )
-    else:
-        return "file type not yet supported"
+    if ".csv" in file2.filename:
+        df = pd.read_csv(file2)
+        x, y = df.shape
+        string2 = "shape of file2 is " + str(x) + " and " + str(y)
+
+    return string1 + ", " + string2
 
 
 if __name__ == "__main__":

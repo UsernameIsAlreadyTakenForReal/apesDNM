@@ -27,6 +27,7 @@ export default function UploadComponent() {
 
   const [selectedFile1, setSelectedFile1] = useState(null);
   const [selectedFile2, setSelectedFile2] = useState(null);
+  const [selectedFiles, setSelectedFiles] = useState([]);
 
   const [showXarrow, setShowXarrow] = useState(false);
 
@@ -66,18 +67,15 @@ export default function UploadComponent() {
   }
 
   async function onFileChange(event) {
-    setSelectedFile1(null);
-    setSelectedFile2(null);
-
+    console.log(event.target.files);
     resetAllFormErrors();
+    setSelectedFiles(event.target.files);
 
     if (event.target.files.length > 2) {
       setShowXarrow(true);
       setFileSelectionError(true);
       setFileSelectionErrorMessage("two files max can be selected...");
-
-      setSelectedFile1(null);
-      setSelectedFile2(null);
+      setSelectedFiles([]);
       return;
     }
 
@@ -96,9 +94,7 @@ export default function UploadComponent() {
           "if sending archives, send only one file..."
         );
         setShowXarrow(true);
-
-        setSelectedFile1(null);
-        setSelectedFile2(null);
+        setSelectedFiles([]);
         return;
       }
 
@@ -170,9 +166,9 @@ export default function UploadComponent() {
 
     const formData = new FormData();
 
-    formData.append("file1", selectedFile1);
-    if (selectedFile2) {
-      formData.append("file2", selectedFile2);
+    formData.append("file0", selectedFiles[0]);
+    if (selectedFiles.length === 2) {
+      formData.append("file1", selectedFiles[1]);
     }
 
     formData.append("percentage", trainDataPercentage);
@@ -180,13 +176,13 @@ export default function UploadComponent() {
     formData.append("normalLabel", normalLabel);
     formData.append("saveData", saveDataCheckbox);
 
-    // console.log({
-    //   file: formData,
-    //   percentage: trainDataPercentage,
-    //   labelColumn: labelColumn,
-    //   normalLabel: normalLabel,
-    //   saveData: saveDataCheckbox,
-    // });
+    console.log("body is", {
+      file: formData,
+      percentage: trainDataPercentage,
+      labelColumn: labelColumn,
+      normalLabel: normalLabel,
+      saveData: saveDataCheckbox,
+    });
 
     const response = await fetch("/upload", {
       method: "POST",
@@ -211,7 +207,7 @@ export default function UploadComponent() {
         }}
       >
         <Divv bottom="0px" style={{ padding: "12.5px 12.5px" }}>
-          Select one of the existing datasets...
+          select one of the existing datasets...
         </Divv>
 
         <form>
@@ -302,14 +298,14 @@ export default function UploadComponent() {
           </Label>
         </Divv>
 
-        {selectedFile1 && !fileSelectionError ? (
+        {selectedFiles[0] && !fileSelectionError ? (
           <Divv top="0px" size="22.5px">
-            {selectedFile2
-              ? "You have uploaded: " +
-                selectedFile1.name +
+            {selectedFiles[1]
+              ? "you have uploaded: " +
+                selectedFiles[0].name +
                 ", " +
-                selectedFile2.name
-              : "You have uploaded: " + selectedFile1.name}
+                selectedFiles[1].name
+              : "you have uploaded: " + selectedFiles[0].name}
           </Divv>
         ) : fileSelectionError ? (
           <div style={{ transition: "color 0.4s linear" }}>
