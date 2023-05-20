@@ -36,6 +36,8 @@ def unarchive():
 
 @app.route("/upload", methods=["GET", "POST"])
 def upload_file():
+    sleep(3.5)
+
     file0 = request.files.get("file0", None)
     file1 = request.files.get("file1", None)
 

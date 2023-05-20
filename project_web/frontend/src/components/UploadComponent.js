@@ -1,5 +1,7 @@
 import { useEffect, useState } from "react";
-import { Divv, TextFieldFlex, Label, RowFlex } from "./StyledComponents";
+import * as React from "react";
+import { Divv, TextFieldFlex, Label } from "./StyledComponents";
+import { green } from "@mui/material/colors";
 import Xarrow from "react-xarrows";
 
 import {
@@ -12,6 +14,7 @@ import {
   Checkbox,
   FormControlLabel,
   CircularProgress,
+  Box,
 } from "@mui/material";
 
 const BASE_URL = process.env.REACT_APP_BACKEND;
@@ -32,6 +35,7 @@ export default function UploadComponent() {
   const [saveDataCheckbox, setSaveDataCheckbox] = useState(false);
 
   const [loading, setLoading] = useState(false);
+  const [success, setSuccess] = React.useState(false);
 
   // --------------------------------- errors --------------------------------
   const [fileSelectionError, setFileSelectionError] = useState(false);
@@ -55,6 +59,15 @@ export default function UploadComponent() {
   }
 
   // -------------------------------------------------------------------------
+
+  const buttonSx = {
+    ...(success && {
+      bgcolor: green[500],
+      "&:hover": {
+        bgcolor: green[700],
+      },
+    }),
+  };
 
   async function getExistingDatasetItems() {
     const response = await fetch(BASE_URL + "datasets", {
@@ -111,6 +124,8 @@ export default function UploadComponent() {
   }
 
   async function onFileSubmit() {
+    setFileUploadButtonHover(false);
+
     setPercentageError(false);
     setLabelColumnError(false);
     setNormalLabelError(false);
@@ -179,8 +194,9 @@ export default function UploadComponent() {
       saveData: saveDataCheckbox,
     });
 
-    // setLoading(true);
-    // console.log("loading is true");
+    setLoading(true);
+    setSuccess(false);
+    console.log("loading is true");
 
     const response = await fetch("/upload", {
       method: "POST",
@@ -192,8 +208,9 @@ export default function UploadComponent() {
     const resp = await response.text();
     console.log(resp);
 
-    // setLoading(false);
-    // console.log("loading is false");
+    setLoading(false);
+    setSuccess(true);
+    console.log("loading is false");
   }
 
   useEffect(() => {
@@ -403,25 +420,43 @@ export default function UploadComponent() {
         </TextFieldFlex>
 
         <Divv>
-          <Button
-            style={{
-              background: fileUploadButtonHover === false ? "black" : "orange",
-              color: fileUploadButtonHover === false ? "white" : "black",
-              fontWeight: "bold",
-            }}
-            variant="contained"
-            color="primary"
-            size="large"
-            onClick={() => onFileSubmit()}
-            onMouseEnter={() => {
-              setFileUploadButtonHover(true);
-            }}
-            onMouseLeave={() => {
-              setFileUploadButtonHover(false);
-            }}
-          >
-            Upload file
-          </Button>
+          <Box sx={{ m: 1, position: "relative" }}>
+            <Button
+              style={{
+                background:
+                  fileUploadButtonHover === false ? "black" : "orange",
+                color: fileUploadButtonHover === false ? "white" : "black",
+                fontWeight: "bold",
+              }}
+              // sx={buttonSx}
+              disabled={loading}
+              variant="contained"
+              color="primary"
+              size="large"
+              onClick={() => onFileSubmit()}
+              onMouseEnter={() => {
+                setFileUploadButtonHover(true);
+              }}
+              onMouseLeave={() => {
+                setFileUploadButtonHover(false);
+              }}
+            >
+              Upload file
+            </Button>
+            {loading && (
+              <CircularProgress
+                size={24}
+                sx={{
+                  color: green[500],
+                  position: "absolute",
+                  top: "50%",
+                  left: "50%",
+                  marginTop: "-12px",
+                  marginLeft: "-12px",
+                }}
+              />
+            )}
+          </Box>
         </Divv>
       </div>
     </div>
