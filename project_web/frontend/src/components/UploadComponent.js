@@ -25,8 +25,6 @@ export default function UploadComponent() {
   const [fileInputHover, setFileInputHover] = useState(false);
   const [fileUploadButtonHover, setFileUploadButtonHover] = useState(false);
 
-  const [selectedFile1, setSelectedFile1] = useState(null);
-  const [selectedFile2, setSelectedFile2] = useState(null);
   const [selectedFiles, setSelectedFiles] = useState([]);
 
   const [showXarrow, setShowXarrow] = useState(false);
@@ -79,9 +77,6 @@ export default function UploadComponent() {
       return;
     }
 
-    if (event.target.files[0]) setSelectedFile1(event.target.files[0]);
-    if (event.target.files[1]) setSelectedFile2(event.target.files[1]);
-
     if (
       event.target.files[0].name.includes(".zip") ||
       event.target.files[0].name.includes(".rar") ||
@@ -115,13 +110,13 @@ export default function UploadComponent() {
     setShowXarrow(false);
   }
 
-  const onFileSubmit = async () => {
+  async function onFileSubmit() {
     setPercentageError(false);
     setLabelColumnError(false);
     setNormalLabelError(false);
 
     // ----------------------------- file logic ------------------------------
-    if (!selectedFile1) {
+    if (!selectedFiles[0]) {
       setShowXarrow(true);
       setFileSelectionError(true);
       setFileSelectionErrorMessage("upload a file first...");
@@ -132,7 +127,7 @@ export default function UploadComponent() {
     const trainDataPercentage =
       document.getElementById("percentage-field").value;
 
-    if (!selectedFile2) {
+    if (!selectedFiles[1]) {
       if (trainDataPercentage.length === 0) {
         setPercentageError(true);
         setPercentageErrorMessage("percentage cannot be empty...");
@@ -184,14 +179,22 @@ export default function UploadComponent() {
       saveData: saveDataCheckbox,
     });
 
+    // setLoading(true);
+    // console.log("loading is true");
+
     const response = await fetch("/upload", {
       method: "POST",
       body: formData,
     });
 
+    console.log(response);
+
     const resp = await response.text();
     console.log(resp);
-  };
+
+    // setLoading(false);
+    // console.log("loading is false");
+  }
 
   useEffect(() => {
     getExistingDatasetItems();
@@ -332,7 +335,9 @@ export default function UploadComponent() {
         <TextFieldFlex>
           <Divv
             size="22.5px"
-            color={selectedFile2 && !fileSelectionError ? "lightgray" : "black"}
+            color={
+              selectedFiles[1] && !fileSelectionError ? "lightgray" : "black"
+            }
             style={{
               margin: "25px",
               width: "60%",
@@ -348,7 +353,7 @@ export default function UploadComponent() {
             id="percentage-field"
             variant="outlined"
             label="percentage of train data"
-            disabled={selectedFile2 && !fileSelectionError ? true : false}
+            disabled={selectedFiles[1] && !fileSelectionError ? true : false}
           />
         </TextFieldFlex>
 

@@ -24,16 +24,9 @@ def getDatasets():
 def unarchive():
     file = request.files["file"]
 
-    temp_dir = tempfile.gettempdir()  # Get the system's temporary directory
+    temp_dir = tempfile.gettempdir()
     temp_file_path = os.path.join(temp_dir, file.filename)
     file.save(temp_file_path)
-    # return temp_file_path
-
-    # temp_file = tempfile.NamedTemporaryFile(delete=False)
-    # temp_file.write(file.read())
-    # temp_file.close()
-
-    # temp_folder = tempfile.mkdtemp()
 
     patoolib.extract_archive(temp_file_path, outdir="extracted")
     extracted_items = os.listdir("extracted")
@@ -41,29 +34,33 @@ def unarchive():
     return len(extracted_items)
 
 
-@app.route("/upload", methods=["POST"])
+@app.route("/upload", methods=["GET", "POST"])
 def upload_file():
-    sleep(10)
-    return
+    file0 = request.files.get("file0", None)
+    file1 = request.files.get("file1", None)
 
-    file1 = request.files["file1"]
-    file2 = request.files["file2"] or ""
     label_column = request.form["labelColumn"]
+
+    string0 = ""
     string1 = ""
-    string2 = ""
 
-    print(file1.filename)
-    if ".csv" in file1.filename:
-        df = pd.read_csv(file1)
+    print(file0.filename)
+    if ".csv" in file0.filename:
+        df = pd.read_csv(file0)
         x, y = df.shape
-        string1 = "shape of file1 is " + str(x) + " and " + str(y)
+        string0 = "shape of " + file0.filename + " is (" + str(x) + ", " + str(y) + ")"
 
-    if ".csv" in file2.filename:
-        df = pd.read_csv(file2)
-        x, y = df.shape
-        string2 = "shape of file2 is " + str(x) + " and " + str(y)
+    if file1 is None:
+        return string0
+    else:
+        if ".csv" in file1.filename:
+            df = pd.read_csv(file1)
+            x, y = df.shape
+            string1 = (
+                "shape of " + file1.filename + " is (" + str(x) + ", " + str(y) + ")"
+            )
 
-    return string1 + ", " + string2
+        return string0 + ", " + string1
 
 
 if __name__ == "__main__":
