@@ -2,7 +2,6 @@ from time import sleep
 from flask import Flask, request
 from flask_cors import CORS
 from flask.json import jsonify
-from io import BytesIO
 
 import pandas as pd
 import data
