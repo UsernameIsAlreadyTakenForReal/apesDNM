@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import * as React from "react";
 import { Divv, TextFieldFlex, Label, WrapperDiv } from "./StyledComponents";
-import { green } from "@mui/material/colors";
+import { tsParticles } from "tsparticles-engine";
 import Xarrow from "react-xarrows";
 
 import {
@@ -63,6 +63,17 @@ export default function UploadComponent() {
 
   // -------------------------------------------------------------------------
 
+  function loadParticles() {
+    tsParticles.load("tsparticles", {
+      preset: "seaAnemone",
+      particles: {
+        move: {
+          speed: 2,
+        },
+      },
+    });
+  }
+
   async function getExistingDatasetItems() {
     const response = await fetch(BASE_URL + "datasets", {
       method: "get",
@@ -117,7 +128,7 @@ export default function UploadComponent() {
     setShowXarrow(false);
   }
 
-  async function onFileSubmit() {
+  async function onFileUpload() {
     setFileUploadButtonHover(false);
 
     setPercentageError(false);
@@ -140,6 +151,12 @@ export default function UploadComponent() {
       if (trainDataPercentage.length === 0) {
         setPercentageError(true);
         setPercentageErrorMessage("percentage cannot be empty...");
+        return;
+      }
+
+      if (isNaN(trainDataPercentage)) {
+        setPercentageError(true);
+        setPercentageErrorMessage("percentage must be a number (between 0-1)");
         return;
       }
 
@@ -195,7 +212,8 @@ export default function UploadComponent() {
       body: formData,
     });
 
-    const resp = await response.text();
+    const textResponse = await response.text();
+    console.log(textResponse);
 
     setLoading(false);
   }
@@ -425,7 +443,7 @@ export default function UploadComponent() {
             variant="contained"
             color="primary"
             size="large"
-            onClick={() => onFileSubmit()}
+            onClick={() => onFileUpload()}
             onMouseEnter={() => {
               setFileUploadButtonHover(true);
             }}
@@ -444,6 +462,7 @@ export default function UploadComponent() {
         }}
       >
         <CircularProgress />
+        <Divv>loading...</Divv>
       </WrapperDiv>
     </div>
   );
