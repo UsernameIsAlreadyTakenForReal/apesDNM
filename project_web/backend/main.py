@@ -11,6 +11,7 @@ import rarfile
 import data
 import patoolib
 import os
+import io
 
 import tempfile
 
@@ -42,7 +43,7 @@ def unarchive():
 
 
 def create_dataframe_from_file(file):
-    file_extension = file.filename.rsplit(".", 1)[-1].lower()
+    file_extension = file.rsplit(".", 1)[-1].lower()
 
     if file_extension == "csv":
         return pd.read_csv(file)
@@ -87,12 +88,15 @@ def unarchive(file):
         if file_info.isdir():
             folder_name = file_info.filename
 
-    folder_files = []
+    # folder_files = []
+    extracted_files = []
     for file_info in rar.infolist():
-        if not file_info.isdir() and file_info.filename.startswith(folder_name):
-            folder_files.append(file_info.filename)
+        # if not file_info.isdir() and file_info.filename.startswith(folder_name):
+        #     folder_files.append(file_info.filename)
+        extracted_data = io.BytesIO(rar.read(file_info))
+        extracted_files.append(extracted_data)
 
-    return folder_files
+    return extracted_files
 
 
 # https://medium.com/geekculture/how-to-a-build-real-time-react-app-with-server-sent-events-9fbb83374f90
@@ -114,6 +118,11 @@ def upload_file():
         files = [file0]
 
     print(files)
+
+    for file in files:
+        df = create_dataframe_from_file(file)
+        x, y = df.shape()
+        print(file, x, y)
 
     return "ok"
 
