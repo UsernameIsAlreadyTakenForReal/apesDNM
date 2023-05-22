@@ -6,6 +6,7 @@ from flask.json import jsonify
 import pandas as pd
 import numpy as np
 from scipy.io import arff
+import rarfile
 
 import data
 import patoolib
@@ -41,11 +42,11 @@ def unarchive():
 
 
 def create_dataframe_from_file(file):
-    return pd.read_csv(file)
-    # file_extension = file.filename.rsplit(".", 1)[-1].lower()
+    file_extension = file.filename.rsplit(".", 1)[-1].lower()
 
-    # if file_extension == "csv":
-    #     return pd.read_csv(file)
+    if file_extension == "csv":
+        return pd.read_csv(file)
+
     # elif file_extension == "arff":
     #     from scipy.io import arff
 
@@ -77,10 +78,24 @@ def create_dataframe_from_file(file):
     #     raise ValueError("Unsupported file type.")
 
 
-def create_dataframe_from_file(file):
-    return pd.read_csv(file)
+def unarchive(file):
+    rar = rarfile.RarFile(file)
+
+    folder_name = ""
+
+    for file_info in rar.infolist():
+        if file_info.isdir():
+            folder_name = file_info.filename
+
+    folder_files = []
+    for file_info in rar.infolist():
+        if not file_info.isdir() and file_info.filename.startswith(folder_name):
+            folder_files.append(file_info.filename)
+
+    return folder_files
 
 
+# https://medium.com/geekculture/how-to-a-build-real-time-react-app-with-server-sent-events-9fbb83374f90
 @app.route("/upload", methods=["GET", "POST"])
 def upload_file():
     cls()
@@ -88,31 +103,18 @@ def upload_file():
     file0 = request.files.get("file0", None)
     file1 = request.files.get("file1", None)
 
-    print("file0 is " + file0.filename)
+    print("file0: " + file0.filename if file0 else "file0: None")
+    print("file1: " + file1.filename if file1 else "file1: None")
 
-    # if ".csv" in file0.filename:
-    df = pd.read_csv(file0)
-    x, y = df.shape
-    string0 = "shape of " + file0.filename + " is (" + str(x) + ", " + str(y) + ")"
-    print("from me: " + string0)
+    if file0 and not file1 and file0.filename.endswith(".rar"):
+        files = unarchive(file0)
+    elif file0 and file1:
+        files = [file0, file1]
+    else:
+        files = [file0]
 
-    df0 = create_dataframe_from_file(file0)
-    x, y = df0.shape
-    string0 = "shape of " + file0.filename + " is (" + str(x) + ", " + str(y) + ")"
-    print("from chatgpt: " + string0)
+    print(files)
 
-    # if ".zip" in file0.filename or ".rar" in file0.filename:
-    #     return "you sent an archive", 400
-
-    # if file1 is None:
-    #     return string0, 201
-
-    # if ".csv" in file1.filename:
-    #     df = pd.read_csv(file1)
-    #     x, y = df.shape
-    #     string1 = "shape of " + file1.filename + " is (" + str(x) + ", " + str(y) + ")"
-
-    # return string0 + ", " + string1, 201
     return "ok"
 
 
