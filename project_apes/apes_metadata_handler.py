@@ -14,11 +14,11 @@
 class dataset_metadata:
     def __init__(
         self,
-        is_labeled,
-        class_names,
-        label_column_name,
-        numerical_value_of_desired_label,
-        percentage_of_split,
+        is_labeled=True,
+        class_names=[],
+        label_column_name="target",
+        numerical_value_of_desired_label=0,
+        percentage_of_split=0.7,
     ):
         self.is_labeled = is_labeled
         self.class_names = class_names
