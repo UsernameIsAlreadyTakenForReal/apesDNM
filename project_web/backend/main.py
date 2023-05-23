@@ -91,12 +91,16 @@ def unarchive(file):
     # folder_files = []
     extracted_files = []
     for file_info in rar.infolist():
-        # if not file_info.isdir() and file_info.filename.startswith(folder_name):
-        #     folder_files.append(file_info.filename)
-        extracted_data = io.BytesIO(rar.read(file_info))
-        extracted_files.append(extracted_data)
+        if not file_info.isdir() and file_info.filename.startswith(folder_name):
+            #     folder_files.append(file_info.filename)
 
-    return extracted_files
+            df = pd.read_csv(file_info)
+            print(type(file_info))
+
+    #     extracted_data = io.BytesIO(rar.read(file_info))
+    #     extracted_files.append(extracted_data)
+
+    # return extracted_files
 
 
 # https://medium.com/geekculture/how-to-a-build-real-time-react-app-with-server-sent-events-9fbb83374f90
@@ -129,3 +133,41 @@ def upload_file():
 
 if __name__ == "__main__":
     app.run(debug=True, port=5000)
+
+
+# solution provided by chat gpt below
+# ###################################
+
+# import os
+# import zipfile
+# import pandas as pd
+
+# def process_uploaded_file(file):
+#     file_extension = os.path.splitext(file.filename)[1]
+
+#     if file_extension == '.rar':
+#         with zipfile.ZipFile(file, 'r') as zip_ref:
+#             file_list = []
+#             folder_name = None
+
+#             for item in zip_ref.infolist():
+#                 if item.is_dir():
+#                     folder_name = os.path.basename(item.filename)
+#                 else:
+#                     file_list.append(item.filename)
+
+#             if folder_name:
+#                 # Process files in the folder
+#                 folder_path = os.path.join(zip_ref.extracted_path, folder_name)
+#                 for filename in file_list:
+#                     file_path = os.path.join(folder_path, filename)
+#                     # Use file_path to open and process the file as needed (e.g., read_csv)
+#             else:
+#                 # Process individual files in the archive
+#                 for filename in file_list:
+#                     # Use filename to open and process the file as needed (e.g., read_csv)
+#     else:
+#         # Handle other file types if needed
+#         pass
+
+#     # Additional processing or return statements as required
