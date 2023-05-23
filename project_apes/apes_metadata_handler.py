@@ -14,20 +14,30 @@
 class dataset_metadata:
     def __init__(
         self,
+        Logger,
         is_labeled=True,
         class_names=[],
         label_column_name="target",
         numerical_value_of_desired_label=0,
+        separate_train_and_test=False,
         percentage_of_split=0.7,
     ):
+        self.Logger = Logger
+
         self.is_labeled = is_labeled
         self.class_names = class_names
         self.label_column_name = label_column_name
         self.numerical_value_of_desired_label = numerical_value_of_desired_label
+        self.separate_train_and_test = separate_train_and_test
         self.percentage_of_split = percentage_of_split
+
+        info_message = "Created object of type dataset_metadata"
+        self.Logger.info(self, info_message)
 
 
 # ############ Application instance metada:
+# Dataset_metadata: an object of type dataset_metadata. TODO: multiple such objects for a type of application_mode == benchmark_solution
+#                                                             (same solution, multiple datasets)?
 # application mode: compare solutions / run one solution only
 # dataset_origin: new_data / user chose existing data
 # dataset_category: ekg / img / ral
@@ -40,6 +50,8 @@ class dataset_metadata:
 class application_instance_metadata:
     def __init__(
         self,
+        Logger,
+        Dataset_metadata,
         application_mode="compare_solutions",
         dataset_origin="new_dataset",
         dataset_category="ekg",
@@ -48,6 +60,9 @@ class application_instance_metadata:
         solution_index=1,
         model_origin="train_model",
     ):
+        self.Logger = Logger
+        self.Dataset_metadata = Dataset_metadata
+
         self.application_mode = application_mode
         self.dataset_origin = dataset_origin
         self.dataset_category = dataset_category
@@ -55,3 +70,6 @@ class application_instance_metadata:
         self.solution_nature = solution_nature
         self.solution_index = solution_index
         self.model_origin = model_origin
+
+        info_message = "Created object of type application_instance_metadata"
+        self.Logger.info(self, info_message)

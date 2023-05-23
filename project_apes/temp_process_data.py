@@ -71,7 +71,7 @@ val_df, test_df = train_test_split(val_df, test_size=0.33, random_state=RANDOM_S
 
 
 from type_ekg.apes_solution_ekg_1_train import solution_ekg_1
-from helpers_aiders_and_conveniencers.logger import Logger
+from helpers_aiders_and_conveniencers.Logger import Logger
 
 Logger = Logger()
 shared_definitions = Shared_Definitions()

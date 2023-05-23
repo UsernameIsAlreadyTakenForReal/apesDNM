@@ -24,16 +24,15 @@ def unarchive(path, delete_after_unarchiving=False):
 
 
 def process_file_type(
-    path, supervized=True, labeled=True, separate_train_and_test=False
+    app_instance_metadata,
+    path,
 ):
     match pathlib.Path(path).suffix:
         case ".csv":
             df = pd.read_csv(path, header=None)
             # df = df.sample(frac=1).reset_index(drop=True)  ## shuffles the rows
 
-            # metadata.percentage
-            # medatata.supervized
-            if separate_train_and_test == False:
+            if app_instance_metadata.Dataset_metadata.separate_train_and_test == False:
                 return df
             else:
                 x, y = df.shape()

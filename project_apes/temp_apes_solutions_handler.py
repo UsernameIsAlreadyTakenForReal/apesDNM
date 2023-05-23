@@ -26,9 +26,16 @@
 #     exec(f.read())
 
 import apes_dataset_handler
+import apes_metadata_handler
+from helpers_aiders_and_conveniencers.Logger import Logger
 
+Logger = Logger()
+dataset_metadata = apes_metadata_handler.dataset_metadata(Logger)
+app_instance_metadata = apes_metadata_handler.application_instance_metadata(
+    Logger, dataset_metadata
+)
 
 example_path = "../../Dataset - ECG_Heartbeat/mitbih_test.csv"
-pandas_df = apes_dataset_handler.process_file_type(example_path)
+pandas_df = apes_dataset_handler.process_file_type(app_instance_metadata, example_path)
 
 print(pandas_df)
