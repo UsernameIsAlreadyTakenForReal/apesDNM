@@ -23,12 +23,16 @@ def unarchive(path, delete_after_unarchiving=False):
     return new_path
 
 
-def process_file_type(path, separate_train_and_test=False):
+def process_file_type(
+    path, supervized=True, labeled=True, separate_train_and_test=False
+):
     match pathlib.Path(path).suffix:
         case ".csv":
             df = pd.read_csv(path, header=None)
             # df = df.sample(frac=1).reset_index(drop=True)  ## shuffles the rows
 
+            # metadata.percentage
+            # medatata.supervized
             if separate_train_and_test == False:
                 return df
             else:
