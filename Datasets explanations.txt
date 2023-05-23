@@ -1,3 +1,4 @@
+################ Datasets ################
 ### ECG_Heartbeat ###
 	- Classes: ['N': 0, 'S': 1, 'V': 2, 'F': 3, 'Q': 4]
 	- Number of Samples: 109446 (21892 + 87554)
@@ -32,10 +33,32 @@
 			- 1 class per entry
 
 
-ECG5000
+### ECG5000 ###
 	- Classes: ["Normal", "R on T", "PVC", "SP", "UB"]
 	- Number of Samples: 
 	- Elements per sample: 141 (140 + 1)
 	- Data Source: Physionet's MIT-BIH Arrhythmia Dataset
 	- Type: txt (headless table), ts, arff
 	
+	
+################ Morph datasets to pandas ################
+CSV (Comma Separated Values):
+	- import as pandas (automatically creates labeled axes (rows and columns). 
+			Therefore, rename the target column)
+	
+ARFF (Attribute Relation File Format):
+	- import arff file (generator object)
+	- for each row in generator:
+		- append row[i] to a new list (need to know range)
+		- append row.target (or whatever its name) to list of rows' classes
+		- cast as float, save as numpy
+		- c_ rows (numpy) and classes (numpy)
+		- pandas.DataFrame from that (automatically creates labeled axes (rows and columns). 
+			Therefore, rename the target column)
+	
+	
+TS:
+	-
+	
+TXT:
+	- God bless you

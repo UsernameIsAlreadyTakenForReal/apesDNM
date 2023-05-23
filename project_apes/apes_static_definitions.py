@@ -1,3 +1,11 @@
+# This file:
+# Contains global / static definitions.
+# Use:
+#
+# * from apes_static_definitions import Shared_Definitions
+# * shared_definitions = Shared_Definitions()
+# * new_object = class_creator(shared_definitions, other, arguments)
+
 import os
 
 

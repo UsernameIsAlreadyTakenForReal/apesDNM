@@ -1,3 +1,6 @@
+# This file:
+# Is meant to call the suitable solution (by user input or by apes's recommendation).
+
 import sys
 from apes_static_definitions import Shared_Definitions
 
@@ -21,15 +24,3 @@ print("\n\nResult:", Sum)
 ##### open as if concatenated to main
 # with open("type_ekg/apes_solution_ekg_1_do.py") as f:
 #     exec(f.read())
-
-
-##### open as classes
-from type_ekg.apes_solution_ekg_1_train import solution_ekg_1
-from helpers_aiders_and_conveniencers.logger import Logger
-
-Logger = Logger()
-shared_definitions = Shared_Definitions()
-
-test_solution = solution_ekg_1(shared_definitions, Logger)
-
-dataset = 0

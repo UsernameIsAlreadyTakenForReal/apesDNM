@@ -44,6 +44,7 @@ train_df = pd.read_csv(
 test_df = pd.read_csv("../../../Dataset - ECG_Heartbeat/mitbih_test.csv", header=None)
 
 train_df[187] = train_df[187].astype(int)
+# how many of each class
 equilibre = train_df[187].value_counts()
 print(equilibre)
 

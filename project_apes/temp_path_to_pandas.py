@@ -9,9 +9,6 @@ import os
 from scipy.io.arff import loadarff
 
 os.system("cls" if os.name == "nt" else "clear")
-RANDOM_SEED = 42
-np.random.seed(RANDOM_SEED)
-torch.manual_seed(RANDOM_SEED)
 
 example_path01 = "C:\\Users\\danieldum\\Desktop\\ekg datasets\\mitbih_one.zip"
 example_path02 = "C:\\Users\\danieldum\\Desktop\\ekg datasets\\mitbih_two.zip"
