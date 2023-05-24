@@ -23,13 +23,12 @@ def unarchive(path, delete_after_unarchiving=False):
     return new_path
 
 
-def process_file_type(
-    app_instance_metadata,
-    path,
-):
-    match pathlib.Path(path).suffix:
+def process_file_type(app_instance_metadata):
+    match pathlib.Path(app_instance_metadata.dataset_metadata.dataset_path).suffix:
         case ".csv":
-            df = pd.read_csv(path, header=None)
+            df = pd.read_csv(
+                app_instance_metadata.dataset_metadata.dataset_path, header=None
+            )
 
             # df = df.sample(frac=1).reset_index(drop=True)  ## shuffles the rows
 

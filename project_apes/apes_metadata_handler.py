@@ -15,6 +15,7 @@ class Dataset_metadata:
     def __init__(
         self,
         Logger,
+        dataset_path="",
         is_labeled=True,
         class_names=[],
         label_column_name="target",
@@ -24,6 +25,7 @@ class Dataset_metadata:
     ):
         self.Logger = Logger
 
+        self.dataset_path = dataset_path
         self.is_labeled = is_labeled
         self.class_names = class_names
         self.label_column_name = label_column_name
@@ -37,6 +39,8 @@ class Dataset_metadata:
     def getMetadataAsString(self):
         return (
             "\nDataset_metadata"
+            + "\n dataset_path = "
+            + str(self.dataset_path)
             + "\n is_labeled = "
             + str(self.is_labeled)
             + "\n class_names = "
@@ -56,8 +60,8 @@ class Dataset_metadata:
 # Dataset_metadata: an object of type dataset_metadata. TODO: multiple such objects for a type of application_mode == benchmark_solution
 #                                                             (same solution, multiple datasets)?
 # application mode: compare solutions / run one solution only
-# dataset_origin: new_data / user chose existing data
-# dataset_category: ekg / img / ral
+# dataset_origin: new_dataset / (user chose) existing_dataset
+# dataset_category: ekg / img / ral / N/A
 # solution_category: ekg / img / ral (redundant)
 # solution_nature: supervised / unsupervised
 # solution_index: 1/2/3 OR [1,2,3] OR [1,2] OR [1,3] OR [2,3] for ekg, 1 for img, 1 for ral

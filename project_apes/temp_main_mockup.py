@@ -5,12 +5,23 @@ from helpers_aiders_and_conveniencers.Logger import Logger
 
 Logger = Logger()
 
-dataset_metadata = Dataset_metadata(Logger, True, [], "target", 0, False, 0.7)
+example_path = "../../Dataset - ECG_Heartbeat/mitbih_test.csv"
+
+dataset_metadata = Dataset_metadata(
+    Logger,
+    example_path,
+    True,
+    ["Normal", "R on T", "PVC", "SP", "UB"],
+    "target",
+    0,
+    False,
+    0.7,
+)
 application_instance_metadata = Application_instance_metadata(
     Logger,
     dataset_metadata,
     "compare_solutions",
-    "new_dataset",
+    "existing_dataset",
     "ekg",
     "ekg",
     "supervised",

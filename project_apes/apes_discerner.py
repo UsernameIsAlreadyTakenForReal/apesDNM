@@ -4,4 +4,10 @@
 import sys
 import apes_static_definitions
 
-print("Hang until i'm dead")
+
+class Discerner:
+    def __init__(self, Logger):
+        self.Logger = Logger
+
+        info_message = "Created object of type Discerner."
+        self.Logger.info(self, info_message)
