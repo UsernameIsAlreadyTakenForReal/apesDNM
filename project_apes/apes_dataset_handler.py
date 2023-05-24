@@ -30,9 +30,10 @@ def process_file_type(
     match pathlib.Path(path).suffix:
         case ".csv":
             df = pd.read_csv(path, header=None)
+
             # df = df.sample(frac=1).reset_index(drop=True)  ## shuffles the rows
 
-            if app_instance_metadata.Dataset_metadata.separate_train_and_test == False:
+            if app_instance_metadata.dataset_metadata.separate_train_and_test == False:
                 return df
             else:
                 x, y = df.shape()

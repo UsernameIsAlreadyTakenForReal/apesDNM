@@ -11,7 +11,7 @@
 # percentage_of_split: value / [value1, value2] (where value2 is % to split for validation)
 
 
-class dataset_metadata:
+class Dataset_metadata:
     def __init__(
         self,
         Logger,
@@ -31,8 +31,25 @@ class dataset_metadata:
         self.separate_train_and_test = separate_train_and_test
         self.percentage_of_split = percentage_of_split
 
-        info_message = "Created object of type dataset_metadata"
+        info_message = "Created object of type Dataset_metadata"
         self.Logger.info(self, info_message)
+
+    def getMetadataAsString(self):
+        return (
+            "\nDataset_metadata"
+            + "\n is_labeled = "
+            + str(self.is_labeled)
+            + "\n class_names = "
+            + str(self.class_names)
+            + "\n label_column_name = "
+            + str(self.label_column_name)
+            + "\n numerical_value_of_desired_label = "
+            + str(self.numerical_value_of_desired_label)
+            + "\n separate_train_and_test = "
+            + str(self.separate_train_and_test)
+            + "\n percentage_of_split = "
+            + str(self.percentage_of_split)
+        )
 
 
 # ############ Application instance metada:
@@ -44,24 +61,24 @@ class dataset_metadata:
 # solution_category: ekg / img / ral (redundant)
 # solution_nature: supervised / unsupervised
 # solution_index: 1/2/3 OR [1,2,3] OR [1,2] OR [1,3] OR [2,3] for ekg, 1 for img, 1 for ral
-# {FOR DATASET_ORIGIN=='new_data'} model_origin: train_model / use_existing_model
+# {FOR DATASET_ORIGIN=='new_data'} model_origin: train_new_model / use_existing_model
 
 
-class application_instance_metadata:
+class Application_instance_metadata:
     def __init__(
         self,
         Logger,
-        Dataset_metadata,
+        dataset_metadata,
         application_mode="compare_solutions",
         dataset_origin="new_dataset",
         dataset_category="ekg",
         solution_category="ekg",
         solution_nature="supervised",
         solution_index=1,
-        model_origin="train_model",
+        model_origin="train_new_model",
     ):
         self.Logger = Logger
-        self.Dataset_metadata = Dataset_metadata
+        self.dataset_metadata = dataset_metadata
 
         self.application_mode = application_mode
         self.dataset_origin = dataset_origin
@@ -71,5 +88,32 @@ class application_instance_metadata:
         self.solution_index = solution_index
         self.model_origin = model_origin
 
-        info_message = "Created object of type application_instance_metadata"
+        info_message = "Created object of type Application_instance_metadata"
+        self.Logger.info(self, info_message)
+
+    def getMetadataAsString(self):
+        return (
+            "\nApplication_metadata"
+            + "\n application_mode = "
+            + str(self.application_mode)
+            + "\n dataset_origin = "
+            + str(self.dataset_origin)
+            + "\n dataset_category = "
+            + str(self.dataset_category)
+            + "\n solution_category = "
+            + str(self.solution_category)
+            + "\n solution_nature = "
+            + str(self.solution_nature)
+            + "\n solution_index = "
+            + str(self.solution_index)
+            + "\n model_origin = "
+            + str(self.model_origin)
+        )
+
+    def printMetadata(self):
+        info_message = (
+            "Running with this configuration: "
+            + self.getMetadataAsString()
+            + self.dataset_metadata.getMetadataAsString()
+        )
         self.Logger.info(self, info_message)
