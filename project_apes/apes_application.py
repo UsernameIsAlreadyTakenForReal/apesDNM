@@ -1,5 +1,8 @@
 # This file:
 # Contains the main application class.
+# run() follows these steps:
+# * 1. Part 1 -- Get the desired dataset as a pandas dataFrame
+# * 2. Part 2 -- Get the suitable solution(s) suitable solution (by user input or by apes's recommendation).
 
 from apes_discerner import Discerner
 from apes_dataset_handler import *
@@ -90,6 +93,7 @@ class APES_Application:
                             self.application_instance_metadata.shared_definitions,
                             self.Logger,
                         )
+
                         pass
                     case 2:
                         info_message = "Loading solution ekg_2"
@@ -129,3 +133,23 @@ class APES_Application:
                             self.Logger,
                         )
                         pass
+
+        ## Part 3 -- Go to town with the solution
+        if self.application_instance_metadata.application_mode == "run_one_solution":
+            pass
+
+            self.solution.adapt_dataset(
+                self.application_instance_metadata, self.dataFrame
+            )
+
+            if self.application_instance_metadata.model_origin == "train_new_model":
+                self.solution.create_model()
+                self.solution.train()
+                self.solution.save_model()
+                self.solution.test()
+                pass
+            else:
+                ## check if sizes compatible with dataset's sizes
+                self.solution.load_model()
+                self.solution.test()
+                pass

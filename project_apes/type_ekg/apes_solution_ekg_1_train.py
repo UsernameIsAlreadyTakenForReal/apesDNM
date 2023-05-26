@@ -303,3 +303,7 @@ class Solution_ekg_1:
                 self.shared_definitions.project_solution_ekg_1_model_filename_last_good_one,
                 map_location=lambda storage, loc: storage.cuda(1),
             )
+
+    def adapt_dataset(application_instance_metadata, dataFrame):
+        newDataFrame = 2
+        return newDataFrame
