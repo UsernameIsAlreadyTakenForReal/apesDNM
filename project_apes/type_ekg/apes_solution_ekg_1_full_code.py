@@ -210,9 +210,9 @@ class Decoder(nn.Module):
 
 
 ## Time to wrap everything into an easy to use module:
-class RecurrentAutoencoder(nn.Module):
+class Recurrent_Autoencoder(nn.Module):
     def __init__(self, seq_len, n_features, embedding_dim=64):
-        super(RecurrentAutoencoder, self).__init__()
+        super(Recurrent_Autoencoder, self).__init__()
 
         self.encoder = Encoder(seq_len, n_features, embedding_dim).to(device)
         self.decoder = Decoder(seq_len, embedding_dim, n_features).to(device)
@@ -227,7 +227,7 @@ class RecurrentAutoencoder(nn.Module):
 ## Our Autoencoder passes the input through the Encoder and Decoder.
 ## Let's create an instance of it:
 print("begin autoencoder model definitions")
-model = RecurrentAutoencoder(seq_len, n_features, 128)
+model = Recurrent_Autoencoder(seq_len, n_features, 128)
 model = model.to(device)
 
 

@@ -83,9 +83,9 @@ class Decoder(nn.Module):
 
 
 ## Time to wrap everything into an easy to use module:
-class RecurrentAutoencoder(nn.Module):
+class Recurrent_Autoencoder(nn.Module):
     def __init__(self, device, seq_len, n_features, embedding_dim=64):
-        super(RecurrentAutoencoder, self).__init__()
+        super(Recurrent_Autoencoder, self).__init__()
 
         self.encoder = Encoder(seq_len, n_features, embedding_dim).to(device)
         self.decoder = Decoder(seq_len, embedding_dim, n_features).to(device)
@@ -97,7 +97,7 @@ class RecurrentAutoencoder(nn.Module):
         return x
 
 
-class solution_ekg_1:
+class Solution_ekg_1:
     def __init__(self, shared_definitions, Logger):
         self.Logger = Logger
         self.device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
@@ -281,7 +281,7 @@ class solution_ekg_1:
         info_message = "create_model -- Begin autoencoder model creation"
         self.Logger.info(self, info_message)
 
-        self.model = RecurrentAutoencoder(self.device, seq_len, n_features, 128)
+        self.model = Recurrent_Autoencoder(self.device, seq_len, n_features, 128)
         self.model = self.model.to(self.device)
 
         info_message = "create_model -- Ended autoencoder model creation"

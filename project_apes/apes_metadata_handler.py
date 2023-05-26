@@ -10,8 +10,10 @@
 # numerical_value_of_desired_label: int (e.g. 0)
 # percentage_of_split: value / [value1, value2] (where value2 is % to split for validation)
 
+from apes_static_definitions import Shared_Definitions
 
-class Dataset_metadata:
+
+class Dataset_Metadata:
     def __init__(
         self,
         Logger,
@@ -33,7 +35,7 @@ class Dataset_metadata:
         self.separate_train_and_test = separate_train_and_test
         self.percentage_of_split = percentage_of_split
 
-        info_message = "Created object of type Dataset_metadata"
+        info_message = "Created object of type Dataset_Metadata"
         self.Logger.info(self, info_message)
 
     def getMetadataAsString(self):
@@ -59,7 +61,7 @@ class Dataset_metadata:
 # ############ Application instance metada:
 # Dataset_metadata: an object of type dataset_metadata. TODO: multiple such objects for a type of application_mode == benchmark_solution
 #                                                             (same solution, multiple datasets)?
-# application mode: compare solutions / run one solution only
+# application mode: compare_solutions / run_one_solution only
 # dataset_origin: new_dataset / (user chose) existing_dataset
 # dataset_category: ekg / img / ral / N/A
 # solution_category: ekg / img / ral (redundant)
@@ -68,7 +70,7 @@ class Dataset_metadata:
 # {FOR DATASET_ORIGIN=='new_data'} model_origin: train_new_model / use_existing_model
 
 
-class Application_instance_metadata:
+class Application_Instance_Metadata:
     def __init__(
         self,
         Logger,
@@ -92,7 +94,9 @@ class Application_instance_metadata:
         self.solution_index = solution_index
         self.model_origin = model_origin
 
-        info_message = "Created object of type Application_instance_metadata"
+        self.shared_definitions = Shared_Definitions()
+
+        info_message = "Created object of type Application_Instance_Metadata"
         self.Logger.info(self, info_message)
 
     def getMetadataAsString(self):

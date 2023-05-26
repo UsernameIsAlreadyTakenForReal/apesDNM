@@ -16,7 +16,8 @@ from torch import nn, optim
 
 import torch.nn.functional as F
 
-import torch;
+import torch
+
 torch.__version__
 
 
@@ -64,7 +65,6 @@ for i in range(0, train_number_of_entries):
 all_train_data = np.c_[train_data, train_labels]
 
 
-
 ## Test data (4500 entries)
 file_path = "../../Dataset - ECG5000/ECG5000_TEST.arff"
 data = arff.load(file_path)
@@ -100,31 +100,23 @@ df_2 = pd.DataFrame(all_test_data)
 df = df._append(df_2)
 
 CLASS_NORMAL = 1
-class_names = ['Normal','R on T','PVC','SP','UB']
+class_names = ["Normal", "R on T", "PVC", "SP", "UB"]
 
 new_columns = list(df.columns)
-new_columns[-1] = 'target'
+new_columns[-1] = "target"
 df.columns = new_columns
 
 
 ## Let’s get all normal heartbeats and drop the target (class) column:
-normal_df = df[df.target == int(CLASS_NORMAL)].drop(labels='target', axis=1)
+normal_df = df[df.target == int(CLASS_NORMAL)].drop(labels="target", axis=1)
 
 ## We’ll merge all other classes and mark them as anomalies:
-anomaly_df = df[df.target != int(CLASS_NORMAL)].drop(labels='target', axis=1)
+anomaly_df = df[df.target != int(CLASS_NORMAL)].drop(labels="target", axis=1)
 
 ## We’ll split the normal examples into train, validation and test sets:
-train_df, val_df = train_test_split(
-  normal_df,
-  test_size=0.15,
-  random_state=RANDOM_SEED
-)
+train_df, val_df = train_test_split(normal_df, test_size=0.15, random_state=RANDOM_SEED)
 
-val_df, test_df = train_test_split(
-  val_df,
-  test_size=0.33,
-  random_state=RANDOM_SEED
-)
+val_df, test_df = train_test_split(val_df, test_size=0.33, random_state=RANDOM_SEED)
 
 ###############################################################################
 ## ----------------------- Definition of classes and fct ----------------------
@@ -134,8 +126,8 @@ val_df, test_df = train_test_split(
 ## our Autoencoder.
 ## Let’s write a helper function for that:
 
-def create_dataset(df):
 
+def create_dataset(df):
     print("begin create_dataset")
     sequences = df.astype(np.float32).to_numpy().tolist()
     dataset = [torch.tensor(s).unsqueeze(1).float() for s in sequences]
@@ -151,96 +143,91 @@ test_anomaly_dataset, _, _ = create_dataset(anomaly_df)
 
 ## LTSM Autoencoder
 
+
 ## We'll use the LSTM Autoencoder from this GitHub repo with some small tweaks.
 ## Our model's job is to reconstruct Time Series data.
 ## Let's start with the Encoder:
 class Encoder(nn.Module):
+    def __init__(self, seq_len, n_features, embedding_dim=64):
+        super(Encoder, self).__init__()
 
-  def __init__(self, seq_len, n_features, embedding_dim=64):
-    super(Encoder, self).__init__()
+        self.seq_len, self.n_features = seq_len, n_features
+        self.embedding_dim, self.hidden_dim = embedding_dim, 2 * embedding_dim
 
-    self.seq_len, self.n_features = seq_len, n_features
-    self.embedding_dim, self.hidden_dim = embedding_dim, 2 * embedding_dim
+        self.rnn1 = nn.LSTM(
+            input_size=n_features,
+            hidden_size=self.hidden_dim,
+            num_layers=1,
+            batch_first=True,
+        )
 
-    self.rnn1 = nn.LSTM(
-      input_size=n_features,
-      hidden_size=self.hidden_dim,
-      num_layers=1,
-      batch_first=True
-    )
+        self.rnn2 = nn.LSTM(
+            input_size=self.hidden_dim,
+            hidden_size=embedding_dim,
+            num_layers=1,
+            batch_first=True,
+        )
 
-    self.rnn2 = nn.LSTM(
-      input_size=self.hidden_dim,
-      hidden_size=embedding_dim,
-      num_layers=1,
-      batch_first=True
-    )
+    def forward(self, x):
+        x = x.reshape((1, self.seq_len, self.n_features))
 
-  def forward(self, x):
-    x = x.reshape((1, self.seq_len, self.n_features))
+        x, (_, _) = self.rnn1(x)
+        x, (hidden_n, _) = self.rnn2(x)
 
-    x, (_, _) = self.rnn1(x)
-    x, (hidden_n, _) = self.rnn2(x)
-
-    return hidden_n.reshape((self.n_features, self.embedding_dim))
+        return hidden_n.reshape((self.n_features, self.embedding_dim))
 
 
 ## Next, we'll decode the compressed representation using a Decoder:
 class Decoder(nn.Module):
+    def __init__(self, seq_len, input_dim=64, n_features=1):
+        super(Decoder, self).__init__()
 
-  def __init__(self, seq_len, input_dim=64, n_features=1):
-    super(Decoder, self).__init__()
+        self.seq_len, self.input_dim = seq_len, input_dim
+        self.hidden_dim, self.n_features = 2 * input_dim, n_features
 
-    self.seq_len, self.input_dim = seq_len, input_dim
-    self.hidden_dim, self.n_features = 2 * input_dim, n_features
+        self.rnn1 = nn.LSTM(
+            input_size=input_dim, hidden_size=input_dim, num_layers=1, batch_first=True
+        )
 
-    self.rnn1 = nn.LSTM(
-      input_size=input_dim,
-      hidden_size=input_dim,
-      num_layers=1,
-      batch_first=True
-    )
+        self.rnn2 = nn.LSTM(
+            input_size=input_dim,
+            hidden_size=self.hidden_dim,
+            num_layers=1,
+            batch_first=True,
+        )
 
-    self.rnn2 = nn.LSTM(
-      input_size=input_dim,
-      hidden_size=self.hidden_dim,
-      num_layers=1,
-      batch_first=True
-    )
+        self.output_layer = nn.Linear(self.hidden_dim, n_features)
 
-    self.output_layer = nn.Linear(self.hidden_dim, n_features)
+    def forward(self, x):
+        x = x.repeat(self.seq_len, self.n_features)
+        x = x.reshape((self.n_features, self.seq_len, self.input_dim))
 
-  def forward(self, x):
-    x = x.repeat(self.seq_len, self.n_features)
-    x = x.reshape((self.n_features, self.seq_len, self.input_dim))
+        x, (hidden_n, cell_n) = self.rnn1(x)
+        x, (hidden_n, cell_n) = self.rnn2(x)
+        x = x.reshape((self.seq_len, self.hidden_dim))
 
-    x, (hidden_n, cell_n) = self.rnn1(x)
-    x, (hidden_n, cell_n) = self.rnn2(x)
-    x = x.reshape((self.seq_len, self.hidden_dim))
-
-    return self.output_layer(x)
+        return self.output_layer(x)
 
 
 ## Time to wrap everything into an easy to use module:
-class RecurrentAutoencoder(nn.Module):
+class Recurrent_Autoencoder(nn.Module):
+    def __init__(self, seq_len, n_features, embedding_dim=64):
+        super(Recurrent_Autoencoder, self).__init__()
 
-  def __init__(self, seq_len, n_features, embedding_dim=64):
-    super(RecurrentAutoencoder, self).__init__()
+        self.encoder = Encoder(seq_len, n_features, embedding_dim).to(device)
+        self.decoder = Decoder(seq_len, embedding_dim, n_features).to(device)
 
-    self.encoder = Encoder(seq_len, n_features, embedding_dim).to(device)
-    self.decoder = Decoder(seq_len, embedding_dim, n_features).to(device)
+    def forward(self, x):
+        x = self.encoder(x)
+        x = self.decoder(x)
 
-  def forward(self, x):
-    x = self.encoder(x)
-    x = self.decoder(x)
-
-    return x
+        return x
 
 
 ## Our Autoencoder passes the input through the Encoder and Decoder.
 ## Let's create an instance of it:
 print("begin autoencoder model definitions")
-model = RecurrentAutoencoder(seq_len, n_features, 128)
+model = Recurrent_Autoencoder(seq_len, n_features, 128)
 model = model.to(device)
 
 
@@ -249,20 +236,24 @@ model = model.to(device)
 ###############################################################################
 
 # import model
-model = torch.load('apes_solution_ekg_1_model.pth', map_location=lambda storage, loc: storage.cuda(1))
+model = torch.load(
+    "apes_solution_ekg_1_model.pth", map_location=lambda storage, loc: storage.cuda(1)
+)
+
 
 def predict(model, dataset):
-  predictions, losses = [], []
-  criterion = nn.L1Loss(reduction='sum').to(device)
-  with torch.no_grad():
-    model = model.eval()
-    for seq_true in dataset:
-      seq_true = seq_true.to(device)
-      seq_pred = model(seq_true)
-      loss = criterion(seq_pred, seq_true)
-      predictions.append(seq_pred.cpu().numpy().flatten())
-      losses.append(loss.item())
-  return predictions, losses
+    predictions, losses = [], []
+    criterion = nn.L1Loss(reduction="sum").to(device)
+    with torch.no_grad():
+        model = model.eval()
+        for seq_true in dataset:
+            seq_true = seq_true.to(device)
+            seq_pred = model(seq_true)
+            loss = criterion(seq_pred, seq_true)
+            predictions.append(seq_pred.cpu().numpy().flatten())
+            losses.append(loss.item())
+    return predictions, losses
+
 
 _, losses = predict(model, train_dataset)
 sns.displot(losses, bins=50, kde=True)
@@ -275,23 +266,23 @@ THRESHOLD = 26
 
 # normal heartbeats
 predictions, pred_losses = predict(model, test_normal_dataset)
-sns.displot(pred_losses, bins=50, kde=True);
+sns.displot(pred_losses, bins=50, kde=True)
 correct = sum(l <= THRESHOLD for l in pred_losses)
-print(f'Correct normal predictions: {correct}/{len(test_normal_dataset)}')
+print(f"Correct normal predictions: {correct}/{len(test_normal_dataset)}")
 
 
 # anomalies
-anomaly_dataset = test_anomaly_dataset[:len(test_normal_dataset)]
+anomaly_dataset = test_anomaly_dataset[: len(test_normal_dataset)]
 predictions, pred_losses = predict(model, anomaly_dataset)
-sns.displot(pred_losses, bins=50, kde=True);
+sns.displot(pred_losses, bins=50, kde=True)
 correct = sum(l > THRESHOLD for l in pred_losses)
-print(f'Correct anomaly predictions: {correct}/{len(anomaly_dataset)}')
+print(f"Correct anomaly predictions: {correct}/{len(anomaly_dataset)}")
 
 plt.figure(1)
 plt.plot(test_normal_dataset[0])
 plt.plot(predictions[0])
-plt.legend(['beat', 'prediction'])
-plt.title('Beat and prediction')
+plt.legend(["beat", "prediction"])
+plt.title("Beat and prediction")
 plt.show()
 
 ###############################################################################
@@ -302,29 +293,28 @@ import matplotlib.pyplot as plt
 import numpy
 from sklearn import metrics
 
-actual = numpy.random.binomial(1,.9,size = 150)
-predicted = numpy.random.binomial(1,.9,size = 150)
+actual = numpy.random.binomial(1, 0.9, size=150)
+predicted = numpy.random.binomial(1, 0.9, size=150)
 
 confusion_matrix = metrics.confusion_matrix(actual, predicted)
 
-cm_display = metrics.ConfusionMatrixDisplay(confusion_matrix = confusion_matrix, display_labels = ["Anomaly", "Normal"])
+cm_display = metrics.ConfusionMatrixDisplay(
+    confusion_matrix=confusion_matrix, display_labels=["Anomaly", "Normal"]
+)
 
 cm_display.plot()
 plt.show()
-
 
 
 from mlxtend.plotting import plot_confusion_matrix
 import matplotlib.pyplot as plt
 import numpy as np
 
-class_names = ['Anomaly', 'Normal']
+class_names = ["Anomaly", "Normal"]
 
-binary1 = np.array([[123, 22],
-                    [0, 145]])
+binary1 = np.array([[123, 22], [0, 145]])
 
-fig, ax = plot_confusion_matrix(conf_mat=binary1,
-                                colorbar=True,
-                                show_absolute=True,
-                                class_names=class_names)
+fig, ax = plot_confusion_matrix(
+    conf_mat=binary1, colorbar=True, show_absolute=True, class_names=class_names
+)
 plt.show()
