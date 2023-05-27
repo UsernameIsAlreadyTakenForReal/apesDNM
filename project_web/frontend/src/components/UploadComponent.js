@@ -16,6 +16,7 @@ import {
   CircularProgress,
   Tooltip,
   Typography,
+  FormHelperText,
 } from "@mui/material";
 
 const BASE_URL = process.env.REACT_APP_BACKEND;
@@ -38,10 +39,13 @@ export default function UploadComponent() {
 
   const [loading, setLoading] = useState(false);
 
-  // --------------------------------- errors --------------------------------
+  // errors
   const [fileSelectionError, setFileSelectionError] = useState(false);
   const [fileSelectionErrorMessage, setFileSelectionErrorMessage] =
     useState(false);
+
+  const [datasetError, setDatasetError] = useState(false);
+  const [datasetErrorMessage, setDatasetErrorMessage] = useState(false);
 
   const [percentageError, setPercentageError] = useState(false);
   const [percentageErrorMessage, setPercentageErrorMessage] = useState("");
@@ -53,6 +57,8 @@ export default function UploadComponent() {
   const [normalLabelErrorMessage, setNormalLabelErrorMessage] = useState("");
 
   function resetAllFormErrorsAndData() {
+    setDatasetError(false);
+
     setFileSelectionError(false);
     setPercentageError(false);
     setLabelColumnError(false);
@@ -66,17 +72,6 @@ export default function UploadComponent() {
 
   // -------------------------------------------------------------------------
 
-  function loadParticles() {
-    tsParticles.load("tsparticles", {
-      preset: "seaAnemone",
-      particles: {
-        move: {
-          speed: 2,
-        },
-      },
-    });
-  }
-
   async function getExistingDatasetItems() {
     const response = await fetch(BASE_URL + "datasets", {
       method: "get",
@@ -86,49 +81,26 @@ export default function UploadComponent() {
   }
 
   async function onFileChange(event) {
-    console.log(event.target.files);
     resetAllFormErrorsAndData();
     setSelectedFiles(event.target.files);
 
-    if (event.target.files.length > 2) {
-      setShowXarrow(true);
+    let archiveFoundAndMultipleFiles = false;
+
+    if (event.target.files.length > 1) {
+      [...event.target.files].forEach((file) => {
+        console.log(file);
+        if (file.name.includes(".zip") || file.name.includes(".rar")) {
+          archiveFoundAndMultipleFiles = true;
+        }
+      });
+    }
+
+    if (archiveFoundAndMultipleFiles) {
       setFileSelectionError(true);
-      setFileSelectionErrorMessage("two files max can be selected...");
+      setFileSelectionErrorMessage("if sending archives, send only one...");
       setSelectedFiles([]);
       return;
     }
-
-    if (
-      event.target.files[0].name.includes(".zip") ||
-      event.target.files[0].name.includes(".rar") ||
-      event.target.files[1].name.includes(".zip") ||
-      event.target.files[1].name.includes(".rar")
-    ) {
-      if (event.target.files[0] && event.target.files[1]) {
-        setFileSelectionError(true);
-        setFileSelectionErrorMessage(
-          "if sending archives, send only one file..."
-        );
-        setShowXarrow(true);
-        setSelectedFiles([]);
-        return;
-      }
-
-      const formData = new FormData();
-      formData.append("file", event.target.files[0]);
-
-      // find out if we have one or two files in the archive
-
-      // const response = await fetch("/unarchive", {
-      //   method: "POST",
-      //   body: formData,
-      // });
-
-      // const resp = await response.text();
-      // console.log(resp);
-    }
-
-    setShowXarrow(false);
   }
 
   async function onFileUpload() {
@@ -138,7 +110,7 @@ export default function UploadComponent() {
     setLabelColumnError(false);
     setNormalLabelError(false);
 
-    // ----------------------------- file logic ------------------------------
+    // file logic
     if (!selectedFiles[0]) {
       setShowXarrow(true);
       setFileSelectionError(true);
@@ -146,35 +118,35 @@ export default function UploadComponent() {
       return;
     }
 
-    // --------------------------- percentage logic --------------------------
+    // percentage logic
     const trainDataPercentage =
       document.getElementById("percentage-field").value;
 
-    if (!selectedFiles[1]) {
-      if (trainDataPercentage.length === 0) {
-        trainDataPercentage = 0.7;
-        document.getElementById("percentage-field").value = 0.7;
-        console.log("testing... 0.7 value");
-        return;
-        // setPercentageError(true);
-        // setPercentageErrorMessage("percentage cannot be empty...");
-        // return;
-      }
+    console.log(trainDataPercentage);
 
-      if (isNaN(trainDataPercentage)) {
-        setPercentageError(true);
-        setPercentageErrorMessage("percentage must be a number (between 0-1)");
-        return;
-      }
-
-      if (trainDataPercentage < 0 || trainDataPercentage > 1) {
-        setPercentageError(true);
-        setPercentageErrorMessage("percentage must be between 0-1...");
-        return;
-      }
+    // if (!selectedFiles[1]) {
+    if (trainDataPercentage === "") {
+      console.log("no percentage");
+      trainDataPercentage = 0.7;
+      document.getElementById("percentage-field").value = 0.7;
+      console.log("testing... 0.7 value");
+      return;
     }
 
-    // ------------------------- label column logic --------------------------
+    if (isNaN(trainDataPercentage)) {
+      setPercentageError(true);
+      setPercentageErrorMessage("percentage must be a number (between 0-1)");
+      return;
+    }
+
+    if (trainDataPercentage < 0 || trainDataPercentage > 1) {
+      setPercentageError(true);
+      setPercentageErrorMessage("percentage must be between 0-1...");
+      return;
+    }
+    // }
+
+    // label column logic
     const labelColumn = document.getElementById("label-column-field").value;
 
     if (labelColumn === "") {
@@ -183,7 +155,7 @@ export default function UploadComponent() {
       return;
     }
 
-    // ------------------------- normal value logic --------------------------
+    // normal value logic
     const normalLabel = document.getElementById("normal-value-field").value;
 
     if (normalLabel === "") {
@@ -229,15 +201,48 @@ export default function UploadComponent() {
     let tempSelectedMethods = selectedMethods;
 
     if (tempSelectedMethods.includes(methodNumber)) {
-      console.log(tempSelectedMethods.indexOf(methodNumber));
-      tempSelectedMethods.pop(tempSelectedMethods.indexOf(methodNumber) + 1);
+      tempSelectedMethods.splice(tempSelectedMethods.indexOf(methodNumber), 1);
     } else tempSelectedMethods.push(methodNumber);
 
-    // YOU WERE HERE
+    console.log("selected methods are", tempSelectedMethods.sort());
+    setSelectedMethods(tempSelectedMethods.sort());
+  }
 
-    console.log(tempSelectedMethods);
+  async function onUseThisDatasetHandler() {
+    setDatasetError(false);
+    setDatasetErrorMessage("");
 
-    setSelectedMethods(tempSelectedMethods);
+    if (selectedDataset === "") {
+      setDatasetError(true);
+      setDatasetErrorMessage("you need to select a data-set first...");
+      return;
+    }
+
+    if (selectedDataset === "EKG" && selectedMethods.length === 0) {
+      setDatasetError(true);
+      setDatasetErrorMessage("you need to select a method for EKG first...");
+      return;
+    }
+
+    const formData = new FormData();
+
+    formData.append("dataset", selectedDataset);
+    formData.append("methods", selectedMethods);
+
+    console.log(formData);
+    return;
+
+    setLoading(true);
+
+    const response = await fetch("/upload", {
+      method: "POST",
+      body: formData,
+    });
+
+    const resp = await response.text();
+
+    setLoading(false);
+    console.log(resp);
   }
 
   useEffect(() => {
@@ -262,8 +267,9 @@ export default function UploadComponent() {
             <FormControl
               sx={{ width: "50%", margin: "20px" }}
               variant="outlined"
+              error={datasetError}
             >
-              <InputLabel id="data-type-select">Data type</InputLabel>
+              <InputLabel id="data-type-select">data type</InputLabel>
               <Select
                 label="data-type-select"
                 onChange={(event) => {
@@ -274,7 +280,7 @@ export default function UploadComponent() {
                 }}
               >
                 <MenuItem key="0" value="" disabled>
-                  Choose a dataset
+                  choose a dataset
                 </MenuItem>
                 {existingDatasets.map((item) => {
                   return (
@@ -284,6 +290,9 @@ export default function UploadComponent() {
                   );
                 })}
               </Select>
+              <FormHelperText>
+                {datasetError ? datasetErrorMessage : ""}
+              </FormHelperText>
             </FormControl>
           </div>
 
@@ -338,17 +347,7 @@ export default function UploadComponent() {
               variant="contained"
               color="primary"
               size="large"
-              onClick={() => {
-                if (selectedDataset === "") {
-                  console.log("You need to select a data-set first...");
-                  return;
-                }
-
-                if (selectedDataset === "EKG" && selectedMethods === []) {
-                  console.log("You need to select a method for EKG first...");
-                  return;
-                }
-              }}
+              onClick={() => onUseThisDatasetHandler()}
               onMouseEnter={() => {
                 setExistingDatasetButtonHover(true);
               }}
