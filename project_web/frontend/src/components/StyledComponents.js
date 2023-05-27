@@ -45,7 +45,7 @@ export const TextFieldDivv = styled.div`
 
 export const Label = styled.label`
   display: inline-block;
-  border: 1px solid #ccc;
+  // border: 1px solid #ccc;
 
   border-radius: 25px;
   padding: 12.5px 12.5px;
@@ -57,7 +57,7 @@ export const Label = styled.label`
 `;
 
 export const TextFieldFlex = styled.div`
-  border: 1px solid #ccc;
+  // border: 1px solid #ccc;
   border-radius: 25px;
 
   margin-left: 10px;

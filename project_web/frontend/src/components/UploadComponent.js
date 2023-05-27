@@ -23,6 +23,7 @@ export default function UploadComponent() {
   const [existingDatasetButtonHover, setExistingDatasetButtonHover] =
     useState(false);
   const [selectedDataset, setSelectedDataset] = useState("");
+  const [selectedMethodForEKG, setSelectedMethodForEKG] = useState("");
 
   const [fileInputHover, setFileInputHover] = useState(false);
   const [fileUploadButtonHover, setFileUploadButtonHover] = useState(false);
@@ -241,19 +242,18 @@ export default function UploadComponent() {
               sx={{ width: "50%", margin: "20px" }}
               variant="outlined"
             >
-              <InputLabel id="itemSelect">Data type</InputLabel>
+              <InputLabel id="data-type-select">Data type</InputLabel>
               <Select
-                labelId="itemId"
-                id="item"
-                label="itemSelect"
+                label="data-type-select"
                 onChange={(event) => {
                   console.log("Now selected", event.target.value);
 
                   setSelectedDataset(event.target.value);
+                  setSelectedMethodForEKG("");
                 }}
               >
                 <MenuItem key="0" value="" disabled>
-                  Choose a method
+                  Choose a dataset
                 </MenuItem>
                 {existingDatasets.map((item) => {
                   return (
@@ -265,6 +265,42 @@ export default function UploadComponent() {
               </Select>
             </FormControl>
           </div>
+
+          {selectedDataset === "EKG" ? (
+            <div>
+              <FormControl
+                sx={{ width: "50%", margin: "20px", marginTop: "0px" }}
+                variant="outlined"
+              >
+                <InputLabel id="method-for-ekg-select">
+                  Method for EKG
+                </InputLabel>
+                <Select
+                  label="method-for-ekg-select"
+                  onChange={(event) => {
+                    console.log("Now selected", event.target.value);
+
+                    setSelectedMethodForEKG(event.target.value);
+                  }}
+                >
+                  <MenuItem key="0" value="" disabled>
+                    Choose a method
+                  </MenuItem>
+                  <MenuItem key="1" value="method #1">
+                    method #1
+                  </MenuItem>
+                  <MenuItem key="2" value="method #2">
+                    method #2
+                  </MenuItem>
+                  <MenuItem key="3" value="method #3">
+                    method #3
+                  </MenuItem>
+                </Select>
+              </FormControl>
+            </div>
+          ) : (
+            <></>
+          )}
 
           <Divv top="0px">
             <Button
@@ -279,10 +315,21 @@ export default function UploadComponent() {
               size="large"
               onClick={() => {
                 if (selectedDataset === "") {
-                  console.log("You need to select a method first...");
+                  console.log("You need to select a data-set first...");
                   return;
                 }
-                console.log("sending over method", selectedDataset);
+
+                if (selectedDataset === "EKG" && selectedMethodForEKG === "") {
+                  console.log("You need to select a method for EKG first...");
+                  return;
+                }
+
+                console.log(
+                  "sending over data-set",
+                  selectedDataset,
+                  "; method is",
+                  selectedDataset === "EKG" ? selectedMethodForEKG : "default"
+                );
               }}
               onMouseEnter={() => {
                 setExistingDatasetButtonHover(true);
