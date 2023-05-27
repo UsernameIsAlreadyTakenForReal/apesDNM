@@ -42,19 +42,19 @@ class Dataset_Metadata:
     def getMetadataAsString(self):
         return (
             "\nDataset_metadata"
-            + "\n dataset_path = "
+            + "\n   dataset_path = "
             + str(self.dataset_path)
-            + "\n is_labeled = "
+            + "\n   is_labeled = "
             + str(self.is_labeled)
-            + "\n class_names = "
+            + "\n   class_names = "
             + str(self.class_names)
-            + "\n label_column_name = "
+            + "\n   label_column_name = "
             + str(self.label_column_name)
-            + "\n numerical_value_of_desired_label = "
+            + "\n   numerical_value_of_desired_label = "
             + str(self.numerical_value_of_desired_label)
-            + "\n separate_train_and_test = "
+            + "\n   separate_train_and_test = "
             + str(self.separate_train_and_test)
-            + "\n percentage_of_split = "
+            + "\n   percentage_of_split = "
             + str(self.percentage_of_split)
         )
 
@@ -62,7 +62,7 @@ class Dataset_Metadata:
 # ############ Application instance metada:
 # Dataset_metadata: an object of type dataset_metadata. TODO: multiple such objects for a type of application_mode == benchmark_solution
 #                                                             (same solution, multiple datasets)?
-# application mode: compare_solutions / run_one_solution only
+# application_mode: compare_solutions / run_one_solution (redunant, obtainable from solution_index)
 # dataset_origin: new_dataset / (user chose) existing_dataset
 # dataset_category: ekg / img / ral / N/A
 # solution_category: ekg / img / ral (redundant)
@@ -103,19 +103,19 @@ class Application_Instance_Metadata:
     def getMetadataAsString(self):
         return (
             "\nApplication_metadata"
-            + "\n application_mode = "
+            + "\n   application_mode = "
             + str(self.application_mode)
-            + "\n dataset_origin = "
+            + "\n   dataset_origin = "
             + str(self.dataset_origin)
-            + "\n dataset_category = "
+            + "\n   dataset_category = "
             + str(self.dataset_category)
-            + "\n solution_category = "
+            + "\n   solution_category = "
             + str(self.solution_category)
-            + "\n solution_nature = "
+            + "\n   solution_nature = "
             + str(self.solution_nature)
-            + "\n solution_index = "
+            + "\n   solution_index = "
             + str(self.solution_index)
-            + "\n model_origin = "
+            + "\n   model_origin = "
             + str(self.model_origin)
         )
 

@@ -133,3 +133,7 @@ class Solution_ekg_2:
 
     def test(self):
         pass
+
+    def adapt_dataset(self, application_instance_metadata, dataFrame):
+        print("test sol 2")
+        pass

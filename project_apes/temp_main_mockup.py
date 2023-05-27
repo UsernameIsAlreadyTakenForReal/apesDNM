@@ -1,11 +1,23 @@
-from apes_application import APES_Application
-from apes_metadata_handler import *
-from helpers_aiders_and_conveniencers.Logger import Logger
-
+from helpers_aiders_and_conveniencers.logger import Logger
 
 Logger = Logger()
 
-example_path = "../../Dataset - ECG_Heartbeat/mitbih_test.csv"
+init_message = "Begin"
+Logger.info("Program", init_message)
+
+from apes_application import APES_Application
+
+init_message = "Imported APES_Application"
+Logger.info("Program", init_message)
+
+
+from apes_metadata_handler import *
+
+init_message = "Imported apes_metadata_handler.*"
+Logger.info("Program", init_message)
+
+
+example_path = "../../Datasets/Dataset - ECG_Heartbeat/Dataset - ECG_Heartbeat.zip"
 
 dataset_metadata = Dataset_Metadata(
     Logger,
@@ -20,15 +32,16 @@ dataset_metadata = Dataset_Metadata(
 application_instance_metadata = Application_Instance_Metadata(
     Logger,
     dataset_metadata,
-    "run_one_solution",
+    "compare_solution",
     "existing_dataset",
     "ekg",
     "ekg",
     "supervised",
-    1,
+    [1, 2],
     "train_new_model",
 )
 
 apes_application_instance = APES_Application(Logger, application_instance_metadata)
 
-apes_application_instance.run()
+return_code, return_message = apes_application_instance.run()
+Logger.info("Program", return_message)

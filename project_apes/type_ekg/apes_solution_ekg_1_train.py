@@ -304,6 +304,7 @@ class Solution_ekg_1:
                 map_location=lambda storage, loc: storage.cuda(1),
             )
 
-    def adapt_dataset(application_instance_metadata, dataFrame):
+    def adapt_dataset(self, application_instance_metadata, dataFrame):
         newDataFrame = 2
+        print("test sol 1")
         return newDataFrame

@@ -4,18 +4,18 @@
 import arff
 import math
 import pathlib
-import numpy as np
 import pandas as pd
-import torch
-import zipfile
 import os
 from scipy.io.arff import loadarff
 
 
 def unarchive(path, delete_after_unarchiving=False):
-    with zipfile.ZipFile(path, "r") as zip_ref:
-        new_path = path.replace(".zip", "")
-        zip_ref.extractall(new_path)
+    import patoolib
+
+    new_path = path.replace(pathlib.Path(path).suffix, "")
+    if os.path.exists(new_path) == False:
+        os.mkdir(new_path)
+    patoolib.extract_archive(path, outdir=new_path)
 
     if delete_after_unarchiving:
         os.remove(path)
@@ -23,7 +23,28 @@ def unarchive(path, delete_after_unarchiving=False):
     return new_path
 
 
-def process_file_type(app_instance_metadata):
+def process_file_type(Logger, app_instance_metadata):
+    if os.path.isfile(app_instance_metadata.dataset_metadata.dataset_path):
+        ## is file, so we either have to unzip it, open it or see if there are any other available
+        info_message = "app_instance_metadata.dataset_metadata.dataset_path is file."
+        Logger.info("process_file_type", info_message)
+        if (
+            pathlib.Path(app_instance_metadata.dataset_metadata.dataset_path).suffix
+            == ".zip"
+            or pathlib.Path(app_instance_metadata.dataset_metadata.dataset_path).suffix
+            == ".rar"
+        ):
+            info_message = "app_instance_metadata.dataset_metadata.dataset_path is an archive. Unarchiving."
+            Logger.info("process_file_type", info_message)
+            new_path = unarchive(app_instance_metadata.dataset_metadata.dataset_path)
+            app_instance_metadata.dataset_metadata.dataset_path = new_path
+            info_message = f"New file path is {new_path}"
+            Logger.info("process_file_type", info_message)
+
+    if os.path.isdir(app_instance_metadata.dataset_metadata.dataset_path):
+        ## is folder, so we have to crawl through it
+        pass
+
     match pathlib.Path(app_instance_metadata.dataset_metadata.dataset_path).suffix:
         case ".csv":
             df = pd.read_csv(
