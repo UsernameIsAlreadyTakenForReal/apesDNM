@@ -3,8 +3,8 @@
 # run() follows these steps:
 # * Part 0 -- Checks and info;
 # * Part 1 -- Get the desired dataset as a pandas dataFrame
-# * * * At the end of the p1_getDataset_asDataFrame() there will either be a self.dataFrameList or an error.
-# * Part 2 -- Get the suitable solution(s) (by user input or by apes's recommendation);
+# * * * At the end of the p1_getDataset_asDataFrame() there will either be a self.dataFrameMap (df + label) or an error.
+# * Part 2 -- Get the suitable solution(s) (by user input or by APES's recommendation);
 # * Part 3 -- Run selected solution(s);
 
 
@@ -97,13 +97,18 @@ class APES_Application:
             else:
                 match solution_indexes:
                     case [1, 2]:
-                        info_message = (
-                            "Multiple solutions to load. Loading ekg_1 and ekg_2."
-                        )
+                        info_message = "Loading ekg_1 and ekg_2."
                         self.Logger.info(self, info_message)
 
                         from type_ekg.apes_solution_ekg_1_train import Solution_ekg_1
+
+                        info_message = "Loaded Solution_ekg_1."
+                        self.Logger.info(self, info_message)
+
                         from type_ekg.apes_solution_ekg_2_train import Solution_ekg_2
+
+                        info_message = "Loaded Solution_ekg_2."
+                        self.Logger.info(self, info_message)
 
                         self.solution_1 = Solution_ekg_1(
                             self.application_instance_metadata.shared_definitions,
@@ -119,7 +124,9 @@ class APES_Application:
 
         ## Part 3 -- Go to town with the solution(s)
         for solution in self.solutions_list:
-            solution.adapt_dataset(self.application_instance_metadata, self.dataFrame)
+            solution.adapt_dataset(
+                self.application_instance_metadata, self.dataFrameMap
+            )
 
             # if self.application_instance_metadata.model_origin == "train_new_model":
             #     solution.create_model()
@@ -179,7 +186,9 @@ class APES_Application:
                 )
                 self.Logger.info(self, info_message)
 
-                self.dataFrame = process_file_type(self.application_instance_metadata)
+                self.dataFrameMap = process_file_type(
+                    self.application_instance_metadata
+                )
                 pass
 
         else:
@@ -201,9 +210,8 @@ class APES_Application:
                 )
                 self.Logger.info(self, info_message)
 
-                self.dataFrame = process_file_type(
+                self.dataFrameMap = process_file_type(
                     self.Logger, self.application_instance_metadata
                 )
-                print(self.application_instance_metadata.dataset_metadata.dataset_path)
                 pass
         return (0, "Function p1_getDataset_asDataFrame exited successfully")
