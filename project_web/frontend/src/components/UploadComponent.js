@@ -14,6 +14,8 @@ import {
   Checkbox,
   FormControlLabel,
   CircularProgress,
+  Tooltip,
+  Typography,
 } from "@mui/material";
 
 const BASE_URL = process.env.REACT_APP_BACKEND;
@@ -23,7 +25,7 @@ export default function UploadComponent() {
   const [existingDatasetButtonHover, setExistingDatasetButtonHover] =
     useState(false);
   const [selectedDataset, setSelectedDataset] = useState("");
-  const [selectedMethodForEKG, setSelectedMethodForEKG] = useState("");
+  const [selectedMethods, setSelectedMethods] = useState([1]);
 
   const [fileInputHover, setFileInputHover] = useState(false);
   const [fileUploadButtonHover, setFileUploadButtonHover] = useState(false);
@@ -150,9 +152,13 @@ export default function UploadComponent() {
 
     if (!selectedFiles[1]) {
       if (trainDataPercentage.length === 0) {
-        setPercentageError(true);
-        setPercentageErrorMessage("percentage cannot be empty...");
+        trainDataPercentage = 0.7;
+        document.getElementById("percentage-field").value = 0.7;
+        console.log("testing... 0.7 value");
         return;
+        // setPercentageError(true);
+        // setPercentageErrorMessage("percentage cannot be empty...");
+        // return;
       }
 
       if (isNaN(trainDataPercentage)) {
@@ -249,7 +255,7 @@ export default function UploadComponent() {
                   console.log("Now selected", event.target.value);
 
                   setSelectedDataset(event.target.value);
-                  setSelectedMethodForEKG("");
+                  setSelectedMethods([]);
                 }}
               >
                 <MenuItem key="0" value="" disabled>
@@ -257,8 +263,8 @@ export default function UploadComponent() {
                 </MenuItem>
                 {existingDatasets.map((item) => {
                   return (
-                    <MenuItem key={item.id} value={item.method}>
-                      {item.method}
+                    <MenuItem key={item.id} value={item.dataset}>
+                      {item.dataset}
                     </MenuItem>
                   );
                 })}
@@ -267,36 +273,38 @@ export default function UploadComponent() {
           </div>
 
           {selectedDataset === "EKG" ? (
-            <div>
-              <FormControl
-                sx={{ width: "50%", margin: "20px", marginTop: "0px" }}
-                variant="outlined"
-              >
-                <InputLabel id="method-for-ekg-select">
-                  Method for EKG
-                </InputLabel>
-                <Select
-                  label="method-for-ekg-select"
-                  onChange={(event) => {
-                    console.log("Now selected", event.target.value);
-
-                    setSelectedMethodForEKG(event.target.value);
-                  }}
-                >
-                  <MenuItem key="0" value="" disabled>
-                    Choose a method
-                  </MenuItem>
-                  <MenuItem key="1" value="method #1">
-                    method #1
-                  </MenuItem>
-                  <MenuItem key="2" value="method #2">
-                    method #2
-                  </MenuItem>
-                  <MenuItem key="3" value="method #3">
-                    method #3
-                  </MenuItem>
-                </Select>
-              </FormControl>
+            <div style={{ marginBottom: "20px" }}>
+              <FormControlLabel
+                control={
+                  <Checkbox
+                    defaultChecked
+                    checked={selectedMethods.includes(1)}
+                    color="default"
+                    onChange={() => {}}
+                  />
+                }
+                label="method #1"
+              />
+              <FormControlLabel
+                control={
+                  <Checkbox
+                    checked={selectedMethods.includes(2)}
+                    color="default"
+                    onChange={() => {}}
+                  />
+                }
+                label="method #2"
+              />
+              <FormControlLabel
+                control={
+                  <Checkbox
+                    checked={selectedMethods.includes(3)}
+                    color="default"
+                    onChange={() => {}}
+                  />
+                }
+                label="method #3"
+              />
             </div>
           ) : (
             <></>
@@ -319,17 +327,10 @@ export default function UploadComponent() {
                   return;
                 }
 
-                if (selectedDataset === "EKG" && selectedMethodForEKG === "") {
+                if (selectedDataset === "EKG" && selectedMethods === []) {
                   console.log("You need to select a method for EKG first...");
                   return;
                 }
-
-                console.log(
-                  "sending over data-set",
-                  selectedDataset,
-                  "; method is",
-                  selectedDataset === "EKG" ? selectedMethodForEKG : "default"
-                );
               }}
               onMouseEnter={() => {
                 setExistingDatasetButtonHover(true);
@@ -419,18 +420,24 @@ export default function UploadComponent() {
               width: "60%",
             }}
           >
-            in case of one file - what would you like the percentage of train
-            data to be?
+            what would you like the percentage of train data to be?
           </Divv>
-          <TextField
-            style={{ margin: "25px", width: "40%" }}
-            error={percentageError}
-            helperText={percentageError ? percentageErrorMessage : ""}
-            id="percentage-field"
-            variant="outlined"
-            label="percentage of train data"
-            disabled={selectedFiles[1] && !fileSelectionError ? true : false}
-          />
+
+          <Tooltip
+            title={<Typography fontSize={14}>default value is 0.7</Typography>}
+            placement="top"
+            arrow={false}
+          >
+            <TextField
+              style={{ margin: "25px", width: "40%" }}
+              error={percentageError}
+              helperText={percentageError ? percentageErrorMessage : ""}
+              id="percentage-field"
+              variant="outlined"
+              label="percentage of train data"
+              disabled={selectedFiles[1] && !fileSelectionError ? true : false}
+            />
+          </Tooltip>
         </TextFieldFlex>
 
         <TextFieldFlex style={{ marginTop: "10px" }}>

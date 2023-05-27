@@ -57,7 +57,7 @@ export const Label = styled.label`
 `;
 
 export const TextFieldFlex = styled.div`
-  // border: 1px solid #ccc;
+  border: ${(props) => (props.showBorder ? "1px solid #ccc" : "1px #ccc")};
   border-radius: 25px;
 
   margin-left: 10px;

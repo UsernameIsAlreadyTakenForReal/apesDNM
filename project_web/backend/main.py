@@ -1,4 +1,3 @@
-from time import sleep
 from flask import Flask, request
 from flask_cors import CORS
 from flask.json import jsonify
@@ -8,10 +7,8 @@ import numpy as np
 from scipy.io import arff
 import rarfile
 
-import data
 import patoolib
 import os
-import io
 
 import tempfile
 
@@ -25,11 +22,13 @@ def cls():
 
 @app.route("/datasets", methods=["GET", "POST"])
 def getDatasets():
+    import data
+
     return jsonify(data.datasets)
 
 
 @app.route("/unarchive", methods=["GET", "POST"])
-def unarchive():
+def unarchive_old():
     file = request.files["file"]
 
     temp_dir = tempfile.gettempdir()
