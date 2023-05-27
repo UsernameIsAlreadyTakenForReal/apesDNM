@@ -8,6 +8,7 @@
 # class_names: list (e.g. ['normal', 'Q on F'] etc)
 # label_column_name: string (e.g. 'target' or 'label'); not vital
 # numerical_value_of_desired_label: int (e.g. 0)
+# separate_train_and_test: True / False (possibly redundant)
 # percentage_of_split: value / [value1, value2] (where value2 is % to split for validation)
 
 from apes_static_definitions import Shared_Definitions
