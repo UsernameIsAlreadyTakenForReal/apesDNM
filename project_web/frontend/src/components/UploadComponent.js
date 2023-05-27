@@ -25,7 +25,7 @@ export default function UploadComponent() {
   const [existingDatasetButtonHover, setExistingDatasetButtonHover] =
     useState(false);
   const [selectedDataset, setSelectedDataset] = useState("");
-  const [selectedMethods, setSelectedMethods] = useState([1]);
+  const [selectedMethods, setSelectedMethods] = useState([]);
 
   const [fileInputHover, setFileInputHover] = useState(false);
   const [fileUploadButtonHover, setFileUploadButtonHover] = useState(false);
@@ -225,6 +225,21 @@ export default function UploadComponent() {
     setLoading(false);
   }
 
+  function handleEKGMethodsCheckboxes(methodNumber) {
+    let tempSelectedMethods = selectedMethods;
+
+    if (tempSelectedMethods.includes(methodNumber)) {
+      console.log(tempSelectedMethods.indexOf(methodNumber));
+      tempSelectedMethods.pop(tempSelectedMethods.indexOf(methodNumber) + 1);
+    } else tempSelectedMethods.push(methodNumber);
+
+    // YOU WERE HERE
+
+    console.log(tempSelectedMethods);
+
+    setSelectedMethods(tempSelectedMethods);
+  }
+
   useEffect(() => {
     getExistingDatasetItems();
   }, []);
@@ -277,10 +292,10 @@ export default function UploadComponent() {
               <FormControlLabel
                 control={
                   <Checkbox
-                    defaultChecked
-                    checked={selectedMethods.includes(1)}
                     color="default"
-                    onChange={() => {}}
+                    onChange={() => {
+                      handleEKGMethodsCheckboxes(1);
+                    }}
                   />
                 }
                 label="method #1"
@@ -288,9 +303,10 @@ export default function UploadComponent() {
               <FormControlLabel
                 control={
                   <Checkbox
-                    checked={selectedMethods.includes(2)}
                     color="default"
-                    onChange={() => {}}
+                    onChange={() => {
+                      handleEKGMethodsCheckboxes(2);
+                    }}
                   />
                 }
                 label="method #2"
@@ -298,9 +314,10 @@ export default function UploadComponent() {
               <FormControlLabel
                 control={
                   <Checkbox
-                    checked={selectedMethods.includes(3)}
                     color="default"
-                    onChange={() => {}}
+                    onChange={() => {
+                      handleEKGMethodsCheckboxes(3);
+                    }}
                   />
                 }
                 label="method #3"
