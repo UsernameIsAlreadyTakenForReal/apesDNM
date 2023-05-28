@@ -24,15 +24,23 @@ def getDatasets():
 @app.route("/upload", methods=["GET", "POST"])
 def upload_file():
     cls()
+
     files = []
+
     for i in range(len(request.files)):
         file_key = f"file{i}"
         file = request.files.get(file_key)
         if file:
             files.append(file)
-            print(file.filename)
 
-    return "request ok"
+    # print(files)
+
+    temp_dir = tempfile.mkdtemp()
+
+    for file in files:
+        file.save(os.path.join(temp_dir, file.filename))
+
+    return "request ok, files saved at " + temp_dir
 
 
 if __name__ == "__main__":
