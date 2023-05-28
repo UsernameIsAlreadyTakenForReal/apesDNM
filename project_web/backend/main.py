@@ -32,7 +32,7 @@ def upload_file():
     print("file0: " + file0.filename if file0 else "file0: None")
     print("file1: " + file1.filename if file1 else "file1: None")
 
-    return "ok"
+    return "request ok"
 
 
 if __name__ == "__main__":

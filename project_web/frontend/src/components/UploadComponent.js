@@ -56,6 +56,8 @@ export default function UploadComponent() {
   const [normalLabelError, setNormalLabelError] = useState(false);
   const [normalLabelErrorMessage, setNormalLabelErrorMessage] = useState("");
 
+  const [stringOfFilesUploaded, setStringOfFilesUploaded] = useState("");
+
   function resetAllFormErrorsAndData() {
     setDatasetError(false);
 
@@ -69,7 +71,6 @@ export default function UploadComponent() {
     document.getElementById("normal-value-field").value = "";
     setSaveDataCheckbox(false);
   }
-
   // -------------------------------------------------------------------------
 
   async function getExistingDatasetItems() {
@@ -88,7 +89,6 @@ export default function UploadComponent() {
 
     if (event.target.files.length > 1) {
       [...event.target.files].forEach((file) => {
-        console.log(file);
         if (file.name.includes(".zip") || file.name.includes(".rar")) {
           archiveFoundAndMultipleFiles = true;
         }
@@ -101,11 +101,20 @@ export default function UploadComponent() {
       setSelectedFiles([]);
       return;
     }
+
+    let localStringOfFilesUploaded = "";
+
+    [...event.target.files].forEach((file) => {
+      localStringOfFilesUploaded =
+        localStringOfFilesUploaded + file.name + ", ";
+    });
+
+    localStringOfFilesUploaded = localStringOfFilesUploaded.slice(0, -2);
+    setStringOfFilesUploaded(localStringOfFilesUploaded);
   }
 
   async function onFileUpload() {
     setFileUploadButtonHover(false);
-
     setPercentageError(false);
     setLabelColumnError(false);
     setNormalLabelError(false);
@@ -119,19 +128,14 @@ export default function UploadComponent() {
     }
 
     // percentage logic
-    const trainDataPercentage =
-      document.getElementById("percentage-field").value;
+    let trainDataPercentage =
+      document.getElementById("percentage-field").value !== ""
+        ? Number(document.getElementById("percentage-field").value)
+        : 0.7;
+
+    document.getElementById("percentage-field").value = trainDataPercentage;
 
     console.log(trainDataPercentage);
-
-    // if (!selectedFiles[1]) {
-    if (trainDataPercentage === "") {
-      console.log("no percentage");
-      trainDataPercentage = 0.7;
-      document.getElementById("percentage-field").value = 0.7;
-      console.log("testing... 0.7 value");
-      return;
-    }
 
     if (isNaN(trainDataPercentage)) {
       setPercentageError(true);
@@ -141,17 +145,16 @@ export default function UploadComponent() {
 
     if (trainDataPercentage < 0 || trainDataPercentage > 1) {
       setPercentageError(true);
-      setPercentageErrorMessage("percentage must be between 0-1...");
+      setPercentageErrorMessage("percentage must be between 0-1");
       return;
     }
-    // }
 
     // label column logic
     const labelColumn = document.getElementById("label-column-field").value;
 
     if (labelColumn === "") {
       setLabelColumnError(true);
-      setLabelColumnErrorMessage("unlabeled sets are not supported...");
+      setLabelColumnErrorMessage("unlabeled sets are not supported");
       return;
     }
 
@@ -160,7 +163,7 @@ export default function UploadComponent() {
 
     if (normalLabel === "") {
       setNormalLabelError(true);
-      setNormalLabelErrorMessage("a normal label value must be provided...");
+      setNormalLabelErrorMessage("a normal label value must be provided");
       return;
     }
 
@@ -204,11 +207,10 @@ export default function UploadComponent() {
       tempSelectedMethods.splice(tempSelectedMethods.indexOf(methodNumber), 1);
     } else tempSelectedMethods.push(methodNumber);
 
-    console.log("selected methods are", tempSelectedMethods.sort());
     setSelectedMethods(tempSelectedMethods.sort());
   }
 
-  async function onUseThisDatasetHandler() {
+  async function onUseThisDataset() {
     setDatasetError(false);
     setDatasetErrorMessage("");
 
@@ -224,13 +226,21 @@ export default function UploadComponent() {
       return;
     }
 
+    if (selectedDataset !== "EKG") {
+      handleEKGMethodsCheckboxes(1);
+    }
+
     const formData = new FormData();
 
     formData.append("dataset", selectedDataset);
     formData.append("methods", selectedMethods);
 
-    console.log(formData);
-    return;
+    console.log(
+      "dataset is",
+      selectedDataset,
+      "selected methods are",
+      selectedMethods
+    );
 
     setLoading(true);
 
@@ -347,7 +357,7 @@ export default function UploadComponent() {
               variant="contained"
               color="primary"
               size="large"
-              onClick={() => onUseThisDatasetHandler()}
+              onClick={() => onUseThisDataset()}
               onMouseEnter={() => {
                 setExistingDatasetButtonHover(true);
               }}
@@ -386,19 +396,13 @@ export default function UploadComponent() {
               onChange={(event) => onFileChange(event)}
               multiple
             />
-            ...or click here to upload the input{" "}
-            <span id="upload-something-here-end">file(s)</span>
+            ...or click here to upload the input file(s)
           </Label>
         </Divv>
 
         {selectedFiles[0] && !fileSelectionError ? (
           <Divv top="0px" size="22.5px">
-            {selectedFiles[1]
-              ? "you have uploaded: " +
-                selectedFiles[0].name +
-                ", " +
-                selectedFiles[1].name
-              : "you have uploaded: " + selectedFiles[0].name}
+            you have uploaded: {stringOfFilesUploaded}
           </Divv>
         ) : (
           <div
@@ -408,19 +412,7 @@ export default function UploadComponent() {
             }}
           >
             <Divv top="0px" size="22.5px" style={{ color: "red" }}>
-              <span id="upload-something-here-start">
-                {fileSelectionErrorMessage}&nbsp;&nbsp;
-              </span>
-
-              <Xarrow
-                showXarrow={false}
-                start="upload-something-here-start"
-                end="upload-something-here-end"
-                startAnchor="right"
-                endAnchor="bottom"
-                curveness="2.5"
-                color="#FF5733"
-              ></Xarrow>
+              {fileSelectionErrorMessage}&nbsp;&nbsp;
             </Divv>
           </div>
         )}
@@ -428,9 +420,6 @@ export default function UploadComponent() {
         <TextFieldFlex>
           <Divv
             size="22.5px"
-            color={
-              selectedFiles[1] && !fileSelectionError ? "lightgray" : "black"
-            }
             style={{
               margin: "25px",
               width: "60%",
@@ -451,7 +440,10 @@ export default function UploadComponent() {
               id="percentage-field"
               variant="outlined"
               label="percentage of train data"
-              disabled={selectedFiles[1] && !fileSelectionError ? true : false}
+              InputLabelProps={{
+                shrink:
+                  document.getElementById("percentage-field").value !== "",
+              }}
             />
           </Tooltip>
         </TextFieldFlex>
