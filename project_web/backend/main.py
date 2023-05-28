@@ -24,11 +24,13 @@ def getDatasets():
 @app.route("/upload", methods=["GET", "POST"])
 def upload_file():
     cls()
-
-    files = request.files.getlist("file")
-
-    for file in files:
-        print(file.filename)
+    files = []
+    for i in range(len(request.files)):
+        file_key = f"file{i}"
+        file = request.files.get(file_key)
+        if file:
+            files.append(file)
+            print(file.filename)
 
     return "request ok"
 

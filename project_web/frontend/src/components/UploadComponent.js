@@ -35,7 +35,7 @@ export default function UploadComponent() {
   const [selectedFiles, setSelectedFiles] = useState([]);
 
   const [saveDataCheckbox, setSaveDataCheckbox] = useState(false);
-  const [radioGroupValue, setRadioGroupValue] = useState("yes");
+  const [labelRadioValue, setLabelRadioValue] = useState("yes");
   const [isSupervisedCheckbox, setIsSupervisedCheckbox] = useState(false);
   const [separateTrainAndTestCheckbox, setSeparateTrainAndTestCheckbox] =
     useState(false);
@@ -72,6 +72,7 @@ export default function UploadComponent() {
     document.getElementById("percentage-field").value = "";
     document.getElementById("label-column-field").value = "";
     document.getElementById("normal-value-field").value = "";
+
     setSaveDataCheckbox(false);
   }
   // -------------------------------------------------------------------------
@@ -86,7 +87,7 @@ export default function UploadComponent() {
 
   async function onFileChange(event) {
     resetAllFormErrorsAndData();
-    setSelectedFiles(event.target.files);
+    setSelectedFiles([...event.target.files]);
 
     let archiveFoundAndMultipleFiles = false;
 
@@ -153,7 +154,7 @@ export default function UploadComponent() {
     }
     // label column logic
     let labelColumn = "";
-    if (radioGroupValue === "yes") {
+    if (labelRadioValue === "yes") {
       labelColumn = document.getElementById("label-column-field").value;
 
       if (labelColumn === "") {
@@ -422,9 +423,9 @@ export default function UploadComponent() {
               row
               name="row-radio-buttons-group"
               defaultValue="yes"
-              value={radioGroupValue}
+              value={labelRadioValue}
               onChange={(event) => {
-                setRadioGroupValue(event.target.value);
+                setLabelRadioValue(event.target.value);
               }}
             >
               <FormControlLabel value="yes" control={<Radio />} label="yes" />
