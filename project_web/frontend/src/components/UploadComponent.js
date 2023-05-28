@@ -15,6 +15,9 @@ import {
   Tooltip,
   Typography,
   FormHelperText,
+  FormLabel,
+  RadioGroup,
+  Radio,
 } from "@mui/material";
 
 const BASE_URL = process.env.REACT_APP_BACKEND;
@@ -32,7 +35,7 @@ export default function UploadComponent() {
   const [selectedFiles, setSelectedFiles] = useState([]);
 
   const [saveDataCheckbox, setSaveDataCheckbox] = useState(false);
-  const [islabeledCheckbox, setIsLabeledCheckbox] = useState(false);
+  const [radioGroupValue, setRadioGroupValue] = useState("yes");
   const [isSupervisedCheckbox, setIsSupervisedCheckbox] = useState(false);
   const [separateTrainAndTestCheckbox, setSeparateTrainAndTestCheckbox] =
     useState(false);
@@ -127,34 +130,38 @@ export default function UploadComponent() {
     }
 
     // percentage logic
-    let trainDataPercentage =
-      document.getElementById("percentage-field").value !== ""
-        ? Number(document.getElementById("percentage-field").value)
-        : 0.7;
+    let trainDataPercentage = "";
+    if (separateTrainAndTestCheckbox) {
+      trainDataPercentage =
+        document.getElementById("percentage-field").value !== ""
+          ? Number(document.getElementById("percentage-field").value)
+          : 0.7;
 
-    document.getElementById("percentage-field").value = trainDataPercentage;
+      document.getElementById("percentage-field").value = trainDataPercentage;
 
-    if (isNaN(trainDataPercentage)) {
-      setPercentageError(true);
-      setPercentageErrorMessage("percentage must be a number (between 0-1)");
-      return;
+      if (isNaN(trainDataPercentage)) {
+        setPercentageError(true);
+        setPercentageErrorMessage("percentage must be a number (between 0-1)");
+        return;
+      }
+
+      if (trainDataPercentage < 0 || trainDataPercentage > 1) {
+        setPercentageError(true);
+        setPercentageErrorMessage("percentage must be between 0-1");
+        return;
+      }
     }
-
-    if (trainDataPercentage < 0 || trainDataPercentage > 1) {
-      setPercentageError(true);
-      setPercentageErrorMessage("percentage must be between 0-1");
-      return;
-    }
-
     // label column logic
-    const labelColumn = document.getElementById("label-column-field").value;
+    let labelColumn = "";
+    if (radioGroupValue === "yes") {
+      labelColumn = document.getElementById("label-column-field").value;
 
-    if (labelColumn === "") {
-      setLabelColumnError(true);
-      setLabelColumnErrorMessage("set will be treated as unlabeled");
-      document.getElementById("label-column-field").value = "##unlabeled##";
+      if (labelColumn === "") {
+        setLabelColumnError(true);
+        setLabelColumnErrorMessage("set will be treated as unlabeled");
+        document.getElementById("label-column-field").value = "##unlabeled##";
+      }
     }
-
     // normal value logic
     const normalLabel = document.getElementById("normal-value-field").value;
 
@@ -272,7 +279,6 @@ export default function UploadComponent() {
                 label="data-type-select"
                 onChange={(event) => {
                   console.log("Now selected", event.target.value);
-
                   setSelectedDataset(event.target.value);
                   setSelectedMethods([]);
                 }}
@@ -409,39 +415,30 @@ export default function UploadComponent() {
           </div>
         )}
 
-        <TextFieldFlex style={{ marginTop: "10px" }}>
-          <div display="flex" style={{ flexDirection: "column" }}>
-            <div>
+        <TextFieldFlex style={{ marginTop: "10px" }} flexDirection="">
+          <FormControl style={{ margin: "25px", width: "35%" }}>
+            <FormLabel>is the dataset labeled?</FormLabel>
+            <RadioGroup
+              row
+              name="row-radio-buttons-group"
+              defaultValue="yes"
+              value={radioGroupValue}
+              onChange={(event) => {
+                setRadioGroupValue(event.target.value);
+              }}
+            >
+              <FormControlLabel value="yes" control={<Radio />} label="yes" />
+              <FormControlLabel value="no" control={<Radio />} label="no" />
               <FormControlLabel
-                style={{ margin: "25px", width: "33%" }}
-                control={
-                  <Checkbox
-                    checked={islabeledCheckbox}
-                    id="save-data-checkbox"
-                    color="default"
-                    onChange={() => setIsLabeledCheckbox(!islabeledCheckbox)}
-                  />
-                }
-                label="is the dataset labeled?"
+                value="idk"
+                control={<Radio />}
+                label="idk man..."
               />
-            </div>
-            <div>
-              <FormControlLabel
-                control={
-                  <Checkbox
-                    checked={islabeledCheckbox}
-                    id="save-data-checkbox"
-                    color="default"
-                    onChange={() => setIsLabeledCheckbox(!islabeledCheckbox)}
-                  />
-                }
-                label="idk"
-              />
-            </div>
-          </div>
+            </RadioGroup>
+          </FormControl>
 
           <FormControlLabel
-            style={{ margin: "25px", width: "33%" }}
+            style={{ margin: "25px", width: "30%" }}
             control={
               <Checkbox
                 checked={isSupervisedCheckbox}
@@ -454,7 +451,7 @@ export default function UploadComponent() {
           />
 
           <FormControlLabel
-            style={{ margin: "25px", width: "33%" }}
+            style={{ margin: "25px", width: "35%" }}
             control={
               <Checkbox
                 checked={separateTrainAndTestCheckbox}
@@ -474,69 +471,78 @@ export default function UploadComponent() {
             size="22.5px"
             style={{
               margin: "25px",
-              width: "60%",
+              width: "55%",
             }}
+            color={separateTrainAndTestCheckbox ? "black" : "gray"}
           >
             what would you like the percentage of train data to be?
           </Divv>
 
           <Tooltip
-            title={<Typography fontSize={14}>default value is 0.7</Typography>}
+            title={
+              separateTrainAndTestCheckbox ? (
+                <Typography fontSize={14}>default value is 0.7</Typography>
+              ) : (
+                ""
+              )
+            }
             placement="top"
             arrow={false}
           >
             <TextField
-              style={{ margin: "25px", width: "40%" }}
+              style={{ margin: "25px", width: "45%" }}
+              disabled={separateTrainAndTestCheckbox === false}
               error={percentageError}
               helperText={percentageError ? percentageErrorMessage : ""}
               id="percentage-field"
               variant="outlined"
               label="percentage of train data"
               InputLabelProps={{
-                shrink:
-                  document.getElementById("percentage-field").value !== "",
+                shrink: true,
               }}
             />
           </Tooltip>
         </TextFieldFlex>
 
         <TextFieldFlex style={{ marginTop: "10px" }}>
-          <Divv size="22.5px" style={{ margin: "25px", width: "60%" }}>
+          <Divv size="22.5px" style={{ margin: "25px", width: "55%" }}>
             what is the label column called?
           </Divv>
           <TextField
-            style={{ margin: "25px", width: "40%" }}
+            style={{ margin: "25px", width: "45%" }}
             helperText={labelColumnError ? labelColumnErrorMessage : ""}
             id="label-column-field"
             variant="outlined"
             label="label column"
             InputLabelProps={{
-              shrink:
-                document.getElementById("label-column-field").value !== "",
+              shrink: true,
             }}
           />
         </TextFieldFlex>
 
         <TextFieldFlex style={{ marginTop: "10px" }}>
-          <Divv size="22.5px" style={{ margin: "25px", width: "60%" }}>
+          <Divv size="22.5px" style={{ margin: "25px", width: "55%" }}>
             what is normal (non-anomaly) value of the label?
           </Divv>
           <TextField
-            style={{ margin: "25px", width: "40%" }}
+            style={{ margin: "25px", width: "45%" }}
             error={normalLabelError}
             helperText={normalLabelError ? normalLabelErrorMessage : ""}
             id="normal-value-field"
             variant="outlined"
             label="normal field label"
+            InputLabelProps={{
+              shrink: true,
+            }}
           />
         </TextFieldFlex>
 
         <TextFieldFlex style={{ marginTop: "10px" }}>
-          <Divv size="22.5px" style={{ margin: "25px", width: "60%" }}>
-            save my data for future uses
+          <Divv size="22.5px" style={{ margin: "25px", width: "55%" }}>
+            {/* save my data for future uses */}
           </Divv>
           <FormControlLabel
-            style={{ margin: "25px", width: "40%" }}
+            style={{ margin: "25px", width: "45%" }}
             control={
               <Checkbox
                 checked={saveDataCheckbox}
