@@ -1,8 +1,6 @@
 import { useEffect, useState } from "react";
 import * as React from "react";
 import { Divv, TextFieldFlex, Label, WrapperDiv } from "./StyledComponents";
-import { tsParticles } from "tsparticles-engine";
-import Xarrow from "react-xarrows";
 
 import {
   Button,
@@ -33,9 +31,11 @@ export default function UploadComponent() {
 
   const [selectedFiles, setSelectedFiles] = useState([]);
 
-  const [showXarrow, setShowXarrow] = useState(false);
-
   const [saveDataCheckbox, setSaveDataCheckbox] = useState(false);
+  const [islabeledCheckbox, setIsLabeledCheckbox] = useState(false);
+  const [isSupervisedCheckbox, setIsSupervisedCheckbox] = useState(false);
+  const [separateTrainAndTestCheckbox, setSeparateTrainAndTestCheckbox] =
+    useState(false);
 
   const [loading, setLoading] = useState(false);
 
@@ -121,7 +121,6 @@ export default function UploadComponent() {
 
     // file logic
     if (!selectedFiles[0]) {
-      setShowXarrow(true);
       setFileSelectionError(true);
       setFileSelectionErrorMessage("upload a file first...");
       return;
@@ -134,8 +133,6 @@ export default function UploadComponent() {
         : 0.7;
 
     document.getElementById("percentage-field").value = trainDataPercentage;
-
-    console.log(trainDataPercentage);
 
     if (isNaN(trainDataPercentage)) {
       setPercentageError(true);
@@ -154,8 +151,8 @@ export default function UploadComponent() {
 
     if (labelColumn === "") {
       setLabelColumnError(true);
-      setLabelColumnErrorMessage("unlabeled sets are not supported");
-      return;
+      setLabelColumnErrorMessage("set will be treated as unlabeled");
+      document.getElementById("label-column-field").value = "##unlabeled##";
     }
 
     // normal value logic
@@ -169,23 +166,14 @@ export default function UploadComponent() {
 
     const formData = new FormData();
 
-    formData.append("file0", selectedFiles[0]);
-    if (selectedFiles.length === 2) {
-      formData.append("file1", selectedFiles[1]);
+    for (let i = 0; i < selectedFiles.length; i++) {
+      formData.append(`file${i}`, selectedFiles[i]);
     }
 
     formData.append("percentage", trainDataPercentage);
     formData.append("labelColumn", labelColumn);
     formData.append("normalLabel", normalLabel);
     formData.append("saveData", saveDataCheckbox);
-
-    console.log("body is", {
-      file: formData,
-      percentage: trainDataPercentage,
-      labelColumn: labelColumn,
-      normalLabel: normalLabel,
-      saveData: saveDataCheckbox,
-    });
 
     setLoading(true);
 
@@ -402,7 +390,11 @@ export default function UploadComponent() {
 
         {selectedFiles[0] && !fileSelectionError ? (
           <Divv top="0px" size="22.5px">
-            you have uploaded: {stringOfFilesUploaded}
+            you have uploaded{" "}
+            {selectedFiles.length === 1
+              ? "1 file"
+              : selectedFiles.length + " files"}
+            : <br></br> {stringOfFilesUploaded}
           </Divv>
         ) : (
           <div
@@ -416,6 +408,66 @@ export default function UploadComponent() {
             </Divv>
           </div>
         )}
+
+        <TextFieldFlex style={{ marginTop: "10px" }}>
+          <div display="flex" style={{ flexDirection: "column" }}>
+            <div>
+              <FormControlLabel
+                style={{ margin: "25px", width: "33%" }}
+                control={
+                  <Checkbox
+                    checked={islabeledCheckbox}
+                    id="save-data-checkbox"
+                    color="default"
+                    onChange={() => setIsLabeledCheckbox(!islabeledCheckbox)}
+                  />
+                }
+                label="is the dataset labeled?"
+              />
+            </div>
+            <div>
+              <FormControlLabel
+                control={
+                  <Checkbox
+                    checked={islabeledCheckbox}
+                    id="save-data-checkbox"
+                    color="default"
+                    onChange={() => setIsLabeledCheckbox(!islabeledCheckbox)}
+                  />
+                }
+                label="idk"
+              />
+            </div>
+          </div>
+
+          <FormControlLabel
+            style={{ margin: "25px", width: "33%" }}
+            control={
+              <Checkbox
+                checked={isSupervisedCheckbox}
+                id="save-data-checkbox"
+                color="default"
+                onChange={() => setIsSupervisedCheckbox(!isSupervisedCheckbox)}
+              />
+            }
+            label="should it be supervised?"
+          />
+
+          <FormControlLabel
+            style={{ margin: "25px", width: "33%" }}
+            control={
+              <Checkbox
+                checked={separateTrainAndTestCheckbox}
+                id="save-data-checkbox"
+                color="default"
+                onChange={() =>
+                  setSeparateTrainAndTestCheckbox(!separateTrainAndTestCheckbox)
+                }
+              />
+            }
+            label="separate train and test data?"
+          />
+        </TextFieldFlex>
 
         <TextFieldFlex>
           <Divv
@@ -454,11 +506,14 @@ export default function UploadComponent() {
           </Divv>
           <TextField
             style={{ margin: "25px", width: "40%" }}
-            error={labelColumnError}
             helperText={labelColumnError ? labelColumnErrorMessage : ""}
             id="label-column-field"
             variant="outlined"
             label="label column"
+            InputLabelProps={{
+              shrink:
+                document.getElementById("label-column-field").value !== "",
+            }}
           />
         </TextFieldFlex>
 
@@ -478,7 +533,7 @@ export default function UploadComponent() {
 
         <TextFieldFlex style={{ marginTop: "10px" }}>
           <Divv size="22.5px" style={{ margin: "25px", width: "60%" }}>
-            {/* save my data for future uses */}
+            save my data for future uses
           </Divv>
           <FormControlLabel
             style={{ margin: "25px", width: "40%" }}

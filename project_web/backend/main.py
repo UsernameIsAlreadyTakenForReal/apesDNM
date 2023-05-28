@@ -1,7 +1,9 @@
 from flask import Flask, request
 from flask_cors import CORS
 from flask.json import jsonify
+
 import os
+import tempfile
 
 app = Flask(__name__)
 CORS(app)
@@ -23,14 +25,10 @@ def getDatasets():
 def upload_file():
     cls()
 
-    file0 = request.files.get("file0", None)
-    file1 = request.files.get("file1", None)
+    files = request.files.getlist("file")
 
-    dataset = request.form.get("dataset", None)
-    methods = request.form.get("methods", None)
-
-    print("file0: " + file0.filename if file0 else "file0: None")
-    print("file1: " + file1.filename if file1 else "file1: None")
+    for file in files:
+        print(file.filename)
 
     return "request ok"
 

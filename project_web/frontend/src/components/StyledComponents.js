@@ -64,7 +64,8 @@ export const TextFieldFlex = styled.div`
   margin-right: 10px;
 
   display: flex;
-  flex-direction: row;
+  flex-direction: ${(props) =>
+    props.flexDirection ? props.flexDirection : "row"};
 
   justify-content: ${(props) => (props.justify ? props.justify : "center")};
   align-items: ${(props) => (props.align ? props.align : "center")};
