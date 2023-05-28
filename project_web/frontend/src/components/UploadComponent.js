@@ -34,11 +34,14 @@ export default function UploadComponent() {
 
   const [selectedFiles, setSelectedFiles] = useState([]);
 
+  const [datasetClasses, setDatasetClasses] = useState([]);
+  const [datasetNormalClass, setDatasetNormalClass] = useState("");
+
   const [saveDataCheckbox, setSaveDataCheckbox] = useState(false);
-  const [labelRadioValue, setLabelRadioValue] = useState("yes");
+  const [labeledRadioValue, setLabeledRadioValue] = useState("yes");
   const [isSupervisedCheckbox, setIsSupervisedCheckbox] = useState(false);
   const [separateTrainAndTestCheckbox, setSeparateTrainAndTestCheckbox] =
-    useState(false);
+    useState(true);
 
   const [loading, setLoading] = useState(false);
 
@@ -154,13 +157,15 @@ export default function UploadComponent() {
     }
     // label column logic
     let labelColumn = "";
-    if (labelRadioValue === "yes") {
+    if (labeledRadioValue === "yes") {
       labelColumn = document.getElementById("label-column-field").value;
 
       if (labelColumn === "") {
         setLabelColumnError(true);
-        setLabelColumnErrorMessage("set will be treated as unlabeled");
-        document.getElementById("label-column-field").value = "##unlabeled##";
+        setLabelColumnErrorMessage(
+          "labeled dataset selected. provide a target"
+        );
+        return;
       }
     }
     // normal value logic
@@ -423,9 +428,9 @@ export default function UploadComponent() {
               row
               name="row-radio-buttons-group"
               defaultValue="yes"
-              value={labelRadioValue}
+              value={labeledRadioValue}
               onChange={(event) => {
-                setLabelRadioValue(event.target.value);
+                setLabeledRadioValue(event.target.value);
               }}
             >
               <FormControlLabel value="yes" control={<Radio />} label="yes" />
@@ -474,7 +479,7 @@ export default function UploadComponent() {
               margin: "25px",
               width: "55%",
             }}
-            color={separateTrainAndTestCheckbox ? "black" : "gray"}
+            color={separateTrainAndTestCheckbox ? "black" : "lightgray"}
           >
             what would you like the percentage of train data to be?
           </Divv>
@@ -506,11 +511,17 @@ export default function UploadComponent() {
         </TextFieldFlex>
 
         <TextFieldFlex style={{ marginTop: "10px" }}>
-          <Divv size="22.5px" style={{ margin: "25px", width: "55%" }}>
+          <Divv
+            size="22.5px"
+            style={{ margin: "25px", width: "55%" }}
+            color={labeledRadioValue === "yes" ? "black" : "lightgray"}
+          >
             what is the label column called?
           </Divv>
           <TextField
             style={{ margin: "25px", width: "45%" }}
+            disabled={labeledRadioValue !== "yes"}
+            error={labelColumnError}
             helperText={labelColumnError ? labelColumnErrorMessage : ""}
             id="label-column-field"
             variant="outlined"
@@ -519,6 +530,41 @@ export default function UploadComponent() {
               shrink: true,
             }}
           />
+        </TextFieldFlex>
+
+        <TextFieldFlex style={{ marginTop: "10px" }}>
+          <Divv
+            size="22.5px"
+            style={{ margin: "25px", width: "55%" }}
+            color={labeledRadioValue === "yes" ? "black" : "lightgray"}
+          >
+            what are the classes?
+          </Divv>
+          <TextField
+            style={{ margin: "25px", width: "30%" }}
+            disabled={labeledRadioValue !== "yes"}
+            helperText={labelColumnError ? labelColumnErrorMessage : ""}
+            id="label-column-field"
+            variant="outlined"
+            label="class value"
+            InputLabelProps={{
+              shrink: true,
+            }}
+          />
+          <Button
+            style={{
+              margin: "25px",
+              width: "15%",
+              background: "black",
+              color: "white",
+              fontWeight: "bold",
+            }}
+            variant="contained"
+            color="primary"
+            size="large"
+          >
+            +
+          </Button>
         </TextFieldFlex>
 
         <TextFieldFlex style={{ marginTop: "10px" }}>
