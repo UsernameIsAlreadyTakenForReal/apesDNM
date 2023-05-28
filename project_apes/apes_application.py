@@ -186,9 +186,13 @@ class APES_Application:
                 )
                 self.Logger.info(self, info_message)
 
-                self.dataFrameMap = process_file_type(
-                    self.application_instance_metadata
+                return_code, return_message, self.dataFrameMap = process_file_type(
+                    self.Logger, self.application_instance_metadata
                 )
+                if return_code != 0:
+                    return (return_code, return_message)
+                else:
+                    self.Logger.info(self, return_message)
                 pass
 
         else:
@@ -210,8 +214,12 @@ class APES_Application:
                 )
                 self.Logger.info(self, info_message)
 
-                self.dataFrameMap = process_file_type(
+                return_code, return_message, self.dataFrameMap = process_file_type(
                     self.Logger, self.application_instance_metadata
                 )
+                if return_code != 0:
+                    return (return_code, return_message)
+                else:
+                    self.Logger.info(self, return_message)
                 pass
         return (0, "Function p1_getDataset_asDataFrame exited successfully")

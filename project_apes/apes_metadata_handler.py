@@ -3,6 +3,7 @@
 
 # ############ Dataset metada:
 # is_labeled: True/False
+# file_keyword_names: [] (files usually come as either 'something_train.csv' and 'something_test.csv'. User can give keywords to search by)
 #
 # * For labeled datasets:
 # class_names: list (e.g. ['normal', 'Q on F'] etc)
@@ -20,6 +21,7 @@ class Dataset_Metadata:
         Logger,
         dataset_path="",
         is_labeled=True,
+        file_keyword_names=[],
         class_names=[],
         label_column_name="target",
         numerical_value_of_desired_label=0,
@@ -30,6 +32,7 @@ class Dataset_Metadata:
 
         self.dataset_path = dataset_path
         self.is_labeled = is_labeled
+        self.file_keyword_names = file_keyword_names
         self.class_names = class_names
         self.label_column_name = label_column_name
         self.numerical_value_of_desired_label = numerical_value_of_desired_label
@@ -46,6 +49,8 @@ class Dataset_Metadata:
             + str(self.dataset_path)
             + "\n   is_labeled = "
             + str(self.is_labeled)
+            + "\n   file_keyword_names = "
+            + str(self.file_keyword_names)
             + "\n   class_names = "
             + str(self.class_names)
             + "\n   label_column_name = "
