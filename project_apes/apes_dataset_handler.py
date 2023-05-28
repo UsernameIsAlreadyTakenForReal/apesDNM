@@ -21,6 +21,7 @@ import arff
 import math
 import pathlib
 import pandas as pd
+import numpy as np
 
 from scipy.io.arff import loadarff
 
@@ -96,7 +97,11 @@ def process_file_type(Logger, app_instance_metadata):
         ):
             no_of_files_in_dir_and_subdirs.append(len(filenames))
 
-        if len(no_of_files_in_dir_and_subdirs) != 1:
+        # if subdirs and there is at least one file outside of the main dir
+        if (
+            len(no_of_files_in_dir_and_subdirs) != 1
+            and sum(no_of_files_in_dir_and_subdirs) != no_of_files_in_dir_and_subdirs[0]
+        ):
             info_message = f"There seem to be {len(no_of_files_in_dir_and_subdirs) - 1} subdirectories in this directory. Number of files for each: {no_of_files_in_dir_and_subdirs}"
             Logger.info("process_file_type", info_message)
             return 1, "Subdirectories present. Case not yet handled", []
@@ -166,11 +171,12 @@ def process_file_type(Logger, app_instance_metadata):
             )
             if return_code != 0:
                 return return_code, return_message, []
-            list_of_dataFrames.append(temp_df)
-            for string_match in rough_filename_searches:
-                if string_match in file.lower():
-                    list_of_dataFramesUtilityLabels.append(string_match)
-                    break
+            else:
+                list_of_dataFrames.append(temp_df)
+                for string_match in rough_filename_searches:
+                    if string_match in file.lower():
+                        list_of_dataFramesUtilityLabels.append(string_match)
+                        break
 
         info_message = f"list_of_dataFrames: {list_of_dataFrames}"
         Logger.info("process_file_type", info_message)
@@ -184,13 +190,26 @@ def process_file_type(Logger, app_instance_metadata):
 
 
 def process_singular_file_type(Logger, file, app_instance_metadata):
+    if os.path.isfile(app_instance_metadata.dataset_metadata.dataset_path) == False:
+        file = app_instance_metadata.dataset_metadata.dataset_path + "/" + file
     info_message = f"Processing file {file}"
     Logger.info("process_singular_file_type", info_message)
 
     match pathlib.Path(file).suffix:
         case ".csv":
-            df = pd.read_csv(file, header=None)
-            return df
+            df = []
+            try:
+                info_message = f"Trying to load file {file} without header"
+                Logger.info("process_singular_file_type", info_message)
+                df = pd.read_csv(file, header=None, dtype=np.float64)
+            except:
+                info_message = f"Trying to load file {file} with header"
+                Logger.info("process_singular_file_type", info_message)
+                df = pd.read_csv(file, dtype=np.float64)
+            finally:
+                info_message = f"Loaded file {file}"
+                Logger.info("process_singular_file_type", info_message)
+                return 0, "process_singular_file_type exited successfully", df
 
             # df = df.sample(frac=1).reset_index(drop=True)  ## shuffles the row
             # if app_instance_metadata.dataset_metadata.separate_train_and_test == False:
@@ -200,10 +219,9 @@ def process_singular_file_type(Logger, file, app_instance_metadata):
             #     df_train = df.head(math.floor(0.2 * x))
             #     df_test = df.tail(x - math.floor(0.2 * x))
             #     return df_train, df_test
-            pass
         case ".arff":
-            data = arff.load(file)
-            return data
+            df = arff.load(file)
+            return 0, "process_singular_file_type exited successfully", df
         case ".txt":
             return "txt"
         case ".npz":
