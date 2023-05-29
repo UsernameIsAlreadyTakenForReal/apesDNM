@@ -43,6 +43,8 @@ export default function UploadComponent() {
   const [separateTrainAndTestCheckbox, setSeparateTrainAndTestCheckbox] =
     useState(true);
 
+  const [classesTextfields, setClassesTextfields] = useState([1]);
+
   const [loading, setLoading] = useState(false);
 
   // errors
@@ -168,6 +170,19 @@ export default function UploadComponent() {
         return;
       }
     }
+
+    let classes = [];
+
+    classesTextfields.forEach((textfield) => {
+      if (document.getElementById("classTextfield" + textfield).value) {
+        classes.push(
+          document.getElementById("classTextfield" + textfield).value
+        );
+      }
+    });
+
+    console.log(classes);
+
     // normal value logic
     const normalLabel = document.getElementById("normal-value-field").value;
 
@@ -440,6 +455,7 @@ export default function UploadComponent() {
                 control={<Radio />}
                 label="idk man..."
               />
+              <br></br>
             </RadioGroup>
           </FormControl>
 
@@ -532,40 +548,75 @@ export default function UploadComponent() {
           />
         </TextFieldFlex>
 
-        <TextFieldFlex style={{ marginTop: "10px" }}>
-          <Divv
-            size="22.5px"
-            style={{ margin: "25px", width: "55%" }}
-            color={labeledRadioValue === "yes" ? "black" : "lightgray"}
-          >
-            what are the classes?
-          </Divv>
-          <TextField
-            style={{ margin: "25px", width: "30%" }}
-            disabled={labeledRadioValue !== "yes"}
-            helperText={labelColumnError ? labelColumnErrorMessage : ""}
-            id="label-column-field"
-            variant="outlined"
-            label="class value"
-            InputLabelProps={{
-              shrink: true,
-            }}
-          />
-          <Button
-            style={{
-              margin: "25px",
-              width: "15%",
-              background: "black",
-              color: "white",
-              fontWeight: "bold",
-            }}
-            variant="contained"
-            color="primary"
-            size="large"
-          >
-            +
-          </Button>
-        </TextFieldFlex>
+        {classesTextfields.map((textfield) => {
+          return (
+            <TextFieldFlex style={{ marginTop: "10px" }}>
+              <Divv
+                size="22.5px"
+                style={{ margin: "25px", width: "55%" }}
+                color={labeledRadioValue === "yes" ? "black" : "lightgray"}
+              >
+                {textfield === 1 ? "what are the classes?" : ""}
+              </Divv>
+              <span
+                style={{
+                  width: "45%",
+                  margin: "25px",
+                  display: "flex",
+                  justifyContent: "center",
+                }}
+              >
+                <TextField
+                  style={{
+                    width: [
+                      classesTextfields.length - 1,
+                      classesTextfields.length,
+                    ].includes(textfield)
+                      ? "70%"
+                      : "100%",
+                    flexDirection: "column",
+                  }}
+                  disabled={labeledRadioValue !== "yes"}
+                  helperText={labelColumnError ? labelColumnErrorMessage : ""}
+                  id={"classTextfield" + textfield}
+                  variant="outlined"
+                  label={"class #" + textfield}
+                  InputLabelProps={{
+                    shrink: true,
+                  }}
+                />
+                {[
+                  classesTextfields.length - 1,
+                  classesTextfields.length,
+                ].includes(textfield) ? (
+                  <Button
+                    style={{
+                      width: "30%",
+                      background: "black",
+                      color: "white",
+                      fontWeight: "bold",
+                    }}
+                    variant="contained"
+                    color="primary"
+                    size="large"
+                    onClick={() => {
+                      if (textfield === classesTextfields.length)
+                        setClassesTextfields([
+                          ...classesTextfields,
+                          classesTextfields.length + 1,
+                        ]);
+                      else setClassesTextfields(classesTextfields.slice(0, -1));
+                    }}
+                  >
+                    {textfield === classesTextfields.length - 1 ? "-" : "+"}
+                  </Button>
+                ) : (
+                  ""
+                )}{" "}
+              </span>
+            </TextFieldFlex>
+          );
+        })}
 
         <TextFieldFlex style={{ marginTop: "10px" }}>
           <Divv size="22.5px" style={{ margin: "25px", width: "55%" }}>
