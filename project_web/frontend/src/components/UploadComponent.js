@@ -61,8 +61,8 @@ export default function UploadComponent() {
   const [labelColumnError, setLabelColumnError] = useState(false);
   const [labelColumnErrorMessage, setLabelColumnErrorMessage] = useState("");
 
-  const [normalLabelError, setNormalLabelError] = useState(false);
-  const [normalLabelErrorMessage, setNormalLabelErrorMessage] = useState("");
+  const [normalClassError, setNormalClassError] = useState(false);
+  const [normalClassErrorMessage, setNormalClassErrorMessage] = useState("");
 
   const [stringOfFilesUploaded, setStringOfFilesUploaded] = useState("");
 
@@ -72,11 +72,11 @@ export default function UploadComponent() {
     setFileSelectionError(false);
     setPercentageError(false);
     setLabelColumnError(false);
-    setNormalLabelError(false);
+    setNormalClassError(false);
 
     document.getElementById("percentage-field").value = "";
     document.getElementById("label-column-field").value = "";
-    document.getElementById("normal-value-field").value = "";
+    document.getElementById("normal-class-value-field").value = "";
 
     setSaveDataCheckbox(false);
   }
@@ -91,6 +91,8 @@ export default function UploadComponent() {
   }
 
   async function onFileChange(event) {
+    console.log([...event.target.files]);
+
     resetAllFormErrorsAndData();
     setSelectedFiles([...event.target.files]);
 
@@ -126,7 +128,7 @@ export default function UploadComponent() {
     setFileUploadButtonHover(false);
     setPercentageError(false);
     setLabelColumnError(false);
-    setNormalLabelError(false);
+    setNormalClassError(false);
 
     // file logic
     if (!selectedFiles[0]) {
@@ -184,11 +186,19 @@ export default function UploadComponent() {
     console.log(classes);
 
     // normal value logic
-    const normalLabel = document.getElementById("normal-value-field").value;
+    const normalClass = document.getElementById(
+      "normal-class-value-field"
+    ).value;
 
-    if (normalLabel === "") {
-      setNormalLabelError(true);
-      setNormalLabelErrorMessage("a normal label value must be provided");
+    if (normalClass === "") {
+      setNormalClassError(true);
+      setNormalClassErrorMessage("a normal class value must be provided");
+      return;
+    }
+
+    if (classes.includes(normalClass) === false) {
+      setNormalClassError(true);
+      setNormalClassErrorMessage("normal class must be among classes");
       return;
     }
 
@@ -200,7 +210,7 @@ export default function UploadComponent() {
 
     formData.append("percentage", trainDataPercentage);
     formData.append("labelColumn", labelColumn);
-    formData.append("normalLabel", normalLabel);
+    formData.append("normalClass", normalClass);
     formData.append("saveData", saveDataCheckbox);
 
     setLoading(true);
@@ -620,15 +630,15 @@ export default function UploadComponent() {
 
         <TextFieldFlex style={{ marginTop: "10px" }}>
           <Divv size="22.5px" style={{ margin: "25px", width: "55%" }}>
-            what is normal (non-anomaly) value of the label?
+            what is normal (non-anomaly) class value?
           </Divv>
           <TextField
             style={{ margin: "25px", width: "45%" }}
-            error={normalLabelError}
-            helperText={normalLabelError ? normalLabelErrorMessage : ""}
-            id="normal-value-field"
+            error={normalClassError}
+            helperText={normalClassError ? normalClassErrorMessage : ""}
+            id="normal-class-value-field"
             variant="outlined"
-            label="normal field label"
+            label="normal class value"
             InputLabelProps={{
               shrink: true,
             }}
