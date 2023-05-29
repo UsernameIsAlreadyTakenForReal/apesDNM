@@ -72,16 +72,15 @@ export default function UploadComponent() {
 
   function resetAllFormErrorsAndData() {
     setDatasetError(false);
-
     setFileSelectionError(false);
     setPercentageError(false);
     setLabelColumnError(false);
     setClassesTextfieldsError(false);
     setNormalClassError(false);
 
-    document.getElementById("percentage-field").value = "";
-    document.getElementById("label-column-field").value = "";
-    document.getElementById("normal-class-field").value = "";
+    // document.getElementById("percentage-field").value = "";
+    // document.getElementById("label-column-field").value = "";
+    // document.getElementById("normal-class-field").value = "";
 
     setSaveDataCheckbox(false);
   }
@@ -130,15 +129,6 @@ export default function UploadComponent() {
   }
 
   function handleClassChange() {
-    let classes = [];
-    classesTextfields.forEach((textfield) => {
-      if (document.getElementById("class-textfield" + textfield).value) {
-        classes.push(
-          document.getElementById("class-textfield" + textfield).value
-        );
-      }
-    });
-
     setClasses(classes);
     return classes;
   }
@@ -165,8 +155,6 @@ export default function UploadComponent() {
         document.getElementById("percentage-field").value !== ""
           ? Number(document.getElementById("percentage-field").value)
           : 0.7;
-
-      // document.getElementById("percentage-field").value = trainDataPercentage;
 
       if (isNaN(trainDataPercentage)) {
         setPercentageError(true);
@@ -195,7 +183,14 @@ export default function UploadComponent() {
     }
 
     // classes logic
-    let classes = handleClassChange();
+    let classes = [];
+    classesTextfields.forEach((textfield) => {
+      if (document.getElementById("class-textfield" + textfield).value) {
+        classes.push(
+          document.getElementById("class-textfield" + textfield).value
+        );
+      }
+    });
 
     if (classes.length !== classesTextfields.length) {
       setClassesTextfieldsError(true);
@@ -675,22 +670,34 @@ export default function UploadComponent() {
             variant="outlined"
             error={normalClassError}
           >
-            <InputLabel id="data-type-select">data type</InputLabel>
-            <Select
-              label="data-type-select"
-              onChange={(event) => {
-                console.log("Now selected", event.target.value);
-                setSelectedDataset(event.target.value);
-                setSelectedMethods([]);
-              }}
-            >
+            <InputLabel id="data-type-select">class type</InputLabel>
+            <Select label="data-type-select" onChange={(event) => {}}>
               <MenuItem key="0" value="" disabled>
-                choose a dataset
+                choose the normal class
               </MenuItem>
               {classesTextfields.map((item) => {
                 return (
-                  <MenuItem key={item} value={item}>
-                    {item}
+                  <MenuItem
+                    key={item}
+                    value={
+                      document.getElementById("class-textfield" + item)
+                        ? document.getElementById("class-textfield" + item)
+                            .value === ""
+                          ? "no value yet at #" + item
+                          : document.getElementById("class-textfield" + item)
+                              .value
+                        : "alabala"
+                    }
+                  >
+                    {document.getElementById("class-textfield" + item)
+                      ? document.getElementById("class-textfield" + item)
+                          .value === ""
+                        ? "no value yet at #" + item
+                        : document.getElementById("class-textfield" + item)
+                            .value
+                      : "undefined"
+                      // i dont exactly know what is happening here but there is a better way for sure.
+                      // maybe use the classes useState and actually update the values instead of trying to work around it
                   </MenuItem>
                 );
               })}
