@@ -43,7 +43,11 @@ export default function UploadComponent() {
   const [separateTrainAndTestCheckbox, setSeparateTrainAndTestCheckbox] =
     useState(true);
 
+  const [classes, setClasses] = useState([]);
   const [classesTextfields, setClassesTextfields] = useState([1]);
+  const [classesTextfieldsError, setClassesTextfieldsError] = useState(false);
+  const [classesTextfieldsErrorMessage, setClassesTextfieldsErrorMessage] =
+    useState(false);
 
   const [loading, setLoading] = useState(false);
 
@@ -72,11 +76,12 @@ export default function UploadComponent() {
     setFileSelectionError(false);
     setPercentageError(false);
     setLabelColumnError(false);
+    setClassesTextfieldsError(false);
     setNormalClassError(false);
 
     document.getElementById("percentage-field").value = "";
     document.getElementById("label-column-field").value = "";
-    document.getElementById("normal-class-value-field").value = "";
+    document.getElementById("normal-class-field").value = "";
 
     setSaveDataCheckbox(false);
   }
@@ -124,10 +129,26 @@ export default function UploadComponent() {
     setStringOfFilesUploaded(localStringOfFilesUploaded);
   }
 
+  function handleClassChange() {
+    let classes = [];
+    classesTextfields.forEach((textfield) => {
+      if (document.getElementById("class-textfield" + textfield).value) {
+        classes.push(
+          document.getElementById("class-textfield" + textfield).value
+        );
+      }
+    });
+
+    setClasses(classes);
+    return classes;
+  }
+
   async function onFileUpload() {
     setFileUploadButtonHover(false);
+
     setPercentageError(false);
     setLabelColumnError(false);
+    setClassesTextfieldsError(false);
     setNormalClassError(false);
 
     // file logic
@@ -145,7 +166,7 @@ export default function UploadComponent() {
           ? Number(document.getElementById("percentage-field").value)
           : 0.7;
 
-      document.getElementById("percentage-field").value = trainDataPercentage;
+      // document.getElementById("percentage-field").value = trainDataPercentage;
 
       if (isNaN(trainDataPercentage)) {
         setPercentageError(true);
@@ -173,22 +194,17 @@ export default function UploadComponent() {
       }
     }
 
-    let classes = [];
+    // classes logic
+    let classes = handleClassChange();
 
-    classesTextfields.forEach((textfield) => {
-      if (document.getElementById("classTextfield" + textfield).value) {
-        classes.push(
-          document.getElementById("classTextfield" + textfield).value
-        );
-      }
-    });
+    if (classes.length !== classesTextfields.length) {
+      setClassesTextfieldsError(true);
+      setClassesTextfieldsErrorMessage("add a value for each textfield");
+      return;
+    }
 
-    console.log(classes);
-
-    // normal value logic
-    const normalClass = document.getElementById(
-      "normal-class-value-field"
-    ).value;
+    // normal class value logic
+    const normalClass = document.getElementById("normal-class-field").value;
 
     if (normalClass === "") {
       setNormalClassError(true);
@@ -529,9 +545,6 @@ export default function UploadComponent() {
               id="percentage-field"
               variant="outlined"
               label="percentage of train data"
-              InputLabelProps={{
-                shrink: true,
-              }}
             />
           </Tooltip>
         </TextFieldFlex>
@@ -552,9 +565,6 @@ export default function UploadComponent() {
             id="label-column-field"
             variant="outlined"
             label="label column"
-            InputLabelProps={{
-              shrink: true,
-            }}
           />
         </TextFieldFlex>
 
@@ -566,63 +576,91 @@ export default function UploadComponent() {
                 style={{ margin: "25px", width: "55%" }}
                 color={labeledRadioValue === "yes" ? "black" : "lightgray"}
               >
-                {textfield === 1 ? "what are the classes?" : ""}
-              </Divv>
-              <span
-                style={{
-                  width: "45%",
-                  margin: "25px",
-                  display: "flex",
-                  justifyContent: "center",
-                }}
-              >
-                <TextField
-                  style={{
-                    width: [
-                      classesTextfields.length - 1,
-                      classesTextfields.length,
-                    ].includes(textfield)
-                      ? "70%"
-                      : "100%",
-                    flexDirection: "column",
-                  }}
-                  disabled={labeledRadioValue !== "yes"}
-                  helperText={labelColumnError ? labelColumnErrorMessage : ""}
-                  id={"classTextfield" + textfield}
-                  variant="outlined"
-                  label={"class #" + textfield}
-                  InputLabelProps={{
-                    shrink: true,
-                  }}
-                />
-                {[
-                  classesTextfields.length - 1,
-                  classesTextfields.length,
-                ].includes(textfield) ? (
-                  <Button
-                    style={{
-                      width: "30%",
-                      background: "black",
-                      color: "white",
-                      fontWeight: "bold",
-                    }}
-                    variant="contained"
-                    color="primary"
-                    size="large"
-                    onClick={() => {
-                      if (textfield === classesTextfields.length)
+                {textfield === 1 ? (
+                  "what are the classes?"
+                ) : textfield === 2 ? (
+                  <>
+                    <Button
+                      style={{
+                        marginRight: "25px",
+                        marginLeft: "25px",
+                        width: "20%",
+                        background: "black",
+                        color: "white",
+                        fontWeight: "bold",
+                      }}
+                      variant="contained"
+                      color="primary"
+                      size="large"
+                      onClick={() => {
+                        setClassesTextfields(classesTextfields.slice(0, -1));
+                      }}
+                    >
+                      -
+                    </Button>
+
+                    <Button
+                      style={{
+                        marginRight: "25px",
+                        marginLeft: "25px",
+                        width: "20%",
+                        background: "black",
+                        color: "white",
+                        fontWeight: "bold",
+                      }}
+                      variant="contained"
+                      color="primary"
+                      size="large"
+                      onClick={() => {
                         setClassesTextfields([
                           ...classesTextfields,
                           classesTextfields.length + 1,
                         ]);
-                      else setClassesTextfields(classesTextfields.slice(0, -1));
-                    }}
-                  >
-                    {textfield === classesTextfields.length - 1 ? "-" : "+"}
-                  </Button>
+                      }}
+                    >
+                      +
+                    </Button>
+                  </>
                 ) : (
                   ""
-                )}{" "}
+                )}
+              </Divv>
+
+              <span style={{ width: "45%", display: "flex" }}>
+                <TextField
+                  style={{
+                    width: "fit-content",
+                  }}
+                  error={classesTextfieldsError}
+                  helperText={
+                    classesTextfieldsError &&
+                    textfield === classesTextfields.length
+                      ? classesTextfieldsErrorMessage
+                      : ""
+                  }
+                  id={"class-textfield" + textfield}
+                  variant="outlined"
+                  label={"class #" + textfield}
+                />
+                <Button
+                  style={{
+                    width: "fit-content",
+                    background: "black",
+                    color: "white",
+                    fontWeight: "bold",
+                  }}
+                  variant="contained"
+                  color="primary"
+                  size="large"
+                  onClick={() => {
+                    setClassesTextfields([
+                      ...classesTextfields,
+                      classesTextfields.length + 1,
+                    ]);
+                  }}
+                >
+                  +
+                </Button>
               </span>
             </TextFieldFlex>
           );
@@ -632,17 +670,35 @@ export default function UploadComponent() {
           <Divv size="22.5px" style={{ margin: "25px", width: "55%" }}>
             what is normal (non-anomaly) class value?
           </Divv>
-          <TextField
-            style={{ margin: "25px", width: "45%" }}
-            error={normalClassError}
-            helperText={normalClassError ? normalClassErrorMessage : ""}
-            id="normal-class-value-field"
+          <FormControl
+            sx={{ width: "45%", margin: "25px" }}
             variant="outlined"
-            label="normal class value"
-            InputLabelProps={{
-              shrink: true,
-            }}
-          />
+            error={normalClassError}
+          >
+            <InputLabel id="data-type-select">data type</InputLabel>
+            <Select
+              label="data-type-select"
+              onChange={(event) => {
+                console.log("Now selected", event.target.value);
+                setSelectedDataset(event.target.value);
+                setSelectedMethods([]);
+              }}
+            >
+              <MenuItem key="0" value="" disabled>
+                choose a dataset
+              </MenuItem>
+              {classesTextfields.map((item) => {
+                return (
+                  <MenuItem key={item} value={item}>
+                    {item}
+                  </MenuItem>
+                );
+              })}
+            </Select>
+            <FormHelperText>
+              {normalClassError ? normalClassErrorMessage : ""}
+            </FormHelperText>
+          </FormControl>
         </TextFieldFlex>
 
         <TextFieldFlex style={{ marginTop: "10px" }}>
