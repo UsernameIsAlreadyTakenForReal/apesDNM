@@ -223,8 +223,10 @@ export default function UploadComponent() {
       return;
     }
 
+    let files = selectedFiles.map((file) => file.name);
+
     let data = {
-      files: stringOfFilesUploaded,
+      files: files,
       isLabeled: labeledRadioValue === "idk" ? "unknown" : labeledRadioValue,
       label: labeledRadioValue === "yes" ? labelColumn : "-1",
       isSupervised: isSupervisedCheckbox,
@@ -740,7 +742,7 @@ export default function UploadComponent() {
         <Divv>loading...</Divv>
       </WrapperDiv>
 
-      <Dialog open={dialogOpen} maxWidth="xl">
+      <Dialog open={dialogOpen} maxWidth="xl" fullWidt={true}>
         <DialogTitle>{"Proceed with these parameters?"}</DialogTitle>
         <DialogContent>
           <DialogContentText>
