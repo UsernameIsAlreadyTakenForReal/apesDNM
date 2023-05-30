@@ -18,6 +18,7 @@ import {
   FormLabel,
   RadioGroup,
   Radio,
+  Icon,
 } from "@mui/material";
 
 const BASE_URL = process.env.REACT_APP_BACKEND;
@@ -572,40 +573,19 @@ export default function UploadComponent() {
                 color={labeledRadioValue === "yes" ? "black" : "lightgray"}
               >
                 {textfield === 1 ? (
-                  "what are the classes?"
-                ) : textfield === 2 ? (
                   <>
-                    <Button
-                      style={{
-                        marginRight: "25px",
-                        marginLeft: "25px",
-                        width: "20%",
-                        background: "black",
-                        color: "white",
-                        fontWeight: "bold",
-                      }}
-                      variant="contained"
-                      color="primary"
-                      size="large"
+                    <span
+                      style={{ cursor: "pointer" }}
                       onClick={() => {
+                        if (classesTextfields.length === 1) return;
                         setClassesTextfields(classesTextfields.slice(0, -1));
                       }}
                     >
-                      -
-                    </Button>
-
-                    <Button
-                      style={{
-                        marginRight: "25px",
-                        marginLeft: "25px",
-                        width: "20%",
-                        background: "black",
-                        color: "white",
-                        fontWeight: "bold",
-                      }}
-                      variant="contained"
-                      color="primary"
-                      size="large"
+                      ((-)){" "}
+                    </span>
+                    what are the classes?
+                    <span
+                      style={{ cursor: "pointer" }}
                       onClick={() => {
                         setClassesTextfields([
                           ...classesTextfields,
@@ -613,50 +593,35 @@ export default function UploadComponent() {
                         ]);
                       }}
                     >
-                      +
-                    </Button>
+                      {" "}
+                      ((+))
+                    </span>
                   </>
                 ) : (
                   ""
                 )}
               </Divv>
 
-              <span style={{ width: "45%", display: "flex" }}>
-                <TextField
-                  style={{
-                    width: "fit-content",
-                  }}
-                  error={classesTextfieldsError}
-                  helperText={
-                    classesTextfieldsError &&
-                    textfield === classesTextfields.length
-                      ? classesTextfieldsErrorMessage
-                      : ""
-                  }
-                  id={"class-textfield" + textfield}
-                  variant="outlined"
-                  label={"class #" + textfield}
-                />
-                <Button
-                  style={{
-                    width: "fit-content",
-                    background: "black",
-                    color: "white",
-                    fontWeight: "bold",
-                  }}
-                  variant="contained"
-                  color="primary"
-                  size="large"
-                  onClick={() => {
-                    setClassesTextfields([
-                      ...classesTextfields,
-                      classesTextfields.length + 1,
-                    ]);
-                  }}
-                >
-                  +
-                </Button>
-              </span>
+              <TextField
+                style={{
+                  width: "45%",
+                  display: "flex",
+                  margin: "25px",
+                  marginTop: textfield === 1 ? "25px" : "00px",
+                  marginBottom:
+                    textfield === classesTextfields.length ? "25px" : "10px",
+                }}
+                error={classesTextfieldsError}
+                helperText={
+                  classesTextfieldsError &&
+                  textfield === classesTextfields.length
+                    ? classesTextfieldsErrorMessage
+                    : ""
+                }
+                id={"class-textfield" + textfield}
+                variant="outlined"
+                label={"class #" + textfield}
+              />
             </TextFieldFlex>
           );
         })}
@@ -695,9 +660,7 @@ export default function UploadComponent() {
                         ? "no value yet at #" + item
                         : document.getElementById("class-textfield" + item)
                             .value
-                      : "undefined"
-                      // i dont exactly know what is happening here but there is a better way for sure.
-                      // maybe use the classes useState and actually update the values instead of trying to work around it
+                      : "undefined"}
                   </MenuItem>
                 );
               })}
