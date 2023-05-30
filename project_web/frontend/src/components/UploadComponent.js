@@ -19,6 +19,11 @@ import {
   RadioGroup,
   Radio,
   Icon,
+  Dialog,
+  DialogTitle,
+  DialogContent,
+  DialogContentText,
+  DialogActions,
 } from "@mui/material";
 
 const BASE_URL = process.env.REACT_APP_BACKEND;
@@ -69,6 +74,9 @@ export default function UploadComponent() {
   const [normalClassErrorMessage, setNormalClassErrorMessage] = useState("");
 
   const [stringOfFilesUploaded, setStringOfFilesUploaded] = useState("");
+
+  const [dialogOpen, setDialogOpen] = useState(false);
+  const [dialogText, setDialogText] = useState("");
 
   function resetAllFormErrorsAndData() {
     setDatasetError(false);
@@ -198,30 +206,15 @@ export default function UploadComponent() {
 
     if (classes.length !== classesTextfields.length) {
       setClassesTextfieldsError(true);
-      setClassesTextfieldsErrorMessage("add a value for each textfield");
+      setClassesTextfieldsErrorMessage("add a value for each class textfield");
       return;
     }
 
     if (new Set(classes).size !== classes.length) {
       setClassesTextfieldsError(true);
-      setClassesTextfieldsErrorMessage("remove duplicate values");
+      setClassesTextfieldsErrorMessage("remove duplicate classes");
       return;
     }
-
-    // normal class value logic
-    // const normalClass = document.getElementById("normal-class-field").value;
-
-    // if (normalClass === "") {
-    //   setNormalClassError(true);
-    //   setNormalClassErrorMessage("a normal class value must be provided");
-    //   return;
-    // }
-
-    // if (classes.includes(normalClass) === false) {
-    // setNormalClassError(true);
-    // setNormalClassErrorMessage("normal class must be among classes");
-    // return;
-    // }
 
     // normal class
     if (normalClass === "") {
@@ -229,6 +222,24 @@ export default function UploadComponent() {
       setNormalClassErrorMessage("normal class must be selected");
       return;
     }
+
+    let data = {
+      files: stringOfFilesUploaded,
+      isLabeled: labeledRadioValue === "idk" ? "unknown" : labeledRadioValue,
+      label: labeledRadioValue === "yes" ? labelColumn : "-1",
+      isSupervised: isSupervisedCheckbox,
+      separateTrainAndTest: separateTrainAndTestCheckbox,
+      trainDataPercentage: separateTrainAndTestCheckbox
+        ? trainDataPercentage
+        : "-1",
+      classes: classes,
+      normalClass: normalClass,
+    };
+
+    setDialogText(JSON.stringify(data, null, "\t"));
+
+    setDialogOpen(true);
+    return;
 
     const formData = new FormData();
 
@@ -728,6 +739,27 @@ export default function UploadComponent() {
         <CircularProgress />
         <Divv>loading...</Divv>
       </WrapperDiv>
+
+      <Dialog open={dialogOpen} maxWidth="xl">
+        <DialogTitle>{"Proceed with these parameters?"}</DialogTitle>
+        <DialogContent>
+          <DialogContentText>
+            <pre>{dialogText}</pre>
+          </DialogContentText>
+        </DialogContent>
+        <DialogActions>
+          <Button
+            onClick={() => {
+              setDialogOpen(false);
+            }}
+          >
+            Go back
+          </Button>
+          <Button onClick={() => {}} autoFocus>
+            Confirm
+          </Button>
+        </DialogActions>
+      </Dialog>
     </div>
   );
 }
