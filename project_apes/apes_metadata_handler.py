@@ -10,7 +10,8 @@
 # label_column_name: string (e.g. 'target' or 'label'); not vital
 # numerical_value_of_desired_label: int (e.g. 0)
 # separate_train_and_test: True / False (possibly redundant)
-# percentage_of_split: value / [value1, value2] (where value2 is % to split for validation)
+# percentage_of_split: [value] / [value1, value2] (where value2 is % to split for validation)
+# shuffle_rows: True / False
 
 from apes_static_definitions import Shared_Definitions
 
@@ -27,6 +28,7 @@ class Dataset_Metadata:
         numerical_value_of_desired_label=0,
         separate_train_and_test=False,
         percentage_of_split=0.7,
+        shuffle_rows=False,
     ):
         self.Logger = Logger
 
@@ -38,6 +40,7 @@ class Dataset_Metadata:
         self.numerical_value_of_desired_label = numerical_value_of_desired_label
         self.separate_train_and_test = separate_train_and_test
         self.percentage_of_split = percentage_of_split
+        self.shuffle_rows = shuffle_rows
 
         info_message = "Created object of type Dataset_Metadata"
         self.Logger.info(self, info_message)
@@ -61,6 +64,8 @@ class Dataset_Metadata:
             + str(self.separate_train_and_test)
             + "\n   percentage_of_split = "
             + str(self.percentage_of_split)
+            + "\n   shuffle_rows = "
+            + str(self.shuffle_rows)
         )
 
 

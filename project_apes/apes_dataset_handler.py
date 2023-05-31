@@ -1,7 +1,7 @@
 # This file:
 # Contains functions meant to bring all approached file types to a 'pandas' object.
 #
-# process_file_type():
+# handle_dataset_from_path():
 # * if archive, then unarchive, which makes the path directory
 # * if directory, then crawl through files
 # * * * take all files that contain keywords of interest;
@@ -9,13 +9,13 @@
 # * if single file, then import it
 #
 # File // files import logic:
-# single file
-# * - EITHER all contents go to dataFrame_train (if % NOT defined);
-# * - OF split contents between dataFrame_train and dataFrame_test by user % (if % defined);
-# multiple files
-# * - if the user offered delimiters, search files by those keywords
-# * - if the user didn't input delimiters or they failed, take files named 'test', 'train', (maybe 'val'), use them as prescribed;
-# * - if neither, all contents are collapsed into one single dataFrame and the logic of the 'single file' section is applied.
+# 1. single file
+# * 1.1 - EITHER all contents go to dataFrame_train (if % NOT defined);
+# * 1.2 - OF split contents between dataFrame_train and dataFrame_test by user % (if % defined);
+# 2. multiple files
+# * 2.1 - if the user offered delimiters, search files by those keywords
+# * 2.2 - if the user didn't input delimiters or they failed, take files named 'test', 'train', (maybe 'val'), use them as prescribed;
+# * 2.3 - if neither, all contents are collapsed into one single dataFrame and the logic of the 'single file' section is applied.
 
 # TODO: recursive if folder (after zip?) contains folders or zip...
 
@@ -40,21 +40,7 @@ supported_file_formats = [
 rough_filename_searches = ["train", "test", "validation"]
 
 
-def unarchive(path, overwrite_existing=True, delete_after_unarchiving=False):
-    import patoolib
-
-    new_path = path.replace(pathlib.Path(path).suffix, "")
-    if os.path.exists(new_path) == False:
-        os.mkdir(new_path)
-    patoolib.extract_archive(path, outdir=new_path)
-
-    if delete_after_unarchiving:
-        os.remove(path)
-
-    return new_path
-
-
-def process_file_type(Logger, app_instance_metadata):
+def handle_dataset_from_path(Logger, app_instance_metadata):
     list_of_dataFrames = []
     list_of_dataFramesUtilityLabels = []
     map_of_dataFrames = []
@@ -119,6 +105,20 @@ def process_file_type(Logger, app_instance_metadata):
     return 0, "process_file_type exited successfully", map_of_dataFrames
 
 
+def unarchive(path, overwrite_existing=True, delete_after_unarchiving=False):
+    import patoolib
+
+    new_path = path.replace(pathlib.Path(path).suffix, "")
+    if os.path.exists(new_path) == False:
+        os.mkdir(new_path)
+    patoolib.extract_archive(path, outdir=new_path)
+
+    if delete_after_unarchiving:
+        os.remove(path)
+
+    return new_path
+
+
 def treat_file(
     Logger,
     app_instance_metadata,
@@ -129,6 +129,52 @@ def treat_file(
     try:
         if len(files_to_load) == 0:
             files_to_load = app_instance_metadata.dataset_metadata.dataset_path
+            return_code, return_message, temp_df = process_singular_file_type(
+                Logger, file, app_instance_metadata
+            )
+
+            # Case 1.1
+            if app_instance_metadata.dataset_metadata.separate_train_and_test == False:
+                list_of_dataFrames.append(temp_df)
+                list_of_dataFramesUtilityLabels.append("train")
+            # Case 1.2
+            else:
+                if len(app_instance_metadata.dataset_metadata.percentage_of_split) == 1:
+                    rows = temp_df.shape[0]
+                    number_of_rows_to_train = round(
+                        (
+                            app_instance_metadata.dataset_metadata.percentage_of_split[
+                                0
+                            ]
+                            / 100
+                        )
+                        * rows
+                    )
+                    dataFrame_train = temp_df.iloc[:number_of_rows_to_train, :]
+                    dataFrame_test = temp_df.iloc[number_of_rows_to_train:, :]
+                    list_of_dataFrames.append(dataFrame_train)
+                    list_of_dataFramesUtilityLabels.append("train")
+                    list_of_dataFrames.append(dataFrame_test)
+                    list_of_dataFramesUtilityLabels.append("test")
+                elif (
+                    len(app_instance_metadata.dataset_metadata.percentage_of_split) == 2
+                ):
+                    rows = temp_df.shape[0]
+                    number_of_rows_to_train = round(
+                        (
+                            app_instance_metadata.dataset_metadata.percentage_of_split[
+                                0
+                            ]
+                            / 100
+                        )
+                        * rows
+                    )
+                    dataFrame_train = temp_df.iloc[:number_of_rows_to_train, :]
+                    dataFrame_test = temp_df.iloc[number_of_rows_to_train:, :]
+                    list_of_dataFrames.append(dataFrame_train)
+                    list_of_dataFramesUtilityLabels.append("train")
+                    list_of_dataFrames.append(dataFrame_test)
+                    list_of_dataFramesUtilityLabels.append("test")
 
         for file in files_to_load:
             return_code, return_message, temp_df = process_singular_file_type(
@@ -287,6 +333,11 @@ def process_singular_file_type(Logger, file, app_instance_metadata):
                 else:
                     info_message = f"Loaded file {file} without header"
                 Logger.info("process_singular_file_type", info_message)
+
+                if app_instance_metadata.dataset_metadata.shuffle_rows == True:
+                    info_message = "Shuffling rows"
+                    Logger.info("process_singular_file_type", info_message)
+                    df = df.sample(frac=1).reset_index(drop=True)
                 return 0, "process_singular_file_type exited successfully", df
 
             # df = df.sample(frac=1).reset_index(drop=True)  ## shuffles the row

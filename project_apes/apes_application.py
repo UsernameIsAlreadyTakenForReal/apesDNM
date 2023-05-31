@@ -43,7 +43,7 @@ class APES_Application:
         else:
             self.Logger.info(self, return_message)
 
-        print(self.dataFrameMap)
+        # print(self.dataFrameMap)
 
         # ## Part 2 -- Get the desired solution(s) runners
         # solution_indexes = list(self.application_instance_metadata.solution_index)
@@ -190,7 +190,11 @@ class APES_Application:
                 )
                 self.Logger.info(self, info_message)
 
-                return_code, return_message, self.dataFrameMap = process_file_type(
+                (
+                    return_code,
+                    return_message,
+                    self.dataFrameMap,
+                ) = handle_dataset_from_path(
                     self.Logger, self.application_instance_metadata
                 )
                 if return_code != 0:
@@ -218,7 +222,11 @@ class APES_Application:
                 )
                 self.Logger.info(self, info_message)
 
-                return_code, return_message, self.dataFrameMap = process_file_type(
+                (
+                    return_code,
+                    return_message,
+                    self.dataFrameMap,
+                ) = handle_dataset_from_path(
                     self.Logger, self.application_instance_metadata
                 )
                 if return_code != 0:

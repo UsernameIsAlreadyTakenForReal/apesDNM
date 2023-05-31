@@ -36,6 +36,8 @@ app_instance_metadata = apes_metadata_handler.application_instance_metadata(
 )
 
 example_path = "../../Dataset - ECG_Heartbeat/mitbih_test.csv"
-pandas_df = apes_dataset_handler.process_file_type(app_instance_metadata, example_path)
+pandas_df = apes_dataset_handler.handle_dataset_from_path(
+    app_instance_metadata, example_path
+)
 
 print(pandas_df)
