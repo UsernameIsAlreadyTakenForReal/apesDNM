@@ -56,7 +56,7 @@ export default function NavbarComponent() {
             </Link>
           </Divv>
 
-          <Divv>
+          {/* <Divv>
             <Link
               to="/testing"
               style={{
@@ -67,7 +67,7 @@ export default function NavbarComponent() {
             >
               Testing
             </Link>
-          </Divv>
+          </Divv> */}
         </RowFlex>
       </Nav>
     </>
