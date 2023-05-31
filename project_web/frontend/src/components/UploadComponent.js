@@ -18,7 +18,6 @@ import {
   FormLabel,
   RadioGroup,
   Radio,
-  Icon,
   Dialog,
   DialogTitle,
   DialogContent,
@@ -80,6 +79,13 @@ export default function UploadComponent() {
 
   const [showExistingMethod, setShowExistingMethod] = useState(false);
   const [showFileUploadMethod, setShowFileUploadMethod] = useState(false);
+
+  const [showExistingMethodButtonHover, setShowExistingMethodButtonHover] =
+    useState(false);
+  const [showFileUploadMethodButtonHover, setShowFileUploadMethodButtonHover] =
+    useState(false);
+
+  const [goBackButtonHover, setGoBackButtonHover] = useState(false);
 
   function resetAllFormErrorsAndData() {
     setDatasetError(false);
@@ -351,15 +357,26 @@ export default function UploadComponent() {
               <Button
                 style={{
                   background:
-                    existingDatasetButtonHover === false ? "black" : "orange",
+                    showExistingMethodButtonHover === false
+                      ? "black"
+                      : "orange",
                   color:
-                    existingDatasetButtonHover === false ? "white" : "black",
+                    showExistingMethodButtonHover === false ? "white" : "black",
                   fontWeight: "bold",
                 }}
                 variant="contained"
                 color="primary"
                 size="large"
-                onClick={() => setShowExistingMethod(true)}
+                onMouseEnter={() => {
+                  setShowExistingMethodButtonHover(true);
+                }}
+                onMouseLeave={() => {
+                  setShowExistingMethodButtonHover(false);
+                }}
+                onClick={() => {
+                  setShowExistingMethod(true);
+                  setShowExistingMethodButtonHover(false);
+                }}
               >
                 Use Existing Methods
               </Button>
@@ -368,15 +385,28 @@ export default function UploadComponent() {
               <Button
                 style={{
                   background:
-                    existingDatasetButtonHover === false ? "black" : "orange",
+                    showFileUploadMethodButtonHover === false
+                      ? "black"
+                      : "orange",
                   color:
-                    existingDatasetButtonHover === false ? "white" : "black",
+                    showFileUploadMethodButtonHover === false
+                      ? "white"
+                      : "black",
                   fontWeight: "bold",
                 }}
                 variant="contained"
                 color="primary"
                 size="large"
-                onClick={() => setShowFileUploadMethod(true)}
+                onMouseEnter={() => {
+                  setShowFileUploadMethodButtonHover(true);
+                }}
+                onMouseLeave={() => {
+                  setShowFileUploadMethodButtonHover(false);
+                }}
+                onClick={() => {
+                  setShowFileUploadMethod(true);
+                  setShowFileUploadMethodButtonHover(false);
+                }}
               >
                 Upload a new dataset
               </Button>
@@ -386,11 +416,41 @@ export default function UploadComponent() {
       ) : showExistingMethod === true && showFileUploadMethod === false ? (
         <div
           style={{
-            border: "1px solid #ccc",
-            width: "45%",
+            // border: "1px solid #ccc",
+            // width: "45%",
             textAlign: "center",
           }}
         >
+          <Divv
+            style={{
+              textAlign: "left",
+            }}
+          >
+            <Button
+              style={{
+                background: goBackButtonHover === false ? "black" : "orange",
+                color: goBackButtonHover === false ? "white" : "black",
+                fontWeight: "bold",
+              }}
+              variant="contained"
+              color="primary"
+              size="large"
+              onClick={() => {
+                setShowExistingMethod(false);
+                setShowFileUploadMethod(false);
+                setGoBackButtonHover(false);
+              }}
+              onMouseEnter={() => {
+                setGoBackButtonHover(true);
+              }}
+              onMouseLeave={() => {
+                setGoBackButtonHover(false);
+              }}
+            >
+              Go back
+            </Button>
+          </Divv>
+
           <Divv bottom="0px" style={{ padding: "12.5px 12.5px" }}>
             select one of the existing datasets...
           </Divv>
@@ -497,10 +557,40 @@ export default function UploadComponent() {
         <div
           style={{
             border: "1px solid #ccc",
-            width: "55%",
+            // width: "55%",
             textAlign: "center",
           }}
         >
+          <Divv
+            style={{
+              textAlign: "left",
+            }}
+          >
+            <Button
+              style={{
+                background: goBackButtonHover === false ? "black" : "orange",
+                color: goBackButtonHover === false ? "white" : "black",
+                fontWeight: "bold",
+              }}
+              variant="contained"
+              color="primary"
+              size="large"
+              onClick={() => {
+                setShowExistingMethod(false);
+                setShowFileUploadMethod(false);
+                setGoBackButtonHover(false);
+              }}
+              onMouseEnter={() => {
+                setGoBackButtonHover(true);
+              }}
+              onMouseLeave={() => {
+                setGoBackButtonHover(false);
+              }}
+            >
+              Go back
+            </Button>
+          </Divv>
+
           <Divv>
             <Label
               style={{
@@ -519,7 +609,7 @@ export default function UploadComponent() {
                 onChange={(event) => onFileChange(event)}
                 multiple
               />
-              ...or click here to upload the input file(s)
+              click here to upload the input file(s).
             </Label>
           </Divv>
 
@@ -544,8 +634,15 @@ export default function UploadComponent() {
             </div>
           )}
 
-          <TextFieldFlex style={{ marginTop: "10px" }} flexDirection="">
-            <FormControl style={{ margin: "25px", width: "35%" }}>
+          <TextFieldFlex style={{ marginTop: "10px" }}>
+            <FormControl
+              style={{
+                margin: "25px",
+                width: "50%",
+                display: "flex",
+                alignItems: "center",
+              }}
+            >
               <FormLabel>is the dataset labeled?</FormLabel>
               <RadioGroup
                 row
@@ -568,7 +665,7 @@ export default function UploadComponent() {
             </FormControl>
 
             <FormControlLabel
-              style={{ margin: "25px", width: "30%" }}
+              style={{ margin: "25px", width: "25%" }}
               control={
                 <Checkbox
                   checked={isSupervisedCheckbox}
@@ -583,7 +680,7 @@ export default function UploadComponent() {
             />
 
             <FormControlLabel
-              style={{ margin: "25px", width: "35%" }}
+              style={{ margin: "25px", width: "25%" }}
               control={
                 <Checkbox
                   checked={separateTrainAndTestCheckbox}
@@ -605,7 +702,7 @@ export default function UploadComponent() {
               size="22.5px"
               style={{
                 margin: "25px",
-                width: "55%",
+                width: "60%",
               }}
               color={separateTrainAndTestCheckbox ? "black" : "lightgray"}
             >
@@ -624,7 +721,7 @@ export default function UploadComponent() {
               arrow={false}
             >
               <TextField
-                style={{ margin: "25px", width: "45%" }}
+                style={{ margin: "25px", width: "40%" }}
                 disabled={separateTrainAndTestCheckbox === false}
                 error={percentageError}
                 helperText={percentageError ? percentageErrorMessage : ""}
@@ -638,13 +735,13 @@ export default function UploadComponent() {
           <TextFieldFlex style={{ marginTop: "10px" }}>
             <Divv
               size="22.5px"
-              style={{ margin: "25px", width: "55%" }}
+              style={{ margin: "25px", width: "60%" }}
               color={labeledRadioValue === "yes" ? "black" : "lightgray"}
             >
               what is the label column called?
             </Divv>
             <TextField
-              style={{ margin: "25px", width: "45%" }}
+              style={{ margin: "25px", width: "40%" }}
               disabled={labeledRadioValue !== "yes"}
               error={labelColumnError}
               helperText={labelColumnError ? labelColumnErrorMessage : ""}
@@ -657,7 +754,7 @@ export default function UploadComponent() {
           {classesTextfields.map((textfield) => {
             return (
               <TextFieldFlex style={{ marginTop: "10px" }}>
-                <Divv size="22.5px" style={{ margin: "25px", width: "55%" }}>
+                <Divv size="22.5px" style={{ margin: "25px", width: "60%" }}>
                   {textfield === 1 ? (
                     <>
                       <span
@@ -692,7 +789,7 @@ export default function UploadComponent() {
 
                 <TextField
                   style={{
-                    width: "45%",
+                    width: "40%",
                     display: "flex",
                     margin: "25px",
                     marginTop: textfield === 1 ? "25px" : "0px",
@@ -716,11 +813,11 @@ export default function UploadComponent() {
           })}
 
           <TextFieldFlex style={{ marginTop: "10px" }}>
-            <Divv size="22.5px" style={{ margin: "25px", width: "55%" }}>
+            <Divv size="22.5px" style={{ margin: "25px", width: "60%" }}>
               what is normal (non-anomaly) class value?
             </Divv>
             <FormControl
-              sx={{ width: "45%", margin: "25px" }}
+              sx={{ width: "40%", margin: "25px" }}
               variant="outlined"
               error={normalClassError}
             >
@@ -753,11 +850,11 @@ export default function UploadComponent() {
           </TextFieldFlex>
 
           <TextFieldFlex style={{ marginTop: "10px" }}>
-            <Divv size="22.5px" style={{ margin: "25px", width: "55%" }}>
+            <Divv size="22.5px" style={{ margin: "25px", width: "60%" }}>
               {/* save my data for future uses */}
             </Divv>
             <FormControlLabel
-              style={{ margin: "25px", width: "45%" }}
+              style={{ margin: "25px", width: "40%" }}
               control={
                 <Checkbox
                   checked={saveDataCheckbox}
@@ -795,6 +892,7 @@ export default function UploadComponent() {
           </Divv>
         </div>
       )}
+
       <div style={{ display: "flex" }}>
         <WrapperDiv
           style={{
