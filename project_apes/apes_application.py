@@ -3,7 +3,7 @@
 # run() follows these steps:
 # * Part 0 -- Checks and info;
 # * Part 1 -- Get the desired dataset as a pandas dataFrame
-# * * * At the end of the p1_getDataset_asDataFrame() there will either be a self.dataFrameMap (df + label) or an error.
+# * * * At the end of the p1_getDataset_asDataFrame() there will either be a self.dataFrameMap (df + label) or an error;
 # * Part 2 -- Get the suitable solution(s) (by user input or by APES's recommendation);
 # * Part 3 -- Run selected solution(s);
 
@@ -15,6 +15,8 @@ from apes_dataset_handler import *
 
 
 class APES_Application:
+    dataFrameMap = []
+
     def __init__(self, Logger, application_instance_metadata):
         self.Logger = Logger
         self.application_instance_metadata = application_instance_metadata
@@ -41,104 +43,106 @@ class APES_Application:
         else:
             self.Logger.info(self, return_message)
 
-        ## Part 2 -- Get the desired solution(s) runners
-        solution_indexes = list(self.application_instance_metadata.solution_index)
-        self.solutions_list = []
-        # if self.application_instance_metadata.application_mode == "run_one_solution":
-        if len(solution_indexes) == 1:
-            info_message = "Only one solution to load."
-            self.Logger.info(self, info_message)
+        print(self.dataFrameMap)
 
-            if self.application_instance_metadata.solution_category == "ral":
-                info_message = "Loading solution ral_1"
-                self.Logger.info(self, info_message)
-                pass
-            elif self.application_instance_metadata.solution_category == "img":
-                info_message = "Loading solution img_1"
-                self.Logger.info(self, info_message)
-                pass
-            else:
-                match solution_indexes[0]:
-                    case 1:
-                        info_message = "Loading supervised solution ekg_1"
-                        self.Logger.info(self, info_message)
+        # ## Part 2 -- Get the desired solution(s) runners
+        # solution_indexes = list(self.application_instance_metadata.solution_index)
+        # self.solutions_list = []
+        # # if self.application_instance_metadata.application_mode == "run_one_solution":
+        # if len(solution_indexes) == 1:
+        #     info_message = "Only one solution to load."
+        #     self.Logger.info(self, info_message)
 
-                        from type_ekg.apes_solution_ekg_1_train import Solution_ekg_1
+        #     if self.application_instance_metadata.solution_category == "ral":
+        #         info_message = "Loading solution ral_1"
+        #         self.Logger.info(self, info_message)
+        #         pass
+        #     elif self.application_instance_metadata.solution_category == "img":
+        #         info_message = "Loading solution img_1"
+        #         self.Logger.info(self, info_message)
+        #         pass
+        #     else:
+        #         match solution_indexes[0]:
+        #             case 1:
+        #                 info_message = "Loading supervised solution ekg_1"
+        #                 self.Logger.info(self, info_message)
 
-                        self.solution = Solution_ekg_1(
-                            self.application_instance_metadata.shared_definitions,
-                            self.Logger,
-                        )
-                        self.solutions_list.append(self.solution)
-                        pass
-                    case 2:
-                        info_message = "Loading solution ekg_2"
-                        self.Logger.info(self, info_message)
+        #                 from type_ekg.apes_solution_ekg_1_train import Solution_ekg_1
 
-                        from type_ekg.apes_solution_ekg_2_train import Solution_ekg_2
+        #                 self.solution = Solution_ekg_1(
+        #                     self.application_instance_metadata.shared_definitions,
+        #                     self.Logger,
+        #                 )
+        #                 self.solutions_list.append(self.solution)
+        #                 pass
+        #             case 2:
+        #                 info_message = "Loading solution ekg_2"
+        #                 self.Logger.info(self, info_message)
 
-                        self.solution = Solution_ekg_2(
-                            self.application_instance_metadata.shared_definitions,
-                            self.Logger,
-                        )
-                        self.solutions_list.append(self.solution)
-                        pass
+        #                 from type_ekg.apes_solution_ekg_2_train import Solution_ekg_2
 
-        else:
-            info_message = "Multiple solutions to load."
-            self.Logger.info(self, info_message)
+        #                 self.solution = Solution_ekg_2(
+        #                     self.application_instance_metadata.shared_definitions,
+        #                     self.Logger,
+        #                 )
+        #                 self.solutions_list.append(self.solution)
+        #                 pass
 
-            if self.application_instance_metadata.solution_category == "ral":
-                info_message = "Beep beep, I'm a sheep. There's only 1 ral solution. Why is there a directive to load more?"
-                self.Logger.info(self, info_message)
-            elif self.application_instance_metadata.solution_category == "img":
-                info_message = "Beep beep, I'm a sheep. There's only 1 img solution. Why is there a directive to load more?"
-                self.Logger.info(self, info_message)
-            else:
-                match solution_indexes:
-                    case [1, 2]:
-                        info_message = "Loading ekg_1 and ekg_2."
-                        self.Logger.info(self, info_message)
+        # else:
+        #     info_message = "Multiple solutions to load."
+        #     self.Logger.info(self, info_message)
 
-                        from type_ekg.apes_solution_ekg_1_train import Solution_ekg_1
+        #     if self.application_instance_metadata.solution_category == "ral":
+        #         info_message = "Beep beep, I'm a sheep. There's only 1 ral solution. Why is there a directive to load more?"
+        #         self.Logger.info(self, info_message)
+        #     elif self.application_instance_metadata.solution_category == "img":
+        #         info_message = "Beep beep, I'm a sheep. There's only 1 img solution. Why is there a directive to load more?"
+        #         self.Logger.info(self, info_message)
+        #     else:
+        #         match solution_indexes:
+        #             case [1, 2]:
+        #                 info_message = "Loading ekg_1 and ekg_2."
+        #                 self.Logger.info(self, info_message)
 
-                        info_message = "Loaded Solution_ekg_1."
-                        self.Logger.info(self, info_message)
+        #                 from type_ekg.apes_solution_ekg_1_train import Solution_ekg_1
 
-                        from type_ekg.apes_solution_ekg_2_train import Solution_ekg_2
+        #                 info_message = "Loaded Solution_ekg_1."
+        #                 self.Logger.info(self, info_message)
 
-                        info_message = "Loaded Solution_ekg_2."
-                        self.Logger.info(self, info_message)
+        #                 from type_ekg.apes_solution_ekg_2_train import Solution_ekg_2
 
-                        self.solution_1 = Solution_ekg_1(
-                            self.application_instance_metadata.shared_definitions,
-                            self.Logger,
-                        )
-                        self.solution_2 = Solution_ekg_2(
-                            self.application_instance_metadata.shared_definitions,
-                            self.Logger,
-                        )
-                        self.solutions_list.append(self.solution_1)
-                        self.solutions_list.append(self.solution_2)
-                        pass
+        #                 info_message = "Loaded Solution_ekg_2."
+        #                 self.Logger.info(self, info_message)
 
-        ## Part 3 -- Go to town with the solution(s)
-        for solution in self.solutions_list:
-            solution.adapt_dataset(
-                self.application_instance_metadata, self.dataFrameMap
-            )
+        #                 self.solution_1 = Solution_ekg_1(
+        #                     self.application_instance_metadata.shared_definitions,
+        #                     self.Logger,
+        #                 )
+        #                 self.solution_2 = Solution_ekg_2(
+        #                     self.application_instance_metadata.shared_definitions,
+        #                     self.Logger,
+        #                 )
+        #                 self.solutions_list.append(self.solution_1)
+        #                 self.solutions_list.append(self.solution_2)
+        #                 pass
 
-            # if self.application_instance_metadata.model_origin == "train_new_model":
-            #     solution.create_model()
-            #     solution.train()
-            #     solution.save_model()
-            #     solution.test()
-            #     pass
-            # else:
-            #     ## check if sizes compatible with dataset's sizes
-            #     solution.load_model()
-            #     solution.test()
-            #     pass
+        # ## Part 3 -- Go to town with the solution(s)
+        # for solution in self.solutions_list:
+        #     solution.adapt_dataset(
+        #         self.application_instance_metadata, self.dataFrameMap
+        #     )
+
+        #     # if self.application_instance_metadata.model_origin == "train_new_model":
+        #     #     solution.create_model()
+        #     #     solution.train()
+        #     #     solution.save_model()
+        #     #     solution.test()
+        #     #     pass
+        #     # else:
+        #     #     ## check if sizes compatible with dataset's sizes
+        #     #     solution.load_model()
+        #     #     solution.test()
+        #     #     pass
 
         return (0, "Program exited successfully")
 

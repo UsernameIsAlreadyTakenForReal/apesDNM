@@ -17,6 +17,8 @@
 # * - if the user didn't input delimiters or they failed, take files named 'test', 'train', (maybe 'val'), use them as prescribed;
 # * - if neither, all contents are collapsed into one single dataFrame and the logic of the 'single file' section is applied.
 
+# TODO: recursive if folder (after zip?) contains folders or zip...
+
 import arff
 import math
 import pathlib
@@ -56,6 +58,7 @@ def process_file_type(Logger, app_instance_metadata):
     list_of_dataFrames = []
     list_of_dataFramesUtilityLabels = []
     map_of_dataFrames = []
+    files_to_load = []
 
     # checks
     if (
@@ -66,27 +69,106 @@ def process_file_type(Logger, app_instance_metadata):
             app_instance_metadata.dataset_metadata.dataset_path[:-1]
         )
 
-    # archive
+    # # archive
     if os.path.isfile(app_instance_metadata.dataset_metadata.dataset_path) and (
         pathlib.Path(app_instance_metadata.dataset_metadata.dataset_path).suffix
         == ".zip"
         or pathlib.Path(app_instance_metadata.dataset_metadata.dataset_path).suffix
         == ".rar"
     ):
-        info_message = "app_instance_metadata.dataset_metadata.dataset_path is an archive. Unarchiving."
-        Logger.info("process_file_type", info_message)
-
-        app_instance_metadata.dataset_metadata.dataset_path = unarchive(
-            app_instance_metadata.dataset_metadata.dataset_path
-        )
-
-        info_message = (
-            f"New file path is {app_instance_metadata.dataset_metadata.dataset_path}"
-        )
-        Logger.info("process_file_type", info_message)
+        return_code, return_message = treat_archive(Logger, app_instance_metadata)
+        if return_code != 0:
+            return (return_code, return_message)
+        else:
+            Logger.info("process_file_type", return_message)
 
     # folder
     if os.path.isdir(app_instance_metadata.dataset_metadata.dataset_path):
+        return_code, return_message, files_to_load = treat_folder(
+            Logger, app_instance_metadata
+        )
+        if return_code != 0:
+            return (return_code, return_message)
+        else:
+            Logger.info("process_file_type", return_message)
+
+    # file
+    if (
+        os.path.isfile(app_instance_metadata.dataset_metadata.dataset_path)
+        or len(files_to_load) != 0
+    ):
+        (
+            return_code,
+            return_message,
+            files_to_load,
+            list_of_dataFrames,
+            list_of_dataFramesUtilityLabels,
+        ) = treat_file(
+            Logger,
+            app_instance_metadata,
+            files_to_load,
+            list_of_dataFrames,
+            list_of_dataFramesUtilityLabels,
+        )
+        if return_code != 0:
+            return (return_code, return_message)
+        else:
+            Logger.info("process_file_type", return_message)
+
+    map_of_dataFrames = (list_of_dataFrames, list_of_dataFramesUtilityLabels)
+    return 0, "process_file_type exited successfully", map_of_dataFrames
+
+
+def treat_file(
+    Logger,
+    app_instance_metadata,
+    files_to_load,
+    list_of_dataFrames,
+    list_of_dataFramesUtilityLabels,
+):
+    try:
+        if len(files_to_load) == 0:
+            files_to_load = app_instance_metadata.dataset_metadata.dataset_path
+
+        for file in files_to_load:
+            return_code, return_message, temp_df = process_singular_file_type(
+                Logger, file, app_instance_metadata
+            )
+            if return_code != 0:
+                return return_code, return_message
+            else:
+                list_of_dataFrames.append(temp_df)
+                for string_match in rough_filename_searches:
+                    if string_match in file.lower():
+                        list_of_dataFramesUtilityLabels.append(string_match)
+                        break
+
+        info_message = f"list_of_dataFrames: {list_of_dataFrames}"
+        Logger.info("process_file_type", info_message)
+        info_message = (
+            f"list_of_dataFramesUtilityLabels: {list_of_dataFramesUtilityLabels}"
+        )
+        Logger.info("process_file_type", info_message)
+
+        return (
+            0,
+            "apes_dataset_handler.treat_file exited successfully",
+            files_to_load,
+            list_of_dataFrames,
+            list_of_dataFramesUtilityLabels,
+        )
+    except:
+        return (
+            1,
+            "apes_dataset_handler.treat_file exited with error",
+            files_to_load,
+            list_of_dataFrames,
+            list_of_dataFramesUtilityLabels,
+        )
+
+
+def treat_folder(Logger, app_instance_metadata):
+    try:
         no_of_files_in_folder = 0
         no_of_files_in_dir_and_subdirs = []
         possible_files_list = []
@@ -157,36 +239,27 @@ def process_file_type(Logger, app_instance_metadata):
         info_message = f"Files that will be loaded: {files_to_load}"
         Logger.info("process_file_type", info_message)
 
-    # file
-    if (
-        os.path.isfile(app_instance_metadata.dataset_metadata.dataset_path)
-        or len(files_to_load) != 0
-    ):
-        if len(files_to_load) == 0:
-            files_to_load = app_instance_metadata.dataset_metadata.dataset_path
+        return 0, "apes_data_handler.treat_folder exited successfully", files_to_load
+    except:
+        return 1, "apes_data_handler.treat_folder exited with error", []
 
-        for file in files_to_load:
-            return_code, return_message, temp_df = process_singular_file_type(
-                Logger, file, app_instance_metadata
-            )
-            if return_code != 0:
-                return return_code, return_message, []
-            else:
-                list_of_dataFrames.append(temp_df)
-                for string_match in rough_filename_searches:
-                    if string_match in file.lower():
-                        list_of_dataFramesUtilityLabels.append(string_match)
-                        break
 
-        info_message = f"list_of_dataFrames: {list_of_dataFrames}"
+def treat_archive(Logger, app_instance_metadata):
+    try:
+        info_message = "app_instance_metadata.dataset_metadata.dataset_path is an archive. Unarchiving."
         Logger.info("process_file_type", info_message)
+
+        app_instance_metadata.dataset_metadata.dataset_path = unarchive(
+            app_instance_metadata.dataset_metadata.dataset_path
+        )
+
         info_message = (
-            f"list_of_dataFramesUtilityLabels: {list_of_dataFramesUtilityLabels}"
+            f"New file path is {app_instance_metadata.dataset_metadata.dataset_path}"
         )
         Logger.info("process_file_type", info_message)
-
-    map_of_dataFrames = list_of_dataFrames.append(list_of_dataFramesUtilityLabels)
-    return 0, "process_file_type exited successfully", map_of_dataFrames
+        return 0, "apes_data_handler.treat_archive exited successfully"
+    except:
+        return 1, "apes_data_handler.treat_archive exited with error"
 
 
 def process_singular_file_type(Logger, file, app_instance_metadata):
@@ -198,6 +271,7 @@ def process_singular_file_type(Logger, file, app_instance_metadata):
     match pathlib.Path(file).suffix:
         case ".csv":
             df = []
+            loaded_with_header = False
             try:
                 info_message = f"Trying to load file {file} without header"
                 Logger.info("process_singular_file_type", info_message)
@@ -206,8 +280,12 @@ def process_singular_file_type(Logger, file, app_instance_metadata):
                 info_message = f"Trying to load file {file} with header"
                 Logger.info("process_singular_file_type", info_message)
                 df = pd.read_csv(file, dtype=np.float64)
+                loaded_with_header = True
             finally:
-                info_message = f"Loaded file {file}"
+                if loaded_with_header == True:
+                    info_message = f"Loaded file {file} with header"
+                else:
+                    info_message = f"Loaded file {file} without header"
                 Logger.info("process_singular_file_type", info_message)
                 return 0, "process_singular_file_type exited successfully", df
 
@@ -227,7 +305,7 @@ def process_singular_file_type(Logger, file, app_instance_metadata):
         case ".npz":
             return "npz"
         case other:
-            return "Could not idenfity file type."
+            return 1, "Could not idenfity file type.", df
 
 
 def rough_filename_filter(filename, keywords=rough_filename_searches):
