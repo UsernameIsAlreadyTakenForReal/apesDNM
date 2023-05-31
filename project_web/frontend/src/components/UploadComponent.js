@@ -431,6 +431,7 @@ export default function UploadComponent() {
                 background: goBackButtonHover === false ? "black" : "orange",
                 color: goBackButtonHover === false ? "white" : "black",
                 fontWeight: "bold",
+                float: "left",
               }}
               variant="contained"
               color="primary"
@@ -571,6 +572,7 @@ export default function UploadComponent() {
                 background: goBackButtonHover === false ? "black" : "orange",
                 color: goBackButtonHover === false ? "white" : "black",
                 fontWeight: "bold",
+                float: "left",
               }}
               variant="contained"
               color="primary"
