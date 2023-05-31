@@ -15,7 +15,7 @@ export default function NavbarComponent() {
                 color: useLocation().pathname === "/" ? "white" : "black",
               }}
             >
-              APESDNM
+              apesdnm
             </Link>
           </Divv>
 
@@ -27,7 +27,7 @@ export default function NavbarComponent() {
                 color: useLocation().pathname === "/upload" ? "white" : "black",
               }}
             >
-              Upload
+              upload
             </Link>
           </Divv>
 
@@ -39,7 +39,7 @@ export default function NavbarComponent() {
                 color: useLocation().pathname === "/about" ? "white" : "black",
               }}
             >
-              About
+              about
             </Link>
           </Divv>
 
@@ -52,7 +52,7 @@ export default function NavbarComponent() {
                   useLocation().pathname === "/contact" ? "white" : "black",
               }}
             >
-              Contact
+              contact
             </Link>
           </Divv>
 

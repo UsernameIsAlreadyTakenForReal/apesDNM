@@ -87,6 +87,9 @@ export default function UploadComponent() {
 
   const [goBackButtonHover, setGoBackButtonHover] = useState(false);
 
+  const [addClassButtonHover, setAddClassButtonHover] = useState(false);
+  const [removeClassButtonHover, setRemoveClassButtonHover] = useState(false);
+
   function resetAllFormErrorsAndData() {
     setDatasetError(false);
     setFileSelectionError(false);
@@ -807,18 +810,58 @@ export default function UploadComponent() {
                   {textfield === 1 ? (
                     <>
                       <span
-                        style={{ cursor: "pointer" }}
+                        style={{
+                          cursor: "pointer",
+                          borderRadius: "52px",
+                          // border: "1px solid #ccc",
+                          padding: "15px",
+                          margin: "10px",
+                          background:
+                            removeClassButtonHover === false
+                              ? "white"
+                              : "orange",
+                          color:
+                            removeClassButtonHover === false
+                              ? "black"
+                              : "black",
+                          transition: "background 0.4s linear",
+                          // transition: "color 0.4s linear",
+                        }}
+                        onMouseEnter={() => {
+                          setRemoveClassButtonHover(true);
+                        }}
+                        onMouseLeave={() => {
+                          setRemoveClassButtonHover(false);
+                        }}
                         onClick={() => {
                           if (classesTextfields.length === 1) return;
                           setClassesTextfields(classesTextfields.slice(0, -1));
                           handleClassChange();
                         }}
                       >
-                        ((-)){" "}
+                        ((-))
                       </span>
                       what are the classes?
                       <span
-                        style={{ cursor: "pointer" }}
+                        style={{
+                          cursor: "pointer",
+                          borderRadius: "52px",
+                          // border: "1px solid #ccc",
+                          padding: "15px",
+                          margin: "10px",
+                          background:
+                            addClassButtonHover === false ? "white" : "orange",
+                          color:
+                            addClassButtonHover === false ? "black" : "black",
+                          transition: "background 0.4s linear",
+                          // transition: "color 0.4s linear",
+                        }}
+                        onMouseEnter={() => {
+                          setAddClassButtonHover(true);
+                        }}
+                        onMouseLeave={() => {
+                          setAddClassButtonHover(false);
+                        }}
                         onClick={() => {
                           setClassesTextfields([
                             ...classesTextfields,
@@ -827,7 +870,6 @@ export default function UploadComponent() {
                           handleClassChange();
                         }}
                       >
-                        {" "}
                         ((+))
                       </span>
                     </>
