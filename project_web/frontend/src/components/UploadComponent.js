@@ -343,6 +343,8 @@ export default function UploadComponent() {
             style={{
               display: "flex",
               justifyContent: "center",
+              marginTop: "35px",
+              marginBottom: "5px",
             }}
           >
             choose the type of solution you want
@@ -354,62 +356,107 @@ export default function UploadComponent() {
             }}
           >
             <Divv>
-              <Button
-                style={{
-                  background:
-                    showExistingMethodButtonHover === false
-                      ? "black"
-                      : "orange",
-                  color:
-                    showExistingMethodButtonHover === false ? "white" : "black",
-                  fontWeight: "bold",
-                }}
-                variant="contained"
-                color="primary"
-                size="large"
-                onMouseEnter={() => {
-                  setShowExistingMethodButtonHover(true);
-                }}
-                onMouseLeave={() => {
-                  setShowExistingMethodButtonHover(false);
-                }}
-                onClick={() => {
-                  setShowExistingMethod(true);
-                  setShowExistingMethodButtonHover(false);
-                }}
+              <Tooltip
+                title={
+                  separateTrainAndTestCheckbox ? (
+                    <Typography fontSize={14}>
+                      here you can choose one of the existing dataset that we
+                      have provided, such as images or EKGs, and you will get
+                      back details about their respective solutions
+                    </Typography>
+                  ) : (
+                    ""
+                  )
+                }
+                placement="bottom"
               >
-                Use Existing Methods
-              </Button>
+                <Button
+                  style={{
+                    background:
+                      showExistingMethodButtonHover === false
+                        ? "black"
+                        : "orange",
+                    color:
+                      showExistingMethodButtonHover === false
+                        ? "white"
+                        : "black",
+                    fontWeight: "bold",
+                  }}
+                  variant="contained"
+                  color="primary"
+                  size="large"
+                  onMouseEnter={() => {
+                    setShowExistingMethodButtonHover(true);
+                  }}
+                  onMouseLeave={() => {
+                    setShowExistingMethodButtonHover(false);
+                  }}
+                  onClick={() => {
+                    setShowExistingMethod(true);
+                    setShowExistingMethodButtonHover(false);
+
+                    // so no error is shown if there was one previously
+                    setDatasetError(false);
+                  }}
+                >
+                  Use Existing Methods
+                </Button>
+              </Tooltip>
             </Divv>
+
             <Divv>
-              <Button
-                style={{
-                  background:
-                    showFileUploadMethodButtonHover === false
-                      ? "black"
-                      : "orange",
-                  color:
-                    showFileUploadMethodButtonHover === false
-                      ? "white"
-                      : "black",
-                  fontWeight: "bold",
-                }}
-                variant="contained"
-                color="primary"
-                size="large"
-                onMouseEnter={() => {
-                  setShowFileUploadMethodButtonHover(true);
-                }}
-                onMouseLeave={() => {
-                  setShowFileUploadMethodButtonHover(false);
-                }}
-                onClick={() => {
-                  setShowFileUploadMethod(true);
-                  setShowFileUploadMethodButtonHover(false);
-                }}
+              <Tooltip
+                title={
+                  separateTrainAndTestCheckbox ? (
+                    <Typography fontSize={14}>
+                      here you can select one or more files and provide details
+                      regarding the classes, the labels, and how you want that
+                      data to be divided in order to train a model. afterwards,
+                      we shall run it and provide you with some details about
+                      how it went
+                    </Typography>
+                  ) : (
+                    ""
+                  )
+                }
+                placement="bottom"
               >
-                Upload a new dataset
-              </Button>
+                <Button
+                  style={{
+                    background:
+                      showFileUploadMethodButtonHover === false
+                        ? "black"
+                        : "orange",
+                    color:
+                      showFileUploadMethodButtonHover === false
+                        ? "white"
+                        : "black",
+                    fontWeight: "bold",
+                  }}
+                  variant="contained"
+                  color="primary"
+                  size="large"
+                  onMouseEnter={() => {
+                    setShowFileUploadMethodButtonHover(true);
+                  }}
+                  onMouseLeave={() => {
+                    setShowFileUploadMethodButtonHover(false);
+                  }}
+                  onClick={() => {
+                    setShowFileUploadMethod(true);
+                    setShowFileUploadMethodButtonHover(false);
+
+                    // so no error is shown if there was one previously
+                    setFileSelectionError(false);
+                    setPercentageError(false);
+                    setLabelColumnError(false);
+                    setClassesTextfieldsError(false);
+                    setNormalClassError(false);
+                  }}
+                >
+                  Upload a new dataset
+                </Button>
+              </Tooltip>
             </Divv>
           </div>
         </>
