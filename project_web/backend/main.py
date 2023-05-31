@@ -1,3 +1,4 @@
+from time import sleep
 from flask import Flask, request
 from flask_cors import CORS
 from flask.json import jsonify
@@ -23,6 +24,7 @@ def getDatasets():
 # https://medium.com/geekculture/how-to-a-build-real-time-react-app-with-server-sent-events-9fbb83374f90
 @app.route("/upload", methods=["GET", "POST"])
 def upload_file():
+    sleep(10)
     cls()
 
     files = []

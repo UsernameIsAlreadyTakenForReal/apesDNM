@@ -1,3 +1,11 @@
+// TO DO
+
+// 1. change dialog text for method 1
+// 2. change loading screen with something like backdrop
+// 3. change all necessary variables to useState one in order to add them into dialog text
+// 4. create in backend metadata with needed structure
+// 5. create results page
+
 import { useEffect, useState } from "react";
 import * as React from "react";
 import { Divv, TextFieldFlex, Label, WrapperDiv } from "./StyledComponents";
@@ -222,6 +230,12 @@ export default function UploadComponent() {
       return;
     }
 
+    if (classes.length < 2) {
+      setClassesTextfieldsError(true);
+      setClassesTextfieldsErrorMessage("provide at least 2 classes");
+      return;
+    }
+
     if (new Set(classes).size !== classes.length) {
       setClassesTextfieldsError(true);
       setClassesTextfieldsErrorMessage("remove duplicate classes");
@@ -254,15 +268,17 @@ export default function UploadComponent() {
 
     setDialogOpen(true);
     return;
+  }
 
+  async function onFileUploadConfirm() {
     const formData = new FormData();
 
     for (let i = 0; i < selectedFiles.length; i++) {
       formData.append(`file${i}`, selectedFiles[i]);
     }
 
-    formData.append("percentage", trainDataPercentage);
-    formData.append("labelColumn", labelColumn);
+    // formData.append("percentage", trainDataPercentage);
+    // formData.append("labelColumn", labelColumn);
     formData.append("normalClass", normalClass);
     formData.append("saveData", saveDataCheckbox);
 
@@ -309,6 +325,11 @@ export default function UploadComponent() {
       handleEKGMethodsCheckboxes(1);
     }
 
+    setDialogOpen(true);
+    return;
+  }
+
+  async function onUseThisDatasetConfirm() {
     const formData = new FormData();
 
     formData.append("dataset", selectedDataset);
@@ -1009,7 +1030,19 @@ export default function UploadComponent() {
             >
               Go back
             </Button>
-            <Button onClick={() => {}} autoFocus>
+            <Button
+              onClick={() => {
+                if (
+                  showExistingMethod === false &&
+                  showFileUploadMethod === true
+                )
+                  onFileUploadConfirm();
+                else onUseThisDatasetConfirm();
+
+                setDialogOpen(false);
+              }}
+              autoFocus
+            >
               Confirm
             </Button>
           </DialogActions>
