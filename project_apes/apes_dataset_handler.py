@@ -1,5 +1,6 @@
 # This file:
-# Contains functions meant to bring all approached file types to a 'pandas' object.
+# Contains functions meant to bring all approached file types to 'pandas' objects. Returns a list of dataFrames and a list for their
+# attributed utility (i.e. train, test, validation)
 #
 # handle_dataset_from_path():
 # * if archive, then unarchive, which makes the path directory
@@ -18,6 +19,7 @@
 # * 2.3 - if neither, all contents are collapsed into one single dataFrame and the logic of the 'single file' section is applied.
 
 # TODO: recursive if folder (after zip?) contains folders or zip...
+# TODO: split dataset for [multiple, percetages]
 
 import arff
 import math
@@ -43,7 +45,6 @@ rough_filename_searches = ["train", "test", "validation"]
 def handle_dataset_from_path(Logger, app_instance_metadata):
     list_of_dataFrames = []
     list_of_dataFramesUtilityLabels = []
-    map_of_dataFrames = []
     files_to_load = []
 
     # checks
@@ -89,7 +90,7 @@ def handle_dataset_from_path(Logger, app_instance_metadata):
             files_to_load,
             list_of_dataFrames,
             list_of_dataFramesUtilityLabels,
-        ) = treat_file(
+        ) = treat_files(
             Logger,
             app_instance_metadata,
             files_to_load,
@@ -101,8 +102,12 @@ def handle_dataset_from_path(Logger, app_instance_metadata):
         else:
             Logger.info("process_file_type", return_message)
 
-    map_of_dataFrames = (list_of_dataFrames, list_of_dataFramesUtilityLabels)
-    return 0, "process_file_type exited successfully", map_of_dataFrames
+    return (
+        0,
+        "process_file_type exited successfully",
+        list_of_dataFrames,
+        list_of_dataFramesUtilityLabels,
+    )
 
 
 def unarchive(path, overwrite_existing=True, delete_after_unarchiving=False):
@@ -119,7 +124,7 @@ def unarchive(path, overwrite_existing=True, delete_after_unarchiving=False):
     return new_path
 
 
-def treat_file(
+def treat_files(
     Logger,
     app_instance_metadata,
     files_to_load,
@@ -129,52 +134,6 @@ def treat_file(
     try:
         if len(files_to_load) == 0:
             files_to_load = app_instance_metadata.dataset_metadata.dataset_path
-            return_code, return_message, temp_df = process_singular_file_type(
-                Logger, file, app_instance_metadata
-            )
-
-            # Case 1.1
-            if app_instance_metadata.dataset_metadata.separate_train_and_test == False:
-                list_of_dataFrames.append(temp_df)
-                list_of_dataFramesUtilityLabels.append("train")
-            # Case 1.2
-            else:
-                if len(app_instance_metadata.dataset_metadata.percentage_of_split) == 1:
-                    rows = temp_df.shape[0]
-                    number_of_rows_to_train = round(
-                        (
-                            app_instance_metadata.dataset_metadata.percentage_of_split[
-                                0
-                            ]
-                            / 100
-                        )
-                        * rows
-                    )
-                    dataFrame_train = temp_df.iloc[:number_of_rows_to_train, :]
-                    dataFrame_test = temp_df.iloc[number_of_rows_to_train:, :]
-                    list_of_dataFrames.append(dataFrame_train)
-                    list_of_dataFramesUtilityLabels.append("train")
-                    list_of_dataFrames.append(dataFrame_test)
-                    list_of_dataFramesUtilityLabels.append("test")
-                elif (
-                    len(app_instance_metadata.dataset_metadata.percentage_of_split) == 2
-                ):
-                    rows = temp_df.shape[0]
-                    number_of_rows_to_train = round(
-                        (
-                            app_instance_metadata.dataset_metadata.percentage_of_split[
-                                0
-                            ]
-                            / 100
-                        )
-                        * rows
-                    )
-                    dataFrame_train = temp_df.iloc[:number_of_rows_to_train, :]
-                    dataFrame_test = temp_df.iloc[number_of_rows_to_train:, :]
-                    list_of_dataFrames.append(dataFrame_train)
-                    list_of_dataFramesUtilityLabels.append("train")
-                    list_of_dataFrames.append(dataFrame_test)
-                    list_of_dataFramesUtilityLabels.append("test")
 
         for file in files_to_load:
             return_code, return_message, temp_df = process_singular_file_type(
@@ -187,7 +146,46 @@ def treat_file(
                 for string_match in rough_filename_searches:
                     if string_match in file.lower():
                         list_of_dataFramesUtilityLabels.append(string_match)
+                    else:
+                        list_of_dataFramesUtilityLabels.append("train")
                         break
+
+        # Case 1.1
+        if app_instance_metadata.dataset_metadata.separate_train_and_test == False:
+            list_of_dataFrames.append(temp_df)
+            list_of_dataFramesUtilityLabels.append("train")
+        # Case 1.2
+        else:
+            if len(app_instance_metadata.dataset_metadata.percentage_of_split) == 1:
+                rows = temp_df.shape[0]
+                number_of_rows_to_train = round(
+                    (
+                        app_instance_metadata.dataset_metadata.percentage_of_split[0]
+                        / 100
+                    )
+                    * rows
+                )
+                dataFrame_train = temp_df.iloc[:number_of_rows_to_train, :]
+                dataFrame_test = temp_df.iloc[number_of_rows_to_train:, :]
+                list_of_dataFrames.append(dataFrame_train)
+                list_of_dataFramesUtilityLabels.append("train")
+                list_of_dataFrames.append(dataFrame_test)
+                list_of_dataFramesUtilityLabels.append("test")
+            elif len(app_instance_metadata.dataset_metadata.percentage_of_split) == 2:
+                rows = temp_df.shape[0]
+                number_of_rows_to_train = round(
+                    (
+                        app_instance_metadata.dataset_metadata.percentage_of_split[0]
+                        / 100
+                    )
+                    * rows
+                )
+                dataFrame_train = temp_df.iloc[:number_of_rows_to_train, :]
+                dataFrame_test = temp_df.iloc[number_of_rows_to_train:, :]
+                list_of_dataFrames.append(dataFrame_train)
+                list_of_dataFramesUtilityLabels.append("train")
+                list_of_dataFrames.append(dataFrame_test)
+                list_of_dataFramesUtilityLabels.append("test")
 
         info_message = f"list_of_dataFrames: {list_of_dataFrames}"
         Logger.info("process_file_type", info_message)
@@ -243,10 +241,7 @@ def treat_folder(Logger, app_instance_metadata):
                     app_instance_metadata.dataset_metadata.dataset_path
                 ):
                     for filename in filenames:
-                        if (
-                            pathlib.Path(filename).suffix
-                            in app_instance_metadata.dataset_metadata.file_keyword_names
-                        ):
+                        if pathlib.Path(filename).suffix in supported_file_formats:
                             if (
                                 rough_filename_filter(
                                     filename.lower(),

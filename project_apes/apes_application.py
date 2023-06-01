@@ -2,7 +2,7 @@
 # Contains the main application class. Imports are made on a case-by-case basis, to avoid extra import time.
 # run() follows these steps:
 # * Part 0 -- Checks and info;
-# * Part 1 -- Get the desired dataset as a pandas dataFrame
+# * Part 1 -- Get the desired datasets as a pandas dataFrames
 # * * * At the end of the p1_getDataset_asDataFrame() there will either be a self.dataFrameMap (df + label) or an error;
 # * Part 2 -- Get the suitable solution(s) (by user input or by APES's recommendation);
 # * Part 3 -- Run selected solution(s);
@@ -36,7 +36,7 @@ class APES_Application:
         else:
             self.Logger.info(self, return_message)
 
-        ## Part 1 -- Get the desired dataset as a pandas dataFrame
+        ## Part 1 -- Get the desired datasets as a pandas dataFrames
         return_code, return_message = self.p1_getDataset_asDataFrame()
         if return_code != 0:
             return (return_code, return_message)
@@ -225,7 +225,8 @@ class APES_Application:
                 (
                     return_code,
                     return_message,
-                    self.dataFrameMap,
+                    self.dataFramesList,
+                    self.dataFramesUtilityList,
                 ) = handle_dataset_from_path(
                     self.Logger, self.application_instance_metadata
                 )
