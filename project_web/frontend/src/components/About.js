@@ -16,6 +16,10 @@ export default function About() {
       {/* <Divv margin="0px" size="15px">
         *apesdnm = acest proiect este supervizat de norm macdonald
       </Divv> */}
+      <Divv margin="0px" size="22.5px">
+        the all lowercase was inspired by ee cummings' often stylised spelling
+        of his own name
+      </Divv>
     </Divv>
   );
 }

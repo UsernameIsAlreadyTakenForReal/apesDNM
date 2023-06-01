@@ -6,6 +6,11 @@
 // 4. create in backend metadata with needed structure
 // 5. create results page
 
+// when going back to main upload window, selected combobox value remains
+// needs to be reset
+
+// isLabeled = false => isSupervised is false and LOCKED
+
 import { useEffect, useState } from "react";
 import * as React from "react";
 import { Divv, TextFieldFlex, Label, WrapperDiv } from "./StyledComponents";
@@ -279,12 +284,12 @@ export default function UploadComponent() {
     let data = {
       files: files,
       isLabeled: labeledRadioValue === "idk" ? "unknown" : labeledRadioValue,
-      label: labeledRadioValue === "yes" ? localLabelColumn : "-1",
+      label: labeledRadioValue === "yes" ? localLabelColumn : -1,
       isSupervised: isSupervisedCheckbox,
       separateTrainAndTest: separateTrainAndTestCheckbox,
       trainDataPercentage: separateTrainAndTestCheckbox
         ? localTrainDataPercentage
-        : "-1",
+        : -1,
       classes: classes,
       normalClass: normalClass,
     };
@@ -303,18 +308,10 @@ export default function UploadComponent() {
       formData.append(`file${i}`, selectedFiles[i]);
     }
 
-    console.log("-----------------");
-
     formData.append("percentage", trainDataPercentage);
     formData.append("labelColumn", labelColumn);
     formData.append("normalClass", normalClass);
     formData.append("saveData", saveDataCheckbox);
-
-    console.log("-----------------");
-    console.log(trainDataPercentage);
-    console.log(labelColumn);
-    console.log(normalClass);
-    console.log(saveDataCheckbox);
 
     setLoading(true);
 
