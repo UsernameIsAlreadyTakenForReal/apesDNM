@@ -1,20 +1,17 @@
-import json
-from random import randint
-import threading
 from time import sleep
+
 from flask import Flask, Response, request
 from flask_cors import CORS
 from flask.json import jsonify
+from flask_sse import sse
 
 import os
 import tempfile
-import time
 
-import sys
-from io import StringIO
 
 app = Flask(__name__)
-CORS(app)
+app.register_blueprint(sse, url_prefix="/stream")
+# CORS(app)
 
 
 def cls():
@@ -72,21 +69,46 @@ class Output:
         print("variable x has changed!")
 
 
-@app.route("/events")
+@app.route("/stream")
 def send_event(event_id):
-    # print("data is", event_id)
+    print("from send_event()")
 
     def generate_data():
-        print("data is", event_id)
+        print("from generate_data()")
         yield f"data: {event_id}\n\n"
 
-    return Response(generate_data(), mimetype="text/event-stream")
+    yield Response(generate_data(), mimetype="text/event-stream")
+
+
+# https://maxhalford.github.io/blog/flask-sse-no-deps/
+
+
+# @app.route("/stream")
+# def stream(data):
+#     print("from stream()")
+
+#     def event_stream():
+#         print("from event_stream()")
+#         yield "data: Update 1\n\n"
+#         sleep(1)
+
+#         yield "data: Update 2\n\n"
+#         sleep(1)
+
+#         yield "data: Update 3\n\n"
+#         sleep(1)
+
+#         # After sending all messages, return the final response
+#         yield "data: 200 OK\n\n"
+
+#     return Response(event_stream(), mimetype="text/event-stream")
 
 
 @app.route("/testingSSEs", methods=["GET", "POST"])
 def mock_endpoint():
-    data = "SOMETHING HERE MAN"
-    send_event(data)
+    send_event("testing...")
+    sleep(5)
+
     return "ok"
 
 
