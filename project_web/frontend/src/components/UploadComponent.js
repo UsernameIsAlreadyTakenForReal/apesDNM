@@ -12,6 +12,7 @@ import { Divv, TextFieldFlex, Label, WrapperDiv } from "./StyledComponents";
 
 import {
   Button,
+  Backdrop,
   FormControl,
   InputLabel,
   MenuItem,
@@ -36,32 +37,55 @@ import {
 const BASE_URL = process.env.REACT_APP_BACKEND;
 
 export default function UploadComponent() {
+  // show/hide elements
+  const [showExistingMethod, setShowExistingMethod] = useState(false);
+  const [showFileUploadMethod, setShowFileUploadMethod] = useState(false);
+
+  const [dialogOpen, setDialogOpen] = useState(false);
+  const [dialogText, setDialogText] = useState("");
+
+  const [loading, setLoading] = useState(false);
+
+  // data
   const [existingDatasets, setExistingDatasets] = useState([]);
-  const [existingDatasetButtonHover, setExistingDatasetButtonHover] =
-    useState(false);
+
   const [selectedDataset, setSelectedDataset] = useState("");
   const [selectedMethods, setSelectedMethods] = useState([]);
 
-  const [fileInputHover, setFileInputHover] = useState(false);
-  const [fileUploadButtonHover, setFileUploadButtonHover] = useState(false);
-
   const [selectedFiles, setSelectedFiles] = useState([]);
 
-  const [saveDataCheckbox, setSaveDataCheckbox] = useState(false);
   const [labeledRadioValue, setLabeledRadioValue] = useState("yes");
+
   const [isSupervisedCheckbox, setIsSupervisedCheckbox] = useState(false);
   const [separateTrainAndTestCheckbox, setSeparateTrainAndTestCheckbox] =
     useState(true);
+  const [saveDataCheckbox, setSaveDataCheckbox] = useState(false);
 
+  const [classesTextfields, setClassesTextfields] = useState([1, 2]);
   const [classes, setClasses] = useState([]);
-  const [classesTextfields, setClassesTextfields] = useState([1]);
-  const [classesTextfieldsError, setClassesTextfieldsError] = useState(false);
-  const [classesTextfieldsErrorMessage, setClassesTextfieldsErrorMessage] =
-    useState(false);
 
   const [normalClass, setNormalClass] = useState("");
 
-  const [loading, setLoading] = useState(false);
+  // hovers
+  const [existingDatasetButtonHover, setExistingDatasetButtonHover] =
+    useState(false);
+  const [fileUploadButtonHover, setFileUploadButtonHover] = useState(false);
+
+  const [showExistingMethodButtonHover, setShowExistingMethodButtonHover] =
+    useState(false);
+  const [showFileUploadMethodButtonHover, setShowFileUploadMethodButtonHover] =
+    useState(false);
+
+  const [fileInputHover, setFileInputHover] = useState(false);
+
+  const [goBackButtonHover, setGoBackButtonHover] = useState(false);
+
+  const [addClassButtonHover, setAddClassButtonHover] = useState(false);
+  const [removeClassButtonHover, setRemoveClassButtonHover] = useState(false);
+
+  const [dialogBackButtonHover, setDialogBackButtonHover] = useState(false);
+  const [dialogConfirmButtonHover, setDialogConfirmButtonHover] =
+    useState(false);
 
   // errors
   const [fileSelectionError, setFileSelectionError] = useState(false);
@@ -80,40 +104,30 @@ export default function UploadComponent() {
   const [normalClassError, setNormalClassError] = useState(false);
   const [normalClassErrorMessage, setNormalClassErrorMessage] = useState("");
 
+  const [classesTextfieldsError, setClassesTextfieldsError] = useState(false);
+  const [classesTextfieldsErrorMessage, setClassesTextfieldsErrorMessage] =
+    useState(false);
+
+  // misc
   const [stringOfFilesUploaded, setStringOfFilesUploaded] = useState("");
 
-  const [dialogOpen, setDialogOpen] = useState(false);
-  const [dialogText, setDialogText] = useState("");
-
-  const [showExistingMethod, setShowExistingMethod] = useState(false);
-  const [showFileUploadMethod, setShowFileUploadMethod] = useState(false);
-
-  const [showExistingMethodButtonHover, setShowExistingMethodButtonHover] =
-    useState(false);
-  const [showFileUploadMethodButtonHover, setShowFileUploadMethodButtonHover] =
-    useState(false);
-
-  const [goBackButtonHover, setGoBackButtonHover] = useState(false);
-
-  const [addClassButtonHover, setAddClassButtonHover] = useState(false);
-  const [removeClassButtonHover, setRemoveClassButtonHover] = useState(false);
-
+  // -------------------------------------------------------------------------
   function resetAllFormErrorsAndData() {
-    setDatasetError(false);
     setFileSelectionError(false);
+    setDatasetError(false);
     setPercentageError(false);
     setLabelColumnError(false);
-    setClassesTextfieldsError(false);
     setNormalClassError(false);
+    setClassesTextfieldsError(false);
 
     // document.getElementById("percentage-field").value = "";
     // document.getElementById("label-column-field").value = "";
     // document.getElementById("normal-class-field").value = "";
 
-    setSaveDataCheckbox(false);
+    // setSaveDataCheckbox(false);
   }
-  // -------------------------------------------------------------------------
 
+  // -------------------------------------------------------------------------
   async function getExistingDatasetItems() {
     const response = await fetch(BASE_URL + "datasets", {
       method: "get",
@@ -122,6 +136,7 @@ export default function UploadComponent() {
     setExistingDatasets(data);
   }
 
+  // -------------------------------------------------------------------------
   async function onFileChange(event) {
     console.log([...event.target.files]);
 
@@ -156,6 +171,7 @@ export default function UploadComponent() {
     setStringOfFilesUploaded(localStringOfFilesUploaded);
   }
 
+  // -------------------------------------------------------------------------
   function handleClassChange() {
     let classes = [];
     classesTextfields.forEach((textfield) => {
@@ -172,6 +188,7 @@ export default function UploadComponent() {
     return classes;
   }
 
+  // -------------------------------------------------------------------------
   async function onFileUpload() {
     setFileUploadButtonHover(false);
 
@@ -270,6 +287,7 @@ export default function UploadComponent() {
     return;
   }
 
+  // -------------------------------------------------------------------------
   async function onFileUploadConfirm() {
     const formData = new FormData();
 
@@ -295,6 +313,7 @@ export default function UploadComponent() {
     setLoading(false);
   }
 
+  // -------------------------------------------------------------------------
   function handleEKGMethodsCheckboxes(methodNumber) {
     let tempSelectedMethods = selectedMethods;
 
@@ -305,6 +324,7 @@ export default function UploadComponent() {
     setSelectedMethods(tempSelectedMethods.sort());
   }
 
+  // -------------------------------------------------------------------------
   async function onUseThisDataset() {
     setDatasetError(false);
     setDatasetErrorMessage("");
@@ -325,10 +345,20 @@ export default function UploadComponent() {
       handleEKGMethodsCheckboxes(1);
     }
 
+    let data = {
+      dataset: selectedDataset,
+      methods: selectedMethods,
+      solutionType:
+        selectedMethods.length > 1 ? "compareSolutions" : "retrieveData",
+    };
+
+    setDialogText(JSON.stringify(data, null, "\t"));
+
     setDialogOpen(true);
     return;
   }
 
+  // -------------------------------------------------------------------------
   async function onUseThisDatasetConfirm() {
     const formData = new FormData();
 
@@ -355,6 +385,7 @@ export default function UploadComponent() {
     console.log(resp);
   }
 
+  // -------------------------------------------------------------------------
   useEffect(() => {
     getExistingDatasetItems();
   }, []);
@@ -382,15 +413,11 @@ export default function UploadComponent() {
             <Divv>
               <Tooltip
                 title={
-                  separateTrainAndTestCheckbox ? (
-                    <Typography fontSize={14}>
-                      here you can choose one of the existing dataset that we
-                      have provided, such as images or EKGs, and you will get
-                      back details about their respective solutions
-                    </Typography>
-                  ) : (
-                    ""
-                  )
+                  <Typography fontSize={14}>
+                    here you can choose one of the existing dataset that we have
+                    provided, such as images or EKGs, and you will get back
+                    details about their respective solutions
+                  </Typography>
                 }
                 placement="bottom"
               >
@@ -409,12 +436,8 @@ export default function UploadComponent() {
                   variant="contained"
                   color="primary"
                   size="large"
-                  onMouseEnter={() => {
-                    setShowExistingMethodButtonHover(true);
-                  }}
-                  onMouseLeave={() => {
-                    setShowExistingMethodButtonHover(false);
-                  }}
+                  onMouseEnter={() => setShowExistingMethodButtonHover(true)}
+                  onMouseLeave={() => setShowExistingMethodButtonHover(false)}
                   onClick={() => {
                     setShowExistingMethod(true);
                     setShowExistingMethodButtonHover(false);
@@ -431,17 +454,13 @@ export default function UploadComponent() {
             <Divv>
               <Tooltip
                 title={
-                  separateTrainAndTestCheckbox ? (
-                    <Typography fontSize={14}>
-                      here you can select one or more files and provide details
-                      regarding the classes, the labels, and how you want that
-                      data to be divided in order to train a model. afterwards,
-                      we shall run it and provide you with some details about
-                      how it went
-                    </Typography>
-                  ) : (
-                    ""
-                  )
+                  <Typography fontSize={14}>
+                    here you can select one or more files and provide details
+                    regarding the classes, the labels, and how you want that
+                    data to be divided in order to train a model. afterwards, we
+                    shall run it and provide you with some details about how it
+                    went
+                  </Typography>
                 }
                 placement="bottom"
               >
@@ -460,12 +479,8 @@ export default function UploadComponent() {
                   variant="contained"
                   color="primary"
                   size="large"
-                  onMouseEnter={() => {
-                    setShowFileUploadMethodButtonHover(true);
-                  }}
-                  onMouseLeave={() => {
-                    setShowFileUploadMethodButtonHover(false);
-                  }}
+                  onMouseEnter={() => setShowFileUploadMethodButtonHover(true)}
+                  onMouseLeave={() => setShowFileUploadMethodButtonHover(false)}
                   onClick={() => {
                     setShowFileUploadMethod(true);
                     setShowFileUploadMethodButtonHover(false);
@@ -512,12 +527,8 @@ export default function UploadComponent() {
                 setShowFileUploadMethod(false);
                 setGoBackButtonHover(false);
               }}
-              onMouseEnter={() => {
-                setGoBackButtonHover(true);
-              }}
-              onMouseLeave={() => {
-                setGoBackButtonHover(false);
-              }}
+              onMouseEnter={() => setGoBackButtonHover(true)}
+              onMouseLeave={() => setGoBackButtonHover(false)}
             >
               Go back
             </Button>
@@ -613,12 +624,8 @@ export default function UploadComponent() {
                 color="primary"
                 size="large"
                 onClick={() => onUseThisDataset()}
-                onMouseEnter={() => {
-                  setExistingDatasetButtonHover(true);
-                }}
-                onMouseLeave={() => {
-                  setExistingDatasetButtonHover(false);
-                }}
+                onMouseEnter={() => setExistingDatasetButtonHover(true)}
+                onMouseLeave={() => setExistingDatasetButtonHover(false)}
               >
                 Use this dataset
               </Button>
@@ -653,12 +660,8 @@ export default function UploadComponent() {
                 setShowFileUploadMethod(false);
                 setGoBackButtonHover(false);
               }}
-              onMouseEnter={() => {
-                setGoBackButtonHover(true);
-              }}
-              onMouseLeave={() => {
-                setGoBackButtonHover(false);
-              }}
+              onMouseEnter={() => setGoBackButtonHover(true)}
+              onMouseLeave={() => setGoBackButtonHover(false)}
             >
               Go back
             </Button>
@@ -848,14 +851,10 @@ export default function UploadComponent() {
                           transition: "background 0.4s linear",
                           // transition: "color 0.4s linear",
                         }}
-                        onMouseEnter={() => {
-                          setRemoveClassButtonHover(true);
-                        }}
-                        onMouseLeave={() => {
-                          setRemoveClassButtonHover(false);
-                        }}
+                        onMouseEnter={() => setRemoveClassButtonHover(true)}
+                        onMouseLeave={() => setRemoveClassButtonHover(false)}
                         onClick={() => {
-                          if (classesTextfields.length === 1) return;
+                          if (classesTextfields.length === 2) return;
                           setClassesTextfields(classesTextfields.slice(0, -1));
                           handleClassChange();
                         }}
@@ -877,12 +876,8 @@ export default function UploadComponent() {
                           transition: "background 0.4s linear",
                           // transition: "color 0.4s linear",
                         }}
-                        onMouseEnter={() => {
-                          setAddClassButtonHover(true);
-                        }}
-                        onMouseLeave={() => {
-                          setAddClassButtonHover(false);
-                        }}
+                        onMouseEnter={() => setAddClassButtonHover(true)}
+                        onMouseLeave={() => setAddClassButtonHover(false)}
                         onClick={() => {
                           setClassesTextfields([
                             ...classesTextfields,
@@ -992,12 +987,8 @@ export default function UploadComponent() {
               color="primary"
               size="large"
               onClick={() => onFileUpload()}
-              onMouseEnter={() => {
-                setFileUploadButtonHover(true);
-              }}
-              onMouseLeave={() => {
-                setFileUploadButtonHover(false);
-              }}
+              onMouseEnter={() => setFileUploadButtonHover(true)}
+              onMouseLeave={() => setFileUploadButtonHover(false)}
             >
               Upload file
             </Button>
@@ -1005,32 +996,56 @@ export default function UploadComponent() {
         </div>
       )}
 
-      <div style={{ display: "flex" }}>
-        <WrapperDiv
+      {/* <WrapperDiv
           style={{
             display: loading ? "" : "none",
           }}
         >
           <CircularProgress />
           <Divv>loading...</Divv>
-        </WrapperDiv>
+        </WrapperDiv> */}
 
+      <div style={{ display: "flex" }}>
         <Dialog open={dialogOpen} maxWidth="xl" fullWidt={true}>
-          <DialogTitle>{"Proceed with these parameters?"}</DialogTitle>
+          <DialogTitle style={{ fontWeight: "bold" }}>
+            {"Proceed with these parameters?"}
+          </DialogTitle>
           <DialogContent>
-            <DialogContentText>
+            <DialogContentText style={{ paddingRight: "30px" }}>
               <pre>{dialogText}</pre>
             </DialogContentText>
           </DialogContent>
           <DialogActions>
             <Button
+              style={{
+                background:
+                  dialogBackButtonHover === false ? "black" : "orange",
+                color: dialogBackButtonHover === false ? "white" : "black",
+                fontWeight: "bold",
+              }}
+              variant="contained"
+              color="primary"
+              size="large"
+              onMouseEnter={() => setDialogBackButtonHover(true)}
+              onMouseLeave={() => setDialogBackButtonHover(false)}
               onClick={() => {
                 setDialogOpen(false);
               }}
             >
-              Go back
+              Back to data
             </Button>
             <Button
+              style={{
+                background:
+                  dialogConfirmButtonHover === false ? "black" : "orange",
+                color: dialogConfirmButtonHover === false ? "white" : "black",
+                fontWeight: "bold",
+              }}
+              variant="contained"
+              color="primary"
+              size="large"
+              onMouseEnter={() => setDialogConfirmButtonHover(true)}
+              onMouseLeave={() => setDialogConfirmButtonHover(false)}
               onClick={() => {
                 if (
                   showExistingMethod === false &&
@@ -1047,6 +1062,19 @@ export default function UploadComponent() {
             </Button>
           </DialogActions>
         </Dialog>
+      </div>
+
+      <div>
+        <Backdrop
+          sx={{ color: "#fff", zIndex: (theme) => theme.zIndex.drawer + 1 }}
+          open={loading}
+          onClick={() => setLoading(false)}
+        >
+          <Divv>
+            <CircularProgress color="inherit" />
+            {/* {"Loading"} */}
+          </Divv>
+        </Backdrop>
       </div>
     </>
   );

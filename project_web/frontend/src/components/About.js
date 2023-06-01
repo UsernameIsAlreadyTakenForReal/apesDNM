@@ -12,6 +12,10 @@ export default function About() {
         intelligent method is best suited to detect anomalies on that given
         input.
       </Divv>
+      <br></br>
+      {/* <Divv margin="0px" size="15px">
+        *apesdnm = acest proiect este supervizat de norm macdonald
+      </Divv> */}
     </Divv>
   );
 }

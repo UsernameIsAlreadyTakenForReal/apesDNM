@@ -7,7 +7,7 @@ export default function NavbarComponent() {
     <>
       <Nav>
         <RowFlex>
-          <Divv size="40px" margin="35px">
+          <Divv size="42.5px" margin="50px" style={{ padding: "10px" }}>
             <Link
               to="/"
               style={{

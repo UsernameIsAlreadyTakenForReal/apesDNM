@@ -35,6 +35,9 @@ def upload_file():
 
     temp_dir = tempfile.mkdtemp()
 
+    if len(files) == 0:
+        return "request ok. no files to save"
+
     for file in files:
         file.save(os.path.join(temp_dir, file.filename))
 
