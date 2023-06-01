@@ -1,10 +1,14 @@
+import json
+from random import randint
+import threading
 from time import sleep
-from flask import Flask, request
+from flask import Flask, Response, request
 from flask_cors import CORS
 from flask.json import jsonify
 
 import os
 import tempfile
+import time
 
 app = Flask(__name__)
 CORS(app)
@@ -21,10 +25,8 @@ def getDatasets():
     return jsonify(data.datasets)
 
 
-# https://medium.com/geekculture/how-to-a-build-real-time-react-app-with-server-sent-events-9fbb83374f90
 @app.route("/upload", methods=["GET", "POST"])
 def upload_file():
-    sleep(10)
     cls()
 
     files = []
@@ -42,6 +44,9 @@ def upload_file():
         file.save(os.path.join(temp_dir, file.filename))
 
     return "request ok. files saved at " + temp_dir
+
+
+# ############################################################################
 
 
 if __name__ == "__main__":

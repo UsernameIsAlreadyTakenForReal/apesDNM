@@ -61,6 +61,9 @@ export default function UploadComponent() {
     useState(true);
   const [saveDataCheckbox, setSaveDataCheckbox] = useState(false);
 
+  const [trainDataPercentage, setTrainDataPercentage] = useState("");
+  const [labelColumn, setLabelColumn] = useState("");
+
   const [classesTextfields, setClassesTextfields] = useState([1, 2]);
   const [classes, setClasses] = useState([]);
 
@@ -205,31 +208,34 @@ export default function UploadComponent() {
     }
 
     // percentage logic
-    let trainDataPercentage = "";
+    let localTrainDataPercentage = "";
     if (separateTrainAndTestCheckbox) {
-      trainDataPercentage =
+      localTrainDataPercentage =
         document.getElementById("percentage-field").value !== ""
           ? Number(document.getElementById("percentage-field").value)
           : 0.7;
 
-      if (isNaN(trainDataPercentage)) {
+      if (isNaN(localTrainDataPercentage)) {
         setPercentageError(true);
         setPercentageErrorMessage("percentage must be a number (between 0-1)");
         return;
       }
 
-      if (trainDataPercentage < 0 || trainDataPercentage > 1) {
+      if (localTrainDataPercentage < 0 || localTrainDataPercentage > 1) {
         setPercentageError(true);
         setPercentageErrorMessage("percentage must be between 0-1");
         return;
       }
     }
-    // label column logic
-    let labelColumn = "";
-    if (labeledRadioValue === "yes") {
-      labelColumn = document.getElementById("label-column-field").value;
 
-      if (labelColumn === "") {
+    setTrainDataPercentage(localTrainDataPercentage);
+
+    // label column logic
+    let localLabelColumn = "";
+    if (labeledRadioValue === "yes") {
+      localLabelColumn = document.getElementById("label-column-field").value;
+
+      if (localLabelColumn === "") {
         setLabelColumnError(true);
         setLabelColumnErrorMessage(
           "labeled dataset selected. provide a target"
@@ -237,6 +243,8 @@ export default function UploadComponent() {
         return;
       }
     }
+
+    setLabelColumn(localLabelColumn);
 
     // classes logic
     let classes = handleClassChange();
@@ -271,11 +279,11 @@ export default function UploadComponent() {
     let data = {
       files: files,
       isLabeled: labeledRadioValue === "idk" ? "unknown" : labeledRadioValue,
-      label: labeledRadioValue === "yes" ? labelColumn : "-1",
+      label: labeledRadioValue === "yes" ? localLabelColumn : "-1",
       isSupervised: isSupervisedCheckbox,
       separateTrainAndTest: separateTrainAndTestCheckbox,
       trainDataPercentage: separateTrainAndTestCheckbox
-        ? trainDataPercentage
+        ? localTrainDataPercentage
         : "-1",
       classes: classes,
       normalClass: normalClass,
@@ -295,14 +303,22 @@ export default function UploadComponent() {
       formData.append(`file${i}`, selectedFiles[i]);
     }
 
-    // formData.append("percentage", trainDataPercentage);
-    // formData.append("labelColumn", labelColumn);
+    console.log("-----------------");
+
+    formData.append("percentage", trainDataPercentage);
+    formData.append("labelColumn", labelColumn);
     formData.append("normalClass", normalClass);
     formData.append("saveData", saveDataCheckbox);
 
+    console.log("-----------------");
+    console.log(trainDataPercentage);
+    console.log(labelColumn);
+    console.log(normalClass);
+    console.log(saveDataCheckbox);
+
     setLoading(true);
 
-    const response = await fetch("/upload", {
+    const response = await fetch(BASE_URL + "upload", {
       method: "POST",
       body: formData,
     });
@@ -374,7 +390,7 @@ export default function UploadComponent() {
 
     setLoading(true);
 
-    const response = await fetch("/upload", {
+    const response = await fetch(BASE_URL + "upload", {
       method: "POST",
       body: formData,
     });
@@ -1068,7 +1084,6 @@ export default function UploadComponent() {
         <Backdrop
           sx={{ color: "#fff", zIndex: (theme) => theme.zIndex.drawer + 1 }}
           open={loading}
-          onClick={() => setLoading(false)}
         >
           <Divv>
             <CircularProgress color="inherit" />
