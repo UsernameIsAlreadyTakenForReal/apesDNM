@@ -12,6 +12,8 @@ import os
 class Shared_Definitions:
     ROOT_DIR = os.path.dirname(os.path.abspath(__file__))
 
+    default_file_to_dataset_label = "train"
+
     project_solution_ekg_1_model_filename = "apes_solution_ekg_1_model.pth"
     project_solution_ekg_1_training_script = "apes_solution_ekg_1_train.py"
     project_solution_ekg_1_model_filename_last_good_one = (

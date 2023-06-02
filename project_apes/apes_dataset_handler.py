@@ -20,6 +20,8 @@
 
 # TODO: recursive if folder (after zip?) contains folders or zip...
 # TODO: split dataset for [multiple, percetages]
+# TODO: files_to_load must not contain dummy/dud files
+# NON-TODO: if there are 2 "train" files, maybe user has different use-cases. Couldn't think of a scenario in which this happens.
 
 import arff
 import math
@@ -39,7 +41,7 @@ supported_file_formats = [
     ".npz",
     ".ts",
 ]  # also acts as priority
-rough_filename_searches = ["train", "test", "validation"]
+rough_filename_searches = ["train", "test", "validation", "run"]
 
 
 def handle_dataset_from_path(Logger, app_instance_metadata):
@@ -131,10 +133,22 @@ def treat_files(
     list_of_dataFrames,
     list_of_dataFramesUtilityLabels,
 ):
+    flag_enter = False
+    default_label = (
+        app_instance_metadata.shared_definitions.default_file_to_dataset_label
+    )
+
+    if len(app_instance_metadata.dataset_metadata.file_keyword_names) != 0:
+        rough_filename_searches = (
+            app_instance_metadata.dataset_metadata.file_keyword_names
+        )
+
     try:
         if len(files_to_load) == 0:
             files_to_load = app_instance_metadata.dataset_metadata.dataset_path
+            flag_enter = True
 
+        # Load files and label them. Also counts as case 2.1 and 2.2. Also 2.3, as the default label is "train" (see in apes_static_definitions)
         for file in files_to_load:
             return_code, return_message, temp_df = process_singular_file_type(
                 Logger, file, app_instance_metadata
@@ -147,52 +161,71 @@ def treat_files(
                     if string_match in file.lower():
                         list_of_dataFramesUtilityLabels.append(string_match)
                     else:
-                        list_of_dataFramesUtilityLabels.append("train")
+                        list_of_dataFramesUtilityLabels.append(default_label)
                         break
 
-        # Case 1.1
-        if app_instance_metadata.dataset_metadata.separate_train_and_test == False:
-            list_of_dataFrames.append(temp_df)
-            list_of_dataFramesUtilityLabels.append("train")
-        # Case 1.2
+        # Exit if the no. of dataFrames does not match no. of labels
+        if len(list_of_dataFrames) != len(list_of_dataFramesUtilityLabels):
+            return (
+                1,
+                "apes_dataset_handler.treat_file exited with error: number of dataFrames do not match number of utility labels",
+                files_to_load,
+                list_of_dataFrames,
+                list_of_dataFramesUtilityLabels,
+            )
+
+        # If list_of_dataFramesUtilityLabels contains only "train", make one single "train" dataFrame. We will pass this to case 2.3 // 1.1 or 1.2
+        # Else if list_of_dataFramesUtilityLabels contains only one of each, go ahead
+        # Else unify_dataFrames (make only one "train", only one "test" etc)
+        verifier = [
+            0 if x == default_label else 1 for x in list_of_dataFramesUtilityLabels
+        ]
+        if sum(verifier) == 0:
+            temp_list_of_dataFrames = []
+            temp_list_of_dataFrames.append(pd.concat(list_of_dataFrames))
+            list_of_dataFramesUtilityLabels = [default_label]
+            list_of_dataFrames = temp_list_of_dataFrames
+            flag_enter = True
+        elif are_labels_unique(list_of_dataFramesUtilityLabels) == True:
+            flag_enter = False
         else:
-            if len(app_instance_metadata.dataset_metadata.percentage_of_split) == 1:
-                rows = temp_df.shape[0]
-                number_of_rows_to_train = round(
-                    (
-                        app_instance_metadata.dataset_metadata.percentage_of_split[0]
-                        / 100
-                    )
-                    * rows
+            (
+                return_code,
+                return_message,
+                list_of_dataFrames,
+                list_of_dataFramesUtilityLabels,
+            ) = unify_dataFrames(
+                Logger, list_of_dataFrames, list_of_dataFramesUtilityLabels
+            )
+            if return_code != 0:
+                return return_code, return_message
+
+        # If single file or if all were put together
+        if flag_enter == True:
+            # Case 1.1 -- do not split
+            if app_instance_metadata.dataset_metadata.separate_train_and_test == False:
+                list_of_dataFrames = list_of_dataFrames
+                list_of_dataFramesUtilityLabels = [default_label]
+            # Case 1.2 -- split
+            else:
+                (
+                    return_code,
+                    return_message,
+                    list_of_dataFrames,
+                    list_of_dataFramesUtilityLabels,
+                ) = split_dataFrames(
+                    Logger,
+                    app_instance_metadata,
+                    list_of_dataFramesUtilityLabels,
+                    list_of_dataFramesUtilityLabels,
                 )
-                dataFrame_train = temp_df.iloc[:number_of_rows_to_train, :]
-                dataFrame_test = temp_df.iloc[number_of_rows_to_train:, :]
-                list_of_dataFrames.append(dataFrame_train)
-                list_of_dataFramesUtilityLabels.append("train")
-                list_of_dataFrames.append(dataFrame_test)
-                list_of_dataFramesUtilityLabels.append("test")
-            elif len(app_instance_metadata.dataset_metadata.percentage_of_split) == 2:
-                rows = temp_df.shape[0]
-                number_of_rows_to_train = round(
-                    (
-                        app_instance_metadata.dataset_metadata.percentage_of_split[0]
-                        / 100
-                    )
-                    * rows
-                )
-                dataFrame_train = temp_df.iloc[:number_of_rows_to_train, :]
-                dataFrame_test = temp_df.iloc[number_of_rows_to_train:, :]
-                list_of_dataFrames.append(dataFrame_train)
-                list_of_dataFramesUtilityLabels.append("train")
-                list_of_dataFrames.append(dataFrame_test)
-                list_of_dataFramesUtilityLabels.append("test")
 
         info_message = f"list_of_dataFrames: {list_of_dataFrames}"
-        Logger.info("process_file_type", info_message)
+        Logger.info("treat_files", info_message)
         info_message = (
             f"list_of_dataFramesUtilityLabels: {list_of_dataFramesUtilityLabels}"
         )
-        Logger.info("process_file_type", info_message)
+        Logger.info("treat_files", info_message)
 
         return (
             0,
@@ -363,6 +396,7 @@ def rough_filename_filter(filename, keywords=rough_filename_searches):
 
 
 def filter_files_in_folder_list(filename_list):
+    # TODO: treat .txt files that do not contain tables or something of the sort
     list_of_stems = [pathlib.Path(x).stem for x in filename_list]
     return_list = []
 
@@ -385,3 +419,101 @@ def filter_files_in_folder_list(filename_list):
         return return_list
     else:
         return filename_list
+
+
+def unify_dataFrames(Logger, list_of_dataFrames, list_of_dataFramesUtilityLabels):
+    temp_list_of_dataFrames = []
+
+    # 'seen' will be uniques, 'dupes' will be extra
+    seen = []
+    dupes = []
+    for x in list_of_dataFramesUtilityLabels:
+        if x in seen:
+            dupes.append(x)
+        else:
+            seen.append(x)
+
+    temp_list = []
+    for element in seen:
+        # get all dataFrames of one label in a single list
+        for i in range(0, len(list_of_dataFramesUtilityLabels)):
+            if element == list_of_dataFramesUtilityLabels[i]:
+                temp_list.append(list_of_dataFrames[i])
+
+        # mash those dataFrames into one single dataFrame
+        first_dataFrame_shape = temp_list[0].shape
+        for i in range(1, len(temp_list)):
+            if temp_list[i].shape != first_dataFrame_shape:
+                info_message = f"dataFrame.shape at index {i} does not match {first_dataFrame_shape}"
+                Logger.info("unify_dataFrames", info_message)
+        temp_list_of_dataFrames.append(pd.concat(temp_list))
+
+    return (
+        0,
+        "apes_data_handler.unify_dataFrames exited successfully",
+        temp_list_of_dataFrames,
+        seen,
+    )
+
+
+def are_labels_unique(list_of_dataFramesUtilityLabels):
+    seen = []
+    dupes = []
+    for x in list_of_dataFramesUtilityLabels:
+        if x in seen:
+            dupes.append(x)
+        else:
+            seen.append(x)
+
+    if seen == list_of_dataFramesUtilityLabels:
+        return True
+    return False
+
+
+def split_dataFrames(
+    Logger, app_instance_metadata, list_of_dataFrames, list_of_dataFramesUtilityLabels
+):
+    # [%]
+    if len(app_instance_metadata.dataset_metadata.percentage_of_split) == 1:
+        if len(list_of_dataFrames) != 1:
+            info_message = "Only one split % value was given, but there are multiple dataFrames. If this error appears, there's something extremely wrong with Python."
+            Logger.info("split_dataFrames", info_message)
+
+        rows = list_of_dataFrames[0].shape[0]
+        number_of_rows_to_train = round(
+            (app_instance_metadata.dataset_metadata.percentage_of_split[0] / 100) * rows
+        )
+
+        dataFrame_train = list_of_dataFrames[0].iloc[:number_of_rows_to_train, :]
+        dataFrame_test = list_of_dataFrames[0].iloc[number_of_rows_to_train:, :]
+
+        list_of_dataFrames = []
+        list_of_dataFrames.append(dataFrame_train)
+        list_of_dataFramesUtilityLabels.append("train")
+        list_of_dataFrames.append(dataFrame_test)
+        list_of_dataFramesUtilityLabels.append("test")
+
+        return (
+            0,
+            "split_dataFrames exited successfully",
+            list_of_dataFrames,
+            list_of_dataFramesUtilityLabels,
+        )
+    # [%, %]
+    elif len(app_instance_metadata.dataset_metadata.percentage_of_split) == 2:
+        if len(list_of_dataFrames) != 1:
+            info_message = "Two split % value was given, but there are multiple dataFrames. If this error appears, there's something extremely wrong with Python."
+            Logger.info("split_dataFrames", info_message)
+
+        return (
+            0,
+            "split_dataFrames exited successfully. Let's not do this right now.",
+            list_of_dataFrames,
+            list_of_dataFramesUtilityLabels,
+        )
+    return (
+        0,
+        "split_dataFrames exited successfully",
+        list_of_dataFrames,
+        list_of_dataFramesUtilityLabels,
+    )
