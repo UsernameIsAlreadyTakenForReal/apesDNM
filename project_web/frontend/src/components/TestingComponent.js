@@ -5,12 +5,12 @@ import { useState, useEffect } from "react";
 import Terminal, { ColorMode, TerminalOutput } from "react-terminal-ui";
 // Make sure to run npm run install-peers after npm install so peer dependencies are also installed.
 
-import io from "socket.io-client";
+import { io } from "socket.io-client";
 
 export default function RoutesComponent() {
   const [terminalText, setTerminalText] = useState(">>> hello world");
 
-  async function getSSEs() {
+  async function testing() {
     const response = await fetch("http://127.0.0.1:5000/testing", {
       method: "get",
     });
@@ -18,19 +18,6 @@ export default function RoutesComponent() {
     const textResponse = await response.text();
     console.log(textResponse);
   }
-
-  useEffect(() => {
-    const socket = io("http://127.0.0.1:5000");
-    console.log("socket created");
-
-    socket.on("message", (data) => {
-      console.log(data);
-    });
-
-    return () => {
-      socket.disconnect();
-    };
-  }, []);
 
   return (
     <>
@@ -46,7 +33,7 @@ export default function RoutesComponent() {
       <Divv>
         <Button
           style={{ backgroundColor: "black", color: "white" }}
-          onClick={() => getSSEs()}
+          onClick={() => testing()}
         >
           Click me
         </Button>

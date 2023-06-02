@@ -56,6 +56,7 @@ def upload_file():
 
 @socketio.on("connect")
 def handle_connect():
+    print("Client connected")
     emit("message", "Connected to the WebSocket")
 
 
