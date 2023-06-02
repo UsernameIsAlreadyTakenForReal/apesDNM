@@ -22,8 +22,6 @@
 # ############################################################################
 
 
-from time import sleep
-
 from flask import Flask, request
 from flask_cors import CORS
 from flask.json import jsonify
@@ -51,6 +49,10 @@ def getDatasets():
 @app.route("/upload", methods=["GET", "POST"])
 def upload_file():
     cls()
+
+    from time import sleep
+
+    sleep(5)
 
     files = []
 

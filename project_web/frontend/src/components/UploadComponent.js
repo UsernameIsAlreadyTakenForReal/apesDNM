@@ -7,6 +7,8 @@ import { useEffect, useState } from "react";
 import * as React from "react";
 import { Divv, TextFieldFlex, Label, WrapperDiv } from "./StyledComponents";
 
+import { useNavigate } from "react-router-dom";
+
 import {
   Button,
   Backdrop,
@@ -34,6 +36,8 @@ import {
 const BASE_URL = process.env.REACT_APP_BACKEND;
 
 export default function UploadComponent() {
+  const navigate = useNavigate();
+
   // show/hide elements
   const [showExistingMethod, setShowExistingMethod] = useState(false);
   const [showFileUploadMethod, setShowFileUploadMethod] = useState(false);
@@ -42,6 +46,7 @@ export default function UploadComponent() {
   const [dialogText, setDialogText] = useState("");
 
   const [loading, setLoading] = useState(false);
+  const [loadingText, setLoadingText] = useState("");
 
   // data
   const [existingDatasets, setExistingDatasets] = useState([]);
@@ -113,7 +118,6 @@ export default function UploadComponent() {
 
   // -------------------------------------------------------------------------
   function resetAllFormErrorsAndData() {
-    setExistingDatasets([]);
     setSelectedDataset("");
     setSelectedMethods([]);
 
@@ -319,6 +323,7 @@ export default function UploadComponent() {
     formData.append("saveData", saveDataCheckbox);
 
     setLoading(true);
+    setLoadingText("processing...");
 
     const response = await fetch(BASE_URL + "upload", {
       method: "POST",
@@ -328,7 +333,34 @@ export default function UploadComponent() {
     const textResponse = await response.text();
     console.log(textResponse);
 
-    setLoading(false);
+    setTimeout(() => {
+      setLoadingText("redirecting to results page.");
+    }, 0);
+
+    setTimeout(() => {
+      setLoadingText("redirecting to results page..");
+    }, 500);
+
+    setTimeout(() => {
+      setLoadingText("redirecting to results page...");
+    }, 1000);
+
+    setTimeout(() => {
+      setLoadingText("redirecting to results page.");
+    }, 1500);
+
+    setTimeout(() => {
+      setLoadingText("redirecting to results page..");
+    }, 2000);
+
+    setTimeout(() => {
+      setLoadingText("redirecting to results page...");
+    }, 2500);
+
+    setTimeout(() => {
+      setLoading(false);
+      navigate("/results");
+    }, 3000);
   }
 
   // -------------------------------------------------------------------------
@@ -391,16 +423,44 @@ export default function UploadComponent() {
     );
 
     setLoading(true);
+    setLoadingText("processing...");
 
     const response = await fetch(BASE_URL + "upload", {
       method: "POST",
       body: formData,
     });
 
-    const resp = await response.text();
+    const textResponse = await response.text();
+    console.log(textResponse);
 
-    setLoading(false);
-    console.log(resp);
+    setTimeout(() => {
+      setLoadingText("redirecting to results page.");
+    }, 0);
+
+    setTimeout(() => {
+      setLoadingText("redirecting to results page..");
+    }, 500);
+
+    setTimeout(() => {
+      setLoadingText("redirecting to results page...");
+    }, 1000);
+
+    setTimeout(() => {
+      setLoadingText("redirecting to results page.");
+    }, 1500);
+
+    setTimeout(() => {
+      setLoadingText("redirecting to results page..");
+    }, 2000);
+
+    setTimeout(() => {
+      setLoadingText("redirecting to results page...");
+    }, 2500);
+
+    setTimeout(() => {
+      setLoading(false);
+      navigate("/results");
+    }, 3000);
   }
 
   // -------------------------------------------------------------------------
@@ -1100,10 +1160,8 @@ export default function UploadComponent() {
           sx={{ color: "#fff", zIndex: (theme) => theme.zIndex.drawer + 1 }}
           open={loading}
         >
-          <Divv>
-            <CircularProgress color="inherit" />
-            {/* {"Loading"} */}
-          </Divv>
+          <CircularProgress color="inherit" />
+          <Divv color="white">{loadingText}</Divv>
         </Backdrop>
       </div>
     </>
