@@ -5,10 +5,9 @@ import { useState, useEffect } from "react";
 import Terminal, { ColorMode, TerminalOutput } from "react-terminal-ui";
 // Make sure to run npm run install-peers after npm install so peer dependencies are also installed.
 
-import { socket } from "../socket";
-
 export default function RoutesComponent() {
   const [terminalText, setTerminalText] = useState(">>> hello world");
+  const [alreadyConnected, setAlreadyConnected] = useState(false);
 
   async function testing() {
     const response = await fetch("http://127.0.0.1:5000/testing", {

@@ -1,3 +1,27 @@
+# ############################################################################
+
+# class Output:
+#     def __init__(self):
+#         self._x = None
+
+#     @property
+#     def x(self):
+#         return self._x
+
+#     @x.setter
+#     def x(self, value):
+#         if self._x != value:
+#             self._x = value
+#             self.trigger_action()
+
+#     def trigger_action(self):
+#         print("variable x has changed!")
+
+# https://maxhalford.github.io/blog/flask-sse-no-deps/
+
+# ############################################################################
+
+
 from time import sleep
 
 from flask import Flask, request
@@ -8,7 +32,6 @@ import os
 import tempfile
 
 from datetime import datetime
-
 
 app = Flask(__name__)
 CORS(app)
@@ -44,30 +67,6 @@ def upload_file():
         file.save(os.path.join(temp_dir, file.filename))
 
     return "request ok. files saved at " + temp_dir
-
-
-# ############################################################################
-
-# class Output:
-#     def __init__(self):
-#         self._x = None
-
-#     @property
-#     def x(self):
-#         return self._x
-
-#     @x.setter
-#     def x(self, value):
-#         if self._x != value:
-#             self._x = value
-#             self.trigger_action()
-
-#     def trigger_action(self):
-#         print("variable x has changed!")
-
-# https://maxhalford.github.io/blog/flask-sse-no-deps/
-
-# ############################################################################
 
 
 @app.route("/testing", methods=["GET", "POST"])
