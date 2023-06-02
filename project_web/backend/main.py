@@ -10,11 +10,8 @@ import tempfile
 from datetime import datetime
 
 
-from flask_socketio import SocketIO, emit
-
 app = Flask(__name__)
 CORS(app)
-socketio = SocketIO(app, cors_allowed_origins="*")
 
 
 def cls():
@@ -30,8 +27,6 @@ def getDatasets():
 
 @app.route("/upload", methods=["GET", "POST"])
 def upload_file():
-    sleep(5)
-
     cls()
 
     files = []
@@ -53,44 +48,30 @@ def upload_file():
 
 # ############################################################################
 
+# class Output:
+#     def __init__(self):
+#         self._x = None
 
-@socketio.on("connect")
-def handle_connect():
-    print("Client connected")
-    emit("message", "Connected to the WebSocket")
+#     @property
+#     def x(self):
+#         return self._x
 
+#     @x.setter
+#     def x(self, value):
+#         if self._x != value:
+#             self._x = value
+#             self.trigger_action()
 
-@socketio.on("disconnect")
-def handle_disconnect():
-    print("Client disconnected")
-
-
-class Output:
-    def __init__(self):
-        self._x = None
-
-    @property
-    def x(self):
-        return self._x
-
-    @x.setter
-    def x(self, value):
-        if self._x != value:
-            self._x = value
-            self.trigger_action()
-
-    def trigger_action(self):
-        print("variable x has changed!")
-
+#     def trigger_action(self):
+#         print("variable x has changed!")
 
 # https://maxhalford.github.io/blog/flask-sse-no-deps/
+
+# ############################################################################
 
 
 @app.route("/testing", methods=["GET", "POST"])
 def testing():
-    socketio.emit("message", "Hello from /testing endpoint")
-    socketio.emit("message", "Hello again from /testing endpoint")
-
     return str(datetime.now()) + " OK"
 
 

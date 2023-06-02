@@ -5,7 +5,7 @@ import { useState, useEffect } from "react";
 import Terminal, { ColorMode, TerminalOutput } from "react-terminal-ui";
 // Make sure to run npm run install-peers after npm install so peer dependencies are also installed.
 
-import { io } from "socket.io-client";
+import { socket } from "../socket";
 
 export default function RoutesComponent() {
   const [terminalText, setTerminalText] = useState(">>> hello world");
