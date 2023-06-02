@@ -1,15 +1,7 @@
 // TO DO
 
-// 1. change dialog text for method 1
-// 2. change loading screen with something like backdrop
-// 3. change all necessary variables to useState one in order to add them into dialog text
 // 4. create in backend metadata with needed structure
 // 5. create results page
-
-// when going back to main upload window, selected combobox value remains
-// needs to be reset
-
-// isLabeled = false => isSupervised is false and LOCKED
 
 import { useEffect, useState } from "react";
 import * as React from "react";
@@ -121,6 +113,21 @@ export default function UploadComponent() {
 
   // -------------------------------------------------------------------------
   function resetAllFormErrorsAndData() {
+    setExistingDatasets([]);
+    setSelectedDataset("");
+    setSelectedMethods([]);
+
+    setSelectedFiles([]);
+    setLabeledRadioValue("yes");
+    setIsSupervisedCheckbox(false);
+    setSeparateTrainAndTestCheckbox(true);
+    setSaveDataCheckbox(false);
+    setTrainDataPercentage("");
+    setLabelColumn("");
+    setClassesTextfields([1, 2]);
+    setClasses([]);
+    setNormalClass("");
+
     setFileSelectionError(false);
     setDatasetError(false);
     setPercentageError(false);
@@ -131,8 +138,6 @@ export default function UploadComponent() {
     // document.getElementById("percentage-field").value = "";
     // document.getElementById("label-column-field").value = "";
     // document.getElementById("normal-class-field").value = "";
-
-    // setSaveDataCheckbox(false);
   }
 
   // -------------------------------------------------------------------------
@@ -456,7 +461,7 @@ export default function UploadComponent() {
                     setShowExistingMethodButtonHover(false);
 
                     // so no error is shown if there was one previously
-                    setDatasetError(false);
+                    resetAllFormErrorsAndData();
                   }}
                 >
                   Use Existing Methods
@@ -499,11 +504,7 @@ export default function UploadComponent() {
                     setShowFileUploadMethodButtonHover(false);
 
                     // so no error is shown if there was one previously
-                    setFileSelectionError(false);
-                    setPercentageError(false);
-                    setLabelColumnError(false);
-                    setClassesTextfieldsError(false);
-                    setNormalClassError(false);
+                    resetAllFormErrorsAndData();
                   }}
                 >
                   Upload a new dataset
@@ -740,6 +741,9 @@ export default function UploadComponent() {
                 value={labeledRadioValue}
                 onChange={(event) => {
                   setLabeledRadioValue(event.target.value);
+                  if (event.target.value !== "yes") {
+                    setIsSupervisedCheckbox(false);
+                  }
                 }}
               >
                 <FormControlLabel value="yes" control={<Radio />} label="yes" />
@@ -753,20 +757,34 @@ export default function UploadComponent() {
               </RadioGroup>
             </FormControl>
 
-            <FormControlLabel
-              style={{ margin: "25px", width: "25%" }}
-              control={
-                <Checkbox
-                  checked={isSupervisedCheckbox}
-                  id="save-data-checkbox"
-                  color="default"
-                  onChange={() =>
-                    setIsSupervisedCheckbox(!isSupervisedCheckbox)
-                  }
-                />
+            <Tooltip
+              title={
+                labeledRadioValue !== "yes" ? (
+                  <Typography fontSize={14}>
+                    if the dataset is not labeled, it cannot be supervised
+                  </Typography>
+                ) : (
+                  ""
+                )
               }
-              label="should it be supervised?"
-            />
+              placement="bottom"
+            >
+              <FormControlLabel
+                style={{ margin: "25px", width: "25%" }}
+                control={
+                  <Checkbox
+                    checked={isSupervisedCheckbox}
+                    id="save-data-checkbox"
+                    color="default"
+                    disabled={labeledRadioValue !== "yes"}
+                    onChange={() =>
+                      setIsSupervisedCheckbox(!isSupervisedCheckbox)
+                    }
+                  />
+                }
+                label="should it be supervised?"
+              />
+            </Tooltip>
 
             <FormControlLabel
               style={{ margin: "25px", width: "25%" }}
