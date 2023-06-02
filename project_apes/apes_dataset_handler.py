@@ -406,7 +406,9 @@ def process_singular_file_type(Logger, file, app_instance_metadata):
                     df,
                 )
         case ".arff":
-            df = arff.load(file)
+            data = loadarff(file)
+            df = pd.DataFrame(data[0])
+            print(df.shape)
             return (
                 0,
                 "apes_dataset_handler.process_singular_file_type exited successfully",

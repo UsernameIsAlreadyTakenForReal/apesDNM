@@ -17,8 +17,8 @@ init_message = "Imported apes_metadata_handler.*"
 Logger.info("Program", init_message)
 
 
-example_path = "../../Datasets/Dataset - ECG_Heartbeat/Dataset - ECG_Heartbeat.zip"
-# example_path = "../../Datasets/Dataset - ECG5000/Dataset - ECG5000"
+# example_path = "../../Datasets/Dataset - ECG_Heartbeat/Dataset - ECG_Heartbeat.zip"
+example_path = "../../Datasets/Dataset - ECG5000/Dataset - ECG5000"
 
 
 dataset_metadata = Dataset_Metadata(
