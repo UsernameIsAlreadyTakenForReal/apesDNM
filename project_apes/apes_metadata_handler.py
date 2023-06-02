@@ -72,6 +72,11 @@ class Dataset_Metadata:
 # ############ Application instance metada:
 # Dataset_metadata: an object of type dataset_metadata. TODO: multiple such objects for a type of application_mode == benchmark_solution
 #                                                             (same solution, multiple datasets)?
+#
+# * Development / Maintenance parameters
+# display_dataFrames: True / False (to not clog logs)
+#
+# * Functional parameters
 # application_mode: compare_solutions / run_one_solution (redunant, obtainable from solution_index)
 # dataset_origin: new_dataset / (user chose) existing_dataset
 # dataset_category: ekg / img / ral / N/A
@@ -86,6 +91,7 @@ class Application_Instance_Metadata:
         self,
         Logger,
         dataset_metadata,
+        display_dataFrames=False,
         application_mode="compare_solutions",
         dataset_origin="new_dataset",
         dataset_category="ekg",
@@ -96,6 +102,8 @@ class Application_Instance_Metadata:
     ):
         self.Logger = Logger
         self.dataset_metadata = dataset_metadata
+
+        self.display_dataFrames = (display_dataFrames,)
 
         self.application_mode = application_mode
         self.dataset_origin = dataset_origin
@@ -113,6 +121,8 @@ class Application_Instance_Metadata:
     def getMetadataAsString(self):
         return (
             "\nApplication_metadata"
+            + "\n   display_dataFrames = "
+            + str(self.display_dataFrames)
             + "\n   application_mode = "
             + str(self.application_mode)
             + "\n   dataset_origin = "

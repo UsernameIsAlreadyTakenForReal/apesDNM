@@ -45,8 +45,6 @@ rough_filename_searches = ["train", "test", "validation", "run"]
 
 
 def handle_dataset_from_path(Logger, app_instance_metadata):
-    list_of_dataFrames = []
-    list_of_dataFramesUtilityLabels = []
     files_to_load = []
 
     # checks
@@ -69,7 +67,7 @@ def handle_dataset_from_path(Logger, app_instance_metadata):
         if return_code != 0:
             return (return_code, return_message)
         else:
-            Logger.info("process_file_type", return_message)
+            Logger.info("handle_dataset_from_path", return_message)
 
     # folder
     if os.path.isdir(app_instance_metadata.dataset_metadata.dataset_path):
@@ -79,7 +77,7 @@ def handle_dataset_from_path(Logger, app_instance_metadata):
         if return_code != 0:
             return (return_code, return_message)
         else:
-            Logger.info("process_file_type", return_message)
+            Logger.info("handle_dataset_from_path", return_message)
 
     # file
     if (
@@ -89,24 +87,21 @@ def handle_dataset_from_path(Logger, app_instance_metadata):
         (
             return_code,
             return_message,
-            files_to_load,
             list_of_dataFrames,
             list_of_dataFramesUtilityLabels,
         ) = treat_files(
             Logger,
             app_instance_metadata,
             files_to_load,
-            list_of_dataFrames,
-            list_of_dataFramesUtilityLabels,
         )
         if return_code != 0:
-            return (return_code, return_message)
+            return return_code, return_message, [], []
         else:
-            Logger.info("process_file_type", return_message)
+            Logger.info("handle_dataset_from_path", return_message)
 
     return (
         0,
-        "process_file_type exited successfully",
+        "handle_dataset_from_path exited successfully",
         list_of_dataFrames,
         list_of_dataFramesUtilityLabels,
     )
@@ -130,15 +125,21 @@ def treat_files(
     Logger,
     app_instance_metadata,
     files_to_load,
-    list_of_dataFrames,
-    list_of_dataFramesUtilityLabels,
 ):
+    list_of_dataFrames = []
+    list_of_dataFramesUtilityLabels = []
     flag_enter = False
     default_label = (
         app_instance_metadata.shared_definitions.default_file_to_dataset_label
     )
 
+    rough_filename_searches = (
+        app_instance_metadata.shared_definitions.rough_filename_searches
+    )
+
     if len(app_instance_metadata.dataset_metadata.file_keyword_names) != 0:
+        info_message = "Switched file-to-dataFrames labels from default to user-defined"
+        Logger.info("apes_dataset_handler.treat_files", info_message)
         rough_filename_searches = (
             app_instance_metadata.dataset_metadata.file_keyword_names
         )
@@ -158,9 +159,11 @@ def treat_files(
             else:
                 list_of_dataFrames.append(temp_df)
                 for string_match in rough_filename_searches:
-                    if string_match in file.lower():
+                    matching_file = file.lower()
+                    if string_match in matching_file:
                         list_of_dataFramesUtilityLabels.append(string_match)
-                    else:
+                        break
+                    elif string_match == rough_filename_searches[-1]:
                         list_of_dataFramesUtilityLabels.append(default_label)
                         break
 
@@ -169,7 +172,6 @@ def treat_files(
             return (
                 1,
                 "apes_dataset_handler.treat_file exited with error: number of dataFrames do not match number of utility labels",
-                files_to_load,
                 list_of_dataFrames,
                 list_of_dataFramesUtilityLabels,
             )
@@ -181,14 +183,20 @@ def treat_files(
             0 if x == default_label else 1 for x in list_of_dataFramesUtilityLabels
         ]
         if sum(verifier) == 0:
+            info_message = "list_of_dataFramesUtilityLabels contains only 'train'. Collapsing into a single dataFrame"
+            Logger.info("apes_dataset_handler.treat_files", info_message)
             temp_list_of_dataFrames = []
             temp_list_of_dataFrames.append(pd.concat(list_of_dataFrames))
             list_of_dataFramesUtilityLabels = [default_label]
             list_of_dataFrames = temp_list_of_dataFrames
             flag_enter = True
         elif are_labels_unique(list_of_dataFramesUtilityLabels) == True:
+            info_message = "list_of_dataFramesUtilityLabels contains only unique labels"
+            Logger.info("apes_dataset_handler.treat_files", info_message)
             flag_enter = False
         else:
+            info_message = "list_of_dataFramesUtilityLabels contains duplicates. Collapsing duplicates"
+            Logger.info("apes_dataset_handler.treat_files", info_message)
             (
                 return_code,
                 return_message,
@@ -198,16 +206,22 @@ def treat_files(
                 Logger, list_of_dataFrames, list_of_dataFramesUtilityLabels
             )
             if return_code != 0:
-                return return_code, return_message
+                return return_code, return_message, [], []
 
         # If single file or if all were put together
         if flag_enter == True:
             # Case 1.1 -- do not split
             if app_instance_metadata.dataset_metadata.separate_train_and_test == False:
+                info_message = "One file or all files put together, and user doesn't want them split"
+                Logger.info("apes_dataset_handler.treat_files", info_message)
                 list_of_dataFrames = list_of_dataFrames
                 list_of_dataFramesUtilityLabels = [default_label]
             # Case 1.2 -- split
             else:
+                info_message = (
+                    "One file or all files put together, and user wants them split"
+                )
+                Logger.info("apes_dataset_handler.treat_files", info_message)
                 (
                     return_code,
                     return_message,
@@ -216,21 +230,23 @@ def treat_files(
                 ) = split_dataFrames(
                     Logger,
                     app_instance_metadata,
-                    list_of_dataFramesUtilityLabels,
+                    list_of_dataFrames,
                     list_of_dataFramesUtilityLabels,
                 )
+                if return_code != 0:
+                    return return_code, return_message, [], []
 
-        info_message = f"list_of_dataFrames: {list_of_dataFrames}"
-        Logger.info("treat_files", info_message)
+        if app_instance_metadata.display_dataFrames == True:
+            info_message = f"list_of_dataFrames: {list_of_dataFrames}"
+            Logger.info("apes_dataset_handler.treat_files", info_message)
         info_message = (
             f"list_of_dataFramesUtilityLabels: {list_of_dataFramesUtilityLabels}"
         )
-        Logger.info("treat_files", info_message)
+        Logger.info("apes_dataset_handler.treat_files", info_message)
 
         return (
             0,
             "apes_dataset_handler.treat_file exited successfully",
-            files_to_load,
             list_of_dataFrames,
             list_of_dataFramesUtilityLabels,
         )
@@ -238,7 +254,6 @@ def treat_files(
         return (
             1,
             "apes_dataset_handler.treat_file exited with error",
-            files_to_load,
             list_of_dataFrames,
             list_of_dataFramesUtilityLabels,
         )
@@ -262,11 +277,11 @@ def treat_folder(Logger, app_instance_metadata):
             and sum(no_of_files_in_dir_and_subdirs) != no_of_files_in_dir_and_subdirs[0]
         ):
             info_message = f"There seem to be {len(no_of_files_in_dir_and_subdirs) - 1} subdirectories in this directory. Number of files for each: {no_of_files_in_dir_and_subdirs}"
-            Logger.info("process_file_type", info_message)
+            Logger.info("apes_dataset_handler.treat_folder", info_message)
             return 1, "Subdirectories present. Case not yet handled", []
         else:
             info_message = f"There seem to be {no_of_files_in_dir_and_subdirs[0]} files in this directory. No subdirectories"
-            Logger.info("process_file_type", info_message)
+            Logger.info("apes_dataset_handler.treat_folder", info_message)
 
             # search for keynames given by the user
             if len(app_instance_metadata.dataset_metadata.file_keyword_names) != 0:
@@ -274,7 +289,10 @@ def treat_folder(Logger, app_instance_metadata):
                     app_instance_metadata.dataset_metadata.dataset_path
                 ):
                     for filename in filenames:
-                        if pathlib.Path(filename).suffix in supported_file_formats:
+                        if (
+                            pathlib.Path(filename).suffix
+                            in app_instance_metadata.shared_definitions.supported_file_formats
+                        ):
                             if (
                                 rough_filename_filter(
                                     filename.lower(),
@@ -285,7 +303,7 @@ def treat_folder(Logger, app_instance_metadata):
                                 possible_files_list.append(filename)
 
             # search for keynames 'test', 'train', 'val' if user didn't prescribe keywords or they failed
-            if (
+            elif (
                 len(app_instance_metadata.dataset_metadata.file_keyword_names) == 0
                 or len(possible_files_list) == 0
             ):
@@ -293,7 +311,10 @@ def treat_folder(Logger, app_instance_metadata):
                     app_instance_metadata.dataset_metadata.dataset_path
                 ):
                     for filename in filenames:
-                        if pathlib.Path(filename).suffix in supported_file_formats:
+                        if (
+                            pathlib.Path(filename).suffix
+                            in app_instance_metadata.shared_definitions.supported_file_formats
+                        ):
                             if rough_filename_filter(filename.lower()) == True:
                                 possible_files_list.append(filename)
 
@@ -306,22 +327,24 @@ def treat_folder(Logger, app_instance_metadata):
                         possible_files_list.append(filename)
                 pass
 
-        files_to_load = filter_files_in_folder_list(possible_files_list)
+        files_to_load = filter_files_in_folder_list(
+            app_instance_metadata, possible_files_list
+        )
 
         info_message = f"Possible files to load: {possible_files_list}"
-        Logger.info("process_file_type", info_message)
+        Logger.info("apes_dataset_handler.treat_folder", info_message)
         info_message = f"Files that will be loaded: {files_to_load}"
-        Logger.info("process_file_type", info_message)
+        Logger.info("apes_dataset_handler.treat_folder", info_message)
 
-        return 0, "apes_data_handler.treat_folder exited successfully", files_to_load
+        return 0, "apes_dataset_handler.treat_folder exited successfully", files_to_load
     except:
-        return 1, "apes_data_handler.treat_folder exited with error", []
+        return 1, "apes_dataset_handler.treat_folder exited with error", []
 
 
 def treat_archive(Logger, app_instance_metadata):
     try:
         info_message = "app_instance_metadata.dataset_metadata.dataset_path is an archive. Unarchiving."
-        Logger.info("process_file_type", info_message)
+        Logger.info("apes_dataset_handler.treat_archive", info_message)
 
         app_instance_metadata.dataset_metadata.dataset_path = unarchive(
             app_instance_metadata.dataset_metadata.dataset_path
@@ -330,17 +353,19 @@ def treat_archive(Logger, app_instance_metadata):
         info_message = (
             f"New file path is {app_instance_metadata.dataset_metadata.dataset_path}"
         )
-        Logger.info("process_file_type", info_message)
-        return 0, "apes_data_handler.treat_archive exited successfully"
+        Logger.info("apes_dataset_handler.treat_archive", info_message)
+        return 0, "apes_dataset_handler.treat_archive exited successfully"
     except:
-        return 1, "apes_data_handler.treat_archive exited with error"
+        return 1, "apes_dataset_handler.treat_archive exited with error"
 
 
 def process_singular_file_type(Logger, file, app_instance_metadata):
     if os.path.isfile(app_instance_metadata.dataset_metadata.dataset_path) == False:
         file = app_instance_metadata.dataset_metadata.dataset_path + "/" + file
+    info_message = "##############"
+    Logger.info("apes_dataset_handler.process_singular_file_type", info_message)
     info_message = f"Processing file {file}"
-    Logger.info("process_singular_file_type", info_message)
+    Logger.info("apes_dataset_handler.process_singular_file_type", info_message)
 
     match pathlib.Path(file).suffix:
         case ".csv":
@@ -348,37 +373,45 @@ def process_singular_file_type(Logger, file, app_instance_metadata):
             loaded_with_header = False
             try:
                 info_message = f"Trying to load file {file} without header"
-                Logger.info("process_singular_file_type", info_message)
+                Logger.info(
+                    "apes_dataset_handler.process_singular_file_type", info_message
+                )
                 df = pd.read_csv(file, header=None, dtype=np.float64)
             except:
                 info_message = f"Trying to load file {file} with header"
-                Logger.info("process_singular_file_type", info_message)
+                Logger.info(
+                    "apes_dataset_handler.process_singular_file_type", info_message
+                )
                 df = pd.read_csv(file, dtype=np.float64)
+                df.columns = list(range(len(df.columns)))
                 loaded_with_header = True
             finally:
                 if loaded_with_header == True:
-                    info_message = f"Loaded file {file} with header"
+                    info_message = f"Loaded file {file} with header and then promptly got rid of that header"
                 else:
                     info_message = f"Loaded file {file} without header"
-                Logger.info("process_singular_file_type", info_message)
+                Logger.info(
+                    "apes_dataset_handler.process_singular_file_type", info_message
+                )
 
                 if app_instance_metadata.dataset_metadata.shuffle_rows == True:
-                    info_message = "Shuffling rows"
-                    Logger.info("process_singular_file_type", info_message)
+                    info_message = f"Shuffling rows for file {file}"
+                    Logger.info(
+                        "apes_dataset_handler.process_singular_file_type", info_message
+                    )
                     df = df.sample(frac=1).reset_index(drop=True)
-                return 0, "process_singular_file_type exited successfully", df
-
-            # df = df.sample(frac=1).reset_index(drop=True)  ## shuffles the row
-            # if app_instance_metadata.dataset_metadata.separate_train_and_test == False:
-            #     return df
-            # else:
-            #     x, y = df.shape()
-            #     df_train = df.head(math.floor(0.2 * x))
-            #     df_test = df.tail(x - math.floor(0.2 * x))
-            #     return df_train, df_test
+                return (
+                    0,
+                    "apes_dataset_handler.process_singular_file_type exited successfully",
+                    df,
+                )
         case ".arff":
             df = arff.load(file)
-            return 0, "process_singular_file_type exited successfully", df
+            return (
+                0,
+                "apes_dataset_handler.process_singular_file_type exited successfully",
+                df,
+            )
         case ".txt":
             return "txt"
         case ".npz":
@@ -395,7 +428,7 @@ def rough_filename_filter(filename, keywords=rough_filename_searches):
     return False
 
 
-def filter_files_in_folder_list(filename_list):
+def filter_files_in_folder_list(app_instance_metadata, filename_list):
     # TODO: treat .txt files that do not contain tables or something of the sort
     list_of_stems = [pathlib.Path(x).stem for x in filename_list]
     return_list = []
@@ -410,7 +443,9 @@ def filter_files_in_folder_list(filename_list):
             seen.add(x)
 
     for filename in seen:
-        for extension in supported_file_formats:
+        for (
+            extension
+        ) in app_instance_metadata.shared_definitions.supported_file_formats:
             if filename + extension in filename_list:
                 return_list.append(filename + extension)
                 break
@@ -433,8 +468,8 @@ def unify_dataFrames(Logger, list_of_dataFrames, list_of_dataFramesUtilityLabels
         else:
             seen.append(x)
 
-    temp_list = []
     for element in seen:
+        temp_list = []
         # get all dataFrames of one label in a single list
         for i in range(0, len(list_of_dataFramesUtilityLabels)):
             if element == list_of_dataFramesUtilityLabels[i]:
@@ -443,14 +478,17 @@ def unify_dataFrames(Logger, list_of_dataFrames, list_of_dataFramesUtilityLabels
         # mash those dataFrames into one single dataFrame
         first_dataFrame_shape = temp_list[0].shape
         for i in range(1, len(temp_list)):
-            if temp_list[i].shape != first_dataFrame_shape:
-                info_message = f"dataFrame.shape at index {i} does not match {first_dataFrame_shape}"
-                Logger.info("unify_dataFrames", info_message)
+            if temp_list[i].shape[1] != first_dataFrame_shape[1]:
+                info_message = f"dataFrame.shape {temp_list[i].shape} at index {i} does not match {first_dataFrame_shape}"
+                Logger.info("apes_dataset_handler.unify_dataFrames", info_message)
+
+        info_message = f"Collapsing {len(temp_list)} dataFrames for {list_of_dataFramesUtilityLabels}"
+        Logger.info("apes_dataset_handler.unify_dataFrames", info_message)
         temp_list_of_dataFrames.append(pd.concat(temp_list))
 
     return (
         0,
-        "apes_data_handler.unify_dataFrames exited successfully",
+        "apes_dataset_handler.unify_dataFrames exited successfully",
         temp_list_of_dataFrames,
         seen,
     )

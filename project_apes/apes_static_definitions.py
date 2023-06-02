@@ -13,6 +13,14 @@ class Shared_Definitions:
     ROOT_DIR = os.path.dirname(os.path.abspath(__file__))
 
     default_file_to_dataset_label = "train"
+    rough_filename_searches = ["train", "test", "validation", "run"]
+    supported_file_formats = [
+        ".csv",
+        ".arff",
+        ".txt",
+        ".npz",
+        ".ts",
+    ]  # also acts as priority when loading files
 
     project_solution_ekg_1_model_filename = "apes_solution_ekg_1_model.pth"
     project_solution_ekg_1_training_script = "apes_solution_ekg_1_train.py"

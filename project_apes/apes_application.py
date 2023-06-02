@@ -15,15 +15,13 @@ from apes_dataset_handler import *
 
 
 class APES_Application:
-    dataFrameMap = []
-
     def __init__(self, Logger, application_instance_metadata):
         self.Logger = Logger
         self.application_instance_metadata = application_instance_metadata
 
-        info_message = "Created object of type APES_Application."
+        info_message = "Created object of type APES_Application"
         self.Logger.info(self, info_message)
-        info_message = "Starting run. This is a mock-up run."
+        info_message = "Starting run. This is a mock-up run"
         self.Logger.info(self, info_message)
 
     def run(self):
@@ -155,19 +153,19 @@ class APES_Application:
                 or self.application_instance_metadata.solution_category == "img"
             )
         ):
-            info_message = "APES app set to run in application_mode = 'compare_solutions' with solution_category = 'ral' or 'img', but we only have one solution of each."
+            info_message = "APES app set to run in application_mode = 'compare_solutions' with solution_category = 'ral' or 'img', but we only have one solution of each"
             self.Logger.info(self, info_message)
 
-            return (1, "application_mode incompatible with solution_type.")
+            return (1, "application_mode incompatible with solution_type")
 
         if (
             self.application_instance_metadata.dataset_category
             != self.application_instance_metadata.solution_category
         ):
-            info_message = "Dataset category and solution category do not match."
+            info_message = "Dataset category and solution category do not match"
             self.Logger.info(self, info_message)
 
-            return (1, "dataset_category and solution_category do not match.")
+            return (1, "dataset_category and solution_category do not match")
 
         return (0, "Function p0_checks exited successfully")
 
@@ -177,39 +175,7 @@ class APES_Application:
             self.Logger.info(self, info_message)
 
             if self.application_instance_metadata.dataset_category == "N/A":
-                info_message = "We do not seem to know what kind of dataset this is. Calling the discerner."
-                self.Logger.info(self, info_message)
-
-                from apes_discerner import Discerner
-
-                discerner = Discerner(self.Logger)
-
-            else:
-                info_message = "We know this dataset is of type " + str(
-                    self.application_instance_metadata.dataset_category
-                )
-                self.Logger.info(self, info_message)
-
-                (
-                    return_code,
-                    return_message,
-                    self.dataFrameMap,
-                ) = handle_dataset_from_path(
-                    self.Logger, self.application_instance_metadata
-                )
-                if return_code != 0:
-                    return (return_code, return_message)
-                else:
-                    self.Logger.info(self, return_message)
-                pass
-
-        else:
-            info_message = "Dataset is coming from our database."
-            self.Logger.info(self, info_message)
-
-            # We don't have unidentified databases at the moment of writing this code, but just in case.
-            if self.application_instance_metadata.dataset_category == "N/A":
-                info_message = "We do not seem to know what kind of dataset this is. Calling the discerner."
+                info_message = "We do not seem to know what kind of dataset this is. Calling the discerner"
                 self.Logger.info(self, info_message)
 
                 from apes_discerner import Discerner
@@ -235,4 +201,44 @@ class APES_Application:
                 else:
                     self.Logger.info(self, return_message)
                 pass
+
+        else:
+            info_message = "Dataset is coming from our database"
+            self.Logger.info(self, info_message)
+
+            # We don't have unidentified databases at the moment of writing this code, but just in case.
+            if self.application_instance_metadata.dataset_category == "N/A":
+                info_message = "We do not seem to know what kind of dataset this is. Calling the discerner"
+                self.Logger.info(self, info_message)
+
+                from apes_discerner import Discerner
+
+                discerner = Discerner(self.Logger)
+
+            else:
+                info_message = "We know this dataset is of type " + str(
+                    self.application_instance_metadata.dataset_category
+                )
+                self.Logger.info(self, info_message)
+
+                (
+                    return_code,
+                    return_message,
+                    self.dataFramesList,
+                    self.dataFramesUtilityList,
+                ) = handle_dataset_from_path(
+                    self.Logger, self.application_instance_metadata
+                )
+                if return_code != 0:
+                    return (return_code, return_message)
+                else:
+                    self.Logger.info(self, return_message)
+                pass
+
+        info_message = "p1_getDataset_asDataFrame returned the following:"
+        self.Logger.info(self, info_message)
+        for i in range(0, len(self.dataFramesList)):
+            info_message = f"\nDataset {i}\n   label = {self.dataFramesUtilityList[i]}\n   shape = {self.dataFramesList[i].shape}"
+            self.Logger.info(self, info_message)
+
         return (0, "Function p1_getDataset_asDataFrame exited successfully")
