@@ -21,6 +21,7 @@
     "react-terminal-ui": "^1.0.5",
     "react-uploader": "^3.13.0",
     "react-xarrows": "^2.0.2",
+    "socket.io-client": "^4.6.2",
     "styled-components": "^5.3.9",
     "tsparticles-engine": "^2.9.3",
     "web-vitals": "^2.1.4"

@@ -1,17 +1,20 @@
 from time import sleep
 
-from flask import Flask, Response, request
+from flask import Flask, request
 from flask_cors import CORS
 from flask.json import jsonify
-from flask_sse import sse
 
 import os
 import tempfile
 
+from datetime import datetime
+
+
+from flask_socketio import SocketIO, emit
 
 app = Flask(__name__)
-app.register_blueprint(sse, url_prefix="/stream")
-# CORS(app)
+CORS(app)
+socketio = SocketIO(app, cors_allowed_origins="*")
 
 
 def cls():
@@ -51,6 +54,16 @@ def upload_file():
 # ############################################################################
 
 
+@socketio.on("connect")
+def handle_connect():
+    emit("message", "Connected to the WebSocket")
+
+
+@socketio.on("disconnect")
+def handle_disconnect():
+    print("Client disconnected")
+
+
 class Output:
     def __init__(self):
         self._x = None
@@ -69,47 +82,15 @@ class Output:
         print("variable x has changed!")
 
 
-@app.route("/stream")
-def send_event(event_id):
-    print("from send_event()")
-
-    def generate_data():
-        print("from generate_data()")
-        yield f"data: {event_id}\n\n"
-
-    yield Response(generate_data(), mimetype="text/event-stream")
-
-
 # https://maxhalford.github.io/blog/flask-sse-no-deps/
 
 
-# @app.route("/stream")
-# def stream(data):
-#     print("from stream()")
+@app.route("/testing", methods=["GET", "POST"])
+def testing():
+    socketio.emit("message", "Hello from /testing endpoint")
+    socketio.emit("message", "Hello again from /testing endpoint")
 
-#     def event_stream():
-#         print("from event_stream()")
-#         yield "data: Update 1\n\n"
-#         sleep(1)
-
-#         yield "data: Update 2\n\n"
-#         sleep(1)
-
-#         yield "data: Update 3\n\n"
-#         sleep(1)
-
-#         # After sending all messages, return the final response
-#         yield "data: 200 OK\n\n"
-
-#     return Response(event_stream(), mimetype="text/event-stream")
-
-
-@app.route("/testingSSEs", methods=["GET", "POST"])
-def mock_endpoint():
-    send_event("testing...")
-    sleep(5)
-
-    return "ok"
+    return str(datetime.now()) + " OK"
 
 
 if __name__ == "__main__":

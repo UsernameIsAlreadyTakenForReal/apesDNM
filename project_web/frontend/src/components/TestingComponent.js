@@ -5,54 +5,48 @@ import { useState, useEffect } from "react";
 import Terminal, { ColorMode, TerminalOutput } from "react-terminal-ui";
 // Make sure to run npm run install-peers after npm install so peer dependencies are also installed.
 
+import io from "socket.io-client";
+
 export default function RoutesComponent() {
-  const [terminalText, setTerminalText] = useState("hello world");
+  const [terminalText, setTerminalText] = useState(">>> hello world");
 
   async function getSSEs() {
-    console.log("getSSEs() called");
-    const response = await fetch("http://127.0.0.1:5000/" + "testingSSEs", {
+    const response = await fetch("http://127.0.0.1:5000/testing", {
       method: "get",
     });
 
     const textResponse = await response.text();
     console.log(textResponse);
-    console.log("getSSEs() ended");
   }
 
   useEffect(() => {
-    const source = new EventSource("http://127.0.0.1:5000/stream");
-    console.log("sse started");
+    const socket = io("http://127.0.0.1:5000");
+    console.log("socket created");
 
-    source.addEventListener("message", (event) => {
-      const message = event.data;
-      console.log("event happened");
-      // Handle SSE message, e.g., update component state
-      console.log("Received SSE message:", message);
+    socket.on("message", (data) => {
+      console.log(data);
     });
 
     return () => {
-      source.close();
-      console.log("sse closed");
+      socket.disconnect();
     };
   }, []);
 
   return (
     <>
-      {/* <div
+      <div
         style={{
           margin: "25px",
           width: "auto",
         }}
       >
         <Terminal name="python terminal mwahaha">{terminalText}</Terminal>
-      </div> */}
+      </div>
 
       <Divv>
         <Button
           style={{ backgroundColor: "black", color: "white" }}
-          onClick={() => {
-            getSSEs();
-          }}
+          onClick={() => getSSEs()}
         >
           Click me
         </Button>
