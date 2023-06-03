@@ -1,8 +1,9 @@
-import { Link, useLocation } from "react-router-dom";
+import { Link, useLocation, useNavigate } from "react-router-dom";
 import { Divv, RowFlex, Nav } from "./StyledComponents";
 import { useEffect, useState } from "react";
 
 export default function NavbarComponent() {
+  const navigate = useNavigate();
   return (
     <>
       <Nav>
@@ -25,6 +26,10 @@ export default function NavbarComponent() {
               style={{
                 textDecoration: "none",
                 color: useLocation().pathname === "/upload" ? "white" : "black",
+              }}
+              onClick={() => {
+                navigate("/upload");
+                navigate(0);
               }}
             >
               upload

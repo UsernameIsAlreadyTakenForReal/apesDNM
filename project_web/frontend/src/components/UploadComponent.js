@@ -14,6 +14,12 @@ import { Divv, TextFieldFlex, Label, WrapperDiv } from "./StyledComponents";
 
 import { useNavigate } from "react-router-dom";
 
+import Terminal, { ColorMode, TerminalOutput } from "react-terminal-ui";
+
+// import image from "./figure0.png";
+
+import image from "C:\\Users\\DANIEL~1\\AppData\\Local\\Temp\\tmpgptvld9j\\figure0.png";
+
 import {
   Button,
   Backdrop,
@@ -36,6 +42,7 @@ import {
   DialogContent,
   DialogContentText,
   DialogActions,
+  Slider,
 } from "@mui/material";
 
 const BASE_URL = process.env.REACT_APP_BACKEND;
@@ -78,7 +85,12 @@ export default function UploadComponent() {
 
   const [normalClass, setNormalClass] = useState("");
 
+  const [epochs, setEpochs] = useState(40);
+
   const [responseData, setResponseData] = useState(null);
+
+  const [plotPaths, setPlotPaths] = useState([]);
+  const [backendOutput, setBackendOutput] = useState([]);
 
   // hovers
   const [existingDatasetButtonHover, setExistingDatasetButtonHover] =
@@ -297,6 +309,8 @@ export default function UploadComponent() {
       return;
     }
 
+    console.log("epochs", epochs);
+
     let files = selectedFiles.map((file) => file.name);
 
     let data = {
@@ -310,6 +324,7 @@ export default function UploadComponent() {
         : -1,
       classes: classes,
       normalClass: normalClass,
+      epochs: epochs,
     };
 
     setDialogText(JSON.stringify(data, null, "\t"));
@@ -340,7 +355,7 @@ export default function UploadComponent() {
     });
 
     const textResponse = await response.text();
-    console.log(textResponse);
+    setResponseData(textResponse);
 
     // setTimeout(() => setLoadingText("redirecting to results page."), 0);
     // setTimeout(() => setLoadingText("redirecting to results page.."), 500);
@@ -355,7 +370,8 @@ export default function UploadComponent() {
     // }, 3000);
 
     setLoading(false);
-    setShowResults(true);
+
+    handleResults(textResponse);
   }
 
   // -------------------------------------------------------------------------
@@ -426,7 +442,7 @@ export default function UploadComponent() {
     });
 
     const textResponse = await response.text();
-    console.log(textResponse);
+    setResponseData(textResponse);
 
     // setTimeout(() => setLoadingText("redirecting to results page."), 0);
     // setTimeout(() => setLoadingText("redirecting to results page.."), 500);
@@ -441,6 +457,22 @@ export default function UploadComponent() {
     // }, 3000);
 
     setLoading(false);
+
+    handleResults(textResponse);
+  }
+
+  // -------------------------------------------------------------------------
+  function handleResults(textResponse) {
+    const data = JSON.parse(textResponse);
+
+    data.plots.forEach((plotPath) => {
+      console.log(plotPath);
+    });
+
+    setPlotPaths(data.plots);
+    console.log(data.results.split("\n"));
+    setBackendOutput([...data.results.split("\n")]);
+
     setShowResults(true);
   }
 
@@ -1034,6 +1066,21 @@ export default function UploadComponent() {
 
           <TextFieldFlex style={{ marginTop: "10px" }}>
             <Divv size="22.5px" style={{ margin: "25px", width: "60%" }}>
+              how many epochs to run for?
+            </Divv>
+
+            <Slider
+              style={{ margin: "25px", width: "40%" }}
+              min={5}
+              defaultValue={40}
+              valueLabelDisplay="on"
+              value={epochs}
+              onChange={(event, newValue) => setEpochs(newValue)}
+            />
+          </TextFieldFlex>
+
+          <TextFieldFlex style={{ marginTop: "10px" }}>
+            <Divv size="22.5px" style={{ margin: "25px", width: "60%" }}>
               {/* save my data for future uses */}
             </Divv>
             <FormControlLabel
@@ -1074,7 +1121,51 @@ export default function UploadComponent() {
         <></>
       )}
 
-      {showResults ? <Divv>Hello there</Divv> : <></>}
+      {showResults ? (
+        <>
+          {/* <Divv>results are as follow:</Divv> */}
+          <Divv size="22.5px" style={{ padding: "30px" }}>
+            {/* {responseData} */}
+
+            <div
+              style={{
+                margin: "25px",
+                width: "auto",
+              }}
+            >
+              <Terminal name="python outputs">
+                {">>>"} {responseData}
+                <br></br>
+                {backendOutput.map((line) => {
+                  console.log(line);
+                  return (
+                    <>
+                      {">>>"} {line}
+                      <br></br>
+                    </>
+                  );
+                })}
+              </Terminal>
+            </div>
+
+            {plotPaths.map((path) => {
+              console.log("path is", path);
+
+              return (
+                <Divv>
+                  <img src={image} />
+                </Divv>
+              );
+            })}
+
+            {/* <Divv>
+              <img src={image}></img>
+            </Divv> */}
+          </Divv>
+        </>
+      ) : (
+        <></>
+      )}
 
       <div style={{ display: "flex" }}>
         <Dialog open={dialogOpen} maxWidth="xl" fullWidt={true}>
