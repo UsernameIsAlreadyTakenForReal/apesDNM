@@ -1,0 +1,20 @@
+{
+	"nodes":[
+		{"id":"33e47ba47945242f","x":486,"y":-220,"width":294,"height":65,"color":"6","type":"text","text":"Do you have your own dataset?"},
+		{"id":"3f3dd84cc78ae653","x":780,"y":7,"width":250,"height":60,"color":"6","type":"text","text":""},
+		{"id":"4a32818106b5a9cd","x":236,"y":7,"width":250,"height":60,"color":"6","type":"text","text":"Is your data labeled?"},
+		{"id":"dc242765bdae685b","x":486,"y":205,"width":250,"height":60,"color":"6","type":"text","text":"GOTO: unsupervized (green)"},
+		{"id":"443fd0950575fb6d","x":-14,"y":205,"width":334,"height":60,"color":"6","type":"text","text":"Do you wish to train a model before proceeding? (This will take some time) "},
+		{"id":"64984ca298d1e339","x":-264,"y":420,"width":250,"height":60,"type":"text","text":"Test data / Validation data / Train data %?"},
+		{"id":"4324dd614dc5952b","x":320,"y":420,"width":250,"height":60,"type":"text","text":""},
+		{"id":"6c4cd049add34d1c","x":1760,"y":-520,"width":250,"height":60,"color":"4","type":"text","text":"UNSUPERVIZED"}
+	],
+	"edges":[
+		{"id":"fc09ae286b0ba9ac","fromNode":"33e47ba47945242f","fromSide":"bottom","toNode":"4a32818106b5a9cd","toSide":"top","label":"yes"},
+		{"id":"5df678622084219e","fromNode":"33e47ba47945242f","fromSide":"bottom","toNode":"3f3dd84cc78ae653","toSide":"top","label":"no"},
+		{"id":"96623a6b32252229","fromNode":"4a32818106b5a9cd","fromSide":"bottom","toNode":"443fd0950575fb6d","toSide":"top","label":"yes"},
+		{"id":"03ca25e78b64e263","fromNode":"4a32818106b5a9cd","fromSide":"bottom","toNode":"dc242765bdae685b","toSide":"top","label":"no"},
+		{"id":"5acf1c3ee338ab93","fromNode":"443fd0950575fb6d","fromSide":"bottom","toNode":"64984ca298d1e339","toSide":"top","label":"yes"},
+		{"id":"8ab81f91dc7c3c2a","fromNode":"443fd0950575fb6d","fromSide":"bottom","toNode":"4324dd614dc5952b","toSide":"top","label":"no, I'll use an existing model"}
+	]
+}

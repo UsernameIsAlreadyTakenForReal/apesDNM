@@ -1,0 +1,64 @@
+################ Datasets ################
+### ECG_Heartbeat ###
+	- Classes: ['N': 0, 'S': 1, 'V': 2, 'F': 3, 'Q': 4]
+	- Number of Samples: 109446 (21892 + 87554)
+	- Elements per sample: 188 (187 + 1)
+	- Sampling Frequency: 125Hz
+	- Data Source: Physionet's MIT-BIH Arrhythmia Dataset
+	- Type: csv (headless)
+	
+	- mitbih_test
+		- rows (21892): 
+			- 21892 entries
+		- columns (188):	
+			- 187 values per entry
+			- 1 class per entry
+	- mitbih_train
+		- rows (87554)
+			- 87554 entries
+		- columns (188):	
+			- 187 values per entry
+			- 1 class per entry
+	- ptbdb_abnormal
+		- rows (10506)
+			- 10506 entries
+		- columns (188):	
+			- 187 values per entry
+			- 1 class per entry
+	- ptbdb_normal
+		- rows (4046)
+			- 4046 entries
+		- columns (188):	
+			- 187 values per entry
+			- 1 class per entry
+
+
+### ECG5000 ###
+	- Classes: ["Normal", "R on T", "PVC", "SP", "UB"]
+	- Number of Samples: 
+	- Elements per sample: 141 (140 + 1)
+	- Data Source: Physionet's MIT-BIH Arrhythmia Dataset
+	- Type: txt (headless table), ts, arff
+	
+	
+################ Morph datasets to pandas ################
+CSV (Comma Separated Values):
+	- import as pandas (automatically creates labeled axes (rows and columns). 
+			Therefore, rename the target column)
+	
+ARFF (Attribute Relation File Format):
+	- import arff file (generator object)
+	- for each row in generator:
+		- append row[i] to a new list (need to know range)
+		- append row.target (or whatever its name) to list of rows' classes
+		- cast as float, save as numpy
+		- c_ rows (numpy) and classes (numpy)
+		- pandas.DataFrame from that (automatically creates labeled axes (rows and columns). 
+			Therefore, rename the target column)
+	
+	
+TS:
+	-
+	
+TXT:
+	- God bless you
