@@ -3,6 +3,11 @@
 // 4. create in backend metadata with needed structure
 // 5. create results page
 
+// 1. results page with text
+// 2. results page with images (matlab plots - maybe an image viewer)
+// 3. sse/websocket again?
+// 4. ekg methods tooltip images
+
 import { useEffect, useState } from "react";
 import * as React from "react";
 import { Divv, TextFieldFlex, Label, WrapperDiv } from "./StyledComponents";
@@ -48,6 +53,8 @@ export default function UploadComponent() {
   const [loading, setLoading] = useState(false);
   const [loadingText, setLoadingText] = useState("");
 
+  const [showResults, setShowResults] = useState(false);
+
   // data
   const [existingDatasets, setExistingDatasets] = useState([]);
 
@@ -70,6 +77,8 @@ export default function UploadComponent() {
   const [classes, setClasses] = useState([]);
 
   const [normalClass, setNormalClass] = useState("");
+
+  const [responseData, setResponseData] = useState(null);
 
   // hovers
   const [existingDatasetButtonHover, setExistingDatasetButtonHover] =
@@ -333,34 +342,20 @@ export default function UploadComponent() {
     const textResponse = await response.text();
     console.log(textResponse);
 
-    setTimeout(() => {
-      setLoadingText("redirecting to results page.");
-    }, 0);
+    // setTimeout(() => setLoadingText("redirecting to results page."), 0);
+    // setTimeout(() => setLoadingText("redirecting to results page.."), 500);
+    // setTimeout(() => setLoadingText("redirecting to results page..."), 1000);
+    // setTimeout(() => setLoadingText("redirecting to results page."), 1500);
+    // setTimeout(() => setLoadingText("redirecting to results page.."), 2000);
+    // setTimeout(() => setLoadingText("redirecting to results page..."), 2500);
 
-    setTimeout(() => {
-      setLoadingText("redirecting to results page..");
-    }, 500);
+    // setTimeout(() => {
+    //   setLoading(false);
+    //   navigate("/results");
+    // }, 3000);
 
-    setTimeout(() => {
-      setLoadingText("redirecting to results page...");
-    }, 1000);
-
-    setTimeout(() => {
-      setLoadingText("redirecting to results page.");
-    }, 1500);
-
-    setTimeout(() => {
-      setLoadingText("redirecting to results page..");
-    }, 2000);
-
-    setTimeout(() => {
-      setLoadingText("redirecting to results page...");
-    }, 2500);
-
-    setTimeout(() => {
-      setLoading(false);
-      navigate("/results");
-    }, 3000);
+    setLoading(false);
+    setShowResults(true);
   }
 
   // -------------------------------------------------------------------------
@@ -433,34 +428,20 @@ export default function UploadComponent() {
     const textResponse = await response.text();
     console.log(textResponse);
 
-    setTimeout(() => {
-      setLoadingText("redirecting to results page.");
-    }, 0);
+    // setTimeout(() => setLoadingText("redirecting to results page."), 0);
+    // setTimeout(() => setLoadingText("redirecting to results page.."), 500);
+    // setTimeout(() => setLoadingText("redirecting to results page..."), 1000);
+    // setTimeout(() => setLoadingText("redirecting to results page."), 1500);
+    // setTimeout(() => setLoadingText("redirecting to results page.."), 2000);
+    // setTimeout(() => setLoadingText("redirecting to results page..."), 2500);
 
-    setTimeout(() => {
-      setLoadingText("redirecting to results page..");
-    }, 500);
+    // setTimeout(() => {
+    //   setLoading(false);
+    //   navigate("/results");
+    // }, 3000);
 
-    setTimeout(() => {
-      setLoadingText("redirecting to results page...");
-    }, 1000);
-
-    setTimeout(() => {
-      setLoadingText("redirecting to results page.");
-    }, 1500);
-
-    setTimeout(() => {
-      setLoadingText("redirecting to results page..");
-    }, 2000);
-
-    setTimeout(() => {
-      setLoadingText("redirecting to results page...");
-    }, 2500);
-
-    setTimeout(() => {
-      setLoading(false);
-      navigate("/results");
-    }, 3000);
+    setLoading(false);
+    setShowResults(true);
   }
 
   // -------------------------------------------------------------------------
@@ -470,7 +451,9 @@ export default function UploadComponent() {
 
   return (
     <>
-      {showExistingMethod === false && showFileUploadMethod === false ? (
+      {showExistingMethod === false &&
+      showFileUploadMethod === false &&
+      showResults === false ? (
         <>
           <Divv
             style={{
@@ -573,7 +556,9 @@ export default function UploadComponent() {
             </Divv>
           </div>
         </>
-      ) : showExistingMethod === true && showFileUploadMethod === false ? (
+      ) : showExistingMethod === true &&
+        showFileUploadMethod === false &&
+        showResults === false ? (
         <div
           style={{
             // border: "1px solid #ccc",
@@ -706,7 +691,7 @@ export default function UploadComponent() {
             </Divv>
           </form>
         </div>
-      ) : (
+      ) : showResults === false ? (
         <div
           style={{
             border: "1px solid #ccc",
@@ -1085,16 +1070,11 @@ export default function UploadComponent() {
             </Button>
           </Divv>
         </div>
+      ) : (
+        <></>
       )}
 
-      {/* <WrapperDiv
-          style={{
-            display: loading ? "" : "none",
-          }}
-        >
-          <CircularProgress />
-          <Divv>loading...</Divv>
-        </WrapperDiv> */}
+      {showResults ? <Divv>Hello there</Divv> : <></>}
 
       <div style={{ display: "flex" }}>
         <Dialog open={dialogOpen} maxWidth="xl" fullWidt={true}>
