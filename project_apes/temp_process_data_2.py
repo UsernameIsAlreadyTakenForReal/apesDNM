@@ -57,7 +57,7 @@ X_train = X_train.reshape(len(X_train), X_train.shape[1], 1)
 
 temp = (X_train.shape[1], 1)
 from type_ekg.apes_solution_ekg_2_train import solution_ekg_2
-from helpers_aiders_and_conveniencers.Logger import Logger
+from helpers_aiders_and_conveniencers.logger import Logger
 from apes_static_definitions import Shared_Definitions
 
 Logger = Logger()

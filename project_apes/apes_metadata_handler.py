@@ -84,6 +84,7 @@ class Dataset_Metadata:
 # solution_nature: supervised / unsupervised
 # solution_index: 1/2/3 OR [1,2,3] OR [1,2] OR [1,3] OR [2,3] for ekg, 1 for img, 1 for ral
 # {FOR DATASET_ORIGIN=='new_data'} model_origin: train_new_model / use_existing_model
+# model_train_epochs: (int)
 
 
 class Application_Instance_Metadata:
@@ -99,6 +100,7 @@ class Application_Instance_Metadata:
         solution_nature="supervised",
         solution_index=1,
         model_origin="train_new_model",
+        model_train_epochs=40,
     ):
         self.Logger = Logger
         self.dataset_metadata = dataset_metadata
@@ -112,6 +114,7 @@ class Application_Instance_Metadata:
         self.solution_nature = solution_nature
         self.solution_index = solution_index
         self.model_origin = model_origin
+        self.model_train_epochs = model_train_epochs
 
         self.shared_definitions = Shared_Definitions()
 
@@ -137,6 +140,8 @@ class Application_Instance_Metadata:
             + str(self.solution_index)
             + "\n   model_origin = "
             + str(self.model_origin)
+            + "\n   model_train_epochs = "
+            + str(self.model_train_epochs)
         )
 
     def printMetadata(self):

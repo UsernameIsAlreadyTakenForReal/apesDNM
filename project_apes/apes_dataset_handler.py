@@ -22,6 +22,7 @@
 # TODO: split dataset for [multiple, percetages]
 # TODO: files_to_load must not contain dummy/dud files
 # NON-TODO: if there are 2 "train" files, maybe user has different use-cases. Couldn't think of a scenario in which this happens.
+# TODO: fuck knows how, but make sure the label/target is in the last column
 
 import arff
 import math
@@ -362,7 +363,7 @@ def treat_archive(Logger, app_instance_metadata):
 def process_singular_file_type(Logger, file, app_instance_metadata):
     if os.path.isfile(app_instance_metadata.dataset_metadata.dataset_path) == False:
         file = app_instance_metadata.dataset_metadata.dataset_path + "/" + file
-    info_message = "##############"
+    info_message = "## ----------------- New File ----------------- ## "
     Logger.info("apes_dataset_handler.process_singular_file_type", info_message)
     info_message = f"Processing file {file}"
     Logger.info("apes_dataset_handler.process_singular_file_type", info_message)
@@ -387,9 +388,15 @@ def process_singular_file_type(Logger, file, app_instance_metadata):
                 loaded_with_header = True
             finally:
                 if loaded_with_header == True:
-                    info_message = f"Loaded file {file} with header and then promptly got rid of that header"
+                    info_message = (
+                        f"Loaded file {file} with header and then defaulted the header"
+                    )
                 else:
                     info_message = f"Loaded file {file} without header"
+                Logger.info(
+                    "apes_dataset_handler.process_singular_file_type", info_message
+                )
+                info_message = f"DataFrame is of shape {df.shape}"
                 Logger.info(
                     "apes_dataset_handler.process_singular_file_type", info_message
                 )
@@ -408,7 +415,8 @@ def process_singular_file_type(Logger, file, app_instance_metadata):
         case ".arff":
             data = loadarff(file)
             df = pd.DataFrame(data[0])
-            print(df.shape)
+            info_message = f"Loaded file {file}. DataFrame is of shape {df.shape}"
+            Logger.info("apes_dataset_handler.process_singular_file_type", info_message)
             return (
                 0,
                 "apes_dataset_handler.process_singular_file_type exited successfully",
@@ -484,7 +492,10 @@ def unify_dataFrames(Logger, list_of_dataFrames, list_of_dataFramesUtilityLabels
                 info_message = f"dataFrame.shape {temp_list[i].shape} at index {i} does not match {first_dataFrame_shape}"
                 Logger.info("apes_dataset_handler.unify_dataFrames", info_message)
 
-        info_message = f"Collapsing {len(temp_list)} dataFrames for {list_of_dataFramesUtilityLabels}"
+        if len(temp_list) == 1:
+            info_message = f"1 dataFrame(s) for '{element}' in {list_of_dataFramesUtilityLabels}. Nothing to collapse"
+        else:
+            info_message = f"{len(temp_list)} dataFrame(s) for '{element}' in {list_of_dataFramesUtilityLabels}. Collapsing"
         Logger.info("apes_dataset_handler.unify_dataFrames", info_message)
         temp_list_of_dataFrames.append(pd.concat(temp_list))
 

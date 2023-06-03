@@ -27,7 +27,7 @@
 
 import apes_dataset_handler
 import apes_metadata_handler
-from helpers_aiders_and_conveniencers.Logger import Logger
+from helpers_aiders_and_conveniencers.logger import Logger
 
 Logger = Logger()
 dataset_metadata = apes_metadata_handler.dataset_metadata(Logger)
