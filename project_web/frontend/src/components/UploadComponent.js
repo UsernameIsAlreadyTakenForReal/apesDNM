@@ -443,13 +443,13 @@ export default function UploadComponent() {
       body: formData,
     });
 
-    const blob = response.blob();
-    const imgURL = URL.createObjectURL(blob);
+    // const blob = response.blob();
+    // const imgURL = URL.createObjectURL(blob);
 
-    setImageUrl(imgURL);
+    // setImageUrl(imgURL);
 
-    // const textResponse = await response.text();
-    // setResponseData(textResponse);
+    const textResponse = await response.text();
+    setResponseData(textResponse);
 
     // -------------------------------------------------------------------------
     // setTimeout(() => setLoadingText("redirecting to results page."), 0);
@@ -465,9 +465,9 @@ export default function UploadComponent() {
     // }, 3000);
     // -------------------------------------------------------------------------
 
-    // setLoading(false);
+    setLoading(false);
 
-    // handleResults(textResponse);
+    handleResults(textResponse);
   }
 
   // -------------------------------------------------------------------------
@@ -547,7 +547,7 @@ export default function UploadComponent() {
                     resetAllFormErrorsAndData();
                   }}
                 >
-                  Use Existing Methods
+                  use existing dataset
                 </Button>
               </Tooltip>
             </Divv>
@@ -590,7 +590,7 @@ export default function UploadComponent() {
                     resetAllFormErrorsAndData();
                   }}
                 >
-                  Upload a new dataset
+                  upload a new dataset
                 </Button>
               </Tooltip>
             </Divv>
@@ -1167,10 +1167,6 @@ export default function UploadComponent() {
                 })}
               </Terminal>
             </div>
-
-            <Divv>
-              <img src={imageUrl} alt="image0" />
-            </Divv>
 
             <Divv>
               <img src={image00} alt="image"></img>

@@ -78,16 +78,13 @@ def upload_file():
     output = StringIO()
     sys.stdout = output
 
-    print("processing...")
-    print(5 + 10)
+    logger = Logger()
+
+    logger.info("upload_file", "hello from logger")
 
     files = []
 
-    print_data()
-
     print("len of files sent is " + str(len(request.files)))
-
-    print_data()
 
     for i in range(len(request.files)):
         if request.files.get(f"file{i}"):
@@ -95,32 +92,27 @@ def upload_file():
 
     temp_dir = tempfile.mkdtemp()
 
-    from matplotlib import pyplot as plt
+    # from matplotlib import pyplot as plt
 
-    plt.switch_backend("agg")
+    # plt.switch_backend("agg")
     plots = []
 
-    plt.plot([1, 2, 3, 4])
-    plt.ylabel("some numbers")
-    figure_path_png = os.path.join(temp_dir, "figure" + str(len(plots)) + ".png")
-    plt.savefig(figure_path_png)
-    plots.append(figure_path_png)
+    # plt.plot([1, 2, 3, 4])
+    # plt.ylabel("some numbers")
+    # figure_path_png = os.path.join(temp_dir, "figure" + str(len(plots)) + ".png")
+    # plt.savefig(figure_path_png)
+    # plots.append(figure_path_png)
 
-    plt.plot([1, 2, 3, 4], [1, 4, 9, 16])
-    figure_path_png = os.path.join(temp_dir, "figure" + str(len(plots)) + ".png")
-    plt.savefig(figure_path_png)
-    plots.append(figure_path_png)
+    # plt.plot([1, 2, 3, 4], [1, 4, 9, 16])
+    # figure_path_png = os.path.join(temp_dir, "figure" + str(len(plots)) + ".png")
+    # plt.savefig(figure_path_png)
+    # plots.append(figure_path_png)
 
     console_info = output.getvalue()
     sys.stdout = sys.__stdout__
 
-    # result = {"plots": plots, "results": console_info}
-
-    print("testing...")
-
-    return send_file(figure_path_png, mimetype="image/png")
-
-    # return jsonify(result)
+    result = {"plots": plots, "results": console_info}
+    return jsonify(result)
 
     if len(files) == 0:
         return "request ok. no files to save"
