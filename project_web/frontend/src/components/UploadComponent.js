@@ -16,10 +16,10 @@ import { useNavigate } from "react-router-dom";
 
 import Terminal, { ColorMode, TerminalOutput } from "react-terminal-ui";
 
-// import image from "./figure0.png";
+import image from "C:\\Users\\DANIEL~1\\AppData\\Local\\Temp\\tmpgptvld9j\\figure0.png";
+// import image from "C:/Users/DANIEL~1/AppData/Local/Temp/tmpiez91a70/figure0.png";
 
-// import image from "C:\\Users\\DANIEL~1\\AppData\\Local\\Temp\\tmpgptvld9j\\figure0.png";
-import image from "C:/Users/DANIEL~1/AppData/Local/Temp/tmpiez91a70/figure0.png";
+import image00 from "file:///C:/Users/danieldum/AppData/Local/Temp/tmpgptvld9j/figure0.png";
 
 import {
   Button,
@@ -74,6 +74,7 @@ export default function UploadComponent() {
   const [labeledRadioValue, setLabeledRadioValue] = useState("yes");
 
   const [isSupervisedCheckbox, setIsSupervisedCheckbox] = useState(false);
+  const [shuffleRows, setShuffleRows] = useState(true);
   const [separateTrainAndTestCheckbox, setSeparateTrainAndTestCheckbox] =
     useState(true);
   const [saveDataCheckbox, setSaveDataCheckbox] = useState(false);
@@ -137,8 +138,8 @@ export default function UploadComponent() {
 
   // misc
   const [stringOfFilesUploaded, setStringOfFilesUploaded] = useState("");
-  const [dynamicModule, setDynamicModule] = useState(null);
-  const [image, setImage] = useState(null);
+
+  const [imageUrl, setImageUrl] = useState("");
 
   // -------------------------------------------------------------------------
   function resetAllFormErrorsAndData() {
@@ -146,15 +147,23 @@ export default function UploadComponent() {
     setSelectedMethods([]);
 
     setSelectedFiles([]);
+
     setLabeledRadioValue("yes");
     setIsSupervisedCheckbox(false);
     setSeparateTrainAndTestCheckbox(true);
-    setSaveDataCheckbox(false);
+    setShuffleRows(true);
+
     setTrainDataPercentage("");
+
     setLabelColumn("");
+
     setClassesTextfields([1, 2]);
     setClasses([]);
     setNormalClass("");
+
+    setEpochs(40);
+
+    setSaveDataCheckbox(false);
 
     setFileSelectionError(false);
     setDatasetError(false);
@@ -222,8 +231,6 @@ export default function UploadComponent() {
         );
       }
     });
-
-    console.log(classes);
 
     setClasses(classes);
     return classes;
@@ -312,8 +319,6 @@ export default function UploadComponent() {
       return;
     }
 
-    console.log("epochs", epochs);
-
     let files = selectedFiles.map((file) => file.name);
 
     let data = {
@@ -321,6 +326,7 @@ export default function UploadComponent() {
       isLabeled: labeledRadioValue === "idk" ? "unknown" : labeledRadioValue,
       label: labeledRadioValue === "yes" ? localLabelColumn : -1,
       isSupervised: isSupervisedCheckbox,
+      shuffleRows: shuffleRows,
       separateTrainAndTest: separateTrainAndTestCheckbox,
       trainDataPercentage: separateTrainAndTestCheckbox
         ? localTrainDataPercentage
@@ -405,9 +411,9 @@ export default function UploadComponent() {
       return;
     }
 
-    if (selectedDataset !== "EKG") {
-      handleEKGMethodsCheckboxes(1);
-    }
+    if (selectedDataset !== "EKG") handleEKGMethodsCheckboxes(1);
+
+    if (selectedMethods.length === 0) handleEKGMethodsCheckboxes(1);
 
     let data = {
       dataset: selectedDataset,
@@ -429,13 +435,6 @@ export default function UploadComponent() {
     formData.append("dataset", selectedDataset);
     formData.append("methods", selectedMethods);
 
-    console.log(
-      "dataset is",
-      selectedDataset,
-      "selected methods are",
-      selectedMethods
-    );
-
     setLoading(true);
     setLoadingText("processing...");
 
@@ -444,9 +443,15 @@ export default function UploadComponent() {
       body: formData,
     });
 
-    const textResponse = await response.text();
-    setResponseData(textResponse);
+    const blob = response.blob();
+    const imgURL = URL.createObjectURL(blob);
 
+    setImageUrl(imgURL);
+
+    // const textResponse = await response.text();
+    // setResponseData(textResponse);
+
+    // -------------------------------------------------------------------------
     // setTimeout(() => setLoadingText("redirecting to results page."), 0);
     // setTimeout(() => setLoadingText("redirecting to results page.."), 500);
     // setTimeout(() => setLoadingText("redirecting to results page..."), 1000);
@@ -458,10 +463,11 @@ export default function UploadComponent() {
     //   setLoading(false);
     //   navigate("/results");
     // }, 3000);
+    // -------------------------------------------------------------------------
 
-    setLoading(false);
+    // setLoading(false);
 
-    handleResults(textResponse);
+    // handleResults(textResponse);
   }
 
   // -------------------------------------------------------------------------
@@ -473,30 +479,10 @@ export default function UploadComponent() {
     });
 
     setPlotPaths(data.plots);
-    console.log(data.results.split("\n"));
-    setBackendOutput([...data.results.split("\n")]);
+    setBackendOutput(data.results.split("\n"));
 
     setShowResults(true);
   }
-
-  // -------------------------------------------------------------------------
-  const importModule = async (path) => {
-    const module = await import(path);
-    setDynamicModule(module);
-  };
-
-  // -------------------------------------------------------------------------
-  async function importModule2(path) {
-    const module = await import(path);
-    return module;
-  }
-
-  // -------------------------------------------------------------------------
-  const fetchImage = async (path) => {
-    const response = await import(path);
-    setImage(response.default);
-    return response.default;
-  };
 
   // -------------------------------------------------------------------------
   useEffect(() => {
@@ -662,7 +648,7 @@ export default function UploadComponent() {
                 <Select
                   label="data-type-select"
                   onChange={(event) => {
-                    console.log("Now selected", event.target.value);
+                    console.log("now selected", event.target.value);
                     setSelectedDataset(event.target.value);
                     setSelectedMethods([]);
                   }}
@@ -827,7 +813,7 @@ export default function UploadComponent() {
             <FormControl
               style={{
                 margin: "25px",
-                width: "50%",
+                width: "40%",
                 display: "flex",
                 alignItems: "center",
               }}
@@ -869,7 +855,7 @@ export default function UploadComponent() {
               placement="bottom"
             >
               <FormControlLabel
-                style={{ margin: "25px", width: "25%" }}
+                style={{ margin: "25px", width: "20%" }}
                 control={
                   <Checkbox
                     checked={isSupervisedCheckbox}
@@ -886,7 +872,20 @@ export default function UploadComponent() {
             </Tooltip>
 
             <FormControlLabel
-              style={{ margin: "25px", width: "25%" }}
+              style={{ margin: "25px", width: "20%" }}
+              control={
+                <Checkbox
+                  checked={shuffleRows}
+                  id="save-data-checkbox"
+                  color="default"
+                  onChange={() => setShuffleRows(!shuffleRows)}
+                />
+              }
+              label="shuffle rows?"
+            />
+
+            <FormControlLabel
+              style={{ margin: "25px", width: "20%" }}
               control={
                 <Checkbox
                   checked={separateTrainAndTestCheckbox}
@@ -1062,8 +1061,8 @@ export default function UploadComponent() {
               <Select
                 label="data-type-select"
                 onChange={(event) => {
+                  console.log("now selectred", event.target.value);
                   setNormalClass(event.target.value);
-                  console.log(event.target.value);
                 }}
               >
                 <MenuItem key="0" value="" disabled>
@@ -1159,7 +1158,6 @@ export default function UploadComponent() {
                 {">>>"} {responseData}
                 <br></br>
                 {backendOutput.map((line) => {
-                  // console.log(line);
                   return (
                     <>
                       {">>>"} {line}
@@ -1171,7 +1169,11 @@ export default function UploadComponent() {
             </div>
 
             <Divv>
-              <img src={image}></img>
+              <img src={imageUrl} alt="image0" />
+            </Divv>
+
+            <Divv>
+              <img src={image00} alt="image"></img>
             </Divv>
           </Divv>
         </>

@@ -31,8 +31,13 @@ export default function RoutesComponent() {
 
       <Divv>
         <Button
-          style={{ backgroundColor: "black", color: "white" }}
-          onClick={() => testing()}
+          style={{
+            backgroundColor: "black",
+            color: "white",
+          }}
+          onClick={() => {
+            console.log(window.location.href);
+          }}
         >
           Click me
         </Button>

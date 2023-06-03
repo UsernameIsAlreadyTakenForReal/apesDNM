@@ -41,7 +41,7 @@ class Logger:
 ############################################################################
 
 
-from flask import Flask, request
+from flask import Flask, request, send_file
 from flask_cors import CORS
 from flask.json import jsonify
 
@@ -95,7 +95,6 @@ def upload_file():
 
     temp_dir = tempfile.mkdtemp()
 
-    from PIL import Image
     from matplotlib import pyplot as plt
 
     plt.switch_backend("agg")
@@ -115,9 +114,13 @@ def upload_file():
     console_info = output.getvalue()
     sys.stdout = sys.__stdout__
 
-    result = {"plots": plots, "results": console_info}
+    # result = {"plots": plots, "results": console_info}
 
-    return jsonify(result)
+    print("testing...")
+
+    return send_file(figure_path_png, mimetype="image/png")
+
+    # return jsonify(result)
 
     if len(files) == 0:
         return "request ok. no files to save"
