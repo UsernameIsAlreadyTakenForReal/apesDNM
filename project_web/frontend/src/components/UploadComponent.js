@@ -18,7 +18,8 @@ import Terminal, { ColorMode, TerminalOutput } from "react-terminal-ui";
 
 // import image from "./figure0.png";
 
-import image from "C:\\Users\\DANIEL~1\\AppData\\Local\\Temp\\tmpgptvld9j\\figure0.png";
+// import image from "C:\\Users\\DANIEL~1\\AppData\\Local\\Temp\\tmpgptvld9j\\figure0.png";
+import image from "C:/Users/DANIEL~1/AppData/Local/Temp/tmpiez91a70/figure0.png";
 
 import {
   Button,
@@ -136,6 +137,8 @@ export default function UploadComponent() {
 
   // misc
   const [stringOfFilesUploaded, setStringOfFilesUploaded] = useState("");
+  const [dynamicModule, setDynamicModule] = useState(null);
+  const [image, setImage] = useState(null);
 
   // -------------------------------------------------------------------------
   function resetAllFormErrorsAndData() {
@@ -475,6 +478,25 @@ export default function UploadComponent() {
 
     setShowResults(true);
   }
+
+  // -------------------------------------------------------------------------
+  const importModule = async (path) => {
+    const module = await import(path);
+    setDynamicModule(module);
+  };
+
+  // -------------------------------------------------------------------------
+  async function importModule2(path) {
+    const module = await import(path);
+    return module;
+  }
+
+  // -------------------------------------------------------------------------
+  const fetchImage = async (path) => {
+    const response = await import(path);
+    setImage(response.default);
+    return response.default;
+  };
 
   // -------------------------------------------------------------------------
   useEffect(() => {
@@ -1137,7 +1159,7 @@ export default function UploadComponent() {
                 {">>>"} {responseData}
                 <br></br>
                 {backendOutput.map((line) => {
-                  console.log(line);
+                  // console.log(line);
                   return (
                     <>
                       {">>>"} {line}
@@ -1148,19 +1170,9 @@ export default function UploadComponent() {
               </Terminal>
             </div>
 
-            {plotPaths.map((path) => {
-              console.log("path is", path);
-
-              return (
-                <Divv>
-                  <img src={image} />
-                </Divv>
-              );
-            })}
-
-            {/* <Divv>
+            <Divv>
               <img src={image}></img>
-            </Divv> */}
+            </Divv>
           </Divv>
         </>
       ) : (
