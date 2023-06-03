@@ -205,7 +205,6 @@ class Solution_ekg_2:
                     else:
                         minimum = min(target_test)
                         target_test = [x - minimum for x in target_test]
-                print(target_test)
                 self.y_test = to_categorical(target_test)
             X_test = test_df.iloc[:, : cols - 1].values
             self.X_test = X_test.reshape(len(X_test), X_test.shape[1], 1)

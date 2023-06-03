@@ -47,6 +47,8 @@ rough_filename_searches = ["train", "test", "validation", "run"]
 
 def handle_dataset_from_path(Logger, app_instance_metadata):
     files_to_load = []
+    list_of_dataFrames = []
+    list_of_dataFramesUtilityLabels = []
 
     # checks
     if (
