@@ -1,0 +1,14 @@
+arff==0.9
+matplotlib==3.7.1
+mlxtend==0.22.0
+nnfs==0.5.1
+numpy==1.23.5
+pandas==2.0.0
+Pillow==9.5.0
+psutil==5.9.4
+scikit_learn==1.2.2
+seaborn==0.12.2
+torch==2.0.0
+keras==2.12.0
+tensorflow==2.12.0
+patool==1.12
