@@ -48,23 +48,23 @@ class Dataset_Metadata:
     def getMetadataAsString(self):
         return (
             "\nDataset_metadata"
-            + "\n   dataset_path = "
+            + "\n|___dataset_path = "
             + str(self.dataset_path)
-            + "\n   is_labeled = "
+            + "\n|___is_labeled = "
             + str(self.is_labeled)
-            + "\n   file_keyword_names = "
+            + "\n|___file_keyword_names = "
             + str(self.file_keyword_names)
-            + "\n   class_names = "
+            + "\n|___class_names = "
             + str(self.class_names)
-            + "\n   label_column_name = "
+            + "\n|___label_column_name = "
             + str(self.label_column_name)
-            + "\n   numerical_value_of_desired_label = "
+            + "\n|___numerical_value_of_desired_label = "
             + str(self.numerical_value_of_desired_label)
-            + "\n   separate_train_and_test = "
+            + "\n|___separate_train_and_test = "
             + str(self.separate_train_and_test)
-            + "\n   percentage_of_split = "
+            + "\n|___percentage_of_split = "
             + str(self.percentage_of_split)
-            + "\n   shuffle_rows = "
+            + "\n|___shuffle_rows = "
             + str(self.shuffle_rows)
         )
 
@@ -124,23 +124,23 @@ class Application_Instance_Metadata:
     def getMetadataAsString(self):
         return (
             "\nApplication_metadata"
-            + "\n   display_dataFrames = "
+            + "\n----display_dataFrames = "
             + str(self.display_dataFrames)
-            + "\n   application_mode = "
+            + "\n----application_mode = "
             + str(self.application_mode)
-            + "\n   dataset_origin = "
+            + "\n----dataset_origin = "
             + str(self.dataset_origin)
-            + "\n   dataset_category = "
+            + "\n----dataset_category = "
             + str(self.dataset_category)
-            + "\n   solution_category = "
+            + "\n----solution_category = "
             + str(self.solution_category)
-            + "\n   solution_nature = "
+            + "\n----solution_nature = "
             + str(self.solution_nature)
-            + "\n   solution_index = "
+            + "\n----solution_index = "
             + str(self.solution_index)
-            + "\n   model_origin = "
+            + "\n----model_origin = "
             + str(self.model_origin)
-            + "\n   model_train_epochs = "
+            + "\n----model_train_epochs = "
             + str(self.model_train_epochs)
         )
 

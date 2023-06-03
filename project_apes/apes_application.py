@@ -150,7 +150,7 @@ class APES_Application:
 
         info_message = "p1_get_datasets_as_dataFrames returned the following:"
         for i in range(0, len(self.dataFramesList)):
-            info_message += f"\nDataset {i}\n   label = {self.dataFramesUtilityList[i]}\n   shape = {self.dataFramesList[i].shape}"
+            info_message += f"\nDataset {i}\n|___label = {self.dataFramesUtilityList[i]}\n|___shape = {self.dataFramesList[i].shape}"
         self.Logger.info(self, info_message)
 
         return (0, "Function p1_get_datasets_as_dataFrames exited successfully")
