@@ -32,111 +32,111 @@ from keras.callbacks import EarlyStopping, ModelCheckpoint
 
 from datetime import datetime
 
-for dirname, _, filenames in os.walk("../../../Dataset - ECG_Heartbeat"):
+for dirname, _, filenames in os.walk("../../../Datasets/Dataset - ECG_Heartbeat"):
     for filename in filenames:
         print(os.path.join(dirname, filename))
 
 
 time_dataset_manipulation_begin = datetime.now()
 train_df = pd.read_csv(
-    "../../../Dataset - ECG_Heartbeat/mitbih_train.csv", header=None
+    "../../../Datasets/Dataset - ECG_Heartbeat/mitbih_train.csv", header=None
 )  # header=None for it to pick up row 1 too
-test_df = pd.read_csv("../../../Dataset - ECG_Heartbeat/mitbih_test.csv", header=None)
+test_df = pd.read_csv("../../../Datasets/Dataset - ECG_Heartbeat/mitbih_test.csv", header=None)
 
 train_df[187] = train_df[187].astype(int)
 # how many of each class
-equilibre = train_df[187].value_counts()
-print(equilibre)
+# equilibre = train_df[187].value_counts()
+# print(equilibre)
 
 
 # We can underligne a huge difference in the balanced of the classes. After some try i have decided to choose the resample technique more than the class weights for the algorithms.
 
-plt.figure(figsize=(20, 10))
-my_circle = plt.Circle((0, 0), 0.7, color="white")
-plt.pie(
-    equilibre,
-    labels=["n", "q", "v", "s", "f"],
-    colors=["red", "green", "blue", "skyblue", "orange"],
-    autopct="%1.1f%%",
-)
-p = plt.gcf()
-p.gca().add_artist(my_circle)
-plt.show()
+# plt.figure(figsize=(20, 10))
+# my_circle = plt.Circle((0, 0), 0.7, color="white")
+# plt.pie(
+#     equilibre,
+#     labels=["n", "q", "v", "s", "f"],
+#     colors=["red", "green", "blue", "skyblue", "orange"],
+#     autopct="%1.1f%%",
+# )
+# p = plt.gcf()
+# p.gca().add_artist(my_circle)
+# plt.show()
 
 from sklearn.utils import resample
 
-df_1 = train_df[train_df[187] == 1]
-df_2 = train_df[train_df[187] == 2]
-df_3 = train_df[train_df[187] == 3]
-df_4 = train_df[train_df[187] == 4]
-df_0 = (train_df[train_df[187] == 0]).sample(n=20000, random_state=42)
+# df_1 = train_df[train_df[187] == 1]
+# df_2 = train_df[train_df[187] == 2]
+# df_3 = train_df[train_df[187] == 3]
+# df_4 = train_df[train_df[187] == 4]
+# df_0 = (train_df[train_df[187] == 0]).sample(n=20000, random_state=42)
 
-df_1_upsample = resample(df_1, replace=True, n_samples=20000, random_state=123)
-df_2_upsample = resample(df_2, replace=True, n_samples=20000, random_state=124)
-df_3_upsample = resample(df_3, replace=True, n_samples=20000, random_state=125)
-df_4_upsample = resample(df_4, replace=True, n_samples=20000, random_state=126)
+# df_1_upsample = resample(df_1, replace=True, n_samples=20000, random_state=123)
+# df_2_upsample = resample(df_2, replace=True, n_samples=20000, random_state=124)
+# df_3_upsample = resample(df_3, replace=True, n_samples=20000, random_state=125)
+# df_4_upsample = resample(df_4, replace=True, n_samples=20000, random_state=126)
 
-train_df = pd.concat([df_0, df_1_upsample, df_2_upsample, df_3_upsample, df_4_upsample])
-
-
-equilibre = train_df[187].value_counts()
-print(equilibre)
+# train_df = pd.concat([df_0, df_1_upsample, df_2_upsample, df_3_upsample, df_4_upsample])
 
 
-plt.figure(figsize=(20, 10))
-my_circle = plt.Circle((0, 0), 0.7, color="white")
-plt.pie(
-    equilibre,
-    labels=["n", "q", "v", "s", "f"],
-    colors=["red", "green", "blue", "skyblue", "orange"],
-    autopct="%1.1f%%",
-)
-p = plt.gcf()
-p.gca().add_artist(my_circle)
-plt.show()
-
-##
+# equilibre = train_df[187].value_counts()
+# print(equilibre)
 
 
-c = train_df.groupby(187, group_keys=False).apply(lambda train_df: train_df.sample(1))
+# plt.figure(figsize=(20, 10))
+# my_circle = plt.Circle((0, 0), 0.7, color="white")
+# plt.pie(
+#     equilibre,
+#     labels=["n", "q", "v", "s", "f"],
+#     colors=["red", "green", "blue", "skyblue", "orange"],
+#     autopct="%1.1f%%",
+# )
+# p = plt.gcf()
+# p.gca().add_artist(my_circle)
+# plt.show()
 
-c
-
-plt.plot(c.iloc[0, :186])
-
-
-def plot_hist(class_number, size, min_, bins):
-    img = train_df.loc[train_df[187] == class_number].values
-    img = img[:, min_:size]
-    img_flatten = img.flatten()
-
-    final1 = np.arange(min_, size)
-    for i in range(img.shape[0] - 1):
-        tempo1 = np.arange(min_, size)
-        final1 = np.concatenate((final1, tempo1), axis=None)
-    print(len(final1))
-    print(len(img_flatten))
-    plt.hist2d(final1, img_flatten, bins=(bins, bins), cmap=plt.cm.jet)
-    plt.show()
+# ##
 
 
-plot_hist(0, 70, 5, 65)
+# c = train_df.groupby(187, group_keys=False).apply(lambda train_df: train_df.sample(1))
 
-plt.plot(c.iloc[1, :186])
+# c
 
-plot_hist(1, 50, 5, 45)
+# plt.plot(c.iloc[0, :186])
 
-plt.plot(c.iloc[2, :186])
 
-plot_hist(2, 50, 5, 45)
+# def plot_hist(class_number, size, min_, bins):
+#     img = train_df.loc[train_df[187] == class_number].values
+#     img = img[:, min_:size]
+#     img_flatten = img.flatten()
 
-plt.plot(c.iloc[3, :186])
+#     final1 = np.arange(min_, size)
+#     for i in range(img.shape[0] - 1):
+#         tempo1 = np.arange(min_, size)
+#         final1 = np.concatenate((final1, tempo1), axis=None)
+#     print(len(final1))
+#     print(len(img_flatten))
+#     plt.hist2d(final1, img_flatten, bins=(bins, bins), cmap=plt.cm.jet)
+#     plt.show()
 
-plot_hist(3, 60, 15, 45)
 
-plt.plot(c.iloc[4, :186])
+# plot_hist(0, 70, 5, 65)
 
-plot_hist(4, 50, 15, 35)
+# plt.plot(c.iloc[1, :186])
+
+# plot_hist(1, 50, 5, 45)
+
+# plt.plot(c.iloc[2, :186])
+
+# plot_hist(2, 50, 5, 45)
+
+# plt.plot(c.iloc[3, :186])
+
+# plot_hist(3, 60, 15, 45)
+
+# plt.plot(c.iloc[4, :186])
+
+# plot_hist(4, 50, 15, 35)
 
 
 def add_gaussian_noise(signal):
@@ -144,21 +144,21 @@ def add_gaussian_noise(signal):
     return signal + noise
 
 
-tempo = c.iloc[0, :186]
-bruiter = add_gaussian_noise(tempo)
+# tempo = c.iloc[0, :186]
+# bruiter = add_gaussian_noise(tempo)
 
-plt.subplot(2, 1, 1)
-plt.plot(c.iloc[0, :186])
+# plt.subplot(2, 1, 1)
+# plt.plot(c.iloc[0, :186])
 
-plt.subplot(2, 1, 2)
-plt.plot(bruiter)
+# plt.subplot(2, 1, 2)
+# plt.plot(bruiter)
 
-plt.show()
+# plt.show()
 
-time_dataset_manipulation = (datetime.now() - time_dataset_manipulation_begin).seconds
-print(
-    f"Took {time_dataset_manipulation} seconds to manipulate dataset (show graphs n shit)."
-)
+# time_dataset_manipulation = (datetime.now() - time_dataset_manipulation_begin).seconds
+# print(
+#     f"Took {time_dataset_manipulation} seconds to manipulate dataset (show graphs n shit)."
+# )
 
 ####
 time_dataset_split_begin = datetime.now()
@@ -257,7 +257,7 @@ def evaluate_model(history, X_test, y_test, model):
 time_model_begin = datetime.now()
 model, history = network(X_train, y_train, X_test, y_test)
 time_model = (datetime.now() - time_model_begin).seconds
-print(f"Took {time_model} seconds to create model.")
+print(f"Took {time_model} seconds to create model")
 
 time_model_eval_begin = datetime.now()
 evaluate_model(history, X_test, y_test, model)

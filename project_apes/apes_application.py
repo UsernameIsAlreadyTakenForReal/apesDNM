@@ -229,7 +229,7 @@ class APES_Application:
             else:
                 match solution_indexes:
                     case [1, 2]:
-                        info_message = "Loading ekg_1 and ekg_2."
+                        info_message = "Loading solutions ekg_1 and ekg_2."
                         self.Logger.info(self, info_message)
 
                         from type_ekg.apes_solution_ekg_1 import Solution_ekg_1

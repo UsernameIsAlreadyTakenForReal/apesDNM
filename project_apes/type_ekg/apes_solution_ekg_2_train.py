@@ -68,7 +68,7 @@ class Solution_ekg_2:
         )
 
         time_model = (datetime.now() - time_model_begin).seconds
-        info_message = f"Took {time_model} seconds to create model."
+        info_message = f"Took {time_model} seconds to create model"
         self.Logger.info(self, info_message)
 
     def train(self, X_train, Y_train, X_val, Y_val, epochs=40):

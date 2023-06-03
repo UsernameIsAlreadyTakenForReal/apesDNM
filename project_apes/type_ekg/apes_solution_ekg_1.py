@@ -159,7 +159,13 @@ class Solution_ekg_1:
     def train(self, train_dataset, val_dataset, epochs):
         f1_time = datetime.now()
 
-        info_message = "Begining training"
+        info_message = "##########################################################"
+        self.Logger.info(self, info_message)
+        info_message = (
+            f"Begining training for solution_ekg_1. Number of epochs: {epochs}"
+        )
+        self.Logger.info(self, info_message)
+        info_message = "##########################################################"
         self.Logger.info(self, info_message)
 
         model, history = self.train_model_helper(
@@ -220,7 +226,12 @@ class Solution_ekg_1:
         plt.show()
 
     ## Dataset methods
-    def adapt_dataset(self, application_instance_metadata, dataFrame):
+    def adapt_dataset(
+        self,
+        application_instance_metadata,
+        list_of_dataFrames,
+        list_of_dataFramesUtilityLabels,
+    ):
         newDataFrame = 2
         print("test sol 1")
         return newDataFrame

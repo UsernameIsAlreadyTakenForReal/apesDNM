@@ -39,6 +39,7 @@ from keras.callbacks import EarlyStopping, ModelCheckpoint
 from datetime import datetime
 
 # TODO: add gaussian noise?
+# TODO: resample?
 
 
 class Solution_ekg_2:
@@ -87,7 +88,7 @@ class Solution_ekg_2:
         )
 
         time_model = (datetime.now() - time_model_begin).seconds
-        info_message = f"Took {time_model} seconds to create model."
+        info_message = f"Took {time_model} seconds to create model"
         self.Logger.info(self, info_message)
 
     def save_model(self, filename="", path=""):
@@ -102,7 +103,7 @@ class Solution_ekg_2:
         MODEL_SAVE_PATH = (
             datetime.now().strftime("%Y%m%d_%H%M%S") + "_" + MODEL_SAVE_PATH
         )
-        info_message = "Saving model at " + MODEL_SAVE_PATH
+        info_message = "Saving model as " + MODEL_SAVE_PATH
         self.Logger.info(self, info_message)
         self.model.save(MODEL_SAVE_PATH)
 
@@ -118,10 +119,16 @@ class Solution_ekg_2:
 
     ## Functionality methods
     def train(self, epochs=40):
-        f1_time = datetime.now()
-
-        info_message = "Begining training"
+        info_message = "##########################################################"
         self.Logger.info(self, info_message)
+        info_message = (
+            f"Begining training for solution_ekg_2. Number of epochs: {epochs}"
+        )
+        self.Logger.info(self, info_message)
+        info_message = "##########################################################"
+        self.Logger.info(self, info_message)
+
+        f1_time = datetime.now()
         callbacks = [
             EarlyStopping(monitor="val_loss", patience=8),
             ModelCheckpoint(
@@ -150,6 +157,10 @@ class Solution_ekg_2:
         return history
 
     def test(self):
+        info_message = "Begining testing"
+        self.Logger.info(self, info_message)
+        info_message = f"Testing - it took "
+        self.Logger.info(self, info_message)
         pass
 
     ## Dataset methods
@@ -167,9 +178,17 @@ class Solution_ekg_2:
             if application_instance_metadata.dataset_metadata.is_labeled == True:
                 cols = cols - 1
                 target_train = [int(x) for x in train_df.iloc[:, cols].values]
+                if min(target_train) > 0:
+                    if min(target_train) == 1:
+                        target_train = [x - 1 for x in target_train]
+                    else:
+                        minimum = min(target_train)
+                        target_train = [x - minimum for x in target_train]
                 self.y_train = to_categorical(target_train)
             X_train = train_df.iloc[:, : cols - 1].values
             self.X_train = X_train.reshape(len(X_train), X_train.shape[1], 1)
+            info_message = f"Created X_train (shape {self.X_train.shape}) and y_train (shape {self.y_train.shape})"
+            self.Logger.info(self, info_message)
         except:
             info_message = "No train dataFrame"
             self.Logger.info(self, info_message)
@@ -180,9 +199,18 @@ class Solution_ekg_2:
             if application_instance_metadata.dataset_metadata.is_labeled == True:
                 cols = cols - 1
                 target_test = [int(x) for x in test_df.iloc[:, cols].values]
+                if min(target_test) > 0:
+                    if min(target_test) == 1:
+                        target_test = [x - 1 for x in target_test]
+                    else:
+                        minimum = min(target_test)
+                        target_test = [x - minimum for x in target_test]
+                print(target_test)
                 self.y_test = to_categorical(target_test)
-            X_test = train_df.iloc[:, : cols - 1].values
+            X_test = test_df.iloc[:, : cols - 1].values
             self.X_test = X_test.reshape(len(X_test), X_test.shape[1], 1)
+            info_message = f"Created X_test (shape {self.X_test.shape}) and y_test (shape {self.y_test.shape})"
+            self.Logger.info(self, info_message)
         except:
             info_message = "No test dataFrame"
             self.Logger.info(self, info_message)
@@ -194,8 +222,10 @@ class Solution_ekg_2:
                 cols = cols - 1
                 target_val = [int(x) for x in val_df.iloc[:, cols].values]
                 self.y_val = to_categorical(target_val)
-            X_val = train_df.iloc[:, : cols - 1].values
+            X_val = val_df.iloc[:, : cols - 1].values
             self.X_val = X_val.reshape(len(X_val), X_val.shape[1], 1)
+            info_message = f"Created X_val (shape {self.X_val.shape}) and y_val (shape {self.y_val.shape})"
+            self.Logger.info(self, info_message)
         except:
             info_message = "No val dataFrame"
             self.Logger.info(self, info_message)
@@ -207,8 +237,10 @@ class Solution_ekg_2:
                 cols = cols - 1
                 target_run = [int(x) for x in run_df.iloc[:, cols].values]
                 self.y_run = to_categorical(target_run)
-            X_run = train_df.iloc[:, : cols - 1].values
+            X_run = run_df.iloc[:, : cols - 1].values
             self.X_run = X_run.reshape(len(X_run), X_run.shape[1], 1)
+            info_message = f"Created X_run (shape {self.X_run.shape}) and y_run (shape {self.y_run.shape})"
+            self.Logger.info(self, info_message)
         except:
             info_message = "No run dataFrame"
             self.Logger.info(self, info_message)

@@ -1,22 +1,5 @@
 import sys
 
-n = len(sys.argv)
-print("Total number of arguments passed: ", n)
-
-for i in range(0, n):
-    print(f"Parameter {i}: {sys.argv[i]}")
-
-example_path = ""
-
-if int(sys.argv[1]) == 1:
-    print("Running with dataset egk1")
-    example_path = "../../Datasets/Dataset - ECG5000/Dataset - ECG5000"
-elif int(sys.argv[1]) == 2:
-    print("Running with dataset ekg2")
-    example_path = "../../Datasets/Dataset - ECG_Heartbeat/Dataset - ECG_Heartbeat.zip"
-else:
-    print("whatev")
-
 from helpers_aiders_and_conveniencers.logger import Logger
 
 Logger = Logger()
@@ -37,7 +20,7 @@ Logger.info("Program", init_message)
 
 
 # example_path = "../../Datasets/Dataset - ECG_Heartbeat/Dataset - ECG_Heartbeat.zip"
-# # example_path = "../../Datasets/Dataset - ECG5000/Dataset - ECG5000"
+example_path = "../../Datasets/Dataset - ECG5000/Dataset - ECG5000"
 
 
 dataset_metadata = Dataset_Metadata(
