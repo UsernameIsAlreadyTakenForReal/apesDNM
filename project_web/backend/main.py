@@ -41,7 +41,7 @@ class Logger:
 ############################################################################
 
 
-from flask import Flask, request, send_file
+from flask import Flask, request, send_file, send_from_directory
 from flask_cors import CORS
 from flask.json import jsonify
 
@@ -73,6 +73,8 @@ def getDatasets():
 def upload_file():
     import sys
     from io import StringIO
+
+    import uuid
 
     # changing output to variable so we can show it in the frontend
     output = StringIO()
@@ -113,8 +115,18 @@ def upload_file():
     # plt.savefig(figure_path_png)
     # plots.append(figure_path_png)
 
+    # plt.plot([1, 2, 3, 4], [1, 4, 9, 16])
+    # figure_path_png = os.path.join(temp_dir, "figure" + str(len(plots)) + ".png")
+    # plt.savefig(figure_path_png)
+    # plots.append(figure_path_png)
+
     plt.plot([1, 2, 3, 4], [1, 4, 9, 16])
-    figure_path_png = os.path.join(temp_dir, "figure" + str(len(plots)) + ".png")
+    filename = str(uuid.uuid4()) + ".png"
+
+    info_message = "plot filename is " + filename
+    logger.info("matplotlib", info_message)
+
+    figure_path_png = os.path.join("images", filename)
     plt.savefig(figure_path_png)
     plots.append(figure_path_png)
 
@@ -137,6 +149,11 @@ def upload_file():
         file.save(os.path.join(temp_dir, file.filename))
 
     return "request ok. files saved at " + temp_dir
+
+
+@app.route("/images/<path:filename>")
+def get_image(filename):
+    return send_from_directory("images", filename)
 
 
 @app.route("/testing", methods=["GET", "POST"])

@@ -1199,8 +1199,8 @@ export default function UploadComponent() {
               }}
             >
               <Terminal name="python outputs">
-                {/* {">>>"} {responseData}
-                <br></br> */}
+                {">>>"} {responseData}
+                <br></br>
                 {backendOutput.map((line) => {
                   if (line === "") return;
                   return (
@@ -1213,9 +1213,14 @@ export default function UploadComponent() {
               </Terminal>
             </div>
 
-            {/* <Divv>
-              <img src={image00} alt=""></img>
-            </Divv> */}
+            <Divv>
+              <img
+                src={
+                  BASE_URL + "images/406fc8ef-f3c4-4510-ad77-dae99d1d627c.png"
+                }
+                alt=""
+              ></img>
+            </Divv>
           </Divv>
         </>
       ) : (
