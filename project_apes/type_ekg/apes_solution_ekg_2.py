@@ -58,6 +58,9 @@ class Solution_ekg_2:
     ## -------------- General methods --------------
     ## Model methods
     def create_model(self):  # im_shape = (X_train.shape[1], 1)
+        info_message = "create_model() -- begin"
+        self.Logger.info(self, info_message)
+
         time_model_begin = datetime.now()
 
         im_shape = (self.X_train.shape[1], 1)
@@ -91,7 +94,13 @@ class Solution_ekg_2:
         info_message = f"Took {time_model} seconds to create model"
         self.Logger.info(self, info_message)
 
+        info_message = "create_model() -- end"
+        self.Logger.info(self, info_message)
+
     def save_model(self, filename="", path=""):
+        info_message = "save_model() -- begin"
+        self.Logger.info(self, info_message)
+
         MODEL_SAVE_PATH = ""
         if filename != "" and path != "":
             MODEL_SAVE_PATH += filename + path
@@ -107,7 +116,13 @@ class Solution_ekg_2:
         self.Logger.info(self, info_message)
         self.model.save(MODEL_SAVE_PATH)
 
+        info_message = "save_model() -- end"
+        self.Logger.info(self, info_message)
+
     def load_model(self, filename="", path=""):
+        info_message = "load_model() -- begin"
+        self.Logger.info(self, info_message)
+
         if filename != "" and path != "":
             pass
         elif filename != "":
@@ -117,8 +132,14 @@ class Solution_ekg_2:
                 self.shared_definitions.project_solution_ekg_2_model_filename_last_good_one
             )
 
+        info_message = "load_model() -- end"
+        self.Logger.info(self, info_message)
+
     ## Functionality methods
     def train(self, epochs=40):
+        info_message = "train() -- begin"
+        self.Logger.info(self, info_message)
+
         info_message = "##########################################################"
         self.Logger.info(self, info_message)
         info_message = (
@@ -154,6 +175,9 @@ class Solution_ekg_2:
         info_message = f"Training - it took {difference} for {epochs} epochs"
         self.Logger.info(self, info_message)
 
+        info_message = "train() -- end"
+        self.Logger.info(self, info_message)
+
         return history
 
     def test(self):
@@ -170,6 +194,9 @@ class Solution_ekg_2:
         list_of_dataFrames,
         list_of_dataFramesUtilityLabels,
     ):
+        info_message = "adapt_dataset() -- begin"
+        self.Logger.info(self, info_message)
+
         try:
             train_df = list_of_dataFrames[
                 list_of_dataFramesUtilityLabels.index("train")
@@ -243,5 +270,8 @@ class Solution_ekg_2:
         except:
             info_message = "No run dataFrame"
             self.Logger.info(self, info_message)
+
+        info_message = "adapt_dataset() -- end"
+        self.Logger.info(self, info_message)
 
     ## -------------- Particular methods --------------

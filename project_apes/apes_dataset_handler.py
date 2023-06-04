@@ -147,7 +147,8 @@ def treat_files(
             app_instance_metadata.dataset_metadata.file_keyword_names
         )
 
-    try:
+    # try:
+    if True:
         if len(files_to_load) == 0:
             files_to_load = app_instance_metadata.dataset_metadata.dataset_path
             flag_enter = True
@@ -253,13 +254,13 @@ def treat_files(
             list_of_dataFrames,
             list_of_dataFramesUtilityLabels,
         )
-    except:
-        return (
-            1,
-            "apes_dataset_handler.treat_file exited with error",
-            list_of_dataFrames,
-            list_of_dataFramesUtilityLabels,
-        )
+    # except:
+    #     return (
+    #         1,
+    #         "apes_dataset_handler.treat_file exited with error",
+    #         list_of_dataFrames,
+    #         list_of_dataFramesUtilityLabels,
+    #     )
 
 
 def treat_folder(Logger, app_instance_metadata):
@@ -386,7 +387,6 @@ def process_singular_file_type(Logger, file, app_instance_metadata):
                     "apes_dataset_handler.process_singular_file_type", info_message
                 )
                 df = pd.read_csv(file, dtype=np.float64)
-                df.columns = list(range(len(df.columns)))
                 loaded_with_header = True
             finally:
                 if loaded_with_header == True:
@@ -409,6 +409,8 @@ def process_singular_file_type(Logger, file, app_instance_metadata):
                         "apes_dataset_handler.process_singular_file_type", info_message
                     )
                     df = df.sample(frac=1).reset_index(drop=True)
+                    df.columns = list(range(len(df.columns)))
+                    df = normalize_label_column(Logger, app_instance_metadata, df)
                 return (
                     0,
                     "apes_dataset_handler.process_singular_file_type exited successfully",
@@ -420,6 +422,7 @@ def process_singular_file_type(Logger, file, app_instance_metadata):
             info_message = f"Loaded file {file}. DataFrame is of shape {df.shape}"
             Logger.info("apes_dataset_handler.process_singular_file_type", info_message)
             df.columns = list(range(len(df.columns)))
+            df = normalize_label_column(Logger, app_instance_metadata, df)
             return (
                 0,
                 "apes_dataset_handler.process_singular_file_type exited successfully",
@@ -431,6 +434,32 @@ def process_singular_file_type(Logger, file, app_instance_metadata):
             return "npz"
         case other:
             return 1, "Could not idenfity file type.", df
+
+
+# [1, 2, 3, 4] -> [0, 1, 2, 3]
+def normalize_label_column(Logger, app_instance_metadata, dataFrame):
+    df = []
+    cols = dataFrame.shape[1] - 1
+    if app_instance_metadata.dataset_metadata.is_labeled == True:
+        # assuming label resides in the last column
+        target_list = [int(x) for x in dataFrame.iloc[:, cols].values]
+        # info_message = f"Old targets are {target_list}"
+        # Logger.info("apes_dataset_handler.normalize_label_column", info_message)
+
+        if min(target_list) > 0:
+            minimum = min(target_list)
+            target_list = [x - minimum for x in target_list]
+
+        # info_message = f"New targets are {target_list}"
+        # Logger.info("apes_dataset_handler.normalize_label_column", info_message)
+
+        df = dataFrame.drop(labels=cols, axis=1)
+        new_targets = pd.DataFrame(target_list)
+        new_targets.columns = ["temp_labels_targets"]
+        df = df.join(new_targets)
+        df.columns = list(range(len(df.columns)))
+        return df
+    return dataFrame
 
 
 def rough_filename_filter(filename, keywords=rough_filename_searches):

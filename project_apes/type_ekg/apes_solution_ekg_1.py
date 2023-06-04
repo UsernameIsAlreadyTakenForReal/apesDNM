@@ -115,6 +115,9 @@ class Solution_ekg_1:
         self.device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 
         self.Logger.info(self, "Creating object of type solution_ekg_1")
+        info_message = f"Using device {self.device}"
+        self.Logger.info(self, info_message)
+
         self.shared_definitions = shared_definitions
         self.project_solution_model_filename = (
             shared_definitions.project_solution_ekg_1_model_filename
@@ -126,7 +129,7 @@ class Solution_ekg_1:
     ## -------------- General methods --------------
     ## Model methods
     def create_model(self):
-        info_message = "create_model -- Begin autoencoder model creation"
+        info_message = "create_model() -- begin autoencoder model creation"
         self.Logger.info(self, info_message)
 
         self.model = Recurrent_Autoencoder(
@@ -134,10 +137,13 @@ class Solution_ekg_1:
         )
         self.model = self.model.to(self.device)
 
-        info_message = "create_model -- Ended autoencoder model creation"
+        info_message = "create_model() -- ended autoencoder model creation"
         self.Logger.info(self, info_message)
 
     def save_model(self, filename="", path=""):
+        info_message = "save_model() -- begin"
+        self.Logger.info(self, info_message)
+
         MODEL_SAVE_PATH = ""
         if filename != "" and path != "":
             MODEL_SAVE_PATH += filename + path
@@ -160,7 +166,13 @@ class Solution_ekg_1:
         self.Logger.info(self, info_message)
         torch.save(self.model, MODEL_SAVE_PATH)
 
+        info_message = "save_model() -- end"
+        self.Logger.info(self, info_message)
+
     def load_model(self, filename="", path=""):
+        info_message = "load_model() -- begin"
+        self.Logger.info(self, info_message)
+
         if filename != "" and path != "":
             pass
         elif filename != "":
@@ -171,8 +183,14 @@ class Solution_ekg_1:
                 map_location=lambda storage, loc: storage.cuda(1),
             )
 
+        info_message = "load_model() -- end"
+        self.Logger.info(self, info_message)
+
     ## Functionality methods
     def train(self, epochs=40):
+        info_message = "train() -- begin"
+        self.Logger.info(self, info_message)
+
         f1_time = datetime.now()
 
         info_message = "##########################################################"
@@ -211,7 +229,13 @@ class Solution_ekg_1:
         )
         self.Logger.info(self, info_message)
 
+        info_message = "train() -- end"
+        self.Logger.info(self, info_message)
+
     def test(self):
+        info_message = "test() -- begin"
+        self.Logger.info(self, info_message)
+
         _, losses = self.predict(self.model, self.train_dataset)
         sns.displot(losses, bins=50, kde=True)
 
@@ -241,6 +265,9 @@ class Solution_ekg_1:
         plt.title("Beat and prediction")
         plt.show()
 
+        info_message = "test() -- end"
+        self.Logger.info(self, info_message)
+
     ## Dataset methods
     def adapt_dataset(
         self,
@@ -248,45 +275,49 @@ class Solution_ekg_1:
         list_of_dataFrames,
         list_of_dataFramesUtilityLabels,
     ):
+        info_message = "adapt_dataset() -- begin"
+        self.Logger.info(self, info_message)
+
         RANDOM_SEED = 42
-        try:
-            df = pd.concat(list_of_dataFrames)
-            new_columns = list(df.columns)
-            new_columns[-1] = "target"
-            df.columns = new_columns
 
-            class_normal = (
-                application_instance_metadata.dataset_metadata.numerical_value_of_desired_label
-            )
-            if class_normal != 0:
-                print("fuck")
+        # try:
+        df = pd.concat(list_of_dataFrames)
+        new_columns = list(df.columns)
+        new_columns[-1] = "target"
+        df.columns = new_columns
 
-            normal_df = df[df.target == int(class_normal)].drop(labels="target", axis=1)
-            self.anormal_df = df[df.target != int(class_normal)].drop(
-                labels="target", axis=1
-            )
+        class_normal = (
+            application_instance_metadata.dataset_metadata.numerical_value_of_desired_label
+        )
+        if class_normal != 0:
+            print("fuck")
 
-            self.train_df, val_df = train_test_split(
-                normal_df, test_size=0.15, random_state=RANDOM_SEED
-            )
-            info_message = "Created train_df"
-            self.Logger.info(self, info_message)
+        normal_df = df[df.target == int(class_normal)].drop(labels="target", axis=1)
+        self.anormal_df = df[df.target != int(class_normal)].drop(
+            labels="target", axis=1
+        )
 
-            self.val_df, self.test_df = train_test_split(
-                val_df, test_size=0.33, random_state=RANDOM_SEED
-            )
-            info_message = "Created val_df, test_df"
-            self.Logger.info(self, info_message)
+        self.train_df, val_df = train_test_split(
+            normal_df, test_size=0.15, random_state=RANDOM_SEED
+        )
+        info_message = "Created train_df"
+        self.Logger.info(self, info_message)
 
-            self.train_dataset, self.seq_len, self.n_features = self.create_dataset(
-                self.train_df
-            )
-            self.val_dataset, _, _ = self.create_dataset(self.val_df)
-            self.test_normal_dataset, _, _ = self.create_dataset(self.test_df)
-            self.test_anomaly_dataset, _, _ = self.create_dataset(self.anormal_df)
-        except:
-            info_message = "Couldn't adapt dataset"
-            self.Logger.info(self, info_message)
+        self.val_df, self.test_df = train_test_split(
+            val_df, test_size=0.33, random_state=RANDOM_SEED
+        )
+        info_message = "Created val_df, test_df"
+        self.Logger.info(self, info_message)
+
+        self.train_dataset, self.seq_len, self.n_features = self.create_dataset(
+            self.train_df
+        )
+        self.val_dataset, _, _ = self.create_dataset(self.val_df)
+        self.test_normal_dataset, _, _ = self.create_dataset(self.test_df)
+        self.test_anomaly_dataset, _, _ = self.create_dataset(self.anormal_df)
+        # except:
+        #     info_message = "Couldn't adapt dataset"
+        #     self.Logger.info(self, info_message)
 
     ## -------------- Particular methods --------------
     def train_model_helper(self, model, train_dataset, val_dataset, n_epochs):
@@ -303,7 +334,11 @@ class Solution_ekg_1:
             model = model.train()
 
             train_losses = []
+            print(len(train_dataset))
+            seq_no = 0
             for seq_true in train_dataset:
+                seq_no += 1
+                print("seq no:" + str(seq_no))
                 optimizer.zero_grad()
 
                 seq_true = seq_true.to(self.device)
@@ -316,6 +351,7 @@ class Solution_ekg_1:
 
                 train_losses.append(loss.item())
 
+            print("works")
             val_losses = []
             model = model.eval()
             with torch.no_grad():

@@ -124,23 +124,23 @@ class Application_Instance_Metadata:
     def getMetadataAsString(self):
         return (
             "\nApplication_metadata"
-            + "\n----display_dataFrames = "
+            + "\n|___display_dataFrames = "
             + str(self.display_dataFrames)
-            + "\n----application_mode = "
+            + "\n|___application_mode = "
             + str(self.application_mode)
-            + "\n----dataset_origin = "
+            + "\n|___dataset_origin = "
             + str(self.dataset_origin)
-            + "\n----dataset_category = "
+            + "\n|___dataset_category = "
             + str(self.dataset_category)
-            + "\n----solution_category = "
+            + "\n|___solution_category = "
             + str(self.solution_category)
-            + "\n----solution_nature = "
+            + "\n|___solution_nature = "
             + str(self.solution_nature)
-            + "\n----solution_index = "
+            + "\n|___solution_index = "
             + str(self.solution_index)
-            + "\n----model_origin = "
+            + "\n|___model_origin = "
             + str(self.model_origin)
-            + "\n----model_train_epochs = "
+            + "\n|___model_train_epochs = "
             + str(self.model_train_epochs)
         )
 
