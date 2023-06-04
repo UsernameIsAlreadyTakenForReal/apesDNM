@@ -1,3 +1,17 @@
+# This file:
+# Contains the solution_ekg_1. Builds a Long Short-Time-Memory Neural Network using an Encoder-Decoder using Torch.
+# This solution only searches for normal vs. anomaly, does not interpret each class
+#
+# Main methods to be called from apes_application:
+# create_model(), load_model()
+#       -- purpose: self.model exists
+# save_model()
+#       -- purpose: self.model save
+# train(epochs), test()
+#       -- purpose: train and use self.model
+# adapt_dataset(self, application_instance_metadata, list_of_dataFrames, list_of_dataFramesUtilityLabels)
+#       -- purpose: self.train_dataset, self.val_dataset, self.test_normal_dataset, self.test_anomaly_dataset etc exist
+
 import arff
 import os, psutil
 import copy
@@ -111,11 +125,13 @@ class Solution_ekg_1:
 
     ## -------------- General methods --------------
     ## Model methods
-    def create_model(self, seq_len, n_features):
+    def create_model(self):
         info_message = "create_model -- Begin autoencoder model creation"
         self.Logger.info(self, info_message)
 
-        self.model = Recurrent_Autoencoder(self.device, seq_len, n_features, 128)
+        self.model = Recurrent_Autoencoder(
+            self.device, self.seq_len, self.n_features, 128
+        )
         self.model = self.model.to(self.device)
 
         info_message = "create_model -- Ended autoencoder model creation"
@@ -156,7 +172,7 @@ class Solution_ekg_1:
             )
 
     ## Functionality methods
-    def train(self, train_dataset, val_dataset, epochs):
+    def train(self, epochs=40):
         f1_time = datetime.now()
 
         info_message = "##########################################################"
@@ -170,8 +186,8 @@ class Solution_ekg_1:
 
         model, history = self.train_model_helper(
             self.model,
-            train_dataset,
-            val_dataset,
+            self.train_dataset,
+            self.val_dataset,
             n_epochs=epochs,
         )
         self.model = model
@@ -195,8 +211,8 @@ class Solution_ekg_1:
         )
         self.Logger.info(self, info_message)
 
-    def test(self, train_dataset, test_normal_dataset, test_anomaly_dataset):
-        _, losses = self.predict(self.model, train_dataset)
+    def test(self):
+        _, losses = self.predict(self.model, self.train_dataset)
         sns.displot(losses, bins=50, kde=True)
 
         # Using the threshold, we can turn the problem into a simple binary classification task:
@@ -206,20 +222,20 @@ class Solution_ekg_1:
         THRESHOLD = 26
 
         # normal heartbeats
-        predictions, pred_losses = self.predict(self.model, test_normal_dataset)
+        predictions, pred_losses = self.predict(self.model, self.test_normal_dataset)
         sns.displot(pred_losses, bins=50, kde=True)
         correct = sum(l <= THRESHOLD for l in pred_losses)
-        print(f"Correct normal predictions: {correct}/{len(test_normal_dataset)}")
+        print(f"Correct normal predictions: {correct}/{len(self.test_normal_dataset)}")
 
         # anomalies
-        anomaly_dataset = test_anomaly_dataset[: len(test_normal_dataset)]
+        anomaly_dataset = self.test_anomaly_dataset[: len(self.test_normal_dataset)]
         predictions, pred_losses = self.predict(self.model, anomaly_dataset)
         sns.displot(pred_losses, bins=50, kde=True)
         correct = sum(l > THRESHOLD for l in pred_losses)
         print(f"Correct anomaly predictions: {correct}/{len(anomaly_dataset)}")
 
         plt.figure(1)
-        plt.plot(test_normal_dataset[0])
+        plt.plot(self.test_normal_dataset[0])
         plt.plot(predictions[0])
         plt.legend(["beat", "prediction"])
         plt.title("Beat and prediction")
@@ -232,9 +248,45 @@ class Solution_ekg_1:
         list_of_dataFrames,
         list_of_dataFramesUtilityLabels,
     ):
-        newDataFrame = 2
-        print("test sol 1")
-        return newDataFrame
+        RANDOM_SEED = 42
+        try:
+            df = pd.concat(list_of_dataFrames)
+            new_columns = list(df.columns)
+            new_columns[-1] = "target"
+            df.columns = new_columns
+
+            class_normal = (
+                application_instance_metadata.dataset_metadata.numerical_value_of_desired_label
+            )
+            if class_normal != 0:
+                print("fuck")
+
+            normal_df = df[df.target == int(class_normal)].drop(labels="target", axis=1)
+            self.anormal_df = df[df.target != int(class_normal)].drop(
+                labels="target", axis=1
+            )
+
+            self.train_df, val_df = train_test_split(
+                normal_df, test_size=0.15, random_state=RANDOM_SEED
+            )
+            info_message = "Created train_df"
+            self.Logger.info(self, info_message)
+
+            self.val_df, self.test_df = train_test_split(
+                val_df, test_size=0.33, random_state=RANDOM_SEED
+            )
+            info_message = "Created val_df, test_df"
+            self.Logger.info(self, info_message)
+
+            self.train_dataset, self.seq_len, self.n_features = self.create_dataset(
+                self.train_df
+            )
+            self.val_dataset, _, _ = self.create_dataset(self.val_df)
+            self.test_normal_dataset, _, _ = self.create_dataset(self.test_df)
+            self.test_anomaly_dataset, _, _ = self.create_dataset(self.anormal_df)
+        except:
+            info_message = "Couldn't adapt dataset"
+            self.Logger.info(self, info_message)
 
     ## -------------- Particular methods --------------
     def train_model_helper(self, model, train_dataset, val_dataset, n_epochs):

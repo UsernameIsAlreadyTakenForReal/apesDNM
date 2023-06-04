@@ -419,6 +419,7 @@ def process_singular_file_type(Logger, file, app_instance_metadata):
             df = pd.DataFrame(data[0])
             info_message = f"Loaded file {file}. DataFrame is of shape {df.shape}"
             Logger.info("apes_dataset_handler.process_singular_file_type", info_message)
+            df.columns = list(range(len(df.columns)))
             return (
                 0,
                 "apes_dataset_handler.process_singular_file_type exited successfully",

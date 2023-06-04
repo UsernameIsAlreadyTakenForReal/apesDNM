@@ -39,7 +39,7 @@ device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 ###############################################################################
 
 ## Train data (500 entries)
-file_path = "../../../Dataset - ECG5000/ECG5000_TRAIN.arff"
+file_path = "../../../Datasets/Dataset - ECG5000/ECG5000_TRAIN.arff"
 data = arff.load(file_path)
 
 train_list = []
@@ -66,7 +66,7 @@ all_train_data = np.c_[train_data, train_labels]
 
 
 ## Test data (4500 entries)
-file_path = "../../../Dataset - ECG5000/ECG5000_TEST.arff"
+file_path = "../../../Datasets/Dataset - ECG5000/ECG5000_TEST.arff"
 data = arff.load(file_path)
 
 test_list = []
@@ -94,10 +94,10 @@ all_test_data = np.c_[test_data, test_labels]
 ###############################################################################
 ## ----------------------- Converting datasets to pandas ----------------------
 ###############################################################################
-df = pd.DataFrame(all_train_data)
+df_1 = pd.DataFrame(all_train_data)
 df_2 = pd.DataFrame(all_test_data)
 
-df = df._append(df_2)
+df = df_1._append(df_2)
 
 CLASS_NORMAL = 1
 class_names = ["Normal", "R on T", "PVC", "SP", "UB"]

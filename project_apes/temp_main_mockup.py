@@ -39,31 +39,50 @@ Logger.info("Program", init_message)
 # example_path = "../../Datasets/Dataset - ECG_Heartbeat/Dataset - ECG_Heartbeat.zip"
 # # example_path = "../../Datasets/Dataset - ECG5000/Dataset - ECG5000"
 
+dataset_metadata__dataset_path = example_path
+dataset_metadata__is_labeled = True
+dataset_metadata__file_keyword_names = []
+dataset_metadata__class_names = ["Normal", "R on T", "PVC", "SP", "UB"]
+dataset_metadata__label_column_name = "target"
+dataset_metadata__numerical_value_of_desired_label = 0
+dataset_metadata__separate_train_and_test = False
+dataset_metadata__percentage_of_split = [0.7]
+dataset_metadata__shuffle_rows = True
+
+application_metadata__display_dataFrames = False
+application_metadata__application_mode = "compare_solution"
+application_metadata__dataset_origin = "existing_dataset"
+application_metadata__dataset_category = "ekg"
+application_metadata__solution_category = "ekg"
+application_metadata__solution_nature = "supervised"
+application_metadata__solution_index = [1]
+application_metadata__model_origin = "train_new_model"
+application_metadata__model_train_epochs = 5
 
 dataset_metadata = Dataset_Metadata(
     Logger,
-    example_path,
-    True,
-    [],
-    ["Normal", "R on T", "PVC", "SP", "UB"],
-    "target",
-    0,
-    False,
-    [0.7],
-    True,
+    dataset_metadata__dataset_path,
+    dataset_metadata__is_labeled,
+    dataset_metadata__file_keyword_names,
+    dataset_metadata__class_names,
+    dataset_metadata__label_column_name,
+    dataset_metadata__numerical_value_of_desired_label,
+    dataset_metadata__separate_train_and_test,
+    dataset_metadata__percentage_of_split,
+    dataset_metadata__shuffle_rows,
 )
 application_instance_metadata = Application_Instance_Metadata(
     Logger,
     dataset_metadata,
-    False,
-    "compare_solution",
-    "existing_dataset",
-    "ekg",
-    "ekg",
-    "supervised",
-    [2],
-    "train_new_model",
-    5,
+    application_metadata__display_dataFrames,
+    application_metadata__application_mode,
+    application_metadata__dataset_origin,
+    application_metadata__dataset_category,
+    application_metadata__solution_category,
+    application_metadata__solution_nature,
+    application_metadata__solution_index,
+    application_metadata__model_origin,
+    application_metadata__model_train_epochs,
 )
 
 apes_application_instance = APES_Application(Logger, application_instance_metadata)

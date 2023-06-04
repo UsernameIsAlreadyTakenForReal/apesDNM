@@ -270,20 +270,22 @@ class APES_Application:
 
     def p3_run_solutions(self):
         for solution in self.solutions_list:
+            info_message = f"Beginning run for solution {solution}"
+            self.Logger.info(self, info_message)
             solution.adapt_dataset(
                 self.application_instance_metadata,
                 self.dataFramesList,
                 self.dataFramesUtilityList,
             )
 
-        if self.application_instance_metadata.model_origin == "train_new_model":
-            solution.create_model()
-            solution.train(self.application_instance_metadata.model_train_epochs)
-            solution.save_model()
-            solution.test()
-        else:
-            ## check if sizes compatible with dataset's sizes
-            solution.load_model()
-            solution.test()
+            if self.application_instance_metadata.model_origin == "train_new_model":
+                solution.create_model()
+                solution.train(self.application_instance_metadata.model_train_epochs)
+                solution.save_model()
+                solution.test()
+            else:
+                ## check if sizes compatible with dataset's sizes
+                solution.load_model()
+                solution.test()
 
         return 0, "Function p3_run_solutions exited successfully"

@@ -6,7 +6,7 @@
 #       -- purpose: self.model exists
 # save_model()
 #       -- purpose: self.model save
-# train(), test()
+# train(epochs), test()
 #       -- purpose: train and use self.model
 # adapt_dataset(self, application_instance_metadata, list_of_dataFrames, list_of_dataFramesUtilityLabels)
 #       -- purpose: self.X_train, self.y_train, self.X_test, self.y_test etc exist
@@ -16,16 +16,16 @@ import numpy as np
 import pandas as pd
 import seaborn as sns
 import matplotlib.pyplot as plt
+import warnings
+
+warnings.filterwarnings("ignore")
+
 from sklearn.metrics import classification_report
 from sklearn.model_selection import train_test_split
 from sklearn.metrics import f1_score
 from sklearn.metrics import confusion_matrix
 from keras.utils.np_utils import to_categorical
 from sklearn.utils import class_weight
-import warnings
-
-warnings.filterwarnings("ignore")
-
 from keras.layers import Dense, Convolution1D, MaxPool1D, Flatten, Dropout
 from keras.layers import Input
 from keras.models import Model
