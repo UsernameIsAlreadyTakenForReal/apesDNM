@@ -3,7 +3,7 @@ import { Divv } from "./StyledComponents";
 export default function About() {
   return (
     <Divv>
-      this is the 'about' page of our urban-octo-dizeratie. it is a creation by
+      this is the 'about' page of our urban-octo-dizeratie. it is a creation of
       cârlianu radu and pupitru daniel.
       <br /> <br />
       <Divv margin="0px" size="22.5px">

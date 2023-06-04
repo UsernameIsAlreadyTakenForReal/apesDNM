@@ -80,21 +80,31 @@ def upload_file():
 
     logger = Logger()
 
-    logger.info("upload_file", "hello from logger")
+    info_message = "upload has been triggered"
+    logger.info("upload_file", info_message)
 
     files = []
 
-    print("len of files sent is " + str(len(request.files)))
+    info_message = "# of files sent is " + str(len(request.files))
+    logger.info("upload_file", info_message)
 
     for i in range(len(request.files)):
         if request.files.get(f"file{i}"):
             files.append(request.files.get(f"file{i}"))
 
+            file = request.files.get(f"file{i}")
+
+            info_message = f"file{i}: " + file.filename
+            logger.info("request", info_message)
+
     temp_dir = tempfile.mkdtemp()
 
-    # from matplotlib import pyplot as plt
+    info_message = "the files have been temporarily saved to " + temp_dir
+    logger.info("tempfile", info_message)
 
-    # plt.switch_backend("agg")
+    from matplotlib import pyplot as plt
+
+    plt.switch_backend("agg")
     plots = []
 
     # plt.plot([1, 2, 3, 4])
@@ -103,10 +113,16 @@ def upload_file():
     # plt.savefig(figure_path_png)
     # plots.append(figure_path_png)
 
-    # plt.plot([1, 2, 3, 4], [1, 4, 9, 16])
-    # figure_path_png = os.path.join(temp_dir, "figure" + str(len(plots)) + ".png")
-    # plt.savefig(figure_path_png)
-    # plots.append(figure_path_png)
+    plt.plot([1, 2, 3, 4], [1, 4, 9, 16])
+    figure_path_png = os.path.join(temp_dir, "figure" + str(len(plots)) + ".png")
+    plt.savefig(figure_path_png)
+    plots.append(figure_path_png)
+
+    info_message = "plot has been created; can be found at " + figure_path_png
+    logger.info("matplotlib", info_message)
+
+    info_message = "exiting endpoint"
+    logger.info("upload_file", info_message)
 
     console_info = output.getvalue()
     sys.stdout = sys.__stdout__

@@ -10,14 +10,9 @@
 
 import { useEffect, useState } from "react";
 import * as React from "react";
-import { Divv, TextFieldFlex, Label, WrapperDiv } from "./StyledComponents";
+import { Divv, TextFieldFlex, Label } from "./StyledComponents";
 
-import { useNavigate } from "react-router-dom";
-
-import Terminal, { ColorMode, TerminalOutput } from "react-terminal-ui";
-
-import image from "C:\\Users\\DANIEL~1\\AppData\\Local\\Temp\\tmpgptvld9j\\figure0.png";
-// import image from "C:/Users/DANIEL~1/AppData/Local/Temp/tmpiez91a70/figure0.png";
+import Terminal from "react-terminal-ui";
 
 import image00 from "file:///C:/Users/danieldum/AppData/Local/Temp/tmpgptvld9j/figure0.png";
 
@@ -49,8 +44,6 @@ import {
 const BASE_URL = process.env.REACT_APP_BACKEND;
 
 export default function UploadComponent() {
-  const navigate = useNavigate();
-
   // show/hide elements
   const [showExistingMethod, setShowExistingMethod] = useState(false);
   const [showFileUploadMethod, setShowFileUploadMethod] = useState(false);
@@ -115,6 +108,12 @@ export default function UploadComponent() {
   const [dialogConfirmButtonHover, setDialogConfirmButtonHover] =
     useState(false);
 
+  const [method1Hover, setMethod1Hover] = useState(false);
+  const [method2Hover, setMethod2Hover] = useState(false);
+  const [method3Hover, setMethod3Hover] = useState(false);
+
+  const [supervisedCheckboxHover, setSupervisedCheckboxHover] = useState(false);
+
   // errors
   const [fileSelectionError, setFileSelectionError] = useState(false);
   const [fileSelectionErrorMessage, setFileSelectionErrorMessage] =
@@ -138,8 +137,6 @@ export default function UploadComponent() {
 
   // misc
   const [stringOfFilesUploaded, setStringOfFilesUploaded] = useState("");
-
-  const [imageUrl, setImageUrl] = useState("");
 
   // -------------------------------------------------------------------------
   function resetAllFormErrorsAndData() {
@@ -616,7 +613,7 @@ export default function UploadComponent() {
                 background: goBackButtonHover === false ? "black" : "orange",
                 color: goBackButtonHover === false ? "white" : "black",
                 fontWeight: "bold",
-                float: "left",
+                position: "absolute",
               }}
               variant="contained"
               color="primary"
@@ -672,39 +669,80 @@ export default function UploadComponent() {
 
             {selectedDataset === "EKG" ? (
               <div style={{ marginBottom: "20px" }}>
-                <FormControlLabel
-                  control={
-                    <Checkbox
-                      color="default"
-                      onChange={() => {
-                        handleEKGMethodsCheckboxes(1);
-                      }}
-                    />
+                <Tooltip
+                  title={
+                    <Typography fontSize={14}>LSTM auto-encoder</Typography>
                   }
-                  label="method #1"
-                />
-                <FormControlLabel
-                  control={
-                    <Checkbox
-                      color="default"
-                      onChange={() => {
-                        handleEKGMethodsCheckboxes(2);
-                      }}
-                    />
+                  placement="bottom"
+                  onMouseEnter={() => setMethod1Hover(true)}
+                  onMouseLeave={() => setMethod1Hover(false)}
+                >
+                  <FormControlLabel
+                    control={
+                      <Checkbox
+                        color="default"
+                        style={{
+                          backgroundColor: method1Hover ? "lightgray" : "",
+                          transition: "background 0.4s linear",
+                        }}
+                        onChange={() => {
+                          handleEKGMethodsCheckboxes(1);
+                        }}
+                      />
+                    }
+                    label="method #1"
+                  />
+                </Tooltip>
+
+                <Tooltip
+                  title={
+                    <Typography fontSize={14}>###PLACEHOLDER2###</Typography>
                   }
-                  label="method #2"
-                />
-                <FormControlLabel
-                  control={
-                    <Checkbox
-                      color="default"
-                      onChange={() => {
-                        handleEKGMethodsCheckboxes(3);
-                      }}
-                    />
+                  placement="bottom"
+                  onMouseEnter={() => setMethod2Hover(true)}
+                  onMouseLeave={() => setMethod2Hover(false)}
+                >
+                  <FormControlLabel
+                    control={
+                      <Checkbox
+                        color="default"
+                        style={{
+                          backgroundColor: method2Hover ? "lightgray" : "",
+                          transition: "background 0.4s linear",
+                        }}
+                        onChange={() => {
+                          handleEKGMethodsCheckboxes(2);
+                        }}
+                      />
+                    }
+                    label="method #2"
+                  />
+                </Tooltip>
+
+                <Tooltip
+                  title={
+                    <Typography fontSize={14}>###PLACEHOLDER3###</Typography>
                   }
-                  label="method #3"
-                />
+                  placement="bottom"
+                  onMouseEnter={() => setMethod3Hover(true)}
+                  onMouseLeave={() => setMethod3Hover(false)}
+                >
+                  <FormControlLabel
+                    control={
+                      <Checkbox
+                        color="default"
+                        style={{
+                          backgroundColor: method3Hover ? "lightgray" : "",
+                          transition: "background 0.4s linear",
+                        }}
+                        onChange={() => {
+                          handleEKGMethodsCheckboxes(3);
+                        }}
+                      />
+                    }
+                    label="method #3"
+                  />
+                </Tooltip>
               </div>
             ) : (
               <></>
@@ -734,7 +772,7 @@ export default function UploadComponent() {
       ) : showResults === false ? (
         <div
           style={{
-            border: "1px solid #ccc",
+            // border: "1px solid #ccc",
             // width: "55%",
             textAlign: "center",
           }}
@@ -749,7 +787,7 @@ export default function UploadComponent() {
                 background: goBackButtonHover === false ? "black" : "orange",
                 color: goBackButtonHover === false ? "white" : "black",
                 fontWeight: "bold",
-                float: "left",
+                position: "absolute",
               }}
               variant="contained"
               color="primary"
@@ -852,6 +890,8 @@ export default function UploadComponent() {
                   ""
                 )
               }
+              onMouseEnter={() => setSupervisedCheckboxHover(true)}
+              onMouseLeave={() => setSupervisedCheckboxHover(false)}
               placement="bottom"
             >
               <FormControlLabel
@@ -862,6 +902,13 @@ export default function UploadComponent() {
                     id="save-data-checkbox"
                     color="default"
                     disabled={labeledRadioValue !== "yes"}
+                    style={{
+                      backgroundColor:
+                        supervisedCheckboxHover && labeledRadioValue !== "yes"
+                          ? "lightgray"
+                          : "",
+                      transition: "background 0.4s linear",
+                    }}
                     onChange={() =>
                       setIsSupervisedCheckbox(!isSupervisedCheckbox)
                     }
@@ -1144,10 +1191,7 @@ export default function UploadComponent() {
 
       {showResults ? (
         <>
-          {/* <Divv>results are as follow:</Divv> */}
           <Divv size="22.5px" style={{ padding: "30px" }}>
-            {/* {responseData} */}
-
             <div
               style={{
                 margin: "25px",
@@ -1155,9 +1199,10 @@ export default function UploadComponent() {
               }}
             >
               <Terminal name="python outputs">
-                {">>>"} {responseData}
-                <br></br>
+                {/* {">>>"} {responseData}
+                <br></br> */}
                 {backendOutput.map((line) => {
+                  if (line === "") return;
                   return (
                     <>
                       {">>>"} {line}
@@ -1168,9 +1213,9 @@ export default function UploadComponent() {
               </Terminal>
             </div>
 
-            <Divv>
-              <img src={image00} alt="image"></img>
-            </Divv>
+            {/* <Divv>
+              <img src={image00} alt=""></img>
+            </Divv> */}
           </Divv>
         </>
       ) : (
@@ -1184,7 +1229,7 @@ export default function UploadComponent() {
           </DialogTitle>
           <DialogContent>
             <DialogContentText style={{ paddingRight: "30px" }}>
-              <pre>{dialogText}</pre>
+              <pre style={{ tabSize: "5" }}>{dialogText}</pre>
             </DialogContentText>
           </DialogContent>
           <DialogActions>
@@ -1201,6 +1246,7 @@ export default function UploadComponent() {
               onMouseEnter={() => setDialogBackButtonHover(true)}
               onMouseLeave={() => setDialogBackButtonHover(false)}
               onClick={() => {
+                setDialogBackButtonHover(false);
                 setDialogOpen(false);
               }}
             >
@@ -1226,6 +1272,7 @@ export default function UploadComponent() {
                   onFileUploadConfirm();
                 else onUseThisDatasetConfirm();
 
+                setDialogConfirmButtonHover(false);
                 setDialogOpen(false);
               }}
               autoFocus
