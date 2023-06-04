@@ -12,7 +12,7 @@
 #       -- purpose:
 
 
-class Solution_ekg_2:
+class Solution_ekg_3:
     def __init__(self, shared_definitions, Logger):
         self.Logger = Logger
 
