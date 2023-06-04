@@ -41,14 +41,13 @@ class Logger:
 ############################################################################
 
 
-from flask import Flask, request, send_file, send_from_directory
+from flask import Flask, request, send_from_directory
 from flask_cors import CORS
 from flask.json import jsonify
 
-import os
+import os, os.path
 import tempfile
 
-from datetime import datetime
 
 app = Flask(__name__)
 CORS(app)
@@ -56,10 +55,6 @@ CORS(app)
 
 def cls():
     os.system("cls" if os.name == "nt" else "clear")
-
-
-def print_data():
-    print("hello there")
 
 
 @app.route("/datasets", methods=["GET", "POST"])
@@ -71,6 +66,21 @@ def getDatasets():
 
 @app.route("/upload", methods=["GET", "POST"])
 def upload_file():
+    if (
+        len(
+            [
+                name
+                for name in os.listdir("images")
+                if os.path.isfile(os.path.join("images", name))
+            ]
+        )
+        > 10
+    ):
+        import shutil
+
+        shutil.rmtree("images")
+        os.makedirs("images")
+
     import sys
     from io import StringIO
 
@@ -101,7 +111,7 @@ def upload_file():
 
     temp_dir = tempfile.mkdtemp()
 
-    info_message = "the files have been temporarily saved to " + temp_dir
+    info_message = "temp file has been created: " + temp_dir
     logger.info("tempfile", info_message)
 
     from matplotlib import pyplot as plt
@@ -109,46 +119,57 @@ def upload_file():
     plt.switch_backend("agg")
     plots = []
 
-    # plt.plot([1, 2, 3, 4])
-    # plt.ylabel("some numbers")
-    # figure_path_png = os.path.join(temp_dir, "figure" + str(len(plots)) + ".png")
-    # plt.savefig(figure_path_png)
-    # plots.append(figure_path_png)
-
-    # plt.plot([1, 2, 3, 4], [1, 4, 9, 16])
-    # figure_path_png = os.path.join(temp_dir, "figure" + str(len(plots)) + ".png")
-    # plt.savefig(figure_path_png)
-    # plots.append(figure_path_png)
-
-    plt.plot([1, 2, 3, 4], [1, 4, 9, 16])
+    # create plot
+    plt.plot([1, 2, 3, 4])
+    plt.ylabel("numbers")
+    # create filename
     filename = str(uuid.uuid4()) + ".png"
-
+    # log info
     info_message = "plot filename is " + filename
     logger.info("matplotlib", info_message)
-
+    # create path and save
     figure_path_png = os.path.join("images", filename)
     plt.savefig(figure_path_png)
+    # add to array of plots
     plots.append(figure_path_png)
 
-    info_message = "plot has been created; can be found at " + figure_path_png
+    # clears the current plot
+    plt.clf()
+
+    # create plot
+    plt.plot([1, 2, 3, 4], [1, 4, 9, 16])
+    plt.ylabel("more numbers")
+    # create filename
+    filename = str(uuid.uuid4()) + ".png"
+    # log info
+    info_message = "plot filename is " + filename
     logger.info("matplotlib", info_message)
+    # create path and save
+    figure_path_png = os.path.join("images", filename)
+    plt.savefig(figure_path_png)
+    # add to array of plots
+    plots.append(figure_path_png)
 
     info_message = "exiting endpoint"
     logger.info("upload_file", info_message)
 
-    console_info = output.getvalue()
-    sys.stdout = sys.__stdout__
-
-    result = {"plots": plots, "results": console_info}
-    return jsonify(result)
-
     if len(files) == 0:
-        return "request ok. no files to save"
+        info_message = "request ok. no files to save"
+        logger.info("file_save", info_message)
 
     for file in files:
         file.save(os.path.join(temp_dir, file.filename))
 
-    return "request ok. files saved at " + temp_dir
+    info_message = "request ok. files saved at " + temp_dir
+    logger.info("file_save", info_message)
+
+    console_info = output.getvalue()
+    sys.stdout = sys.__stdout__
+
+    results = "Run has been successful. Accuracy at 95% over 85 epochs."
+
+    result = {"results": results, "plots": plots, "console": console_info}
+    return jsonify(result)
 
 
 @app.route("/images/<path:filename>")

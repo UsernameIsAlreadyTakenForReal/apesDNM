@@ -1,7 +1,6 @@
 // TO DO
 
 // 4. create in backend metadata with needed structure
-// 5. create results page
 
 // 1. results page with text
 // 2. results page with images (matlab plots - maybe an image viewer)
@@ -84,8 +83,9 @@ export default function UploadComponent() {
 
   const [responseData, setResponseData] = useState(null);
 
-  const [plotPaths, setPlotPaths] = useState([]);
-  const [backendOutput, setBackendOutput] = useState([]);
+  const [backendMLPlots, setBackendMLPlots] = useState([]);
+  const [backendConsole, setBackendConsole] = useState([]);
+  const [backendResults, setBackendResults] = useState("");
 
   // hovers
   const [existingDatasetButtonHover, setExistingDatasetButtonHover] =
@@ -363,6 +363,10 @@ export default function UploadComponent() {
     const textResponse = await response.text();
     setResponseData(textResponse);
 
+    setLoading(false);
+
+    handleResults(textResponse);
+
     // setTimeout(() => setLoadingText("redirecting to results page."), 0);
     // setTimeout(() => setLoadingText("redirecting to results page.."), 500);
     // setTimeout(() => setLoadingText("redirecting to results page..."), 1000);
@@ -374,10 +378,6 @@ export default function UploadComponent() {
     //   setLoading(false);
     //   navigate("/results");
     // }, 3000);
-
-    setLoading(false);
-
-    handleResults(textResponse);
   }
 
   // -------------------------------------------------------------------------
@@ -448,6 +448,10 @@ export default function UploadComponent() {
     const textResponse = await response.text();
     setResponseData(textResponse);
 
+    setLoading(false);
+
+    handleResults(textResponse);
+
     // -------------------------------------------------------------------------
     // setTimeout(() => setLoadingText("redirecting to results page."), 0);
     // setTimeout(() => setLoadingText("redirecting to results page.."), 500);
@@ -461,10 +465,6 @@ export default function UploadComponent() {
     //   navigate("/results");
     // }, 3000);
     // -------------------------------------------------------------------------
-
-    setLoading(false);
-
-    handleResults(textResponse);
   }
 
   // -------------------------------------------------------------------------
@@ -475,8 +475,9 @@ export default function UploadComponent() {
       console.log(plotPath);
     });
 
-    setPlotPaths(data.plots);
-    setBackendOutput(data.results.split("\n"));
+    setBackendMLPlots(data.plots);
+    setBackendConsole(data.console.split("\n"));
+    setBackendResults(data.results);
 
     setShowResults(true);
   }
@@ -1191,17 +1192,21 @@ export default function UploadComponent() {
 
       {showResults ? (
         <>
+          <Divv top="55px" bottom="0px" left="55px">
+            {backendResults}
+          </Divv>
+
           <Divv size="22.5px" style={{ padding: "30px" }}>
             <div
               style={{
-                margin: "25px",
+                margin: "5px",
                 width: "auto",
               }}
             >
               <Terminal name="python outputs">
-                {">>>"} {responseData}
-                <br></br>
-                {backendOutput.map((line) => {
+                {/* {">>>"} {responseData}
+                <br></br> */}
+                {backendConsole.map((line) => {
                   if (line === "") return;
                   return (
                     <>
@@ -1214,13 +1219,19 @@ export default function UploadComponent() {
             </div>
 
             <Divv>
+              {backendMLPlots.map((plot) => {
+                return <img src={BASE_URL + plot} />;
+              })}
+            </Divv>
+
+            {/* <Divv>
               <img
                 src={
                   BASE_URL + "images/406fc8ef-f3c4-4510-ad77-dae99d1d627c.png"
                 }
                 alt=""
               ></img>
-            </Divv>
+            </Divv> */}
           </Divv>
         </>
       ) : (
