@@ -13,6 +13,9 @@ import { Divv, TextFieldFlex, Label } from "./StyledComponents";
 
 import Terminal from "react-terminal-ui";
 
+import lstmSVG from "../lstm.svg";
+import cnnSVG from "../cnn.svg";
+
 import image00 from "file:///C:/Users/danieldum/AppData/Local/Temp/tmpgptvld9j/figure0.png";
 
 import {
@@ -347,9 +350,19 @@ export default function UploadComponent() {
       formData.append(`file${i}`, selectedFiles[i]);
     }
 
-    formData.append("percentage", trainDataPercentage);
-    formData.append("labelColumn", labelColumn);
-    formData.append("normalClass", normalClass);
+    formData.append("is_labeled", labeledRadioValue === "yes");
+    formData.append("class_names", classes);
+    formData.append("label_column_name", labelColumn);
+    formData.append("desired_label", normalClass);
+    formData.append("separate_train_and_test", separateTrainAndTestCheckbox);
+    formData.append("percentage_of_split ", trainDataPercentage);
+    formData.append("shuffle_rows", shuffleRows);
+
+    const solutionNature = isSupervisedCheckbox ? "supervised" : "unsupervised";
+    formData.append("solution_nature", solutionNature);
+    formData.append("dataset_origin", "new_dataset");
+    formData.append("model_train_epoch", epochs);
+
     formData.append("saveData", saveDataCheckbox);
 
     setLoading(true);
@@ -404,7 +417,7 @@ export default function UploadComponent() {
 
     if (selectedDataset === "EKG" && selectedMethods.length === 0) {
       setDatasetError(true);
-      setDatasetErrorMessage("you need to select a method for EKG first...");
+      setDatasetErrorMessage("you need to select a method for ekg first");
       return;
     }
 
@@ -429,8 +442,12 @@ export default function UploadComponent() {
   async function onUseThisDatasetConfirm() {
     const formData = new FormData();
 
-    formData.append("dataset", selectedDataset);
-    formData.append("methods", selectedMethods);
+    const applicationMode =
+      selectedMethods.length > 1 ? "retrieve_data" : "compare_solutions";
+
+    formData.append("application_mode", applicationMode);
+    formData.append("dataset_category", selectedDataset);
+    formData.append("solution_index", selectedMethods);
 
     setLoading(true);
     setLoadingText("processing...");
@@ -672,7 +689,15 @@ export default function UploadComponent() {
               <div style={{ marginBottom: "20px" }}>
                 <Tooltip
                   title={
-                    <Typography fontSize={14}>LSTM auto-encoder</Typography>
+                    <>
+                      <Typography
+                        fontSize={14}
+                        style={{ marginBottom: "5px", padding: "5px" }}
+                      >
+                        lstm auto-encoder (pytorch)
+                      </Typography>
+                      <img src={lstmSVG} alt="m1" />
+                    </>
                   }
                   placement="bottom"
                   onMouseEnter={() => setMethod1Hover(true)}
@@ -697,7 +722,15 @@ export default function UploadComponent() {
 
                 <Tooltip
                   title={
-                    <Typography fontSize={14}>###PLACEHOLDER2###</Typography>
+                    <>
+                      <Typography
+                        fontSize={14}
+                        style={{ marginBottom: "5px", padding: "5px" }}
+                      >
+                        convolutional nn (tensorflow/keras)
+                      </Typography>
+                      <img src={cnnSVG} alt="m2" />
+                    </>
                   }
                   placement="bottom"
                   onMouseEnter={() => setMethod2Hover(true)}

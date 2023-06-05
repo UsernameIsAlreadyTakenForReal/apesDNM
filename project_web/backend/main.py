@@ -21,6 +21,18 @@
 
 # ############################################################################
 
+# from "../../project_apes" import apes_metada_handler
+
+# import importlib.util
+
+# spec = importlib.util.spec_from_file_location(
+#     "apes_metada_handler", "../../project_apes/apes_metada_handler"
+# )
+# metadata_handler = importlib.util.module_from_spec(spec)
+# dataset_metadata = metadata_handler.Dataset_Metadata()
+# dataset_metadata.getMetadataAsString()
+
+
 from datetime import datetime
 
 
@@ -66,34 +78,38 @@ def getDatasets():
 
 @app.route("/upload", methods=["GET", "POST"])
 def upload_file():
-    if (
-        len(
-            [
-                name
-                for name in os.listdir("images")
-                if os.path.isfile(os.path.join("images", name))
-            ]
-        )
-        > 10
-    ):
-        import shutil
-
-        shutil.rmtree("images")
-        os.makedirs("images")
+    # ########################################################################
+    # ########################### changing output ############################
+    # ########################################################################
 
     import sys
     from io import StringIO
-
-    import uuid
 
     # changing output to variable so we can show it in the frontend
     output = StringIO()
     sys.stdout = output
 
+    # ########################################################################
+    # ########################### init-ing logger ############################
+    # ########################################################################
+
     logger = Logger()
 
     info_message = "upload has been triggered"
     logger.info("upload_file", info_message)
+
+    # ########################################################################
+    # ###################### cleaning-up images folder #######################
+    # ########################################################################
+
+    import shutil
+
+    shutil.rmtree("images")
+    os.makedirs("images")
+
+    # ########################################################################
+    # ########################### files processing ###########################
+    # ########################################################################
 
     files = []
 
@@ -111,27 +127,49 @@ def upload_file():
 
     temp_dir = tempfile.mkdtemp()
 
-    info_message = "temp file has been created: " + temp_dir
+    info_message = "temp folder has been created: " + temp_dir
     logger.info("tempfile", info_message)
 
+    if len(files) == 0:
+        info_message = "files processing done. no files to save"
+        logger.info("file_save", info_message)
+    else:
+        for file in files:
+            file.save(os.path.join(temp_dir, file.filename))
+        info_message = "files processing done. files saved at " + temp_dir
+        logger.info("file_save", info_message)
+
+    # ########################################################################
+    # ########################## gathering metadata ##########################
+    # ########################################################################
+
+    dataset_path = temp_dir
+    is_labeled = request.form.get("input_name", False)
+    class_names = request.form.get("class_names", [])
+    label_column_name = request.form.get("class_names", "")
+    desired_label = request.form.get("desired_label", "")
+    separate_train_and_test = request.form.get("separate_train_and_test", False)
+    percentage_of_split = request.form.get("percentage_of_split", 0.7)
+    shuffle_rows = request.form.get("shuffle_rows", True)
+    dataset_origin = request.form.get("dataset_origin", "new_dataset")
+    solution_nature = request.form.get("solution_nature", "unsupervised")
+    dataset_origin = request.form.get("dataset_origin", "new_dataset")
+    model_train_epoch = request.form.get("model_train_epoch", 40)
+    application_mode = request.form.get("application_mode", "compare_solutions")
+    dataset_category = request.form.get("dataset_category", "ekg")
+    solution_index = request.form.get("solution_index", [1])
+
+    saveData = request.form.get("saveData", False)
+
+    # ########################################################################
+    # ########################### plot processing ############################
+    # ########################################################################
+
     from matplotlib import pyplot as plt
+    import uuid
 
     plt.switch_backend("agg")
     plots = []
-
-    # create plot
-    plt.plot([1, 2, 3, 4])
-    plt.ylabel("numbers")
-    # create filename
-    filename = str(uuid.uuid4()) + ".png"
-    # log info
-    info_message = "plot filename is " + filename
-    logger.info("matplotlib", info_message)
-    # create path and save
-    figure_path_png = os.path.join("images", filename)
-    plt.savefig(figure_path_png)
-    # add to array of plots
-    plots.append(figure_path_png)
 
     # clears the current plot
     plt.clf()
@@ -153,18 +191,12 @@ def upload_file():
     info_message = "exiting endpoint"
     logger.info("upload_file", info_message)
 
-    if len(files) == 0:
-        info_message = "request ok. no files to save"
-        logger.info("file_save", info_message)
-
-    for file in files:
-        file.save(os.path.join(temp_dir, file.filename))
-
-    info_message = "request ok. files saved at " + temp_dir
-    logger.info("file_save", info_message)
-
     console_info = output.getvalue()
     sys.stdout = sys.__stdout__
+
+    # ########################################################################
+    # ########################### creating results ###########################
+    # ########################################################################
 
     results = "Run has been successful. Accuracy at 95% over 85 epochs."
 
