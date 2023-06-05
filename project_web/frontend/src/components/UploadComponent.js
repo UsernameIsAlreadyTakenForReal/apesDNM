@@ -1,12 +1,3 @@
-// TO DO
-
-// 4. create in backend metadata with needed structure
-
-// 1. results page with text
-// 2. results page with images (matlab plots - maybe an image viewer)
-// 3. sse/websocket again?
-// 4. ekg methods tooltip images
-
 import { useEffect, useState } from "react";
 import * as React from "react";
 import { Divv, TextFieldFlex, Label } from "./StyledComponents";
@@ -15,8 +6,6 @@ import Terminal from "react-terminal-ui";
 
 import lstmSVG from "../lstm.svg";
 import cnnSVG from "../cnn.svg";
-
-import image00 from "file:///C:/Users/danieldum/AppData/Local/Temp/tmpgptvld9j/figure0.png";
 
 import {
   Button,
@@ -171,10 +160,6 @@ export default function UploadComponent() {
     setLabelColumnError(false);
     setNormalClassError(false);
     setClassesTextfieldsError(false);
-
-    // document.getElementById("percentage-field").value = "";
-    // document.getElementById("label-column-field").value = "";
-    // document.getElementById("normal-class-field").value = "";
   }
 
   // -------------------------------------------------------------------------
@@ -361,7 +346,7 @@ export default function UploadComponent() {
     const solutionNature = isSupervisedCheckbox ? "supervised" : "unsupervised";
     formData.append("solution_nature", solutionNature);
     formData.append("dataset_origin", "new_dataset");
-    formData.append("model_train_epoch", epochs);
+    formData.append("model_train_epochs", epochs);
 
     formData.append("saveData", saveDataCheckbox);
 
@@ -379,18 +364,6 @@ export default function UploadComponent() {
     setLoading(false);
 
     handleResults(textResponse);
-
-    // setTimeout(() => setLoadingText("redirecting to results page."), 0);
-    // setTimeout(() => setLoadingText("redirecting to results page.."), 500);
-    // setTimeout(() => setLoadingText("redirecting to results page..."), 1000);
-    // setTimeout(() => setLoadingText("redirecting to results page."), 1500);
-    // setTimeout(() => setLoadingText("redirecting to results page.."), 2000);
-    // setTimeout(() => setLoadingText("redirecting to results page..."), 2500);
-
-    // setTimeout(() => {
-    //   setLoading(false);
-    //   navigate("/results");
-    // }, 3000);
   }
 
   // -------------------------------------------------------------------------
@@ -468,20 +441,6 @@ export default function UploadComponent() {
     setLoading(false);
 
     handleResults(textResponse);
-
-    // -------------------------------------------------------------------------
-    // setTimeout(() => setLoadingText("redirecting to results page."), 0);
-    // setTimeout(() => setLoadingText("redirecting to results page.."), 500);
-    // setTimeout(() => setLoadingText("redirecting to results page..."), 1000);
-    // setTimeout(() => setLoadingText("redirecting to results page."), 1500);
-    // setTimeout(() => setLoadingText("redirecting to results page.."), 2000);
-    // setTimeout(() => setLoadingText("redirecting to results page..."), 2500);
-
-    // setTimeout(() => {
-    //   setLoading(false);
-    //   navigate("/results");
-    // }, 3000);
-    // -------------------------------------------------------------------------
   }
 
   // -------------------------------------------------------------------------
@@ -614,13 +573,7 @@ export default function UploadComponent() {
       ) : showExistingMethod === true &&
         showFileUploadMethod === false &&
         showResults === false ? (
-        <div
-          style={{
-            // border: "1px solid #ccc",
-            // width: "45%",
-            textAlign: "center",
-          }}
-        >
+        <div style={{ textAlign: "center" }}>
           <Divv
             style={{
               textAlign: "left",
@@ -804,13 +757,7 @@ export default function UploadComponent() {
           </form>
         </div>
       ) : showResults === false ? (
-        <div
-          style={{
-            // border: "1px solid #ccc",
-            // width: "55%",
-            textAlign: "center",
-          }}
-        >
+        <div style={{ textAlign: "center" }}>
           <Divv
             style={{
               textAlign: "left",
@@ -1047,19 +994,13 @@ export default function UploadComponent() {
                         style={{
                           cursor: "pointer",
                           borderRadius: "52px",
-                          // border: "1px solid #ccc",
                           padding: "15px",
                           margin: "10px",
                           background:
                             removeClassButtonHover === false
                               ? "white"
                               : "orange",
-                          color:
-                            removeClassButtonHover === false
-                              ? "black"
-                              : "black",
                           transition: "background 0.4s linear",
-                          // transition: "color 0.4s linear",
                         }}
                         onMouseEnter={() => setRemoveClassButtonHover(true)}
                         onMouseLeave={() => setRemoveClassButtonHover(false)}
@@ -1076,15 +1017,11 @@ export default function UploadComponent() {
                         style={{
                           cursor: "pointer",
                           borderRadius: "52px",
-                          // border: "1px solid #ccc",
                           padding: "15px",
                           margin: "10px",
                           background:
                             addClassButtonHover === false ? "white" : "orange",
-                          color:
-                            addClassButtonHover === false ? "black" : "black",
                           transition: "background 0.4s linear",
-                          // transition: "color 0.4s linear",
                         }}
                         onMouseEnter={() => setAddClassButtonHover(true)}
                         onMouseLeave={() => setAddClassButtonHover(false)}
@@ -1237,8 +1174,6 @@ export default function UploadComponent() {
               }}
             >
               <Terminal name="python outputs">
-                {/* {">>>"} {responseData}
-                <br></br> */}
                 {backendConsole.map((line) => {
                   if (line === "") return;
                   return (
@@ -1256,15 +1191,6 @@ export default function UploadComponent() {
                 return <img src={BASE_URL + plot} />;
               })}
             </Divv>
-
-            {/* <Divv>
-              <img
-                src={
-                  BASE_URL + "images/406fc8ef-f3c4-4510-ad77-dae99d1d627c.png"
-                }
-                alt=""
-              ></img>
-            </Divv> */}
           </Divv>
         </>
       ) : (

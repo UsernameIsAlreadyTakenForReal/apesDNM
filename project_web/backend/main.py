@@ -125,7 +125,7 @@ def upload_file():
             info_message = f"file{i}: " + file.filename
             logger.info("request", info_message)
 
-    temp_dir = tempfile.mkdtemp()
+    temp_dir = ""
 
     info_message = "temp folder has been created: " + temp_dir
     logger.info("tempfile", info_message)
@@ -134,6 +134,7 @@ def upload_file():
         info_message = "files processing done. no files to save"
         logger.info("file_save", info_message)
     else:
+        temp_dir = tempfile.mkdtemp()
         for file in files:
             file.save(os.path.join(temp_dir, file.filename))
         info_message = "files processing done. files saved at " + temp_dir
@@ -143,21 +144,30 @@ def upload_file():
     # ########################## gathering metadata ##########################
     # ########################################################################
 
+    #
     dataset_path = temp_dir
-    is_labeled = request.form.get("input_name", False)
+    is_labeled = request.form.get("input_name", True)
+    file_keyword_names = request.form.get("file_keyword_names", [])
     class_names = request.form.get("class_names", [])
-    label_column_name = request.form.get("class_names", "")
-    desired_label = request.form.get("desired_label", "")
+    label_column_name = request.form.get("class_names", "target")
+    numerical_value_of_desired_label = request.form.get(
+        "numerical_value_of_desired_label", 0
+    )
+    desired_label = request.form.get("desired_label", "")  # ????
     separate_train_and_test = request.form.get("separate_train_and_test", False)
     percentage_of_split = request.form.get("percentage_of_split", 0.7)
-    shuffle_rows = request.form.get("shuffle_rows", True)
-    dataset_origin = request.form.get("dataset_origin", "new_dataset")
-    solution_nature = request.form.get("solution_nature", "unsupervised")
-    dataset_origin = request.form.get("dataset_origin", "new_dataset")
-    model_train_epoch = request.form.get("model_train_epoch", 40)
+    shuffle_rows = request.form.get("shuffle_rows", False)
+
+    # application instance metadata
+    display_dataFrames = request.form.get("display_dataFrames", False)
     application_mode = request.form.get("application_mode", "compare_solutions")
+    dataset_origin = request.form.get("dataset_origin", "new_dataset")
     dataset_category = request.form.get("dataset_category", "ekg")
+    solution_category = request.form.get("solution_category", "ekg")
+    solution_nature = request.form.get("solution_nature", "supervised")
     solution_index = request.form.get("solution_index", [1])
+    model_origin = request.form.get("model_origin", "train_new_model")
+    model_train_epochs = request.form.get("model_train_epochs", 40)
 
     saveData = request.form.get("saveData", False)
 
