@@ -127,9 +127,6 @@ def upload_file():
 
     temp_dir = ""
 
-    info_message = "temp folder has been created: " + temp_dir
-    logger.info("tempfile", info_message)
-
     if len(files) == 0:
         info_message = "files processing done. no files to save"
         logger.info("file_save", info_message)

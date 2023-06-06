@@ -1,5 +1,4 @@
 import { useEffect, useState } from "react";
-import * as React from "react";
 import { Divv, TextFieldFlex, Label } from "./StyledComponents";
 
 import Terminal from "react-terminal-ui";
@@ -1175,7 +1174,7 @@ export default function UploadComponent() {
             >
               <Terminal name="python outputs">
                 {backendConsole.map((line) => {
-                  if (line === "") return;
+                  if (line === "") return <></>;
                   return (
                     <>
                       {">>>"} {line}
