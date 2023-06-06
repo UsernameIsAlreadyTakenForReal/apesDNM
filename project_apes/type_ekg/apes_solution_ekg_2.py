@@ -11,6 +11,8 @@
 # adapt_dataset(self, application_instance_metadata, list_of_dataFrames, list_of_dataFramesUtilityLabels)
 #       -- purpose: self.X_train, self.y_train, self.X_test, self.y_test etc exist
 
+# TODO: how many output neurons bro
+
 import os
 import numpy as np
 import pandas as pd
