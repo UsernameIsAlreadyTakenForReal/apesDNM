@@ -24,6 +24,8 @@
 # NON-TODO: if there are 2 "train" files, maybe user has different use-cases. Couldn't think of a scenario in which this happens.
 # TODO: fuck knows how, but make sure the label/target is in the last column
 
+import sys
+
 import arff
 import math
 import pathlib
@@ -31,6 +33,9 @@ import pandas as pd
 import numpy as np
 
 from scipy.io.arff import loadarff
+from helpers_aiders_and_conveniencers.misc_functions import (
+    how_many_different_values_in_list,
+)
 
 import re
 import os
@@ -410,7 +415,21 @@ def process_singular_file_type(Logger, file, app_instance_metadata):
                     )
                     df = df.sample(frac=1).reset_index(drop=True)
                     df.columns = list(range(len(df.columns)))
-                    df = normalize_label_column(Logger, app_instance_metadata, df)
+                    if app_instance_metadata.dataset_metadata.is_labeled == True:
+                        # assuming label resides in the last column
+                        classes_list = [
+                            int(x) for x in df.iloc[:, df.shape[1] - 1].values
+                        ]
+                        if (
+                            app_instance_metadata.dataset_metadata.number_of_classes
+                            != how_many_different_values_in_list(classes_list)
+                        ):
+                            return (
+                                1,
+                                "Number of classes in dataFrame does not correspond to number of classes inputted",
+                                df,
+                            )
+                        df = normalize_label_column(Logger, app_instance_metadata, df)
                 return (
                     0,
                     "apes_dataset_handler.process_singular_file_type exited successfully",
@@ -422,7 +441,19 @@ def process_singular_file_type(Logger, file, app_instance_metadata):
             info_message = f"Loaded file {file}. DataFrame is of shape {df.shape}"
             Logger.info("apes_dataset_handler.process_singular_file_type", info_message)
             df.columns = list(range(len(df.columns)))
-            df = normalize_label_column(Logger, app_instance_metadata, df)
+            if app_instance_metadata.dataset_metadata.is_labeled == True:
+                # assuming label resides in the last column
+                classes_list = [int(x) for x in df.iloc[:, df.shape[1] - 1].values]
+                if (
+                    app_instance_metadata.dataset_metadata.number_of_classes
+                    != how_many_different_values_in_list(classes_list)
+                ):
+                    return (
+                        1,
+                        "Number of classes in dataFrame does not correspond to number of classes inputted",
+                        df,
+                    )
+                df = normalize_label_column(Logger, app_instance_metadata, df)
             return (
                 0,
                 "apes_dataset_handler.process_singular_file_type exited successfully",
@@ -440,9 +471,14 @@ def process_singular_file_type(Logger, file, app_instance_metadata):
 def normalize_label_column(Logger, app_instance_metadata, dataFrame):
     df = []
     cols = dataFrame.shape[1] - 1
+
     if app_instance_metadata.dataset_metadata.is_labeled == True:
         # assuming label resides in the last column
         target_list = [int(x) for x in dataFrame.iloc[:, cols].values]
+        print(
+            "these many unique values "
+            + str(how_many_different_values_in_list(target_list))
+        )
         # info_message = f"Old targets are {target_list}"
         # Logger.info("apes_dataset_handler.normalize_label_column", info_message)
 

@@ -23,6 +23,7 @@ class Dataset_Metadata:
         dataset_path="",
         is_labeled=True,
         file_keyword_names=[],
+        number_of_classes=5,
         class_names=[],
         label_column_name="target",
         numerical_value_of_desired_label=0,
@@ -35,6 +36,7 @@ class Dataset_Metadata:
         self.dataset_path = dataset_path
         self.is_labeled = is_labeled
         self.file_keyword_names = file_keyword_names
+        self.number_of_classes = number_of_classes
         self.class_names = class_names
         self.label_column_name = label_column_name
         self.numerical_value_of_desired_label = numerical_value_of_desired_label
@@ -52,6 +54,8 @@ class Dataset_Metadata:
             + str(self.dataset_path)
             + "\n|___is_labeled = "
             + str(self.is_labeled)
+            + "\n|number_of_classes = "
+            + str(self.number_of_classes)
             + "\n|___file_keyword_names = "
             + str(self.file_keyword_names)
             + "\n|___class_names = "

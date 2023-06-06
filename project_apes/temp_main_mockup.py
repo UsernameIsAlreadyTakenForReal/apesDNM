@@ -42,6 +42,7 @@ Logger.info("Program", init_message)
 dataset_metadata__dataset_path = example_path
 dataset_metadata__is_labeled = True
 dataset_metadata__file_keyword_names = []
+dataset_metadata__number_of_classes = 5
 dataset_metadata__class_names = ["Normal", "R on T", "PVC", "SP", "UB"]
 dataset_metadata__label_column_name = "target"
 dataset_metadata__numerical_value_of_desired_label = 0
@@ -50,7 +51,7 @@ dataset_metadata__percentage_of_split = [0.7]
 dataset_metadata__shuffle_rows = True
 
 application_metadata__display_dataFrames = False
-application_metadata__application_mode = "compare_solution"
+application_metadata__application_mode = "run_one_solution"
 application_metadata__dataset_origin = "existing_dataset"
 application_metadata__dataset_category = "ekg"
 application_metadata__solution_category = "ekg"
@@ -64,6 +65,7 @@ dataset_metadata = Dataset_Metadata(
     dataset_metadata__dataset_path,
     dataset_metadata__is_labeled,
     dataset_metadata__file_keyword_names,
+    dataset_metadata__number_of_classes,
     dataset_metadata__class_names,
     dataset_metadata__label_column_name,
     dataset_metadata__numerical_value_of_desired_label,

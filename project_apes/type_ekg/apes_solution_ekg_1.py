@@ -195,9 +195,7 @@ class Solution_ekg_1:
 
         info_message = "##########################################################"
         self.Logger.info(self, info_message)
-        info_message = (
-            f"Begining training for solution_ekg_1. Number of epochs: {epochs}"
-        )
+        info_message = f"Begining training for solution_ekg_1. Number of epochs: {epochs}. Using device {self.device}"
         self.Logger.info(self, info_message)
         info_message = "##########################################################"
         self.Logger.info(self, info_message)
@@ -330,15 +328,12 @@ class Solution_ekg_1:
 
         for epoch in range(1, n_epochs + 1):
             time_temp = datetime.now()
-            print("begin train_model epoch {i}".format(i=epoch))
+            info_message = f"Epoch {epoch}"
+            self.Logger.info(self, info_message)
             model = model.train()
 
             train_losses = []
-            print(len(train_dataset))
-            seq_no = 0
             for seq_true in train_dataset:
-                seq_no += 1
-                print("seq no:" + str(seq_no))
                 optimizer.zero_grad()
 
                 seq_true = seq_true.to(self.device)
@@ -351,7 +346,6 @@ class Solution_ekg_1:
 
                 train_losses.append(loss.item())
 
-            print("works")
             val_losses = []
             model = model.eval()
             with torch.no_grad():
@@ -372,9 +366,8 @@ class Solution_ekg_1:
                 best_loss = val_loss
                 best_model_wts = copy.deepcopy(model.state_dict())
 
-            print(f"Epoch {epoch}: train loss {train_loss} val loss {val_loss}")
-            time_per_epoch = (datetime.now() - time_temp).seconds
-            print(time_per_epoch)
+            info_message = f"Epoch {epoch}: train loss {train_loss}%, val loss {val_loss}%. Time: {(datetime.now() - time_temp).seconds}s"
+            self.Logger.info(self, info_message)
 
         model.load_state_dict(best_model_wts)
         return model.eval(), history
