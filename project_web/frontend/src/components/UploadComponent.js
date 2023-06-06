@@ -1,3 +1,6 @@
+// TO DO
+// add indexOf for desired_value
+
 import { useEffect, useState } from "react";
 import { Divv, TextFieldFlex, Label } from "./StyledComponents";
 
@@ -129,6 +132,9 @@ export default function UploadComponent() {
 
   // misc
   const [stringOfFilesUploaded, setStringOfFilesUploaded] = useState("");
+
+  // -------------------------------------------------------------------------
+  const delay = (ms) => new Promise((res) => setTimeout(res, ms));
 
   // -------------------------------------------------------------------------
   function resetAllFormErrorsAndData() {
@@ -353,6 +359,10 @@ export default function UploadComponent() {
     setLoading(true);
     setLoadingText("processing...");
 
+    await delay(500);
+
+    setLoading(false);
+
     const response = await fetch(BASE_URL + "upload", {
       method: "POST",
       body: formData,
@@ -360,8 +370,6 @@ export default function UploadComponent() {
 
     const textResponse = await response.text();
     setResponseData(textResponse);
-
-    setLoading(false);
 
     handleResults(textResponse);
   }
@@ -439,6 +447,30 @@ export default function UploadComponent() {
     setResponseData(textResponse);
 
     setLoading(false);
+    setLoadingText("processing...");
+
+    await delay(500);
+
+    handleResults(textResponse);
+  }
+
+  async function fetchTesting() {
+    // setLoading(true);
+    // setLoadingText("processing...");
+
+    // await delay(500);
+
+    // setLoading(false);
+
+    setLoadingText("processing...");
+
+    const response = await fetch(BASE_URL + "upload", {
+      method: "POST",
+      body: { id: 1 },
+    });
+
+    const textResponse = await response.text();
+    setResponseData(textResponse);
 
     handleResults(textResponse);
   }
@@ -568,6 +600,14 @@ export default function UploadComponent() {
                 </Button>
               </Tooltip>
             </Divv>
+            <Button
+              onClick={() => {
+                setShowResults(true);
+                fetchTesting();
+              }}
+            >
+              Fetch test
+            </Button>
           </div>
         </>
       ) : showExistingMethod === true &&
@@ -1162,10 +1202,6 @@ export default function UploadComponent() {
 
       {showResults ? (
         <>
-          <Divv top="55px" bottom="0px" left="55px">
-            {backendResults}
-          </Divv>
-
           <Divv size="22.5px" style={{ padding: "30px" }}>
             <div
               style={{
@@ -1185,6 +1221,10 @@ export default function UploadComponent() {
                 })}
               </Terminal>
             </div>
+
+            <Divv top="55px" bottom="0px" left="55px">
+              {backendResults}
+            </Divv>
 
             <Divv>
               {backendMLPlots.map((plot) => {
@@ -1268,7 +1308,12 @@ export default function UploadComponent() {
         </Backdrop>
       </div>
 
-      <WebSocketComponent onOutputUpdated={setBackendConsole} />
+      {/* <WebSocketComponent onOutputUpdated={setBackendConsole} /> */}
+      <WebSocketComponent
+        onOutputUpdated={(data) => {
+          setBackendConsole((backendConsole) => [...backendConsole, data]);
+        }}
+      />
     </>
   );
 }

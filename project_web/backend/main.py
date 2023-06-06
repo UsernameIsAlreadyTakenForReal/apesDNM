@@ -9,10 +9,14 @@ from flask.json import jsonify
 from datetime import datetime
 from io import StringIO
 
-import os, os.path, sys
+import os, os.path
 import tempfile
 import gevent
 
+import sys
+
+sys.path.insert(1, "../../project_apes/helpers_aiders_and_conveniencers")
+from logger import Logger
 
 app = Flask(__name__)
 app.config["SECRET_KEY"] = "apesDNM"
@@ -41,31 +45,24 @@ class Output:
         gevent.spawn(socketio.emit("console", str(self._x), broadcast=True))
 
 
-class OutputWrapper(StringIO):
-    def write(self, s):
-        print("Output is changing!")
-
-        super().write(s)
-        gevent.spawn(socketio.emit("console", str(s), broadcast=True))
-
-
 # ############################################################################
 
 
-class Logger:
-    def _init_(self):
-        self.message_in_queue = (
-            "Nothing to print in Logger. This may mean something is wrong."
-        )
-        pass
+# class Logger:
+#     def _init_(self):
+#         self.message_in_queue = (
+#             "Nothing to print in Logger. This may mean something is wrong."
+#         )
+#         pass
 
-    def info(self, sender, text_to_log):
-        message = str(datetime.now()) + " -- " + str(sender) + " -- " + text_to_log
-        gevent.spawn(socketio.emit("console", str(message), broadcast=True))
-        print(message)
+#     def info(self, sender, text_to_log):
+#         message = str(datetime.now()) + " -- " + str(sender) + " -- " + text_to_log
+#         # gevent.spawn(socketio.emit("console", str(message), broadcast=True))
+#         print(message)
+#         # time.sleep(2)
 
-    def print_info(self):
-        print(self.message_in_queue)
+#     def print_info(self):
+#         print(self.message_in_queue)
 
 
 # ############################################################################
@@ -77,19 +74,15 @@ def cls():
 
 @app.route("/datasets", methods=["GET", "POST"])
 def getDatasets():
-    print("getDatasets() function called")
-
     import data
 
+    print("getDatasets() function called")
     return jsonify(data.datasets)
 
 
 @app.route("/upload", methods=["GET", "POST"])
 def upload_file():
     print("upload_file() function called")
-    gevent.spawn(
-        socketio.emit("console", str("upload_file() function called"), broadcast=True)
-    )
 
     # ########################################################################
     # ########################### changing output ############################
@@ -214,7 +207,7 @@ def upload_file():
     # ########################### creating results ###########################
     # ########################################################################
 
-    results = "run has been successful"
+    results = "run has been successful. for detailed steps, check the console."
 
     result = {"results": results, "plots": plots, "console": console_info}
     return jsonify(result)

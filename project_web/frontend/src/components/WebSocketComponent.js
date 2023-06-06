@@ -8,7 +8,7 @@ const WebSocketComponent = ({ onOutputUpdated }) => {
     const socket = io(BASE_URL);
 
     socket.on("console", (data) => {
-      console.log("sio:", data);
+      console.log("io:", data);
       onOutputUpdated(data);
     });
 
