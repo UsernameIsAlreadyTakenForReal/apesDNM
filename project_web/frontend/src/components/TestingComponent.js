@@ -77,7 +77,7 @@ function TestingComponent() {
   }
 
   return (
-    <>
+    <span style={{ display: true ? "" : "none" }}>
       <Divv>
         <Button variant="outlined" onClick={() => handleRequest()}>
           Request
@@ -93,7 +93,7 @@ function TestingComponent() {
       </Divv>
 
       <WebSocketComponent onOutputUpdated={handleOutputUpdated} />
-    </>
+    </span>
   );
 }
 

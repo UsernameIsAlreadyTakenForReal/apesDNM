@@ -30,7 +30,6 @@ class Output:
             self.trigger_action()
 
     def trigger_action(self):
-        print("hello?")
         gevent.spawn(socketio.emit("console", str(self._x), broadcast=True))
 
 

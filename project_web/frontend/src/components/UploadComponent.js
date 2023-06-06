@@ -353,8 +353,6 @@ export default function UploadComponent() {
     setLoading(true);
     setLoadingText("processing...");
 
-    setShowResults(true);
-
     const response = await fetch(BASE_URL + "upload", {
       method: "POST",
       body: formData,
@@ -426,8 +424,6 @@ export default function UploadComponent() {
 
     setLoading(true);
     setLoadingText("processing...");
-
-    setShowResults(true);
 
     const response = await fetch(BASE_URL + "upload", {
       method: "POST",
@@ -1063,7 +1059,7 @@ export default function UploadComponent() {
                   }
                   id={"class-textfield" + textfield}
                   variant="outlined"
-                  label={"class #" + textfield}
+                  label={"class #" + (textfield - 1)}
                   onChange={() => handleClassChange()}
                 />
               </TextFieldFlex>
@@ -1178,7 +1174,7 @@ export default function UploadComponent() {
               }}
             >
               <Terminal name="python outputs">
-                {/* {backendConsole.split("\n").map((line) => {
+                {backendConsole.map((line) => {
                   if (line === "") return <></>;
                   return (
                     <>
@@ -1186,7 +1182,7 @@ export default function UploadComponent() {
                       <br></br>
                     </>
                   );
-                })} */}
+                })}
               </Terminal>
             </div>
 
@@ -1272,7 +1268,7 @@ export default function UploadComponent() {
         </Backdrop>
       </div>
 
-      {/* <WebSocketComponent onOutputUpdated={setBackendConsole} /> */}
+      <WebSocketComponent onOutputUpdated={setBackendConsole} />
     </>
   );
 }

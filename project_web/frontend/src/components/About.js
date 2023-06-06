@@ -1,10 +1,18 @@
 import { Divv } from "./StyledComponents";
+import { Link } from "react-router-dom";
 
 export default function About() {
   return (
     <Divv>
-      this is the 'about' page of our urban-octo-dizeratie. it is a creation of
-      cârlianu radu and pupitru daniel.
+      this is the 'about' page of our{" "}
+      <Link
+        style={{ color: "black", textDecoration: "none" }}
+        target="_blank"
+        to="https://github.com/UsernameIsAlreadyTakenForReal/apesDNM"
+      >
+        urban-octo-dizeratie
+      </Link>
+      . it is a creation of cârlianu radu and pupitru daniel.
       <br /> <br />
       <Divv margin="0px" size="22.5px">
         our goal is to create a self-maintaing and sustaining application which

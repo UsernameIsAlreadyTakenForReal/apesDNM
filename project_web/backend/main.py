@@ -1,16 +1,17 @@
-from flask import Flask, request, send_from_directory
-from flask_socketio import SocketIO, emit
-from flask_cors import CORS
-from flask.json import jsonify
-from datetime import datetime
-
-import os, os.path
-import tempfile
-import gevent
-
 from gevent import monkey
 
 monkey.patch_all()
+
+from flask import Flask, request, send_from_directory
+from flask_socketio import SocketIO
+from flask_cors import CORS
+from flask.json import jsonify
+from datetime import datetime
+from io import StringIO
+
+import os, os.path, sys
+import tempfile
+import gevent
 
 
 app = Flask(__name__)
@@ -36,7 +37,16 @@ class Output:
             self.trigger_action()
 
     def trigger_action(self):
+        print("value changed!")
         gevent.spawn(socketio.emit("console", str(self._x), broadcast=True))
+
+
+class OutputWrapper(StringIO):
+    def write(self, s):
+        print("Output is changing!")
+
+        super().write(s)
+        gevent.spawn(socketio.emit("console", str(s), broadcast=True))
 
 
 # ############################################################################
@@ -50,7 +60,9 @@ class Logger:
         pass
 
     def info(self, sender, text_to_log):
-        print(str(datetime.now()) + " -- " + str(sender) + " -- " + text_to_log)
+        message = str(datetime.now()) + " -- " + str(sender) + " -- " + text_to_log
+        gevent.spawn(socketio.emit("console", str(message), broadcast=True))
+        print(message)
 
     def print_info(self):
         print(self.message_in_queue)
@@ -65,26 +77,26 @@ def cls():
 
 @app.route("/datasets", methods=["GET", "POST"])
 def getDatasets():
+    print("getDatasets() function called")
+
     import data
 
     return jsonify(data.datasets)
 
 
-import sys
-from io import StringIO
-
-output = Output()
-output.x = StringIO()
-sys.stdout = output.x
-
-
 @app.route("/upload", methods=["GET", "POST"])
 def upload_file():
+    print("upload_file() function called")
+    gevent.spawn(
+        socketio.emit("console", str("upload_file() function called"), broadcast=True)
+    )
+
     # ########################################################################
     # ########################### changing output ############################
     # ########################################################################
 
-    # changing output to variable so we can show it in the frontend
+    output = StringIO()
+    sys.stdout = output
 
     # ########################################################################
     # ########################### init-ing logger ############################
@@ -195,14 +207,14 @@ def upload_file():
     info_message = "exiting endpoint"
     logger.info("upload_file", info_message)
 
-    console_info = output.x.getvalue()
+    console_info = output.getvalue()
     sys.stdout = sys.__stdout__
 
     # ########################################################################
     # ########################### creating results ###########################
     # ########################################################################
 
-    results = "Run has been successful. Accuracy at 95% over 85 epochs."
+    results = "run has been successful"
 
     result = {"results": results, "plots": plots, "console": console_info}
     return jsonify(result)
@@ -219,4 +231,7 @@ def testing():
 
 
 if __name__ == "__main__":
-    app.run(debug=True, port=5000)
+    # app.run(debug=True, port=5000)
+
+    cls()
+    socketio.run(app, debug=True, port=5000)
