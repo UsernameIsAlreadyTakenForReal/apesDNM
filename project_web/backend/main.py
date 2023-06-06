@@ -1,39 +1,45 @@
-# ############################################################################
-
-# class Output:
-#     def __init__(self):
-#         self._x = None
-
-#     @property
-#     def x(self):
-#         return self._x
-
-#     @x.setter
-#     def x(self, value):
-#         if self._x != value:
-#             self._x = value
-#             self.trigger_action()
-
-#     def trigger_action(self):
-#         print("variable x has changed!")
-
-# https://maxhalford.github.io/blog/flask-sse-no-deps/
-
-# ############################################################################
-
-# from "../../project_apes" import apes_metada_handler
-
-# import importlib.util
-
-# spec = importlib.util.spec_from_file_location(
-#     "apes_metada_handler", "../../project_apes/apes_metada_handler"
-# )
-# metadata_handler = importlib.util.module_from_spec(spec)
-# dataset_metadata = metadata_handler.Dataset_Metadata()
-# dataset_metadata.getMetadataAsString()
-
-
+from flask import Flask, request, send_from_directory
+from flask_socketio import SocketIO, emit
+from flask_cors import CORS
+from flask.json import jsonify
 from datetime import datetime
+
+import os, os.path
+import tempfile
+import gevent
+
+from gevent import monkey
+
+monkey.patch_all()
+
+
+app = Flask(__name__)
+app.config["SECRET_KEY"] = "apesDNM"
+socketio = SocketIO(app, cors_allowed_origins="*", async_mode="gevent")
+CORS(app)
+
+# ############################################################################
+
+
+class Output:
+    def __init__(self):
+        self._x = None
+
+    @property
+    def x(self):
+        return self._x
+
+    @x.setter
+    def x(self, value):
+        if self._x != value:
+            self._x = value
+            self.trigger_action()
+
+    def trigger_action(self):
+        gevent.spawn(socketio.emit("console", str(self._x), broadcast=True))
+
+
+# ############################################################################
 
 
 class Logger:
@@ -50,19 +56,7 @@ class Logger:
         print(self.message_in_queue)
 
 
-############################################################################
-
-
-from flask import Flask, request, send_from_directory
-from flask_cors import CORS
-from flask.json import jsonify
-
-import os, os.path
-import tempfile
-
-
-app = Flask(__name__)
-CORS(app)
+# ############################################################################
 
 
 def cls():
@@ -76,18 +70,21 @@ def getDatasets():
     return jsonify(data.datasets)
 
 
+import sys
+from io import StringIO
+
+output = Output()
+output.x = StringIO()
+sys.stdout = output.x
+
+
 @app.route("/upload", methods=["GET", "POST"])
 def upload_file():
     # ########################################################################
     # ########################### changing output ############################
     # ########################################################################
 
-    import sys
-    from io import StringIO
-
     # changing output to variable so we can show it in the frontend
-    output = StringIO()
-    sys.stdout = output
 
     # ########################################################################
     # ########################### init-ing logger ############################
@@ -198,7 +195,7 @@ def upload_file():
     info_message = "exiting endpoint"
     logger.info("upload_file", info_message)
 
-    console_info = output.getvalue()
+    console_info = output.x.getvalue()
     sys.stdout = sys.__stdout__
 
     # ########################################################################

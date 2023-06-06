@@ -14,26 +14,42 @@ app.config["SECRET_KEY"] = "apesDNM"
 socketio = SocketIO(app, cors_allowed_origins="*", async_mode="gevent")
 CORS(app)
 
-output = 0
+
+class Output:
+    def __init__(self):
+        self._x = None
+
+    @property
+    def x(self):
+        return self._x
+
+    @x.setter
+    def x(self, value):
+        if self._x != value:
+            self._x = value
+            self.trigger_action()
+
+    def trigger_action(self):
+        print("hello?")
+        gevent.spawn(socketio.emit("console", str(self._x), broadcast=True))
+
+
+output = Output()
 
 
 @app.route("/testing", methods=["GET", "POST"])
 def http_call():
     global output
-    output = 0
-    gevent.spawn(socketio.emit("console", str(output), broadcast=True))
+    output.x = 0
 
     sleep(1)
-    output = 1
-    gevent.spawn(socketio.emit("console", str(output), broadcast=True))
+    output.x = 1
 
     sleep(1)
-    output = 2
-    gevent.spawn(socketio.emit("console", str(output), broadcast=True))
+    output.x = 2
 
     sleep(1)
-    output = 3
-    gevent.spawn(socketio.emit("console", str(output), broadcast=True))
+    output.x = 3
 
     return "ok"
 

@@ -30,6 +30,7 @@ import {
   DialogActions,
   Slider,
 } from "@mui/material";
+import WebSocketComponent from "./WebSocketComponent";
 
 const BASE_URL = process.env.REACT_APP_BACKEND;
 
@@ -352,6 +353,8 @@ export default function UploadComponent() {
     setLoading(true);
     setLoadingText("processing...");
 
+    setShowResults(true);
+
     const response = await fetch(BASE_URL + "upload", {
       method: "POST",
       body: formData,
@@ -423,6 +426,8 @@ export default function UploadComponent() {
 
     setLoading(true);
     setLoadingText("processing...");
+
+    setShowResults(true);
 
     const response = await fetch(BASE_URL + "upload", {
       method: "POST",
@@ -1173,7 +1178,7 @@ export default function UploadComponent() {
               }}
             >
               <Terminal name="python outputs">
-                {backendConsole.map((line) => {
+                {/* {backendConsole.split("\n").map((line) => {
                   if (line === "") return <></>;
                   return (
                     <>
@@ -1181,7 +1186,7 @@ export default function UploadComponent() {
                       <br></br>
                     </>
                   );
-                })}
+                })} */}
               </Terminal>
             </div>
 
@@ -1266,6 +1271,8 @@ export default function UploadComponent() {
           <Divv color="white">{loadingText}</Divv>
         </Backdrop>
       </div>
+
+      {/* <WebSocketComponent onOutputUpdated={setBackendConsole} /> */}
     </>
   );
 }
