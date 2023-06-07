@@ -1,5 +1,6 @@
 from datetime import datetime
 import gevent
+import time
 
 
 class Singleton(type):
@@ -30,6 +31,7 @@ class Logger(metaclass=Singleton):
         message = str(datetime.now()) + " -- " + str(sender) + " -- " + text_to_log
         gevent.spawn(self.socketio.emit("console", str(message), broadcast=True))
         print(message)
+        time.sleep(2)
 
     def print_info(self):
         print(self.message_in_queue)

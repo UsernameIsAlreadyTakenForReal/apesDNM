@@ -356,22 +356,7 @@ export default function UploadComponent() {
 
     formData.append("saveData", saveDataCheckbox);
 
-    setLoading(true);
-    setLoadingText("processing...");
-
-    await delay(500);
-
-    setLoading(false);
-
-    const response = await fetch(BASE_URL + "upload", {
-      method: "POST",
-      body: formData,
-    });
-
-    const textResponse = await response.text();
-    setResponseData(textResponse);
-
-    handleResults(textResponse);
+    sendUploadRequest(formData);
   }
 
   // -------------------------------------------------------------------------
@@ -430,49 +415,13 @@ export default function UploadComponent() {
     formData.append("dataset_category", selectedDataset);
     formData.append("solution_index", selectedMethods);
 
-    setLoading(true);
-    setLoadingText("processing...");
-
-    const response = await fetch(BASE_URL + "upload", {
-      method: "POST",
-      body: formData,
-    });
-
-    // const blob = response.blob();
-    // const imgURL = URL.createObjectURL(blob);
-
-    // setImageUrl(imgURL);
-
-    const textResponse = await response.text();
-    setResponseData(textResponse);
-
-    setLoading(false);
-    setLoadingText("processing...");
-
-    await delay(500);
-
-    handleResults(textResponse);
+    sendUploadRequest(formData);
   }
 
   async function fetchTesting() {
-    // setLoading(true);
-    // setLoadingText("processing...");
+    let formData = { id: 1 };
 
-    // await delay(500);
-
-    // setLoading(false);
-
-    setLoadingText("processing...");
-
-    const response = await fetch(BASE_URL + "upload", {
-      method: "POST",
-      body: { id: 1 },
-    });
-
-    const textResponse = await response.text();
-    setResponseData(textResponse);
-
-    handleResults(textResponse);
+    sendUploadRequest(formData);
   }
 
   // -------------------------------------------------------------------------
@@ -486,8 +435,37 @@ export default function UploadComponent() {
     setBackendMLPlots(data.plots);
     setBackendConsole(data.console.split("\n"));
     setBackendResults(data.results);
+  }
 
+  // -------------------------------------------------------------------------
+  async function loadingResultsScreen() {
+    setShowResults(false);
+    setLoading(true);
+
+    setTimeout(() => setLoadingText("processing."), 0);
+    setTimeout(() => setLoadingText("processing.."), 500);
+    setTimeout(() => setLoadingText("processing..."), 1000);
+
+    await delay(1500);
+
+    setLoading(false);
     setShowResults(true);
+  }
+
+  // -------------------------------------------------------------------------
+  async function sendUploadRequest(formData) {
+    loadingResultsScreen();
+
+    const response = await fetch(BASE_URL + "upload", {
+      method: "POST",
+      body: formData,
+    });
+
+    const textResponse = await response.text();
+    setResponseData(textResponse);
+    console.log(textResponse);
+
+    handleResults(textResponse);
   }
 
   // -------------------------------------------------------------------------
