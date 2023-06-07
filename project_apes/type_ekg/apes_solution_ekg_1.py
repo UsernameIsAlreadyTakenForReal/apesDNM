@@ -196,7 +196,7 @@ class Solution_ekg_1:
                     map_location=lambda storage, loc: storage.cuda(1),
                 )
             except:
-                info_message = "Failed to load last good model saved. Could be an error, or there is none saved. Loading last available model"
+                info_message = "Failed to load the last saved good model. Could be an error, or there is none saved. Loading last available model"
                 self.Logger.info(self, info_message)
                 return_code, return_message, model_path = get_last_model(
                     self.Logger, "ekg1", self.app_instance_metadata

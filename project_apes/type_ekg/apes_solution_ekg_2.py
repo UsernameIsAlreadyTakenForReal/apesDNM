@@ -40,6 +40,11 @@ from keras.callbacks import EarlyStopping, ModelCheckpoint
 
 from datetime import datetime
 
+import sys
+
+sys.path.insert(1, "../helpers_aiders_and_conveniencers")
+from helpers_aiders_and_conveniencers.misc_functions import get_last_model
+
 # TODO: add gaussian noise?
 # TODO: resample?
 
@@ -133,9 +138,26 @@ class Solution_ekg_2:
         elif filename != "":
             pass
         else:
-            self.model = keras.models.load_model(
-                self.app_instance_metadata.shared_definitions.project_solution_ekg_2_model_filename_last_good_one
-            )
+            try:
+                info_message = "Trying to load the last good model saved"
+                self.Logger.info(self, info_message)
+                self.model = keras.models.load_model(
+                    self.app_instance_metadata.shared_definitions.project_solution_ekg_2_model_filename_last_good_one,
+                    map_location=lambda storage, loc: storage.cuda(1),
+                )
+            except:
+                info_message = "Failed to load the last saved good model. Could be an error, or there is none saved. Loading last available model"
+                self.Logger.info(self, info_message)
+                return_code, return_message, model_path = get_last_model(
+                    self.Logger, "ekg2", self.app_instance_metadata
+                )
+                if return_code != 0:
+                    self.Logger.info(self, return_message)
+                    return
+                else:
+                    self.model = keras.models.load_model(
+                        model_path, map_location=lambda storage, loc: storage.cuda(0)
+                    )
 
         info_message = "load_model() -- end"
         self.Logger.info(self, info_message)
