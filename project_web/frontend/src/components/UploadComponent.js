@@ -431,10 +431,6 @@ export default function UploadComponent() {
   function handleResults(textResponse) {
     const data = JSON.parse(textResponse);
 
-    data.plots.forEach((plotPath) => {
-      console.log(plotPath);
-    });
-
     setBackendMLPlots(data.plots);
     setBackendConsole(data.console.split("\n"));
     setBackendResults(data.results);
@@ -457,7 +453,7 @@ export default function UploadComponent() {
 
   // -------------------------------------------------------------------------
   async function sendUploadRequest(formData) {
-    loadingResultsScreen();
+    await loadingResultsScreen();
 
     const response = await fetch(BASE_URL + "upload", {
       method: "POST",

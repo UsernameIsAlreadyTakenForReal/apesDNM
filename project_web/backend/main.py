@@ -12,6 +12,7 @@ from io import StringIO
 import os, os.path
 import tempfile
 import gevent
+import random
 
 import sys
 
@@ -24,6 +25,7 @@ socketio = SocketIO(app, cors_allowed_origins="*", async_mode="gevent")
 CORS(app)
 
 logger = Logger(socketio)
+# logger = Logger()
 
 # ############################################################################
 
@@ -86,28 +88,8 @@ def getDatasets():
 def upload_file():
     print("upload_file() function called")
 
-    # ########################################################################
-    # ########################### changing output ############################
-    # ########################################################################
-
-    output = StringIO()
-    sys.stdout = output
-
-    # ########################################################################
-    # ########################### init-ing logger ############################
-    # ########################################################################
-
-    # logger = Logger()
-
     info_message = "upload has been triggered"
     logger.info("upload_file", info_message)
-
-    sys.path.insert(1, "../../project_apes/helpers_aiders_and_conveniencers")
-    from testing_broadcast import test_singleton
-
-    test_singleton()
-
-    # return "ok"
 
     # ########################################################################
     # ###################### cleaning-up images folder #######################
@@ -209,8 +191,8 @@ def upload_file():
     info_message = "exiting endpoint"
     logger.info("upload_file", info_message)
 
-    console_info = output.getvalue()
-    sys.stdout = sys.__stdout__
+    # console_info = output.getvalue()
+    # sys.stdout = sys.__stdout__
 
     # ########################################################################
     # ########################### creating results ###########################
@@ -218,7 +200,7 @@ def upload_file():
 
     results = "run has been successful. for detailed steps, check the console."
 
-    result = {"results": results, "plots": plots, "console": console_info}
+    result = {"results": results, "plots": plots}  # , "console": console_info}
     return jsonify(result)
 
 
