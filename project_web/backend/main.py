@@ -48,21 +48,21 @@ class Output:
 # ############################################################################
 
 
-# class Logger:
-#     def _init_(self):
-#         self.message_in_queue = (
-#             "Nothing to print in Logger. This may mean something is wrong."
-#         )
-#         pass
+class Logger:
+    def _init_(self):
+        self.message_in_queue = (
+            "Nothing to print in Logger. This may mean something is wrong."
+        )
+        pass
 
-#     def info(self, sender, text_to_log):
-#         message = str(datetime.now()) + " -- " + str(sender) + " -- " + text_to_log
-#         # gevent.spawn(socketio.emit("console", str(message), broadcast=True))
-#         print(message)
-#         # time.sleep(2)
+    def info(self, sender, text_to_log):
+        message = str(datetime.now()) + " -- " + str(sender) + " -- " + text_to_log
+        gevent.spawn(socketio.emit("console", str(message), broadcast=True))
+        print(message)
+        # time.sleep(2)
 
-#     def print_info(self):
-#         print(self.message_in_queue)
+    def print_info(self):
+        print(self.message_in_queue)
 
 
 # ############################################################################
