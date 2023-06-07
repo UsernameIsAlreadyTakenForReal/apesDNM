@@ -45,16 +45,16 @@ from datetime import datetime
 
 
 class Solution_ekg_2:
-    def __init__(self, shared_definitions, Logger):
+    def __init__(self, app_instance_metadata, Logger):
         self.Logger = Logger
 
         self.Logger.info(self, "Creating object of type solution_ekg_2")
-        self.shared_definitions = shared_definitions
+        self.app_instance_metadata = app_instance_metadata
         self.project_solution_model_filename = (
-            shared_definitions.project_solution_ekg_2_model_filename
+            app_instance_metadata.shared_definitions.project_solution_ekg_2_model_filename
         )
         self.project_solution_training_script = (
-            shared_definitions.project_solution_ekg_2_training_script
+            app_instance_metadata.shared_definitions.project_solution_ekg_2_training_script
         )
 
     ## -------------- General methods --------------
@@ -109,10 +109,13 @@ class Solution_ekg_2:
         elif filename != "":
             MODEL_SAVE_PATH += filename
         else:
-            MODEL_SAVE_PATH = self.project_solution_model_filename
+            MODEL_SAVE_PATH = (
+                "s_ekg2_d_"
+                + self.app_instance_metadata.dataset_metadata.dataset_name_stub
+            )
 
         MODEL_SAVE_PATH = (
-            datetime.now().strftime("%Y%m%d_%H%M%S") + "_" + MODEL_SAVE_PATH
+            MODEL_SAVE_PATH + "_" + datetime.now().strftime("%Y%m%d_%H%M%S")
         )
         info_message = "Saving model as " + MODEL_SAVE_PATH
         self.Logger.info(self, info_message)
@@ -131,7 +134,7 @@ class Solution_ekg_2:
             pass
         else:
             self.model = keras.models.load_model(
-                self.shared_definitions.project_solution_ekg_2_model_filename_last_good_one
+                self.app_instance_metadata.shared_definitions.project_solution_ekg_2_model_filename_last_good_one
             )
 
         info_message = "load_model() -- end"

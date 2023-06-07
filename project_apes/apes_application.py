@@ -186,7 +186,7 @@ class APES_Application:
                         from type_ekg.apes_solution_ekg_1 import Solution_ekg_1
 
                         self.solution = Solution_ekg_1(
-                            self.application_instance_metadata.shared_definitions,
+                            self.application_instance_metadata,
                             self.Logger,
                         )
                         self.solutions_list.append(self.solution)
@@ -202,7 +202,7 @@ class APES_Application:
                         from type_ekg.apes_solution_ekg_2 import Solution_ekg_2
 
                         self.solution = Solution_ekg_2(
-                            self.application_instance_metadata.shared_definitions,
+                            self.application_instance_metadata,
                             self.Logger,
                         )
                         self.solutions_list.append(self.solution)
@@ -244,11 +244,11 @@ class APES_Application:
                         self.Logger.info(self, info_message)
 
                         self.solution_1 = Solution_ekg_1(
-                            self.application_instance_metadata.shared_definitions,
+                            self.application_instance_metadata,
                             self.Logger,
                         )
                         self.solution_2 = Solution_ekg_2(
-                            self.application_instance_metadata.shared_definitions,
+                            self.application_instance_metadata,
                             self.Logger,
                         )
                         self.solutions_list.append(self.solution_1)
@@ -280,12 +280,16 @@ class APES_Application:
             )
 
             if self.application_instance_metadata.model_origin == "train_new_model":
+                info_message = f"Directive to train new model"
+                self.Logger.info(self, info_message)
                 solution.create_model()
                 solution.train(self.application_instance_metadata.model_train_epochs)
                 solution.save_model()
                 solution.test()
             else:
                 ## check if sizes compatible with dataset's sizes
+                info_message = f"Directive to use existing model"
+                self.Logger.info(self, info_message)
                 solution.load_model()
                 solution.test()
 

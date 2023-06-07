@@ -269,85 +269,83 @@ def treat_files(
 
 
 def treat_folder(Logger, app_instance_metadata):
-    try:
-        no_of_files_in_folder = 0
-        no_of_files_in_dir_and_subdirs = []
-        possible_files_list = []
+    no_of_files_in_folder = 0
+    no_of_files_in_dir_and_subdirs = []
+    possible_files_list = []
 
-        # check if there are subdirectories
-        for dirname, _, filenames in os.walk(
-            app_instance_metadata.dataset_metadata.dataset_path
-        ):
-            no_of_files_in_dir_and_subdirs.append(len(filenames))
+    # check if there are subdirectories
+    for dirname, _, filenames in os.walk(
+        app_instance_metadata.dataset_metadata.dataset_path
+    ):
+        no_of_files_in_dir_and_subdirs.append(len(filenames))
 
-        # if subdirs and there is at least one file outside of the main dir
-        if (
-            len(no_of_files_in_dir_and_subdirs) != 1
-            and sum(no_of_files_in_dir_and_subdirs) != no_of_files_in_dir_and_subdirs[0]
-        ):
-            info_message = f"There seem to be {len(no_of_files_in_dir_and_subdirs) - 1} subdirectories in this directory. Number of files for each: {no_of_files_in_dir_and_subdirs}"
-            Logger.info("apes_dataset_handler.treat_folder", info_message)
-            return 1, "Subdirectories present. Case not yet handled", []
-        else:
-            info_message = f"There seem to be {no_of_files_in_dir_and_subdirs[0]} files in this directory. No subdirectories"
-            Logger.info("apes_dataset_handler.treat_folder", info_message)
+    # if subdirs and there is at least one file outside of the main dir
+    if (
+        len(no_of_files_in_dir_and_subdirs) != 1
+        and sum(no_of_files_in_dir_and_subdirs) != no_of_files_in_dir_and_subdirs[0]
+    ):
+        info_message = f"There seem(s) to be {len(no_of_files_in_dir_and_subdirs) - 1} subdirectories in this directory. Number of files for each: {no_of_files_in_dir_and_subdirs}"
+        Logger.info("apes_dataset_handler.treat_folder", info_message)
+        return 1, "Subdirectories present. Case not yet handled", []
+    else:
+        info_message = f"There seem(s) to be {no_of_files_in_dir_and_subdirs[0]} files in this directory. No subdirectories"
+        Logger.info("apes_dataset_handler.treat_folder", info_message)
 
-            # search for keynames given by the user
-            if len(app_instance_metadata.dataset_metadata.file_keyword_names) != 0:
-                for dirname, _, filenames in os.walk(
-                    app_instance_metadata.dataset_metadata.dataset_path
-                ):
-                    for filename in filenames:
-                        if (
-                            pathlib.Path(filename).suffix
-                            in app_instance_metadata.shared_definitions.supported_file_formats
-                        ):
-                            if (
-                                rough_filename_filter(
-                                    filename.lower(),
-                                    app_instance_metadata.dataset_metadata.file_keyword_names,
-                                )
-                                == True
-                            ):
-                                possible_files_list.append(filename)
-
-            # search for keynames 'test', 'train', 'val' if user didn't prescribe keywords or they failed
-            elif (
-                len(app_instance_metadata.dataset_metadata.file_keyword_names) == 0
-                or len(possible_files_list) == 0
+        # search for keynames given by the user
+        if len(app_instance_metadata.dataset_metadata.file_keyword_names) != 0:
+            for dirname, _, filenames in os.walk(
+                app_instance_metadata.dataset_metadata.dataset_path
             ):
-                for dirname, _, filenames in os.walk(
-                    app_instance_metadata.dataset_metadata.dataset_path
-                ):
-                    for filename in filenames:
+                for filename in filenames:
+                    if (
+                        pathlib.Path(filename).suffix
+                        in app_instance_metadata.shared_definitions.supported_file_formats
+                    ):
                         if (
-                            pathlib.Path(filename).suffix
-                            in app_instance_metadata.shared_definitions.supported_file_formats
+                            rough_filename_filter(
+                                filename.lower(),
+                                app_instance_metadata.dataset_metadata.file_keyword_names,
+                            )
+                            == True
                         ):
-                            if rough_filename_filter(filename.lower()) == True:
-                                possible_files_list.append(filename)
+                            possible_files_list.append(filename)
 
-            # if that doesn't work either, just load all files and mash them all files into the same dataFrame (hoping it works)
-            else:
-                for dirname, _, filenames in os.walk(
-                    app_instance_metadata.dataset_metadata.dataset_path
-                ):
-                    for filename in filenames:
-                        possible_files_list.append(filename)
-                pass
+        # search for keynames 'test', 'train', 'val' if user didn't prescribe keywords or they failed
+        elif (
+            len(app_instance_metadata.dataset_metadata.file_keyword_names) == 0
+            or len(possible_files_list) == 0
+        ):
+            for dirname, _, filenames in os.walk(
+                app_instance_metadata.dataset_metadata.dataset_path
+            ):
+                for filename in filenames:
+                    if (
+                        pathlib.Path(filename).suffix
+                        in app_instance_metadata.shared_definitions.supported_file_formats
+                    ):
+                        if rough_filename_filter(filename.lower()) == True:
+                            possible_files_list.append(filename)
 
-        files_to_load = filter_files_in_folder_list(
-            app_instance_metadata, possible_files_list
-        )
+        # if that doesn't work either, just load all files and mash them all files into the same dataFrame (hoping it works)
+        else:
+            for dirname, _, filenames in os.walk(
+                app_instance_metadata.dataset_metadata.dataset_path
+            ):
+                for filename in filenames:
+                    possible_files_list.append(filename)
+            pass
 
-        info_message = f"Possible files to load: {possible_files_list}"
-        Logger.info("apes_dataset_handler.treat_folder", info_message)
-        info_message = f"Files that will be loaded: {files_to_load}"
-        Logger.info("apes_dataset_handler.treat_folder", info_message)
+    files_to_load = filter_files_in_folder_list(
+        app_instance_metadata, possible_files_list
+    )
 
-        return 0, "apes_dataset_handler.treat_folder exited successfully", files_to_load
-    except:
-        return 1, "apes_dataset_handler.treat_folder exited with error", []
+    info_message = f"Possible files to load: {possible_files_list}"
+    Logger.info("apes_dataset_handler.treat_folder", info_message)
+    info_message = f"Files that will be loaded: {files_to_load}"
+    Logger.info("apes_dataset_handler.treat_folder", info_message)
+
+    return 0, "apes_dataset_handler.treat_folder exited successfully", files_to_load
+    # return 1, "apes_dataset_handler.treat_folder exited with error", []
 
 
 def treat_archive(Logger, app_instance_metadata):

@@ -2,20 +2,23 @@ import sys
 
 n = len(sys.argv)
 print("Total number of arguments passed: ", n)
-
-for i in range(0, n):
-    print(f"Parameter {i}: {sys.argv[i]}")
+if n != 2:
+    sys.exit("Test correctly, please. Only one parameter (dataset) at the moment")
 
 example_path = ""
+dataset_metadata__dataset_name_stub = ""
 
 if int(sys.argv[1]) == 1:
     print("Running with dataset egk1")
     example_path = "../../Datasets/Dataset - ECG5000/Dataset - ECG5000"
+    dataset_metadata__dataset_name_stub = "ekg1"
 elif int(sys.argv[1]) == 2:
     print("Running with dataset ekg2")
     example_path = "../../Datasets/Dataset - ECG_Heartbeat/Dataset - ECG_Heartbeat.zip"
+    dataset_metadata__dataset_name_stub = "ekg2"
 else:
     print("whatev")
+    sys.exit("Test correctly, please. Selection is [1, 2] at the moment")
 
 from helpers_aiders_and_conveniencers.logger import Logger
 
@@ -35,11 +38,8 @@ from apes_metadata_handler import *
 init_message = "Imported apes_metadata_handler.*"
 Logger.info("Program", init_message)
 
-
-# example_path = "../../Datasets/Dataset - ECG_Heartbeat/Dataset - ECG_Heartbeat.zip"
-# # example_path = "../../Datasets/Dataset - ECG5000/Dataset - ECG5000"
-
 dataset_metadata__dataset_path = example_path
+dataset_metadata__dataset_name_stub = dataset_metadata__dataset_name_stub
 dataset_metadata__is_labeled = True
 dataset_metadata__file_keyword_names = []
 dataset_metadata__number_of_classes = 5
@@ -57,12 +57,13 @@ application_metadata__dataset_category = "ekg"
 application_metadata__solution_category = "ekg"
 application_metadata__solution_nature = "supervised"
 application_metadata__solution_index = [1]
-application_metadata__model_origin = "train_new_model"
+application_metadata__model_origin = "use_existing_model"
 application_metadata__model_train_epochs = 5
 
 dataset_metadata = Dataset_Metadata(
     Logger,
     dataset_metadata__dataset_path,
+    dataset_metadata__dataset_name_stub,
     dataset_metadata__is_labeled,
     dataset_metadata__file_keyword_names,
     dataset_metadata__number_of_classes,

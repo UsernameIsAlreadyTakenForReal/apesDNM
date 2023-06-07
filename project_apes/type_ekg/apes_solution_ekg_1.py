@@ -34,6 +34,12 @@ import torch.nn.functional as F
 torch.__version__
 
 
+import sys
+
+sys.path.insert(1, "../helpers_aiders_and_conveniencers")
+from helpers_aiders_and_conveniencers.misc_functions import get_last_model
+
+
 class Encoder(nn.Module):
     def __init__(self, seq_len, n_features, embedding_dim=64):
         super(Encoder, self).__init__()
@@ -110,20 +116,21 @@ class Recurrent_Autoencoder(nn.Module):
 
 
 class Solution_ekg_1:
-    def __init__(self, shared_definitions, Logger):
+    def __init__(self, app_instance_metadata, Logger):
         self.Logger = Logger
         self.device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
+        # self.device = "cpu"
 
         self.Logger.info(self, "Creating object of type solution_ekg_1")
         info_message = f"Using device {self.device}"
         self.Logger.info(self, info_message)
 
-        self.shared_definitions = shared_definitions
+        self.app_instance_metadata = app_instance_metadata
         self.project_solution_model_filename = (
-            shared_definitions.project_solution_ekg_1_model_filename
+            app_instance_metadata.shared_definitions.project_solution_ekg_1_model_filename
         )
         self.project_solution_training_script = (
-            shared_definitions.project_solution_ekg_1_training_script
+            app_instance_metadata.shared_definitions.project_solution_ekg_1_training_script
         )
 
     ## -------------- General methods --------------
@@ -157,10 +164,13 @@ class Solution_ekg_1:
             #     + "\\type_ekg\\"
             #     + self.project_solution_model_filename
             # )
-            MODEL_SAVE_PATH = self.project_solution_model_filename
+            MODEL_SAVE_PATH = (
+                "s_ekg1_d_"
+                + self.app_instance_metadata.dataset_metadata.dataset_name_stub
+            )
 
         MODEL_SAVE_PATH = (
-            datetime.now().strftime("%Y%m%d_%H%M%S") + "_" + MODEL_SAVE_PATH
+            MODEL_SAVE_PATH + "_" + datetime.now().strftime("%Y%m%d_%H%M%S")
         )
         info_message = "Saving model at " + MODEL_SAVE_PATH
         self.Logger.info(self, info_message)
@@ -178,10 +188,26 @@ class Solution_ekg_1:
         elif filename != "":
             pass
         else:
-            self.model = torch.load(
-                self.shared_definitions.project_solution_ekg_1_model_filename_last_good_one,
-                map_location=lambda storage, loc: storage.cuda(1),
-            )
+            try:
+                info_message = "Trying to load the last good model saved"
+                self.Logger.info(self, info_message)
+                self.model = torch.load(
+                    self.app_instance_metadata.shared_definitions.project_solution_ekg_1_model_filename_last_good_one,
+                    map_location=lambda storage, loc: storage.cuda(1),
+                )
+            except:
+                info_message = "Failed to load last good model saved. Could be an error, or there is none saved. Loading last available model"
+                self.Logger.info(self, info_message)
+                return_code, return_message, model_path = get_last_model(
+                    self.Logger, "ekg1", self.app_instance_metadata
+                )
+                if return_code != 0:
+                    self.Logger.info(self, return_message)
+                    return
+                else:
+                    self.model = torch.load(
+                        model_path, map_location=lambda storage, loc: storage.cuda(0)
+                    )
 
         info_message = "load_model() -- end"
         self.Logger.info(self, info_message)
