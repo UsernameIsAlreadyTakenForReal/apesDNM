@@ -53,7 +53,7 @@ def get_last_model(Logger, solution_name, app_instance_metadata):
 
     if len(list_of_finds) != 0:
         new_path = ""
-        new_path == get_full_path_of_given_model(
+        new_path = get_full_path_of_given_model(
             list_of_finds[0],
             app_instance_metadata.shared_definitions.project_model_root_path,
         )
@@ -95,7 +95,6 @@ def get_full_path_of_given_model(model_filename, project_model_root_path):
                 folder_structure_from_project_root_to_model_dir + "/" + path_elements[i]
             )
             break
-
     return new_path
 
 
