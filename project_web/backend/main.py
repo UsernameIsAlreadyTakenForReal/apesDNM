@@ -12,7 +12,6 @@ from io import StringIO
 import os, os.path
 import tempfile
 import gevent
-import random
 
 import sys
 
@@ -25,9 +24,13 @@ socketio = SocketIO(app, cors_allowed_origins="*", async_mode="gevent")
 CORS(app)
 
 logger = Logger(socketio)
-# logger = Logger()
 
-# ############################################################################
+# TODO
+# add check for new image in emit messages
+# add image viewer for all images in /images folder
+# something like "New picture saved || [full path] || caption"
+# create new screen (component? for onFileChange?) for EDA and checks
+# add EKG1 and EKG2 to combobox/data.py
 
 
 class Output:
@@ -49,29 +52,6 @@ class Output:
         gevent.spawn(socketio.emit("console", str(self._x), broadcast=True))
 
 
-# ############################################################################
-
-
-# class Logger:
-#     def _init_(self):
-#         self.message_in_queue = (
-#             "Nothing to print in Logger. This may mean something is wrong."
-#         )
-#         pass
-
-#     def info(self, sender, text_to_log):
-#         message = str(datetime.now()) + " -- " + str(sender) + " -- " + text_to_log
-#         gevent.spawn(socketio.emit("console", str(message), broadcast=True))
-#         print(message)
-#         # time.sleep(2)
-
-#     def print_info(self):
-#         print(self.message_in_queue)
-
-
-# ############################################################################
-
-
 def cls():
     os.system("cls" if os.name == "nt" else "clear")
 
@@ -88,21 +68,20 @@ def getDatasets():
 def upload_file():
     print("upload_file() function called")
 
+    output = StringIO()
+    sys.stdout = output
+
     info_message = "upload has been triggered"
     logger.info("upload_file", info_message)
 
-    # ########################################################################
     # ###################### cleaning-up images folder #######################
-    # ########################################################################
 
     import shutil
 
     shutil.rmtree("images")
     os.makedirs("images")
 
-    # ########################################################################
     # ########################### files processing ###########################
-    # ########################################################################
 
     files = []
 
@@ -130,9 +109,7 @@ def upload_file():
         info_message = "files processing done. files saved at " + temp_dir
         logger.info("file_save", info_message)
 
-    # ########################################################################
     # ########################## gathering metadata ##########################
-    # ########################################################################
 
     #
     dataset_path = temp_dir
@@ -161,9 +138,9 @@ def upload_file():
 
     saveData = request.form.get("saveData", False)
 
-    # ########################################################################
+    # ########################### application run ############################
+
     # ########################### plot processing ############################
-    # ########################################################################
 
     from matplotlib import pyplot as plt
     import uuid
@@ -191,16 +168,14 @@ def upload_file():
     info_message = "exiting endpoint"
     logger.info("upload_file", info_message)
 
-    # console_info = output.getvalue()
-    # sys.stdout = sys.__stdout__
+    console_info = output.getvalue()
+    sys.stdout = sys.__stdout__
 
-    # ########################################################################
     # ########################### creating results ###########################
-    # ########################################################################
 
     results = "run has been successful. for detailed steps, check the console."
 
-    result = {"results": results, "plots": plots}  # , "console": console_info}
+    result = {"results": results, "plots": plots, "console": console_info}
     return jsonify(result)
 
 
@@ -215,7 +190,5 @@ def testing():
 
 
 if __name__ == "__main__":
-    # app.run(debug=True, port=5000)
-
     cls()
     socketio.run(app, debug=True, port=5000)

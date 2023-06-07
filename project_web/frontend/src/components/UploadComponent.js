@@ -1,10 +1,12 @@
 import { useEffect, useState } from "react";
-import { Divv, TextFieldFlex, Label } from "./StyledComponents";
 
-import Terminal from "react-terminal-ui";
+import { Divv, TextFieldFlex, Label } from "./StyledComponents";
+import WebSocketComponent from "./WebSocketComponent";
 
 import lstmSVG from "../lstm.svg";
 import cnnSVG from "../cnn.svg";
+
+import Terminal from "react-terminal-ui";
 
 import {
   Button,
@@ -30,7 +32,6 @@ import {
   DialogActions,
   Slider,
 } from "@mui/material";
-import WebSocketComponent from "./WebSocketComponent";
 
 const BASE_URL = process.env.REACT_APP_BACKEND;
 
@@ -421,12 +422,6 @@ export default function UploadComponent() {
     sendUploadRequest(formData);
   }
 
-  async function fetchTesting() {
-    let formData = { id: 1 };
-
-    sendUploadRequest(formData);
-  }
-
   // -------------------------------------------------------------------------
   function handleResults(textResponse) {
     const data = JSON.parse(textResponse);
@@ -580,7 +575,7 @@ export default function UploadComponent() {
             <Button
               onClick={() => {
                 setShowResults(true);
-                fetchTesting();
+                sendUploadRequest({ id: 1 });
               }}
             >
               Fetch test
