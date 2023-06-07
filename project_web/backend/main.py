@@ -23,6 +23,8 @@ app.config["SECRET_KEY"] = "apesDNM"
 socketio = SocketIO(app, cors_allowed_origins="*", async_mode="gevent")
 CORS(app)
 
+logger = Logger(socketio)
+
 # ############################################################################
 
 
@@ -48,21 +50,21 @@ class Output:
 # ############################################################################
 
 
-class Logger:
-    def _init_(self):
-        self.message_in_queue = (
-            "Nothing to print in Logger. This may mean something is wrong."
-        )
-        pass
+# class Logger:
+#     def _init_(self):
+#         self.message_in_queue = (
+#             "Nothing to print in Logger. This may mean something is wrong."
+#         )
+#         pass
 
-    def info(self, sender, text_to_log):
-        message = str(datetime.now()) + " -- " + str(sender) + " -- " + text_to_log
-        gevent.spawn(socketio.emit("console", str(message), broadcast=True))
-        print(message)
-        # time.sleep(2)
+#     def info(self, sender, text_to_log):
+#         message = str(datetime.now()) + " -- " + str(sender) + " -- " + text_to_log
+#         gevent.spawn(socketio.emit("console", str(message), broadcast=True))
+#         print(message)
+#         # time.sleep(2)
 
-    def print_info(self):
-        print(self.message_in_queue)
+#     def print_info(self):
+#         print(self.message_in_queue)
 
 
 # ############################################################################
@@ -95,10 +97,17 @@ def upload_file():
     # ########################### init-ing logger ############################
     # ########################################################################
 
-    logger = Logger()
+    # logger = Logger()
 
     info_message = "upload has been triggered"
     logger.info("upload_file", info_message)
+
+    sys.path.insert(1, "../../project_apes/helpers_aiders_and_conveniencers")
+    from testing_broadcast import test_singleton
+
+    test_singleton()
+
+    return "ok"
 
     # ########################################################################
     # ###################### cleaning-up images folder #######################
