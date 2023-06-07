@@ -208,6 +208,7 @@ class Solution_ekg_1:
                     self.model = torch.load(
                         model_path, map_location=lambda storage, loc: storage.cuda(0)
                     )
+                    print(type(self.model) == None)
 
         info_message = "load_model() -- end"
         self.Logger.info(self, info_message)

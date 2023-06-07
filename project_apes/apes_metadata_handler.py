@@ -107,7 +107,7 @@ class Application_Instance_Metadata:
         dataset_category="ekg",
         solution_category="ekg",
         solution_nature="supervised",
-        solution_index=1,
+        solution_index=[1],
         model_origin="train_new_model",
         model_train_epochs=40,
     ):

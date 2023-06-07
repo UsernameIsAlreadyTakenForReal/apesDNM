@@ -2,11 +2,14 @@ import sys
 
 n = len(sys.argv)
 print("Total number of arguments passed: ", n)
-if n != 2:
-    sys.exit("Test correctly, please. Only one parameter (dataset) at the moment")
+if n != 3:
+    sys.exit(
+        "Test correctly, please. Only 2 parameters (dataset, solution) at the moment"
+    )
 
 example_path = ""
 dataset_metadata__dataset_name_stub = ""
+solution_index = []
 
 if int(sys.argv[1]) == 1:
     print("Running with dataset egk1")
@@ -19,6 +22,13 @@ elif int(sys.argv[1]) == 2:
 else:
     print("whatev")
     sys.exit("Test correctly, please. Selection is [1, 2] at the moment")
+
+if int(sys.argv[2]) == 1:
+    solution_index = [1]
+elif int(sys.argv[2]) == 2:
+    solution_index = [2]
+elif int(sys.argv[2]) == 3:
+    solution_index = [1, 2]
 
 from helpers_aiders_and_conveniencers.logger import Logger
 
@@ -56,7 +66,7 @@ application_metadata__dataset_origin = "existing_dataset"
 application_metadata__dataset_category = "ekg"
 application_metadata__solution_category = "ekg"
 application_metadata__solution_nature = "supervised"
-application_metadata__solution_index = [1]
+application_metadata__solution_index = solution_index
 application_metadata__model_origin = "use_existing_model"
 application_metadata__model_train_epochs = 5
 
