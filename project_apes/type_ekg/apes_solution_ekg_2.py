@@ -104,6 +104,8 @@ class Solution_ekg_2:
         info_message = "create_model() -- end"
         self.Logger.info(self, info_message)
 
+        return 0, f"{self} -- create_model() completed successfully"
+
     def save_model(self, filename="", path=""):
         info_message = "save_model() -- begin"
         self.Logger.info(self, info_message)
@@ -128,6 +130,8 @@ class Solution_ekg_2:
 
         info_message = "save_model() -- end"
         self.Logger.info(self, info_message)
+
+        return 0, f"{self} -- save_model() completed successfully"
 
     def load_model(self, filename="", path=""):
         info_message = "load_model() -- begin"
@@ -161,6 +165,8 @@ class Solution_ekg_2:
 
         info_message = "load_model() -- end"
         self.Logger.info(self, info_message)
+
+        return 0, f"{self} -- load_model() completed successfully"
 
     ## Functionality methods
     def train(self, epochs=40):
@@ -205,6 +211,7 @@ class Solution_ekg_2:
         info_message = "train() -- end"
         self.Logger.info(self, info_message)
 
+        return 0, f"{self} -- train() completed successfully"
         return history
 
     def test(self):
@@ -212,7 +219,8 @@ class Solution_ekg_2:
         self.Logger.info(self, info_message)
         info_message = f"Testing - it took "
         self.Logger.info(self, info_message)
-        pass
+
+        return 0, f"{self} -- test() completed successfully"
 
     ## Dataset methods
     def adapt_dataset(
@@ -300,5 +308,7 @@ class Solution_ekg_2:
 
         info_message = "adapt_dataset() -- end"
         self.Logger.info(self, info_message)
+
+        return 0, f"{self} -- adapt_dataset() completed successfully"
 
     ## -------------- Particular methods --------------

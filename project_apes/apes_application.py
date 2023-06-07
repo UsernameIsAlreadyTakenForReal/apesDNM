@@ -273,24 +273,47 @@ class APES_Application:
         for solution in self.solutions_list:
             info_message = f"Beginning run for solution {solution}"
             self.Logger.info(self, info_message)
-            solution.adapt_dataset(
+
+            return_code, return_message = solution.adapt_dataset(
                 self.application_instance_metadata,
                 self.dataFramesList,
                 self.dataFramesUtilityList,
             )
+            if return_code != 0:
+                return return_code, return_message
 
             if self.application_instance_metadata.model_origin == "train_new_model":
                 info_message = f"Directive to train new model"
                 self.Logger.info(self, info_message)
-                solution.create_model()
-                solution.train(self.application_instance_metadata.model_train_epochs)
-                solution.save_model()
-                solution.test()
+
+                return_code, return_message = solution.create_model()
+                if return_code != 0:
+                    return return_code, return_message
+
+                return_code, return_message = solution.train(
+                    self.application_instance_metadata.model_train_epochs
+                )
+                if return_code != 0:
+                    return return_code, return_message
+
+                return_code, return_message = solution.save_model()
+                if return_code != 0:
+                    return return_code, return_message
+
+                return_code, return_message = solution.test()
+                if return_code != 0:
+                    return return_code, return_message
             else:
                 ## check if sizes compatible with dataset's sizes
                 info_message = f"Directive to use existing model"
                 self.Logger.info(self, info_message)
-                solution.load_model()
-                solution.test()
+
+                return_code, return_message = solution.load_model()
+                if return_code != 0:
+                    return return_code, return_message
+
+                return_code, return_message = solution.test()
+                if return_code != 0:
+                    return return_code, return_message
 
         return 0, "Function p3_run_solutions exited successfully"

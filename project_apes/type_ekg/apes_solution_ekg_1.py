@@ -37,7 +37,11 @@ torch.__version__
 import sys
 
 sys.path.insert(1, "../helpers_aiders_and_conveniencers")
-from helpers_aiders_and_conveniencers.misc_functions import get_last_model
+from helpers_aiders_and_conveniencers.misc_functions import (
+    get_last_model,
+    model_filename_fits_expected_name,
+    get_full_path_of_given_model,
+)
 
 
 class Encoder(nn.Module):
@@ -147,6 +151,8 @@ class Solution_ekg_1:
         info_message = "create_model() -- ended autoencoder model creation"
         self.Logger.info(self, info_message)
 
+        return 0, f"{self} -- create_model() completed successfully"
+
     def save_model(self, filename="", path=""):
         info_message = "save_model() -- begin"
         self.Logger.info(self, info_message)
@@ -179,6 +185,8 @@ class Solution_ekg_1:
         info_message = "save_model() -- end"
         self.Logger.info(self, info_message)
 
+        return 0, f"{self} -- save_model() completed successfully"
+
     def load_model(self, filename="", path=""):
         info_message = "load_model() -- begin"
         self.Logger.info(self, info_message)
@@ -188,30 +196,42 @@ class Solution_ekg_1:
         elif filename != "":
             pass
         else:
-            try:
+            if (
+                model_filename_fits_expected_name(
+                    "ekg1",
+                    self.app_instance_metadata,
+                    self.app_instance_metadata.shared_definitions.project_solution_ekg_1_model_filename_last_good_one,
+                )
+                == True
+            ):
                 info_message = "Trying to load the last good model saved"
                 self.Logger.info(self, info_message)
-                self.model = torch.load(
+                model_absolute_path = get_full_path_of_given_model(
                     self.app_instance_metadata.shared_definitions.project_solution_ekg_1_model_filename_last_good_one,
+                    self.app_instance_metadata.shared_definitions.project_model_root_path,
+                )
+                self.model = torch.load(
+                    model_absolute_path,
                     map_location=lambda storage, loc: storage.cuda(1),
                 )
-            except:
-                info_message = "Failed to load the last saved good model. Could be an error, or there is none saved. Loading last available model"
+            else:
+                info_message = "Loading last available model"
                 self.Logger.info(self, info_message)
                 return_code, return_message, model_path = get_last_model(
                     self.Logger, "ekg1", self.app_instance_metadata
                 )
                 if return_code != 0:
                     self.Logger.info(self, return_message)
-                    return
+                    return return_code, return_message
                 else:
                     self.model = torch.load(
                         model_path, map_location=lambda storage, loc: storage.cuda(0)
                     )
-                    print(type(self.model) == None)
 
         info_message = "load_model() -- end"
         self.Logger.info(self, info_message)
+
+        return 0, f"{self} -- load_model() completed successfully"
 
     ## Functionality methods
     def train(self, epochs=40):
@@ -257,6 +277,8 @@ class Solution_ekg_1:
         info_message = "train() -- end"
         self.Logger.info(self, info_message)
 
+        return 0, f"{self} -- train() completed successfully"
+
     def test(self):
         info_message = "test() -- begin"
         self.Logger.info(self, info_message)
@@ -274,14 +296,18 @@ class Solution_ekg_1:
         predictions, pred_losses = self.predict(self.model, self.test_normal_dataset)
         sns.displot(pred_losses, bins=50, kde=True)
         correct = sum(l <= THRESHOLD for l in pred_losses)
-        print(f"Correct normal predictions: {correct}/{len(self.test_normal_dataset)}")
+        info_message = (
+            f"Correct normal predictions: {correct}/{len(self.test_normal_dataset)}"
+        )
+        self.Logger.info(self, info_message)
 
         # anomalies
         anomaly_dataset = self.test_anomaly_dataset[: len(self.test_normal_dataset)]
         predictions, pred_losses = self.predict(self.model, anomaly_dataset)
         sns.displot(pred_losses, bins=50, kde=True)
         correct = sum(l > THRESHOLD for l in pred_losses)
-        print(f"Correct anomaly predictions: {correct}/{len(anomaly_dataset)}")
+        info_message = f"Correct anomaly predictions: {correct}/{len(anomaly_dataset)}"
+        self.Logger.info(self, info_message)
 
         plt.figure(1)
         plt.plot(self.test_normal_dataset[0])
@@ -292,6 +318,8 @@ class Solution_ekg_1:
 
         info_message = "test() -- end"
         self.Logger.info(self, info_message)
+
+        return 0, f"{self} -- test() completed successfully"
 
     ## Dataset methods
     def adapt_dataset(
@@ -305,7 +333,6 @@ class Solution_ekg_1:
 
         RANDOM_SEED = 42
 
-        # try:
         df = pd.concat(list_of_dataFrames)
         new_columns = list(df.columns)
         new_columns[-1] = "target"
@@ -315,7 +342,8 @@ class Solution_ekg_1:
             application_instance_metadata.dataset_metadata.numerical_value_of_desired_label
         )
         if class_normal != 0:
-            print("fuck")
+            print("You don' fuck up")
+            return 1, f"{self} adapt_dataset() -- class_normal == {class_normal}"
 
         normal_df = df[df.target == int(class_normal)].drop(labels="target", axis=1)
         self.anormal_df = df[df.target != int(class_normal)].drop(
@@ -340,9 +368,8 @@ class Solution_ekg_1:
         self.val_dataset, _, _ = self.create_dataset(self.val_df)
         self.test_normal_dataset, _, _ = self.create_dataset(self.test_df)
         self.test_anomaly_dataset, _, _ = self.create_dataset(self.anormal_df)
-        # except:
-        #     info_message = "Couldn't adapt dataset"
-        #     self.Logger.info(self, info_message)
+
+        return 0, f"{self} -- adapt_dataset() completed successfully"
 
     ## -------------- Particular methods --------------
     def train_model_helper(self, model, train_dataset, val_dataset, n_epochs):
@@ -355,7 +382,7 @@ class Solution_ekg_1:
 
         for epoch in range(1, n_epochs + 1):
             time_temp = datetime.now()
-            info_message = f"Epoch {epoch}"
+            info_message = f"Epoch {epoch}: start"
             self.Logger.info(self, info_message)
             model = model.train()
 

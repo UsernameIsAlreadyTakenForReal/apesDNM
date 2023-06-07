@@ -152,7 +152,6 @@ def treat_files(
             app_instance_metadata.dataset_metadata.file_keyword_names
         )
 
-    # try:
     if True:
         if len(files_to_load) == 0:
             files_to_load = app_instance_metadata.dataset_metadata.dataset_path
@@ -259,13 +258,6 @@ def treat_files(
             list_of_dataFrames,
             list_of_dataFramesUtilityLabels,
         )
-    # except:
-    #     return (
-    #         1,
-    #         "apes_dataset_handler.treat_file exited with error",
-    #         list_of_dataFrames,
-    #         list_of_dataFramesUtilityLabels,
-    #     )
 
 
 def treat_folder(Logger, app_instance_metadata):
@@ -473,10 +465,10 @@ def normalize_label_column(Logger, app_instance_metadata, dataFrame):
     if app_instance_metadata.dataset_metadata.is_labeled == True:
         # assuming label resides in the last column
         target_list = [int(x) for x in dataFrame.iloc[:, cols].values]
-        print(
-            "these many unique values "
-            + str(how_many_different_values_in_list(target_list))
+        info_message = "These many unique values in list: " + str(
+            how_many_different_values_in_list(target_list)
         )
+        Logger.info("apes_dataset_handler.normalize_label_column", info_message)
         # info_message = f"Old targets are {target_list}"
         # Logger.info("apes_dataset_handler.normalize_label_column", info_message)
 
