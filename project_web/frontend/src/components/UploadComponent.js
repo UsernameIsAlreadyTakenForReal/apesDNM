@@ -1,6 +1,3 @@
-// TO DO
-// add indexOf for desired_value
-
 import { useEffect, useState } from "react";
 import { Divv, TextFieldFlex, Label } from "./StyledComponents";
 
@@ -324,6 +321,7 @@ export default function UploadComponent() {
         : -1,
       classes: classes,
       normalClass: normalClass,
+      indexOfNormalClass: classes.indexOf(normalClass),
       epochs: epochs,
     };
 
@@ -345,6 +343,11 @@ export default function UploadComponent() {
     formData.append("class_names", classes);
     formData.append("label_column_name", labelColumn);
     formData.append("desired_label", normalClass);
+    formData.append(
+      "numerical_value_of_desired_label",
+      classes.indexOf(normalClass)
+    );
+
     formData.append("separate_train_and_test", separateTrainAndTestCheckbox);
     formData.append("percentage_of_split ", trainDataPercentage);
     formData.append("shuffle_rows", shuffleRows);
