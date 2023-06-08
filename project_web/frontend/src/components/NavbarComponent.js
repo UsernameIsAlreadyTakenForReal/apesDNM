@@ -1,6 +1,6 @@
 import { Link, useLocation, useNavigate } from "react-router-dom";
 import { Divv, RowFlex, Nav } from "./StyledComponents";
-import { useEffect, useState } from "react";
+import { Tooltip, Typography } from "@mui/material";
 
 export default function NavbarComponent() {
   const navigate = useNavigate();

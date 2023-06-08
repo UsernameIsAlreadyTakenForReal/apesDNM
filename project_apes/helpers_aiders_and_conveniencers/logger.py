@@ -29,7 +29,7 @@ class Logger(metaclass=Singleton):
         if self.socketio is not None:
             gevent.spawn(self.socketio.emit("console", str(message), broadcast=True))
 
-        # time.sleep(0.1)
+        time.sleep(0.1)
 
     def print_info(self):
         print(self.message_in_queue)

@@ -50,6 +50,8 @@ export default function UploadComponent() {
 
   const [showResults, setShowResults] = useState(false);
 
+  const [showEDA, setShowEDA] = useState(false);
+
   // data
   const [existingDatasets, setExistingDatasets] = useState([]);
 
@@ -109,6 +111,8 @@ export default function UploadComponent() {
   const [method3Hover, setMethod3Hover] = useState(false);
 
   const [supervisedCheckboxHover, setSupervisedCheckboxHover] = useState(false);
+
+  const [edaButtonHover, setEDAButtonHover] = useState(false);
 
   // errors
   const [fileSelectionError, setFileSelectionError] = useState(false);
@@ -215,6 +219,8 @@ export default function UploadComponent() {
 
     localStringOfFilesUploaded = localStringOfFilesUploaded.slice(0, -2);
     setStringOfFilesUploaded(localStringOfFilesUploaded);
+
+    sendUploadRequest("loading eda", "perform_eda");
   }
 
   // -------------------------------------------------------------------------
@@ -432,22 +438,28 @@ export default function UploadComponent() {
   }
 
   // -------------------------------------------------------------------------
-  function handleResults(textResponse) {
-    const data = JSON.parse(textResponse);
+  async function sendUploadRequest(formData, endpoint = "upload") {
+    await loadingResultsScreen("processing");
 
-    // setBackendMLPlots(data.plots);
-    // setBackendConsole(data.console.split("\n"));
-    setBackendResults(data.results);
+    const response = await fetch(BASE_URL + endpoint, {
+      method: "POST",
+      body: formData,
+    });
+
+    const textResponse = await response.text();
+    setResponseData(textResponse);
+
+    handleResults(textResponse);
   }
 
   // -------------------------------------------------------------------------
-  async function loadingResultsScreen() {
+  async function loadingResultsScreen(loadingText = "processing") {
     setShowResults(false);
     setLoading(true);
 
-    setTimeout(() => setLoadingText("processing."), 0);
-    setTimeout(() => setLoadingText("processing.."), 500);
-    setTimeout(() => setLoadingText("processing..."), 1000);
+    setTimeout(() => setLoadingText(loadingText + "."), 0);
+    setTimeout(() => setLoadingText(loadingText + ".."), 500);
+    setTimeout(() => setLoadingText(loadingText + "..."), 1000);
 
     await delay(1500);
 
@@ -456,21 +468,12 @@ export default function UploadComponent() {
   }
 
   // -------------------------------------------------------------------------
-  async function sendUploadRequest(formData) {
-    await loadingResultsScreen();
+  function handleResults(textResponse) {
+    const data = JSON.parse(textResponse);
 
-    const response = await fetch(BASE_URL + "upload", {
-      method: "POST",
-      body: formData,
-    });
-
-    const textResponse = await response.text();
-    setResponseData(textResponse);
-    console.log(textResponse);
-
-    // setBackendResults(JSON.parse(textResponse).results);
-
-    handleResults(textResponse);
+    // setBackendMLPlots(data.plots);
+    // setBackendConsole(data.console.split("\n"));
+    setBackendResults(data.results);
   }
 
   // -------------------------------------------------------------------------
@@ -853,6 +856,41 @@ export default function UploadComponent() {
               </div>
             )}
 
+            {showEDA && (
+              <Dialog open={true} maxWidth="xl" fullWidt={true}>
+                <DialogTitle style={{ fontWeight: "bold" }}>
+                  {"are you happy with your dataset motherfucker?"}
+                </DialogTitle>
+                <DialogContent>
+                  <DialogContentText>
+                    we ran some test and found this out: your dataset fucking
+                    sucks
+                  </DialogContentText>
+                  <img src={lstmSVG} />
+                  <DialogContentText>
+                    see this thing above? it's got some smart things in those
+                    neurons unlike you you monumental degenerate
+                  </DialogContentText>
+                </DialogContent>
+                <DialogActions>
+                  <Button
+                    style={{
+                      background: edaButtonHover === false ? "black" : "orange",
+                      color: edaButtonHover === false ? "white" : "black",
+                      fontWeight: "bold",
+                    }}
+                    variant="contained"
+                    color="primary"
+                    size="large"
+                    onMouseEnter={() => setEDAButtonHover(true)}
+                    onMouseLeave={() => setEDAButtonHover(false)}
+                  >
+                    got it, sorry
+                  </Button>
+                </DialogActions>
+              </Dialog>
+            )}
+
             <TextFieldFlex style={{ marginTop: "10px" }}>
               <FormControl
                 style={{
@@ -1112,7 +1150,7 @@ export default function UploadComponent() {
                 <Select
                   label="data-type-select"
                   onChange={(event) => {
-                    console.log("now selectred", event.target.value);
+                    console.log("now selected", event.target.value);
                     setNormalClass(event.target.value);
                   }}
                 >
@@ -1330,7 +1368,9 @@ export default function UploadComponent() {
       <WebSocketComponent
         onOutputUpdated={(data) => {
           console.log("io:", data);
+
           setBackendConsole((backendConsole) => [...backendConsole, data]);
+
           if (data.toLowerCase().includes("created picture at")) {
             let imageData = data.split("||");
 

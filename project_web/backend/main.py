@@ -7,11 +7,15 @@ from flask_socketio import SocketIO
 from flask_cors import CORS
 from flask.json import jsonify
 from datetime import datetime
-from io import StringIO
+
+from matplotlib import pyplot as plt
+import uuid
+
+plt.switch_backend("agg")
 
 import os, os.path
 import tempfile
-import gevent
+import random
 
 import sys
 
@@ -26,15 +30,53 @@ CORS(app)
 logger = Logger(socketio)
 
 # TODO
-# add check for new image in emit messages
-# something like "New picture saved || [full path] || caption"
-# add image viewer for all images in /images folder
-# create new screen (component? for onFileChange?) for EDA and checks
+# DONE --- add check for new image in emit messages
+# DONE --- something like "New picture saved || [full path] || caption"
+# DONE --- add image viewer for all images in /images folder
 # DONE --- add EKG1 and EKG2 to combobox/data.py
+# create new screen (component? for onFileChange?) for EDA and checks
 
 
 def cls():
     os.system("cls" if os.name == "nt" else "clear")
+
+
+def plot():
+    number_of_points = random.randint(5, 15)
+    points_x = []
+    points_y = []
+
+    for _ in range(number_of_points):
+        points_x.append(random.randint(0, 100))
+        points_y.append(random.randint(0, 100))
+
+    plt.clf()
+
+    plt.plot(points_x, points_y)
+
+    plt.ylabel(str(number_of_points) + " random numbers")
+    plt.xlabel(str("just as many random numbers"))
+
+    plot_title = "a plot with " + str(number_of_points) + " random numbers"
+    plt.title(plot_title)
+
+    filename = str(uuid.uuid4()) + ".png"
+
+    info_message = "plot filename is " + filename
+    logger.info("matplotlib", info_message)
+
+    figure_path_png = os.path.join("images", filename)
+
+    plt.savefig(figure_path_png)
+
+    info_message = (
+        "Created picture at location"
+        + " || "
+        + str(figure_path_png)
+        + " || "
+        + str(plot_title)
+    )
+    logger.info("upload_file", info_message)
 
 
 @app.route("/datasets", methods=["GET", "POST"])
@@ -45,12 +87,48 @@ def getDatasets():
     return jsonify(data.datasets)
 
 
+@app.route("/perform_eda", methods=["GET", "POST"])
+def perform_eda():
+    files = []
+
+    logger.info("upload_file", "# of files sent is " + str(len(request.files)))
+
+    for i in range(len(request.files)):
+        if request.files.get(f"file{i}"):
+            files.append(request.files.get(f"file{i}"))
+
+            file = request.files.get(f"file{i}")
+
+            logger.info("request", f"file{i}: " + file.filename)
+
+    temp_dir = ""
+
+    if len(files) == 0:
+        logger.info("file_save", "files processing done. no files to save")
+    else:
+        temp_dir = tempfile.mkdtemp()
+        for file in files:
+            file.save(os.path.join(temp_dir, file.filename))
+        logger.info("file_save", "files processing done. files saved at " + temp_dir)
+
+    results = (
+        "these are some results about the files you uploaded. there's also some plots"
+    )
+
+    number_of_plots = random.randint(2, 10)
+    logger.info("upload_file", "there are " + str(number_of_plots) + " plots")
+
+    for _ in range(number_of_plots):
+        plot()
+
+    return jsonify({"results": results})
+
+
 @app.route("/upload", methods=["GET", "POST"])
 def upload_file():
     print("upload_file() function called")
 
-    info_message = "upload has been triggered"
-    logger.info("upload_file", info_message)
+    logger.info("upload_file", "upload has been triggered")
 
     # ###################### cleaning-up images folder #######################
 
@@ -61,36 +139,10 @@ def upload_file():
 
     # ########################### files processing ###########################
 
-    files = []
-
-    info_message = "# of files sent is " + str(len(request.files))
-    logger.info("upload_file", info_message)
-
-    for i in range(len(request.files)):
-        if request.files.get(f"file{i}"):
-            files.append(request.files.get(f"file{i}"))
-
-            file = request.files.get(f"file{i}")
-
-            info_message = f"file{i}: " + file.filename
-            logger.info("request", info_message)
-
-    temp_dir = ""
-
-    if len(files) == 0:
-        info_message = "files processing done. no files to save"
-        logger.info("file_save", info_message)
-    else:
-        temp_dir = tempfile.mkdtemp()
-        for file in files:
-            file.save(os.path.join(temp_dir, file.filename))
-        info_message = "files processing done. files saved at " + temp_dir
-        logger.info("file_save", info_message)
-
     # ########################## gathering metadata ##########################
 
-    #
-    dataset_path = temp_dir
+    # dataset metadata
+    dataset_path = request.form.get("dataset_path", "")
     is_labeled = request.form.get("input_name", True)
     file_keyword_names = request.form.get("file_keyword_names", [])
     class_names = request.form.get("class_names", [])
@@ -120,74 +172,16 @@ def upload_file():
 
     # ########################### plot processing ############################
 
-    from matplotlib import pyplot as plt
-    import uuid
+    number_of_plots = random.randint(2, 10)
+    logger.info("upload_file", "there are " + str(number_of_plots) + " plots")
 
-    plt.switch_backend("agg")
-    plots = []
-
-    # clears the current plot
-    plt.clf()
-
-    # create plot
-    plt.plot([1, 2, 3, 4], [1, 4, 9, 16])
-    plt.ylabel("more numbers")
-    # create filename
-    filename = str(uuid.uuid4()) + ".png"
-    # log info
-    info_message = "plot filename is " + filename
-    logger.info("matplotlib", info_message)
-    # create path and save
-    figure_path_png = os.path.join("images", filename)
-    plt.savefig(figure_path_png)
-    # add to array of plots
-    plots.append(figure_path_png)
-
-    info_message = (
-        "Created picture at "
-        + str(figure_path_png)
-        + " || "
-        + str(figure_path_png)
-        + " || "
-        + "This plot has nothing special"
-    )
-    logger.info("upload_file", info_message)
-
-    # clears the current plot
-    plt.clf()
-
-    # create plot
-    plt.plot([1, 2, 3, 4, 5, 6, 7, 8], [1, 4, 9, 16, 0, 0, 1, 2])
-    plt.ylabel("more numbers")
-    # create filename
-    filename = str(uuid.uuid4()) + ".png"
-    # log info
-    info_message = "plot filename is " + filename
-    logger.info("matplotlib", info_message)
-    # create path and save
-    figure_path_png = os.path.join("images", filename)
-    plt.savefig(figure_path_png)
-    # add to array of plots
-    plots.append(figure_path_png)
-
-    info_message = (
-        "Created picture at "
-        + str(figure_path_png)
-        + " || "
-        + str(figure_path_png)
-        + " || "
-        + "This plot has nothing special either"
-    )
-    logger.info("upload_file", info_message)
-
-    info_message = "exiting endpoint"
-    logger.info("upload_file", info_message)
+    for _ in range(number_of_plots):
+        plot()
 
     # ########################### creating results ###########################
 
     results = "run has been successful. for detailed steps, check the console."
 
-    # result = {"results": results , "plots": plots, "console": console_info}
     result = {"results": results}
     return jsonify(result)
 
@@ -217,3 +211,4 @@ if __name__ == "__main__":
 # print("...")
 # console_info = output.getvalue()
 # sys.stdout = sys.__stdout__
+# result = {"results": results , "plots": plots, "console": console_info}
