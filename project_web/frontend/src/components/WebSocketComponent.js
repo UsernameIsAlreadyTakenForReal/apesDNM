@@ -7,10 +7,7 @@ const WebSocketComponent = ({ onOutputUpdated }) => {
   useEffect(() => {
     const socket = io(BASE_URL);
 
-    socket.on("console", (data) => {
-      console.log("io:", data);
-      onOutputUpdated(data);
-    });
+    socket.on("console", (data) => onOutputUpdated(data));
 
     return () => {
       socket.disconnect();

@@ -27,29 +27,10 @@ logger = Logger(socketio)
 
 # TODO
 # add check for new image in emit messages
-# add image viewer for all images in /images folder
 # something like "New picture saved || [full path] || caption"
+# add image viewer for all images in /images folder
 # create new screen (component? for onFileChange?) for EDA and checks
-# add EKG1 and EKG2 to combobox/data.py
-
-
-class Output:
-    def __init__(self):
-        self._x = None
-
-    @property
-    def x(self):
-        return self._x
-
-    @x.setter
-    def x(self, value):
-        if self._x != value:
-            self._x = value
-            self.trigger_action()
-
-    def trigger_action(self):
-        print("value changed!")
-        gevent.spawn(socketio.emit("console", str(self._x), broadcast=True))
+# DONE --- add EKG1 and EKG2 to combobox/data.py
 
 
 def cls():
@@ -67,9 +48,6 @@ def getDatasets():
 @app.route("/upload", methods=["GET", "POST"])
 def upload_file():
     print("upload_file() function called")
-
-    output = StringIO()
-    sys.stdout = output
 
     info_message = "upload has been triggered"
     logger.info("upload_file", info_message)
@@ -165,22 +143,58 @@ def upload_file():
     # add to array of plots
     plots.append(figure_path_png)
 
-    info_message = "exiting endpoint"
+    info_message = (
+        "Created picture at "
+        + str(figure_path_png)
+        + " || "
+        + str(figure_path_png)
+        + " || "
+        + "This plot has nothing special"
+    )
     logger.info("upload_file", info_message)
 
-    console_info = output.getvalue()
-    sys.stdout = sys.__stdout__
+    # clears the current plot
+    plt.clf()
+
+    # create plot
+    plt.plot([1, 2, 3, 4, 5, 6, 7, 8], [1, 4, 9, 16, 0, 0, 1, 2])
+    plt.ylabel("more numbers")
+    # create filename
+    filename = str(uuid.uuid4()) + ".png"
+    # log info
+    info_message = "plot filename is " + filename
+    logger.info("matplotlib", info_message)
+    # create path and save
+    figure_path_png = os.path.join("images", filename)
+    plt.savefig(figure_path_png)
+    # add to array of plots
+    plots.append(figure_path_png)
+
+    info_message = (
+        "Created picture at "
+        + str(figure_path_png)
+        + " || "
+        + str(figure_path_png)
+        + " || "
+        + "This plot has nothing special either"
+    )
+    logger.info("upload_file", info_message)
+
+    info_message = "exiting endpoint"
+    logger.info("upload_file", info_message)
 
     # ########################### creating results ###########################
 
     results = "run has been successful. for detailed steps, check the console."
 
-    result = {"results": results, "plots": plots, "console": console_info}
+    # result = {"results": results , "plots": plots, "console": console_info}
+    result = {"results": results}
     return jsonify(result)
 
 
 @app.route("/images/<path:filename>")
 def get_image(filename):
+    print("file " + filename + " requested")
     return send_from_directory("images", filename)
 
 
@@ -192,3 +206,14 @@ def testing():
 if __name__ == "__main__":
     cls()
     socketio.run(app, debug=True, port=5000)
+
+
+# ############################################################################
+
+
+# ################## in case of routing the std output #######################
+# output = StringIO()
+# sys.stdout = output
+# print("...")
+# console_info = output.getvalue()
+# sys.stdout = sys.__stdout__

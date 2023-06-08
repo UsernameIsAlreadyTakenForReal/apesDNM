@@ -48,52 +48,67 @@
 
 // ###########################################################################
 
-import { io } from "socket.io-client";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { Divv } from "./StyledComponents";
-import { Button } from "@mui/material";
-import WebSocketComponent from "./WebSocketComponent";
+
+import lstmSVG from "../lstm.svg";
+import cnnSVG from "../cnn.svg";
+
+import {
+  Button,
+  Dialog,
+  DialogActions,
+  DialogContent,
+  DialogContentText,
+  DialogTitle,
+} from "@mui/material";
 
 const BASE_URL = process.env.REACT_APP_BACKEND;
 
 function TestingComponent() {
-  const [output, setOutput] = useState([]);
-  const [loading, setLoading] = useState(false);
+  const [dialogText, setDialogText] = useState(
+    "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nulla et egestas elit. Pellentesque eleifend justo vel lectus mattis ullamcorper. Class aptent taciti sociosqu ad litora torquent per conubia nostra, per inceptos himenaeos. Donec eu tincidunt lorem. Quisque laoreet quam at nisl aliquet, et ultrices lacus placerat. Vestibulum dui nunc, ultricies rhoncus maximus non, lobortis sit amet enim. Integer at ultrices enim. Suspendisse mauris justo, suscipit ut pulvinar quis, malesuada et magna."
+  );
 
-  const handleOutputUpdated = (updatedOutput) => {
-    setOutput(updatedOutput);
-  };
-
-  async function handleRequest() {
-    setLoading(true);
-
-    const response = await fetch(BASE_URL + "testing", {
-      method: "get",
-    });
-
-    const data = await response.text();
-    setLoading(false);
-    console.log(data);
-  }
+  const [showEDA, setShowEDA] = useState(true);
+  const [edaButtonHover, setEDAButtonHover] = useState(false);
 
   return (
-    <span style={{ display: true ? "" : "none" }}>
-      <Divv>
-        <Button variant="outlined" onClick={() => handleRequest()}>
-          Request
-        </Button>
-        <Divv>from socketio: {output}</Divv>
-        <Divv
-          style={{
-            display: loading ? "" : "none",
-          }}
-        >
-          still waiting for the execution to finish
-        </Divv>
-      </Divv>
-
-      <WebSocketComponent onOutputUpdated={handleOutputUpdated} />
-    </span>
+    <>
+      {showEDA && (
+        <Dialog open={true} maxWidth="xl" fullWidt={true}>
+          <DialogTitle style={{ fontWeight: "bold" }}>
+            {"are you happy with your dataset motherfucker?"}
+          </DialogTitle>
+          <DialogContent>
+            <DialogContentText>
+              we ran some test and found this out: your dataset fucking sucks
+            </DialogContentText>
+            <img src={lstmSVG} />
+            <DialogContentText>
+              see this thing above? it's got some smart things in those neurons
+              unlike you you monumental degenerate
+            </DialogContentText>
+          </DialogContent>
+          <DialogActions>
+            <Button
+              style={{
+                background: edaButtonHover === false ? "black" : "orange",
+                color: edaButtonHover === false ? "white" : "black",
+                fontWeight: "bold",
+              }}
+              variant="contained"
+              color="primary"
+              size="large"
+              onMouseEnter={() => setEDAButtonHover(true)}
+              onMouseLeave={() => setEDAButtonHover(false)}
+            >
+              got it, sorry
+            </Button>
+          </DialogActions>
+        </Dialog>
+      )}
+    </>
   );
 }
 

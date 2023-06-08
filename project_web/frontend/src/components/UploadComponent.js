@@ -8,6 +8,8 @@ import cnnSVG from "../cnn.svg";
 
 import Terminal from "react-terminal-ui";
 
+import ImageViewer from "react-simple-image-viewer";
+
 import {
   Button,
   Backdrop,
@@ -77,6 +79,7 @@ export default function UploadComponent() {
   const [responseData, setResponseData] = useState(null);
 
   const [backendMLPlots, setBackendMLPlots] = useState([]);
+  const [backendCptions, setBackendCptions] = useState([]);
   const [backendConsole, setBackendConsole] = useState([]);
   const [backendResults, setBackendResults] = useState("");
 
@@ -130,6 +133,10 @@ export default function UploadComponent() {
 
   // misc
   const [stringOfFilesUploaded, setStringOfFilesUploaded] = useState("");
+
+  // image viewer
+  const [imageViewerOpen, setImageViewerOpen] = useState(false);
+  const [currentImage, setCurrentImage] = useState(0);
 
   // -------------------------------------------------------------------------
   const delay = (ms) => new Promise((res) => setTimeout(res, ms));
@@ -379,19 +386,21 @@ export default function UploadComponent() {
     setDatasetError(false);
     setDatasetErrorMessage("");
 
+    console.log(selectedMethods);
+
     if (selectedDataset === "") {
       setDatasetError(true);
       setDatasetErrorMessage("you need to select a data-set first...");
       return;
     }
 
-    if (selectedDataset === "EKG" && selectedMethods.length === 0) {
+    if (selectedDataset.includes("EKG") && selectedMethods.length === 0) {
       setDatasetError(true);
       setDatasetErrorMessage("you need to select a method for ekg first");
       return;
     }
 
-    if (selectedDataset !== "EKG") handleEKGMethodsCheckboxes(1);
+    if (!selectedDataset.includes("EKG")) handleEKGMethodsCheckboxes(1);
 
     if (selectedMethods.length === 0) handleEKGMethodsCheckboxes(1);
 
@@ -426,8 +435,8 @@ export default function UploadComponent() {
   function handleResults(textResponse) {
     const data = JSON.parse(textResponse);
 
-    setBackendMLPlots(data.plots);
-    setBackendConsole(data.console.split("\n"));
+    // setBackendMLPlots(data.plots);
+    // setBackendConsole(data.console.split("\n"));
     setBackendResults(data.results);
   }
 
@@ -458,6 +467,8 @@ export default function UploadComponent() {
     const textResponse = await response.text();
     setResponseData(textResponse);
     console.log(textResponse);
+
+    // setBackendResults(JSON.parse(textResponse).results);
 
     handleResults(textResponse);
   }
@@ -650,7 +661,7 @@ export default function UploadComponent() {
               </FormControl>
             </div>
 
-            {selectedDataset === "EKG" ? (
+            {selectedDataset.includes("EKG") && (
               <div style={{ marginBottom: "20px" }}>
                 <Tooltip
                   title={
@@ -671,6 +682,7 @@ export default function UploadComponent() {
                   <FormControlLabel
                     control={
                       <Checkbox
+                        checked={selectedMethods.includes(1)}
                         color="default"
                         style={{
                           backgroundColor: method1Hover ? "lightgray" : "",
@@ -704,6 +716,7 @@ export default function UploadComponent() {
                   <FormControlLabel
                     control={
                       <Checkbox
+                        checked={selectedMethods.includes(2)}
                         color="default"
                         style={{
                           backgroundColor: method2Hover ? "lightgray" : "",
@@ -729,6 +742,7 @@ export default function UploadComponent() {
                   <FormControlLabel
                     control={
                       <Checkbox
+                        checked={selectedMethods.includes(3)}
                         color="default"
                         style={{
                           backgroundColor: method3Hover ? "lightgray" : "",
@@ -743,8 +757,6 @@ export default function UploadComponent() {
                   />
                 </Tooltip>
               </div>
-            ) : (
-              <></>
             )}
 
             <Divv top="0px">
@@ -768,411 +780,421 @@ export default function UploadComponent() {
             </Divv>
           </form>
         </div>
-      ) : showResults === false ? (
-        <div style={{ textAlign: "center" }}>
-          <Divv
-            style={{
-              textAlign: "left",
-            }}
-          >
-            <Button
+      ) : (
+        showResults === false && (
+          <div style={{ textAlign: "center" }}>
+            <Divv
               style={{
-                background: goBackButtonHover === false ? "black" : "orange",
-                color: goBackButtonHover === false ? "white" : "black",
-                fontWeight: "bold",
-                position: "absolute",
+                textAlign: "left",
               }}
-              variant="contained"
-              color="primary"
-              size="large"
-              onClick={() => {
-                setShowExistingMethod(false);
-                setShowFileUploadMethod(false);
-                setGoBackButtonHover(false);
-              }}
-              onMouseEnter={() => setGoBackButtonHover(true)}
-              onMouseLeave={() => setGoBackButtonHover(false)}
             >
-              Go back
-            </Button>
-          </Divv>
-
-          <Divv>
-            <Label
-              style={{
-                display: "inline-block",
-                background: fileInputHover === false ? "white" : "#F4BB44",
-                transition: "background 0.4s linear",
-              }}
-              onMouseEnter={() => setFileInputHover(true)}
-              onMouseLeave={() => setFileInputHover(false)}
-            >
-              <input
+              <Button
                 style={{
-                  display: "none",
+                  background: goBackButtonHover === false ? "black" : "orange",
+                  color: goBackButtonHover === false ? "white" : "black",
+                  fontWeight: "bold",
+                  position: "absolute",
                 }}
-                type="file"
-                onChange={(event) => onFileChange(event)}
-                multiple
-              />
-              click here to upload the input file(s).
-            </Label>
-          </Divv>
-
-          {selectedFiles[0] && !fileSelectionError ? (
-            <Divv top="0px" size="22.5px">
-              you have uploaded{" "}
-              {selectedFiles.length === 1
-                ? "1 file"
-                : selectedFiles.length + " files"}
-              : <br></br> {stringOfFilesUploaded}
+                variant="contained"
+                color="primary"
+                size="large"
+                onClick={() => {
+                  setShowExistingMethod(false);
+                  setShowFileUploadMethod(false);
+                  setGoBackButtonHover(false);
+                }}
+                onMouseEnter={() => setGoBackButtonHover(true)}
+                onMouseLeave={() => setGoBackButtonHover(false)}
+              >
+                Go back
+              </Button>
             </Divv>
-          ) : (
-            <div
-              style={{
-                display: fileSelectionError ? "" : "none",
-                transition: "color 0.4s linear",
-              }}
-            >
-              <Divv top="0px" size="22.5px" style={{ color: "red" }}>
-                {fileSelectionErrorMessage}&nbsp;&nbsp;
-              </Divv>
-            </div>
-          )}
 
-          <TextFieldFlex style={{ marginTop: "10px" }}>
-            <FormControl
-              style={{
-                margin: "25px",
-                width: "40%",
-                display: "flex",
-                alignItems: "center",
-              }}
-            >
-              <FormLabel>is the dataset labeled?</FormLabel>
-              <RadioGroup
-                row
-                name="row-radio-buttons-group"
-                defaultValue="yes"
-                value={labeledRadioValue}
-                onChange={(event) => {
-                  setLabeledRadioValue(event.target.value);
-                  if (event.target.value !== "yes") {
-                    setIsSupervisedCheckbox(false);
-                  }
+            <Divv>
+              <Label
+                style={{
+                  display: "inline-block",
+                  background: fileInputHover === false ? "white" : "#F4BB44",
+                  transition: "background 0.4s linear",
+                }}
+                onMouseEnter={() => setFileInputHover(true)}
+                onMouseLeave={() => setFileInputHover(false)}
+              >
+                <input
+                  style={{
+                    display: "none",
+                  }}
+                  type="file"
+                  onChange={(event) => onFileChange(event)}
+                  multiple
+                />
+                click here to upload the input file(s).
+              </Label>
+            </Divv>
+
+            {selectedFiles[0] && !fileSelectionError ? (
+              <Divv top="0px" size="22.5px">
+                you have uploaded{" "}
+                {selectedFiles.length === 1
+                  ? "1 file"
+                  : selectedFiles.length + " files"}
+                : <br></br> {stringOfFilesUploaded}
+              </Divv>
+            ) : (
+              <div
+                style={{
+                  display: fileSelectionError ? "" : "none",
+                  transition: "color 0.4s linear",
                 }}
               >
-                <FormControlLabel value="yes" control={<Radio />} label="yes" />
-                <FormControlLabel value="no" control={<Radio />} label="no" />
-                <FormControlLabel
-                  value="idk"
-                  control={<Radio />}
-                  label="unsure"
-                />
-                <br></br>
-              </RadioGroup>
-            </FormControl>
+                <Divv top="0px" size="22.5px" style={{ color: "red" }}>
+                  {fileSelectionErrorMessage}&nbsp;&nbsp;
+                </Divv>
+              </div>
+            )}
 
-            <Tooltip
-              title={
-                labeledRadioValue !== "yes" ? (
-                  <Typography fontSize={14}>
-                    if the dataset is not labeled, it cannot be supervised
-                  </Typography>
-                ) : (
-                  ""
-                )
-              }
-              onMouseEnter={() => setSupervisedCheckboxHover(true)}
-              onMouseLeave={() => setSupervisedCheckboxHover(false)}
-              placement="bottom"
-            >
+            <TextFieldFlex style={{ marginTop: "10px" }}>
+              <FormControl
+                style={{
+                  margin: "25px",
+                  width: "40%",
+                  display: "flex",
+                  alignItems: "center",
+                }}
+              >
+                <FormLabel>is the dataset labeled?</FormLabel>
+                <RadioGroup
+                  row
+                  name="row-radio-buttons-group"
+                  defaultValue="yes"
+                  value={labeledRadioValue}
+                  onChange={(event) => {
+                    setLabeledRadioValue(event.target.value);
+                    if (event.target.value !== "yes") {
+                      setIsSupervisedCheckbox(false);
+                    }
+                  }}
+                >
+                  <FormControlLabel
+                    value="yes"
+                    control={<Radio />}
+                    label="yes"
+                  />
+                  <FormControlLabel value="no" control={<Radio />} label="no" />
+                  <FormControlLabel
+                    value="idk"
+                    control={<Radio />}
+                    label="unsure"
+                  />
+                  <br></br>
+                </RadioGroup>
+              </FormControl>
+
+              <Tooltip
+                title={
+                  labeledRadioValue !== "yes" ? (
+                    <Typography fontSize={14}>
+                      if the dataset is not labeled, it cannot be supervised
+                    </Typography>
+                  ) : (
+                    ""
+                  )
+                }
+                onMouseEnter={() => setSupervisedCheckboxHover(true)}
+                onMouseLeave={() => setSupervisedCheckboxHover(false)}
+                placement="bottom"
+              >
+                <FormControlLabel
+                  style={{ margin: "25px", width: "20%" }}
+                  control={
+                    <Checkbox
+                      checked={isSupervisedCheckbox}
+                      id="save-data-checkbox"
+                      color="default"
+                      disabled={labeledRadioValue !== "yes"}
+                      style={{
+                        backgroundColor:
+                          supervisedCheckboxHover && labeledRadioValue !== "yes"
+                            ? "lightgray"
+                            : "",
+                        transition: "background 0.4s linear",
+                      }}
+                      onChange={() =>
+                        setIsSupervisedCheckbox(!isSupervisedCheckbox)
+                      }
+                    />
+                  }
+                  label="should it be supervised?"
+                />
+              </Tooltip>
+
               <FormControlLabel
                 style={{ margin: "25px", width: "20%" }}
                 control={
                   <Checkbox
-                    checked={isSupervisedCheckbox}
+                    checked={shuffleRows}
                     id="save-data-checkbox"
                     color="default"
-                    disabled={labeledRadioValue !== "yes"}
-                    style={{
-                      backgroundColor:
-                        supervisedCheckboxHover && labeledRadioValue !== "yes"
-                          ? "lightgray"
-                          : "",
-                      transition: "background 0.4s linear",
-                    }}
+                    onChange={() => setShuffleRows(!shuffleRows)}
+                  />
+                }
+                label="shuffle rows?"
+              />
+
+              <FormControlLabel
+                style={{ margin: "25px", width: "20%" }}
+                control={
+                  <Checkbox
+                    checked={separateTrainAndTestCheckbox}
+                    id="save-data-checkbox"
+                    color="default"
                     onChange={() =>
-                      setIsSupervisedCheckbox(!isSupervisedCheckbox)
+                      setSeparateTrainAndTestCheckbox(
+                        !separateTrainAndTestCheckbox
+                      )
                     }
                   />
                 }
-                label="should it be supervised?"
+                label="separate train and test data?"
               />
-            </Tooltip>
+            </TextFieldFlex>
 
-            <FormControlLabel
-              style={{ margin: "25px", width: "20%" }}
-              control={
-                <Checkbox
-                  checked={shuffleRows}
-                  id="save-data-checkbox"
-                  color="default"
-                  onChange={() => setShuffleRows(!shuffleRows)}
-                />
-              }
-              label="shuffle rows?"
-            />
+            <TextFieldFlex>
+              <Divv
+                size="22.5px"
+                style={{
+                  margin: "25px",
+                  width: "60%",
+                }}
+                color={separateTrainAndTestCheckbox ? "black" : "lightgray"}
+              >
+                what would you like the percentage of train data to be?
+              </Divv>
 
-            <FormControlLabel
-              style={{ margin: "25px", width: "20%" }}
-              control={
-                <Checkbox
-                  checked={separateTrainAndTestCheckbox}
-                  id="save-data-checkbox"
-                  color="default"
-                  onChange={() =>
-                    setSeparateTrainAndTestCheckbox(
-                      !separateTrainAndTestCheckbox
-                    )
-                  }
-                />
-              }
-              label="separate train and test data?"
-            />
-          </TextFieldFlex>
-
-          <TextFieldFlex>
-            <Divv
-              size="22.5px"
-              style={{
-                margin: "25px",
-                width: "60%",
-              }}
-              color={separateTrainAndTestCheckbox ? "black" : "lightgray"}
-            >
-              what would you like the percentage of train data to be?
-            </Divv>
-
-            <Tooltip
-              title={
-                separateTrainAndTestCheckbox ? (
-                  <Typography fontSize={14}>default value is 0.7</Typography>
-                ) : (
-                  ""
-                )
-              }
-              placement="top"
-              arrow={false}
-            >
-              <TextField
-                style={{ margin: "25px", width: "40%" }}
-                disabled={separateTrainAndTestCheckbox === false}
-                error={percentageError}
-                helperText={percentageError ? percentageErrorMessage : ""}
-                id="percentage-field"
-                variant="outlined"
-                label="percentage of train data"
-              />
-            </Tooltip>
-          </TextFieldFlex>
-
-          <TextFieldFlex style={{ marginTop: "10px" }}>
-            <Divv
-              size="22.5px"
-              style={{ margin: "25px", width: "60%" }}
-              color={labeledRadioValue === "yes" ? "black" : "lightgray"}
-            >
-              what is the label column called?
-            </Divv>
-            <TextField
-              style={{ margin: "25px", width: "40%" }}
-              disabled={labeledRadioValue !== "yes"}
-              error={labelColumnError}
-              helperText={labelColumnError ? labelColumnErrorMessage : ""}
-              id="label-column-field"
-              variant="outlined"
-              label="label column"
-            />
-          </TextFieldFlex>
-
-          {classesTextfields.map((textfield) => {
-            return (
-              <TextFieldFlex style={{ marginTop: "10px" }}>
-                <Divv size="22.5px" style={{ margin: "25px", width: "60%" }}>
-                  {textfield === 1 ? (
-                    <>
-                      <span
-                        style={{
-                          cursor: "pointer",
-                          borderRadius: "52px",
-                          padding: "15px",
-                          margin: "10px",
-                          background:
-                            removeClassButtonHover === false
-                              ? "white"
-                              : "orange",
-                          transition: "background 0.4s linear",
-                        }}
-                        onMouseEnter={() => setRemoveClassButtonHover(true)}
-                        onMouseLeave={() => setRemoveClassButtonHover(false)}
-                        onClick={() => {
-                          if (classesTextfields.length === 2) return;
-                          setClassesTextfields(classesTextfields.slice(0, -1));
-                          handleClassChange();
-                        }}
-                      >
-                        ((-))
-                      </span>
-                      what are the classes?
-                      <span
-                        style={{
-                          cursor: "pointer",
-                          borderRadius: "52px",
-                          padding: "15px",
-                          margin: "10px",
-                          background:
-                            addClassButtonHover === false ? "white" : "orange",
-                          transition: "background 0.4s linear",
-                        }}
-                        onMouseEnter={() => setAddClassButtonHover(true)}
-                        onMouseLeave={() => setAddClassButtonHover(false)}
-                        onClick={() => {
-                          setClassesTextfields([
-                            ...classesTextfields,
-                            classesTextfields.length + 1,
-                          ]);
-                          handleClassChange();
-                        }}
-                      >
-                        ((+))
-                      </span>
-                    </>
+              <Tooltip
+                title={
+                  separateTrainAndTestCheckbox ? (
+                    <Typography fontSize={14}>default value is 0.7</Typography>
                   ) : (
                     ""
-                  )}
-                </Divv>
-
-                <TextField
-                  style={{
-                    width: "40%",
-                    display: "flex",
-                    margin: "25px",
-                    marginTop: textfield === 1 ? "25px" : "0px",
-                    marginBottom:
-                      textfield === classesTextfields.length ? "25px" : "0px",
-                  }}
-                  error={classesTextfieldsError}
-                  helperText={
-                    classesTextfieldsError &&
-                    textfield === classesTextfields.length
-                      ? classesTextfieldsErrorMessage
-                      : ""
-                  }
-                  id={"class-textfield" + textfield}
-                  variant="outlined"
-                  label={"class #" + (textfield - 1)}
-                  onChange={() => handleClassChange()}
-                />
-              </TextFieldFlex>
-            );
-          })}
-
-          <TextFieldFlex style={{ marginTop: "10px" }}>
-            <Divv size="22.5px" style={{ margin: "25px", width: "60%" }}>
-              what is normal (non-anomaly) class value?
-            </Divv>
-            <FormControl
-              sx={{ width: "40%", margin: "25px" }}
-              variant="outlined"
-              error={normalClassError}
-            >
-              <InputLabel id="data-type-select">class type</InputLabel>
-              <Select
-                label="data-type-select"
-                onChange={(event) => {
-                  console.log("now selectred", event.target.value);
-                  setNormalClass(event.target.value);
-                }}
+                  )
+                }
+                placement="top"
+                arrow={false}
               >
-                <MenuItem key="0" value="" disabled>
-                  choose the normal class
-                </MenuItem>
-                {classes.map((item, index) => {
-                  return (
-                    <MenuItem
-                      key={index}
-                      value={item === "" ? "no value at " + (index + 1) : item}
-                    >
-                      {item === "" ? "no value at " + (index + 1) : item}
-                    </MenuItem>
-                  );
-                })}
-              </Select>
-              <FormHelperText>
-                {normalClassError ? normalClassErrorMessage : ""}
-              </FormHelperText>
-            </FormControl>
-          </TextFieldFlex>
-
-          <TextFieldFlex style={{ marginTop: "10px" }}>
-            <Divv size="22.5px" style={{ margin: "25px", width: "60%" }}>
-              how many epochs to run for?
-            </Divv>
-
-            <Slider
-              style={{ margin: "25px", width: "40%" }}
-              min={5}
-              defaultValue={40}
-              valueLabelDisplay="on"
-              value={epochs}
-              onChange={(event, newValue) => setEpochs(newValue)}
-            />
-          </TextFieldFlex>
-
-          <TextFieldFlex style={{ marginTop: "10px" }}>
-            <Divv size="22.5px" style={{ margin: "25px", width: "60%" }}>
-              {/* save my data for future uses */}
-            </Divv>
-            <FormControlLabel
-              style={{ margin: "25px", width: "40%" }}
-              control={
-                <Checkbox
-                  checked={saveDataCheckbox}
-                  id="save-data-checkbox"
-                  color="default"
-                  onChange={() => setSaveDataCheckbox(!saveDataCheckbox)}
+                <TextField
+                  style={{ margin: "25px", width: "40%" }}
+                  disabled={separateTrainAndTestCheckbox === false}
+                  error={percentageError}
+                  helperText={percentageError ? percentageErrorMessage : ""}
+                  id="percentage-field"
+                  variant="outlined"
+                  label="percentage of train data"
                 />
-              }
-              label="save my data for future uses"
-            />
-          </TextFieldFlex>
+              </Tooltip>
+            </TextFieldFlex>
 
-          <Divv>
-            <Button
-              style={{
-                background:
-                  fileUploadButtonHover === false ? "black" : "orange",
-                color: fileUploadButtonHover === false ? "white" : "black",
-                fontWeight: "bold",
-              }}
-              disabled={loading === true}
-              variant="contained"
-              color="primary"
-              size="large"
-              onClick={() => onFileUpload()}
-              onMouseEnter={() => setFileUploadButtonHover(true)}
-              onMouseLeave={() => setFileUploadButtonHover(false)}
-            >
-              Upload file
-            </Button>
-          </Divv>
-        </div>
-      ) : (
-        <></>
+            <TextFieldFlex style={{ marginTop: "10px" }}>
+              <Divv
+                size="22.5px"
+                style={{ margin: "25px", width: "60%" }}
+                color={labeledRadioValue === "yes" ? "black" : "lightgray"}
+              >
+                what is the label column called?
+              </Divv>
+              <TextField
+                style={{ margin: "25px", width: "40%" }}
+                disabled={labeledRadioValue !== "yes"}
+                error={labelColumnError}
+                helperText={labelColumnError ? labelColumnErrorMessage : ""}
+                id="label-column-field"
+                variant="outlined"
+                label="label column"
+              />
+            </TextFieldFlex>
+
+            {classesTextfields.map((textfield) => {
+              return (
+                <TextFieldFlex style={{ marginTop: "10px" }}>
+                  <Divv size="22.5px" style={{ margin: "25px", width: "60%" }}>
+                    {textfield === 1 ? (
+                      <>
+                        <span
+                          style={{
+                            cursor: "pointer",
+                            borderRadius: "52px",
+                            padding: "15px",
+                            margin: "10px",
+                            background:
+                              removeClassButtonHover === false
+                                ? "white"
+                                : "orange",
+                            transition: "background 0.4s linear",
+                          }}
+                          onMouseEnter={() => setRemoveClassButtonHover(true)}
+                          onMouseLeave={() => setRemoveClassButtonHover(false)}
+                          onClick={() => {
+                            if (classesTextfields.length === 2) return;
+                            setClassesTextfields(
+                              classesTextfields.slice(0, -1)
+                            );
+                            handleClassChange();
+                          }}
+                        >
+                          ((-))
+                        </span>
+                        what are the classes?
+                        <span
+                          style={{
+                            cursor: "pointer",
+                            borderRadius: "52px",
+                            padding: "15px",
+                            margin: "10px",
+                            background:
+                              addClassButtonHover === false
+                                ? "white"
+                                : "orange",
+                            transition: "background 0.4s linear",
+                          }}
+                          onMouseEnter={() => setAddClassButtonHover(true)}
+                          onMouseLeave={() => setAddClassButtonHover(false)}
+                          onClick={() => {
+                            setClassesTextfields([
+                              ...classesTextfields,
+                              classesTextfields.length + 1,
+                            ]);
+                            handleClassChange();
+                          }}
+                        >
+                          ((+))
+                        </span>
+                      </>
+                    ) : (
+                      ""
+                    )}
+                  </Divv>
+
+                  <TextField
+                    style={{
+                      width: "40%",
+                      display: "flex",
+                      margin: "25px",
+                      marginTop: textfield === 1 ? "25px" : "0px",
+                      marginBottom:
+                        textfield === classesTextfields.length ? "25px" : "0px",
+                    }}
+                    error={classesTextfieldsError}
+                    helperText={
+                      classesTextfieldsError &&
+                      textfield === classesTextfields.length
+                        ? classesTextfieldsErrorMessage
+                        : ""
+                    }
+                    id={"class-textfield" + textfield}
+                    variant="outlined"
+                    label={"class #" + (textfield - 1)}
+                    onChange={() => handleClassChange()}
+                  />
+                </TextFieldFlex>
+              );
+            })}
+
+            <TextFieldFlex style={{ marginTop: "10px" }}>
+              <Divv size="22.5px" style={{ margin: "25px", width: "60%" }}>
+                what is normal (non-anomaly) class value?
+              </Divv>
+              <FormControl
+                sx={{ width: "40%", margin: "25px" }}
+                variant="outlined"
+                error={normalClassError}
+              >
+                <InputLabel id="data-type-select">class type</InputLabel>
+                <Select
+                  label="data-type-select"
+                  onChange={(event) => {
+                    console.log("now selectred", event.target.value);
+                    setNormalClass(event.target.value);
+                  }}
+                >
+                  <MenuItem key="0" value="" disabled>
+                    choose the normal class
+                  </MenuItem>
+                  {classes.map((item, index) => {
+                    return (
+                      <MenuItem
+                        key={index}
+                        value={
+                          item === "" ? "no value at " + (index + 1) : item
+                        }
+                      >
+                        {item === "" ? "no value at " + (index + 1) : item}
+                      </MenuItem>
+                    );
+                  })}
+                </Select>
+                <FormHelperText>
+                  {normalClassError ? normalClassErrorMessage : ""}
+                </FormHelperText>
+              </FormControl>
+            </TextFieldFlex>
+
+            <TextFieldFlex style={{ marginTop: "10px" }}>
+              <Divv size="22.5px" style={{ margin: "25px", width: "60%" }}>
+                how many epochs to run for?
+              </Divv>
+
+              <Slider
+                style={{ margin: "25px", width: "40%" }}
+                min={5}
+                defaultValue={40}
+                valueLabelDisplay="on"
+                value={epochs}
+                onChange={(event, newValue) => setEpochs(newValue)}
+              />
+            </TextFieldFlex>
+
+            <TextFieldFlex style={{ marginTop: "10px" }}>
+              <Divv size="22.5px" style={{ margin: "25px", width: "60%" }}>
+                {/* save my data for future uses */}
+              </Divv>
+              <FormControlLabel
+                style={{ margin: "25px", width: "40%" }}
+                control={
+                  <Checkbox
+                    checked={saveDataCheckbox}
+                    id="save-data-checkbox"
+                    color="default"
+                    onChange={() => setSaveDataCheckbox(!saveDataCheckbox)}
+                  />
+                }
+                label="save my data for future uses"
+              />
+            </TextFieldFlex>
+
+            <Divv>
+              <Button
+                style={{
+                  background:
+                    fileUploadButtonHover === false ? "black" : "orange",
+                  color: fileUploadButtonHover === false ? "white" : "black",
+                  fontWeight: "bold",
+                }}
+                disabled={loading === true}
+                variant="contained"
+                color="primary"
+                size="large"
+                onClick={() => onFileUpload()}
+                onMouseEnter={() => setFileUploadButtonHover(true)}
+                onMouseLeave={() => setFileUploadButtonHover(false)}
+              >
+                Upload file
+              </Button>
+            </Divv>
+          </div>
+        )
       )}
 
-      {showResults ? (
+      {showResults && (
         <>
           <Divv size="22.5px" style={{ padding: "30px" }}>
             <div
@@ -1183,7 +1205,7 @@ export default function UploadComponent() {
             >
               <Terminal name="python outputs">
                 {backendConsole.map((line) => {
-                  if (line === "") return <></>;
+                  if (line === "") return null;
                   return (
                     <>
                       {">>>"} {line}
@@ -1194,25 +1216,50 @@ export default function UploadComponent() {
               </Terminal>
             </div>
 
-            <Divv top="55px" bottom="0px" left="55px">
-              {backendResults}
+            <Divv>{backendResults}</Divv>
+
+            <Divv left="0px">
+              {backendMLPlots.map((src, index) => (
+                <Tooltip
+                  title={
+                    <Typography fontSize={14}>
+                      {backendCptions[index]}
+                    </Typography>
+                  }
+                >
+                  <img
+                    src={src}
+                    onClick={() => {
+                      setImageViewerOpen(true);
+                      setCurrentImage(index);
+                    }}
+                    width="200"
+                    key={index}
+                    style={{ margin: "10px", cursor: "pointer" }}
+                    alt=""
+                  />
+                </Tooltip>
+              ))}
             </Divv>
 
-            <Divv>
-              {backendMLPlots.map((plot) => {
-                return <img src={BASE_URL + plot} />;
-              })}
-            </Divv>
+            {imageViewerOpen && (
+              <ImageViewer
+                backgroundStyle={{ backgroundColor: "rgba(0,0,0,0.75)" }}
+                src={backendMLPlots}
+                currentIndex={currentImage}
+                disableScroll={false}
+                closeOnClickOutside={true}
+                onClose={() => setImageViewerOpen(false)}
+              />
+            )}
           </Divv>
         </>
-      ) : (
-        <></>
       )}
 
       <div style={{ display: "flex" }}>
         <Dialog open={dialogOpen} maxWidth="xl" fullWidt={true}>
           <DialogTitle style={{ fontWeight: "bold" }}>
-            {"Proceed with these parameters?"}
+            {"proceed with these parameters?"}
           </DialogTitle>
           <DialogContent>
             <DialogContentText style={{ paddingRight: "30px" }}>
@@ -1280,10 +1327,23 @@ export default function UploadComponent() {
         </Backdrop>
       </div>
 
-      {/* <WebSocketComponent onOutputUpdated={setBackendConsole} /> */}
       <WebSocketComponent
         onOutputUpdated={(data) => {
+          console.log("io:", data);
           setBackendConsole((backendConsole) => [...backendConsole, data]);
+          if (data.toLowerCase().includes("created picture at")) {
+            let imageData = data.split("||");
+
+            setBackendMLPlots((backendMLPlots) => [
+              ...backendMLPlots,
+              imageData[1].trim(),
+            ]);
+
+            setBackendCptions((backendCaptions) => [
+              ...backendCaptions,
+              imageData[2].trim(),
+            ]);
+          }
         }}
       />
     </>
