@@ -41,6 +41,7 @@ from helpers_aiders_and_conveniencers.misc_functions import (
     get_last_model,
     model_filename_fits_expected_name,
     get_full_path_of_given_model,
+    get_plot_save_filename,
 )
 
 
@@ -204,7 +205,7 @@ class Solution_ekg_1:
                 )
                 == True
             ):
-                info_message = "Trying to load the last good model saved"
+                info_message = "Loading the last good model saved"
                 self.Logger.info(self, info_message)
                 model_absolute_path = get_full_path_of_given_model(
                     self.app_instance_metadata.shared_definitions.project_solution_ekg_1_model_filename_last_good_one,
@@ -212,7 +213,7 @@ class Solution_ekg_1:
                 )
                 self.model = torch.load(
                     model_absolute_path,
-                    map_location=lambda storage, loc: storage.cuda(1),
+                    map_location=lambda storage, loc: storage.cuda(0),
                 )
             else:
                 info_message = "Loading last available model"
@@ -266,8 +267,29 @@ class Solution_ekg_1:
         plt.ylabel("Loss")
         plt.xlabel("Epoch")
         plt.legend(["train", "test"])
-        plt.title("Loss over training epochs")
-        plt.show()
+        plot_name = "Loss over training epochs"
+        plt.title(plot_name)
+        if self.app_instance_metadata.shared_definitions.plot_show_at_runtime == True:
+            plt.show()
+
+        ## Save plot section -- begin
+        plot_save_filename = get_plot_save_filename(
+            plot_name.replace(" ", "_"), "ekg1", self.app_instance_metadata
+        )
+        plot_save_location = (
+            os.path.abspath(
+                self.app_instance_metadata.shared_definitions.plot_savefile_location
+            )
+            + os.sep
+            + plot_save_filename
+        )
+        plt.savefig(
+            plot_save_location,
+            format=self.app_instance_metadata.shared_definitions.plot_savefile_format,
+        )
+        info_message = f"Created picture at ./project_web/backend/images/ || {plot_save_location} || {plot_name}"
+        self.Logger.info(self, info_message)
+        ## Save plot section -- end
 
         info_message = "Training - it took {time} for {number} epochs".format(
             time=difference, number=epochs
@@ -309,12 +331,33 @@ class Solution_ekg_1:
         info_message = f"Correct anomaly predictions: {correct}/{len(anomaly_dataset)}"
         self.Logger.info(self, info_message)
 
-        plt.figure(1)
+        plt.figure()
         plt.plot(self.test_normal_dataset[0])
         plt.plot(predictions[0])
         plt.legend(["beat", "prediction"])
-        plt.title("Beat and prediction")
-        plt.show()
+        plot_name = "Beat and prediction"
+        plt.title(plot_name)
+        if self.app_instance_metadata.shared_definitions.plot_show_at_runtime == True:
+            plt.show()
+
+        ## Save plot section -- begin
+        plot_save_filename = get_plot_save_filename(
+            plot_name.replace(" ", "_"), "ekg1", self.app_instance_metadata
+        )
+        plot_save_location = (
+            os.path.abspath(
+                self.app_instance_metadata.shared_definitions.plot_savefile_location
+            )
+            + os.sep
+            + plot_save_filename
+        )
+        plt.savefig(
+            plot_save_location,
+            format=self.app_instance_metadata.shared_definitions.plot_savefile_format,
+        )
+        info_message = f"Created picture at ./project_web/backend/images/ || {plot_save_location} || {plot_name}"
+        self.Logger.info(self, info_message)
+        ## Save plot section -- end
 
         info_message = "test() -- end"
         self.Logger.info(self, info_message)
@@ -450,7 +493,28 @@ class Solution_ekg_1:
         )
 
         cm_display.plot()
-        plt.show()
+        if self.app_instance_metadata.shared_definitions.plot_show_at_runtime == True:
+            plt.show()
+
+        plot_name = "Confusion matrix"
+        ## Save plot section -- begin
+        plot_save_filename = get_plot_save_filename(
+            plot_name.replace(" ", "_"), "ekg1", self.app_instance_metadata
+        )
+        plot_save_location = (
+            os.path.abspath(
+                self.app_instance_metadata.shared_definitions.plot_savefile_location
+            )
+            + os.sep
+            + plot_save_filename
+        )
+        plt.savefig(
+            plot_save_location,
+            format=self.app_instance_metadata.shared_definitions.plot_savefile_format,
+        )
+        info_message = f"Created picture at ./project_web/backend/images/ || {plot_save_location} || {plot_name}"
+        self.Logger.info(self, info_message)
+        ## Save plot section -- end
 
     def create_dataset(self, df):
         sequences = df.astype(np.float32).to_numpy().tolist()

@@ -131,3 +131,6 @@ dmypy.json
 # apesDNM models
 *.pth
 *.h5
+
+# plot images
+*.png

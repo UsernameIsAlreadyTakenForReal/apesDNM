@@ -98,6 +98,40 @@ def get_full_path_of_given_model(model_filename, project_model_root_path):
     return new_path
 
 
+def get_full_path_of_given_plot_savefile(plot_filename, backend_images):
+    import os
+
+    incomplete_full_path = os.path.abspath(plot_filename)
+    path_elements = incomplete_full_path.split(os.sep)
+    folder_structure_from_project_root_to_model_dir = backend_images[2:]
+    new_path = ""
+
+    for i in range(len(path_elements)):
+        if i != len(path_elements) - 1:
+            new_path += path_elements[i] + "/"
+        else:
+            new_path += (
+                folder_structure_from_project_root_to_model_dir + "/" + path_elements[i]
+            )
+            break
+    return new_path
+
+
+def get_plot_save_filename(plot_caption, solution, app_instance_metadata):
+    from datetime import datetime
+
+    filename = (
+        "s_"
+        + solution
+        + "_d_"
+        + app_instance_metadata.dataset_metadata.dataset_name_stub
+    )
+    filename += "__" + plot_caption + "__"
+    filename += datetime.now().strftime("%Y%m%d_%H%M%S")
+    filename += "." + app_instance_metadata.shared_definitions.plot_savefile_format
+    return filename
+
+
 def model_filename_fits_expected_name(
     solution_name, app_instance_metadata, model_filename
 ):
