@@ -12,6 +12,14 @@ export default function About() {
       >
         urban-octo-dizeratie
       </Link>
+      , also known as{" "}
+      <Link
+        style={{ color: "black", textDecoration: "none", cursor: "auto" }}
+        target="_blank"
+        to="https://www.youtube.com/shorts/Kx5GgLuH0o0"
+      >
+        apesdnm
+      </Link>
       . it is a creation of cârlianu radu and pupitru daniel.
       <br /> <br />
       <Divv margin="0px" size="22.5px">
@@ -26,7 +34,7 @@ export default function About() {
       </Divv> */}
       <Divv margin="0px" size="22.5px">
         the all lowercase was inspired by ee cummings' often stylised spelling
-        of his own name
+        of his own name.
       </Divv>
     </Divv>
   );

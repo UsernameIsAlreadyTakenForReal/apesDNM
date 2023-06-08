@@ -52,6 +52,8 @@ export default function UploadComponent() {
 
   const [showEDA, setShowEDA] = useState(false);
 
+  const [showEDAAgain, setShowEDAAgain] = useState(false);
+
   // data
   const [existingDatasets, setExistingDatasets] = useState([]);
 
@@ -220,7 +222,25 @@ export default function UploadComponent() {
     localStringOfFilesUploaded = localStringOfFilesUploaded.slice(0, -2);
     setStringOfFilesUploaded(localStringOfFilesUploaded);
 
-    sendUploadRequest("loading eda", "perform_eda");
+    await loadingResultsScreen("loading eda");
+
+    const formData = new FormData();
+
+    for (let i = 0; i < [...event.target.files].length; i++) {
+      formData.append(`file${i}`, [...event.target.files][i]);
+    }
+
+    setShowEDA(true);
+
+    const response = await fetch(BASE_URL + "perform_eda", {
+      method: "POST",
+      body: formData,
+    });
+
+    const textResponse = await response.text();
+    setResponseData(textResponse);
+
+    handleResults(textResponse);
   }
 
   // -------------------------------------------------------------------------
@@ -438,10 +458,11 @@ export default function UploadComponent() {
   }
 
   // -------------------------------------------------------------------------
-  async function sendUploadRequest(formData, endpoint = "upload") {
+  async function sendUploadRequest(formData) {
     await loadingResultsScreen("processing");
+    setShowResults(true);
 
-    const response = await fetch(BASE_URL + endpoint, {
+    const response = await fetch(BASE_URL + "upload", {
       method: "POST",
       body: formData,
     });
@@ -464,7 +485,6 @@ export default function UploadComponent() {
     await delay(1500);
 
     setLoading(false);
-    setShowResults(true);
   }
 
   // -------------------------------------------------------------------------
@@ -813,6 +833,36 @@ export default function UploadComponent() {
               </Button>
             </Divv>
 
+            {showEDAAgain && (
+              <Divv
+                style={{
+                  textAlign: "right",
+                }}
+              >
+                <Button
+                  style={{
+                    background:
+                      goBackButtonHover === false ? "black" : "orange",
+                    color: goBackButtonHover === false ? "white" : "black",
+                    fontWeight: "bold",
+                    position: "absolute",
+                  }}
+                  variant="contained"
+                  color="primary"
+                  size="large"
+                  onClick={() => {
+                    setShowExistingMethod(false);
+                    setShowFileUploadMethod(false);
+                    setGoBackButtonHover(false);
+                  }}
+                  onMouseEnter={() => setGoBackButtonHover(true)}
+                  onMouseLeave={() => setGoBackButtonHover(false)}
+                >
+                  show eda
+                </Button>
+              </Divv>
+            )}
+
             <Divv>
               <Label
                 style={{
@@ -858,19 +908,48 @@ export default function UploadComponent() {
 
             {showEDA && (
               <Dialog open={true} maxWidth="xl" fullWidt={true}>
-                <DialogTitle style={{ fontWeight: "bold" }}>
+                {/* <DialogTitle style={{ fontWeight: "bold" }}>
                   {"are you happy with your dataset motherfucker?"}
-                </DialogTitle>
+                </DialogTitle> */}
                 <DialogContent>
-                  <DialogContentText>
-                    we ran some test and found this out: your dataset fucking
-                    sucks
-                  </DialogContentText>
-                  <img src={lstmSVG} />
-                  <DialogContentText>
-                    see this thing above? it's got some smart things in those
-                    neurons unlike you you monumental degenerate
-                  </DialogContentText>
+                  <Divv>{backendResults}</Divv>
+
+                  <Divv left="0px">
+                    {backendMLPlots.map((src, index) => (
+                      <Tooltip
+                        title={
+                          <Typography fontSize={14}>
+                            {backendCptions[index]}
+                          </Typography>
+                        }
+                      >
+                        <img
+                          src={src}
+                          onClick={() => {
+                            setImageViewerOpen(true);
+                            setCurrentImage(index);
+                          }}
+                          width="200"
+                          key={index}
+                          style={{ margin: "10px", cursor: "pointer" }}
+                          alt=""
+                        />
+                      </Tooltip>
+                    ))}
+
+                    {imageViewerOpen && (
+                      <ImageViewer
+                        backgroundStyle={{
+                          backgroundColor: "rgba(0,0,0,0.75)",
+                        }}
+                        src={backendMLPlots}
+                        currentIndex={currentImage}
+                        disableScroll={false}
+                        closeOnClickOutside={true}
+                        onClose={() => setImageViewerOpen(false)}
+                      />
+                    )}
+                  </Divv>
                 </DialogContent>
                 <DialogActions>
                   <Button
@@ -884,8 +963,12 @@ export default function UploadComponent() {
                     size="large"
                     onMouseEnter={() => setEDAButtonHover(true)}
                     onMouseLeave={() => setEDAButtonHover(false)}
+                    onClick={() => {
+                      setShowEDAAgain(true);
+                      setShowEDA(false);
+                    }}
                   >
-                    got it, sorry
+                    got it
                   </Button>
                 </DialogActions>
               </Dialog>
