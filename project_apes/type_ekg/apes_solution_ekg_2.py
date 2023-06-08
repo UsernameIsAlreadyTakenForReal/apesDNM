@@ -58,9 +58,6 @@ class Solution_ekg_2:
         self.project_solution_model_filename = (
             app_instance_metadata.shared_definitions.project_solution_ekg_2_model_filename
         )
-        self.project_solution_training_script = (
-            app_instance_metadata.shared_definitions.project_solution_ekg_2_training_script
-        )
 
     ## -------------- General methods --------------
     ## Model methods

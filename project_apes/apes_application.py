@@ -316,4 +316,7 @@ class APES_Application:
                 if return_code != 0:
                     return return_code, return_message
 
+            return_code, return_message = solution.save_run()
+            if return_code != 0:
+                return return_code, return_message
         return 0, "Function p3_run_solutions exited successfully"

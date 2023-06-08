@@ -1,0 +1,12 @@
+{
+  "solution": "ekg1",
+  "runs": [
+    {
+      "_time_object_creation": "bla bla"
+    },
+    {
+      "_time_object_creation": "bla bla 2"
+    },
+    "{\n    \"_time_object_creation\": \"2023-06-09_00:18:01\",\n    \"device_used\": \"cuda\"\n}"
+  ]
+}

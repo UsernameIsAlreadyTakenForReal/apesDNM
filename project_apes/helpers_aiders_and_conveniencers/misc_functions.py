@@ -119,6 +119,7 @@ def get_full_path_of_given_plot_savefile(plot_filename, backend_images):
 
 def get_plot_save_filename(plot_caption, solution, app_instance_metadata):
     from datetime import datetime
+    import os
 
     filename = (
         "s_"
@@ -129,7 +130,13 @@ def get_plot_save_filename(plot_caption, solution, app_instance_metadata):
     filename += "__" + plot_caption + "__"
     filename += datetime.now().strftime("%Y%m%d_%H%M%S")
     filename += "." + app_instance_metadata.shared_definitions.plot_savefile_format
-    return filename
+
+    file_absolute_path = (
+        os.path.abspath(app_instance_metadata.shared_definitions.plot_savefile_location)
+        + os.sep
+        + filename
+    )
+    return filename, file_absolute_path
 
 
 def model_filename_fits_expected_name(
@@ -155,3 +162,24 @@ def model_filename_fits_expected_name(
         return False
     else:
         return True
+
+
+def append_to_solutions_runs_json_file(solution, serializer, app_instance_metadata):
+    import json
+    import os
+
+    json_file = f"s_{solution}.json"
+    json_file_path = (
+        app_instance_metadata.shared_definitions.project_solution_runs_path
+        + os.sep
+        + json_file
+    )
+
+    print(json_file_path)
+
+    if os.path.exists(json_file_path):
+        with open(json_file_path, "r+") as file:
+            file_data = json.load(file)
+            file_data["runs"].append(serializer.toJSON())
+            file.seek(0)
+            json.dump(file_data, file, indent=2)

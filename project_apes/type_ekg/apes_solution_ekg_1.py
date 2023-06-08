@@ -15,6 +15,7 @@
 import arff
 import os, psutil
 import copy
+import json
 import numpy as np
 import pandas as pd
 import seaborn as sns
@@ -42,7 +43,9 @@ from helpers_aiders_and_conveniencers.misc_functions import (
     model_filename_fits_expected_name,
     get_full_path_of_given_model,
     get_plot_save_filename,
+    append_to_solutions_runs_json_file,
 )
+from helpers_aiders_and_conveniencers.solution_serializer import Solution_Serializer
 
 
 class Encoder(nn.Module):
@@ -123,10 +126,16 @@ class Recurrent_Autoencoder(nn.Module):
 class Solution_ekg_1:
     def __init__(self, app_instance_metadata, Logger):
         self.Logger = Logger
+        self.Logger.info(self, "Creating object of type solution_ekg_1")
+
+        self.solution_serializer = Solution_Serializer()
+        self.solution_serializer._time_object_creation = datetime.now().strftime(
+            "%Y-%m-%d_%H:%M:%S"
+        )
+
         self.device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
         # self.device = "cpu"
-
-        self.Logger.info(self, "Creating object of type solution_ekg_1")
+        self.solution_serializer.device_used = str(self.device)
         info_message = f"Using device {self.device}"
         self.Logger.info(self, info_message)
 
@@ -134,9 +143,23 @@ class Solution_ekg_1:
         self.project_solution_model_filename = (
             app_instance_metadata.shared_definitions.project_solution_ekg_1_model_filename
         )
-        self.project_solution_training_script = (
-            app_instance_metadata.shared_definitions.project_solution_ekg_1_training_script
+
+    ## -------------- To JSON --------------
+    def toJSON(self):
+        return json.dumps(self, default=lambda o: o.__dict__, sort_keys=True, indent=4)
+
+    def save_run(self):
+        info_message = "save_run() -- begin"
+        self.Logger.info(self, info_message)
+
+        append_to_solutions_runs_json_file(
+            "ekg1", self.solution_serializer, self.app_instance_metadata
         )
+
+        info_message = "save_run() -- end"
+        self.Logger.info(self, info_message)
+
+        return 0, f"{self} -- save_run() completed successfully"
 
     ## -------------- General methods --------------
     ## Model methods
@@ -273,15 +296,8 @@ class Solution_ekg_1:
             plt.show()
 
         ## Save plot section -- begin
-        plot_save_filename = get_plot_save_filename(
+        plot_save_filename, plot_save_location = get_plot_save_filename(
             plot_name.replace(" ", "_"), "ekg1", self.app_instance_metadata
-        )
-        plot_save_location = (
-            os.path.abspath(
-                self.app_instance_metadata.shared_definitions.plot_savefile_location
-            )
-            + os.sep
-            + plot_save_filename
         )
         plt.savefig(
             plot_save_location,
@@ -341,15 +357,8 @@ class Solution_ekg_1:
             plt.show()
 
         ## Save plot section -- begin
-        plot_save_filename = get_plot_save_filename(
+        plot_save_filename, plot_save_location = get_plot_save_filename(
             plot_name.replace(" ", "_"), "ekg1", self.app_instance_metadata
-        )
-        plot_save_location = (
-            os.path.abspath(
-                self.app_instance_metadata.shared_definitions.plot_savefile_location
-            )
-            + os.sep
-            + plot_save_filename
         )
         plt.savefig(
             plot_save_location,
