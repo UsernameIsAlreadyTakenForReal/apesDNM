@@ -30,7 +30,7 @@ class Shared_Definitions:
 
     project_solution_ekg_1_model_filename = "apes_solution_ekg_1_model.pth"
     project_solution_ekg_1_model_filename_last_good_one = (
-        "s_ekg1_d_ekg2_20230606_233300.pth"
+        "------s_ekg1_d_ekg2_20230606_233300.pth"
     )
 
     project_solution_ekg_2_model_filename = "apes_solution_ekg_2_model.h5"

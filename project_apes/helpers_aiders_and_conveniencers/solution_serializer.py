@@ -3,12 +3,17 @@ import json
 
 class Solution_Serializer:
     def __init__(self):
+        _app_instance_ID = ""
         _solution_name = ""
         _time_object_creation = ""
+
+        _used_test_function = ""
+        _used_train_function = ""
 
         time_train_start = ""
         time_train_end = ""
         time_train_total = ""
+        train_epochs = ""
 
         time_test_start = ""
         time_test_end = ""
@@ -21,11 +26,10 @@ class Solution_Serializer:
         dataset_val_size = ""
         dataset_run_size = ""
 
-        used_test_function = ""
-        used_train_function = ""
-
         device_used = ""
         accuracy = ""
+        correct_normal_predictions = ""
+        correct_abnormal_predictions = ""
 
         model_filename = ""
 

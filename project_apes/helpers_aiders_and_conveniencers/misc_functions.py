@@ -151,7 +151,7 @@ def model_filename_fits_expected_name(
             file_extension = ".h5"
 
     search_expression = (
-        "s_{solution_name}_d_{name_stub}_.{{6,8}}_.{{4,6}}{extension}".format(
+        "^s_{solution_name}_d_{name_stub}_.{{6,8}}_.{{4,6}}{extension}".format(
             solution_name=solution_name,
             name_stub=app_instance_metadata.dataset_metadata.dataset_name_stub,
             extension=file_extension,
@@ -164,7 +164,9 @@ def model_filename_fits_expected_name(
         return True
 
 
-def append_to_solutions_runs_json_file(solution, serializer, app_instance_metadata):
+def write_to_solutions_runs_json_file(
+    Logger, solution, serializer, app_instance_metadata
+):
     import json
     import os
 
@@ -175,11 +177,34 @@ def append_to_solutions_runs_json_file(solution, serializer, app_instance_metada
         + json_file
     )
 
-    print(json_file_path)
+    # because the json serializer doesn't do a good job (that or I'm too much of an idiot to figure out
+    # why it writes literal string in a file in which \n should be treated as an \n, not as a "\n", but whatever)
+    serialized_data = serializer.toJSON()
+    serialized_data += "\n"
+    serialized_data = serialized_data.replace("{", "    {")
+    serialized_data = serialized_data.replace("}", "    }")
+    serialized_data = serialized_data.replace('    "', '      "')
 
-    if os.path.exists(json_file_path):
-        with open(json_file_path, "r+") as file:
-            file_data = json.load(file)
-            file_data["runs"].append(serializer.toJSON())
-            file.seek(0)
-            json.dump(file_data, file, indent=2)
+    if os.path.exists(json_file_path) == False:
+        info_message = f"Runs file for solution {solution} does not exist. Creating"
+        Logger.info("write_to_solutions_runs_json_file", info_message)
+
+        initial_file_content = '{{\n  "solution": "{solution}",\n  "runs": [\n'.format(
+            solution=solution
+        )
+        all_lines = initial_file_content + serialized_data
+        all_lines += "  ]\n}\n"
+
+    else:
+        info_message = f"Runs file for solution {solution} exists. Appending"
+        Logger.info("write_to_solutions_runs_json_file", info_message)
+        file = open(json_file_path, "r")
+        all_lines = file.readlines()
+        file.close()
+
+        all_lines[-3] = all_lines[-3].replace("}\n", "},\n")
+        all_lines.insert(-2, serialized_data)
+
+    file = open(json_file_path, "w")
+    file.writelines(all_lines)
+    file.close()

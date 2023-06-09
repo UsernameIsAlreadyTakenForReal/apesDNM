@@ -48,6 +48,8 @@ from apes_metadata_handler import *
 init_message = "Imported apes_metadata_handler.*"
 Logger.info("Program", init_message)
 
+from datetime import datetime
+
 dataset_metadata__dataset_path = example_path
 dataset_metadata__dataset_name_stub = dataset_metadata__dataset_name_stub
 dataset_metadata__is_labeled = True
@@ -60,6 +62,7 @@ dataset_metadata__separate_train_and_test = False
 dataset_metadata__percentage_of_split = [0.7]
 dataset_metadata__shuffle_rows = True
 
+application_metadata__app_instance_ID = datetime.now().strftime("%Y%m%d_%H%M%S")[2:]
 application_metadata__display_dataFrames = False
 application_metadata__application_mode = "run_one_solution"
 application_metadata__dataset_origin = "existing_dataset"
@@ -87,6 +90,7 @@ dataset_metadata = Dataset_Metadata(
 application_instance_metadata = Application_Instance_Metadata(
     Logger,
     dataset_metadata,
+    application_metadata__app_instance_ID,
     application_metadata__display_dataFrames,
     application_metadata__application_mode,
     application_metadata__dataset_origin,

@@ -43,7 +43,7 @@ from helpers_aiders_and_conveniencers.misc_functions import (
     model_filename_fits_expected_name,
     get_full_path_of_given_model,
     get_plot_save_filename,
-    append_to_solutions_runs_json_file,
+    write_to_solutions_runs_json_file,
 )
 from helpers_aiders_and_conveniencers.solution_serializer import Solution_Serializer
 
@@ -129,8 +129,17 @@ class Solution_ekg_1:
         self.Logger.info(self, "Creating object of type solution_ekg_1")
 
         self.solution_serializer = Solution_Serializer()
+        self.solution_serializer._app_instance_ID = (
+            app_instance_metadata.app_instance_ID
+        )
         self.solution_serializer._time_object_creation = datetime.now().strftime(
             "%Y-%m-%d_%H:%M:%S"
+        )
+
+        self.plots_filenames = []
+        # self.datasets_names = []
+        self.solution_serializer.dataset_name = (
+            app_instance_metadata.dataset_metadata.dataset_name_stub
         )
 
         self.device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
@@ -145,15 +154,17 @@ class Solution_ekg_1:
         )
 
     ## -------------- To JSON --------------
-    def toJSON(self):
+    def toJSON(self):  # this is not used
         return json.dumps(self, default=lambda o: o.__dict__, sort_keys=True, indent=4)
 
     def save_run(self):
         info_message = "save_run() -- begin"
         self.Logger.info(self, info_message)
 
-        append_to_solutions_runs_json_file(
-            "ekg1", self.solution_serializer, self.app_instance_metadata
+        self.solution_serializer.plots_filenames = self.plots_filenames
+
+        write_to_solutions_runs_json_file(
+            self.Logger, "ekg1", self.solution_serializer, self.app_instance_metadata
         )
 
         info_message = "save_run() -- end"
@@ -238,6 +249,9 @@ class Solution_ekg_1:
                     model_absolute_path,
                     map_location=lambda storage, loc: storage.cuda(0),
                 )
+                self.solution_serializer.model_filename = model_absolute_path.split(
+                    "/"
+                )[-1]
             else:
                 info_message = "Loading last available model"
                 self.Logger.info(self, info_message)
@@ -251,6 +265,7 @@ class Solution_ekg_1:
                     self.model = torch.load(
                         model_path, map_location=lambda storage, loc: storage.cuda(0)
                     )
+                    self.solution_serializer.model_filename = model_path.split("/")[-1]
 
         info_message = "load_model() -- end"
         self.Logger.info(self, info_message)
@@ -284,6 +299,16 @@ class Solution_ekg_1:
         seconds_in_day = 24 * 60 * 60
         divmod(difference.days * seconds_in_day + difference.seconds, 60)
 
+        ## Save run serialization data -- begin
+        self.solution_serializer.time_train_start = f1_time.strftime(
+            "%Y-%m-%d_%H:%M:%S"
+        )
+        self.solution_serializer._used_test_function = True
+        self.solution_serializer.time_train_end = f2_time.strftime("%Y-%m-%d_%H:%M:%S")
+        self.solution_serializer.time_train_total = difference.seconds
+        self.solution_serializer.train_epochs = epochs
+        ## Save run serialization data -- end
+
         ax = plt.figure().gca()
         ax.plot(history["train"])
         ax.plot(history["val"])
@@ -305,13 +330,13 @@ class Solution_ekg_1:
         )
         info_message = f"Created picture at ./project_web/backend/images/ || {plot_save_location} || {plot_name}"
         self.Logger.info(self, info_message)
+        self.plots_filenames.append(plot_save_location.split(os.sep)[-1])
         ## Save plot section -- end
 
         info_message = "Training - it took {time} for {number} epochs".format(
             time=difference, number=epochs
         )
         self.Logger.info(self, info_message)
-
         info_message = "train() -- end"
         self.Logger.info(self, info_message)
 
@@ -320,6 +345,8 @@ class Solution_ekg_1:
     def test(self):
         info_message = "test() -- begin"
         self.Logger.info(self, info_message)
+
+        f1_time = datetime.now()
 
         _, losses = self.predict(self.model, self.train_dataset)
         sns.displot(losses, bins=50, kde=True)
@@ -333,19 +360,37 @@ class Solution_ekg_1:
         # normal heartbeats
         predictions, pred_losses = self.predict(self.model, self.test_normal_dataset)
         sns.displot(pred_losses, bins=50, kde=True)
-        correct = sum(l <= THRESHOLD for l in pred_losses)
-        info_message = (
-            f"Correct normal predictions: {correct}/{len(self.test_normal_dataset)}"
-        )
+        normal_correct = sum(l <= THRESHOLD for l in pred_losses)
+        info_message = f"Correct normal predictions: {normal_correct}/{len(self.test_normal_dataset)}"
         self.Logger.info(self, info_message)
 
         # anomalies
         anomaly_dataset = self.test_anomaly_dataset[: len(self.test_normal_dataset)]
         predictions, pred_losses = self.predict(self.model, anomaly_dataset)
         sns.displot(pred_losses, bins=50, kde=True)
-        correct = sum(l > THRESHOLD for l in pred_losses)
-        info_message = f"Correct anomaly predictions: {correct}/{len(anomaly_dataset)}"
+        anomaly_correct = sum(l > THRESHOLD for l in pred_losses)
+        info_message = (
+            f"Correct anomaly predictions: {anomaly_correct}/{len(anomaly_dataset)}"
+        )
         self.Logger.info(self, info_message)
+
+        f2_time = datetime.now()
+        difference = f2_time - f1_time
+        seconds_in_day = 24 * 60 * 60
+        divmod(difference.days * seconds_in_day + difference.seconds, 60)
+
+        ## Save run serialization data -- begin
+        self.solution_serializer.time_test_start = f1_time.strftime("%Y-%m-%d_%H:%M:%S")
+        self.solution_serializer._used_test_function = True
+        self.solution_serializer.time_test_end = f2_time.strftime("%Y-%m-%d_%H:%M:%S")
+        self.solution_serializer.time_test_total = difference.seconds
+        self.solution_serializer.correct_normal_predictions = (
+            f"{normal_correct}/{len(self.test_normal_dataset)}"
+        )
+        self.solution_serializer.correct_abnormal_predictions = (
+            f"{anomaly_correct}/{len(anomaly_dataset)}"
+        )
+        ## Save run serialization data -- end
 
         plt.figure()
         plt.plot(self.test_normal_dataset[0])
@@ -366,6 +411,7 @@ class Solution_ekg_1:
         )
         info_message = f"Created picture at ./project_web/backend/images/ || {plot_save_location} || {plot_name}"
         self.Logger.info(self, info_message)
+        self.plots_filenames.append(plot_save_location.split(os.sep)[-1])
         ## Save plot section -- end
 
         info_message = "test() -- end"
@@ -420,6 +466,11 @@ class Solution_ekg_1:
         self.val_dataset, _, _ = self.create_dataset(self.val_df)
         self.test_normal_dataset, _, _ = self.create_dataset(self.test_df)
         self.test_anomaly_dataset, _, _ = self.create_dataset(self.anormal_df)
+
+        self.solution_serializer.dataset_train_size = self.train_df.shape
+        self.solution_serializer.dataset_test_size = self.test_df.shape
+        self.solution_serializer.dataset_val_size = self.val_df.shape
+        self.solution_serializer.dataset_full_size = df.shape
 
         return 0, f"{self} -- adapt_dataset() completed successfully"
 
@@ -523,6 +574,7 @@ class Solution_ekg_1:
         )
         info_message = f"Created picture at ./project_web/backend/images/ || {plot_save_location} || {plot_name}"
         self.Logger.info(self, info_message)
+        self.plots_filenames.append(plot_save_location.split(os.sep)[-1])
         ## Save plot section -- end
 
     def create_dataset(self, df):

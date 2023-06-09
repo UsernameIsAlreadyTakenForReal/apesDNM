@@ -101,6 +101,7 @@ class Application_Instance_Metadata:
         self,
         Logger,
         dataset_metadata,
+        app_instance_ID,
         display_dataFrames=False,
         application_mode="compare_solutions",
         dataset_origin="new_dataset",
@@ -114,7 +115,9 @@ class Application_Instance_Metadata:
         self.Logger = Logger
         self.dataset_metadata = dataset_metadata
 
-        self.display_dataFrames = (display_dataFrames,)
+        self.app_instance_ID = app_instance_ID
+
+        self.display_dataFrames = display_dataFrames
 
         self.application_mode = application_mode
         self.dataset_origin = dataset_origin
