@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { Fragment, createElement, useEffect, useState } from "react";
 
 import { Divv, TextFieldFlex, Label } from "./StyledComponents";
 import WebSocketComponent from "./WebSocketComponent";
@@ -86,6 +86,7 @@ export default function UploadComponent() {
   const [backendCptions, setBackendCptions] = useState([]);
   const [backendConsole, setBackendConsole] = useState([]);
   const [backendResults, setBackendResults] = useState("");
+  const [beDatasetPath, setBEDatasetPath] = useState("");
 
   // hovers
   const [existingDatasetButtonHover, setExistingDatasetButtonHover] =
@@ -140,6 +141,7 @@ export default function UploadComponent() {
 
   // misc
   const [stringOfFilesUploaded, setStringOfFilesUploaded] = useState("");
+  const [terminalFontSize, setTerminalFontSize] = useState(18);
 
   // image viewer
   const [imageViewerOpen, setImageViewerOpen] = useState(false);
@@ -191,6 +193,7 @@ export default function UploadComponent() {
 
   // -------------------------------------------------------------------------
   async function onFileChange(event) {
+    if (event.target.files.length === 0) return;
     console.log([...event.target.files]);
 
     setBackendConsole([]);
@@ -228,6 +231,7 @@ export default function UploadComponent() {
     localStringOfFilesUploaded = localStringOfFilesUploaded.slice(0, -2);
     setStringOfFilesUploaded(localStringOfFilesUploaded);
 
+    // eda-request
     await loadingResultsScreen("loading eda");
     setShowEDA(true);
 
@@ -245,7 +249,12 @@ export default function UploadComponent() {
     const textResponse = await response.text();
     setResponseData(textResponse);
 
-    handleResults(textResponse);
+    const data = JSON.parse(textResponse);
+
+    setBackendResults(data.results);
+    setBEDatasetPath(data.path);
+
+    console.log("path is", data.path);
   }
 
   // -------------------------------------------------------------------------
@@ -372,15 +381,22 @@ export default function UploadComponent() {
 
   // -------------------------------------------------------------------------
   async function onFileUploadConfirm() {
+    // upload-request for new files
+
     const formData = new FormData();
 
-    for (let i = 0; i < selectedFiles.length; i++) {
-      formData.append(`file${i}`, selectedFiles[i]);
-    }
+    // for (let i = 0; i < selectedFiles.length; i++) {
+    //   formData.append(`file${i}`, selectedFiles[i]);
+    // }
+
+    formData.append("dataset_path", beDatasetPath);
+    console.log("again, path is", beDatasetPath);
 
     formData.append("is_labeled", labeledRadioValue === "yes");
+    if (labeledRadioValue === "yes")
+      formData.append("label_column_name", labelColumn);
+
     formData.append("class_names", classes);
-    formData.append("label_column_name", labelColumn);
     formData.append("desired_label", normalClass);
     formData.append(
       "numerical_value_of_desired_label",
@@ -396,7 +412,7 @@ export default function UploadComponent() {
     formData.append("dataset_origin", "new_dataset");
     formData.append("model_train_epochs", epochs);
 
-    formData.append("saveData", saveDataCheckbox);
+    formData.append("save_data", saveDataCheckbox);
     formData.append("clear_images", false);
 
     sendUploadRequest(formData);
@@ -451,6 +467,7 @@ export default function UploadComponent() {
 
   // -------------------------------------------------------------------------
   async function onUseThisDatasetConfirm() {
+    // upload-request for existing datasets
     const formData = new FormData();
 
     const applicationMode =
@@ -619,14 +636,17 @@ export default function UploadComponent() {
                 </Button>
               </Tooltip>
             </Divv>
-            <Button
-              onClick={() => {
-                setShowResults(true);
-                sendUploadRequest({ id: 1 });
-              }}
-            >
-              Fetch test
-            </Button>
+
+            {true && (
+              <Button
+                onClick={() => {
+                  setShowResults(true);
+                  sendUploadRequest({ id: 1 });
+                }}
+              >
+                Fetch test
+              </Button>
+            )}
           </div>
         </>
       ) : showExistingMethod === true &&
@@ -914,26 +934,27 @@ export default function UploadComponent() {
                   {"are you happy with your dataset motherfucker?"}
                 </DialogTitle> */}
                 <DialogContent>
-                  <Divv>{backendResults}</Divv>
-
                   <div
                     style={{
                       margin: "5px",
                       width: "auto",
                     }}
                   >
-                    <Terminal name="python outputs">
+                    <Terminal id="eda-terminal" name="python outputs">
                       {backendConsole.map((line) => {
                         if (line === "") return null;
+
                         return (
-                          <>
+                          <span style={{ fontSize: terminalFontSize }}>
                             {">>>"} {line}
                             <br></br>
-                          </>
+                          </span>
                         );
                       })}
                     </Terminal>
                   </div>
+
+                  <Divv>{backendResults}</Divv>
 
                   <Divv left="0px">
                     {backendMLPlots.map((src, index) => (
@@ -1002,7 +1023,7 @@ export default function UploadComponent() {
               <FormControl
                 style={{
                   margin: "25px",
-                  width: "40%",
+                  width: "25%",
                   display: "flex",
                   alignItems: "center",
                 }}
@@ -1342,14 +1363,14 @@ export default function UploadComponent() {
                 width: "auto",
               }}
             >
-              <Terminal name="python outputs">
+              <Terminal id="results-terminal" name="python outputs">
                 {backendConsole.map((line) => {
                   if (line === "") return null;
                   return (
-                    <>
+                    <span style={{ fontSize: terminalFontSize }}>
                       {">>>"} {line}
                       <br></br>
-                    </>
+                    </span>
                   );
                 })}
               </Terminal>
@@ -1475,9 +1496,19 @@ export default function UploadComponent() {
         onOutputUpdated={(data) => {
           console.log("io:", data);
 
-          setBackendConsole((backendConsole) => [...backendConsole, data]);
+          if (data.includes("\n") === false)
+            setBackendConsole((backendConsole) => [...backendConsole, data]);
+          else {
+            const splitLines = data.split("\n");
+            splitLines.forEach((splitLine) => {
+              setBackendConsole((backendConsole) => [
+                ...backendConsole,
+                splitLine,
+              ]);
+            });
+          }
 
-          if (data.toLowerCase().includes("created picture at")) {
+          if (data.toLowerCase().includes("created picture")) {
             let imageData = data.split("||");
 
             setBackendMLPlots((backendMLPlots) => [

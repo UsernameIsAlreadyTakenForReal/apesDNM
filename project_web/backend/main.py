@@ -69,7 +69,7 @@ def plot():
     plt.savefig(figure_path_png)
 
     info_message = (
-        "Created picture at location"
+        "Created picture in folder"
         + " || "
         + str(figure_path_png)
         + " || "
@@ -79,15 +79,18 @@ def plot():
 
 
 @app.route("/datasets", methods=["GET", "POST"])
-def getDatasets():
+def get_datasets():
+    print("get_datasets() function called")
+
     import data
 
-    print("getDatasets() function called")
     return jsonify(data.datasets)
 
 
 @app.route("/perform_eda", methods=["GET", "POST"])
 def perform_eda():
+    print("perform_eda() function called")
+
     import shutil
 
     shutil.rmtree("images")
@@ -125,7 +128,7 @@ def perform_eda():
     for _ in range(number_of_plots):
         plot()
 
-    return jsonify({"results": results})
+    return jsonify({"results": results, "path": temp_dir})
 
 
 @app.route("/upload", methods=["GET", "POST"])
@@ -146,12 +149,16 @@ def upload_file():
 
     # ########################## gathering metadata ##########################
 
+    sys.path.insert(1, "../../project_apes")
+    from apes_metadata_handler import Dataset_Metadata, Application_Instance_Metadata
+    from apes_application import APES_Application
+
     # dataset metadata
     dataset_path = request.form.get("dataset_path", "")
-    is_labeled = request.form.get("input_name", True)
+    is_labeled = request.form.get("is_labeled", True)
     file_keyword_names = request.form.get("file_keyword_names", [])
     class_names = request.form.get("class_names", [])
-    label_column_name = request.form.get("class_names", "target")
+    label_column_name = request.form.get("label_column_name", "target")
     numerical_value_of_desired_label = request.form.get(
         "numerical_value_of_desired_label", 0
     )
@@ -171,7 +178,39 @@ def upload_file():
     model_origin = request.form.get("model_origin", "train_new_model")
     model_train_epochs = request.form.get("model_train_epochs", 40)
 
-    saveData = request.form.get("saveData", False)
+    save_data = request.form.get("save_data", False)
+
+    dataset_metadata = Dataset_Metadata(
+        logger,
+        dataset_path,
+        is_labeled,
+        file_keyword_names,
+        class_names,
+        label_column_name,
+        numerical_value_of_desired_label,
+        separate_train_and_test,
+        percentage_of_split,
+        shuffle_rows,
+    )
+
+    application_instance_metadata = Application_Instance_Metadata(
+        logger,
+        dataset_metadata,
+        display_dataFrames,
+        application_mode,
+        dataset_origin,
+        dataset_category,
+        solution_category,
+        solution_nature,
+        solution_index,
+        model_origin,
+        model_train_epochs,
+    )
+
+    apes_application_instance = APES_Application(logger, application_instance_metadata)
+
+    return_code, return_message = apes_application_instance.run()
+    logger.info("Program", return_message)
 
     # ########################### application run ############################
 

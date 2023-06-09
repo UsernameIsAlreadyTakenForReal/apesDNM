@@ -20,7 +20,7 @@ export default function About() {
       >
         apesdnm
       </Link>
-      . it is a creation of cârlianu radu and pupitru daniel.
+      . it is a creation of cislianu radu and dumitru daniel.
       <br /> <br />
       <Divv margin="0px" size="22.5px">
         our goal is to create a self-maintaing and sustaining application which
