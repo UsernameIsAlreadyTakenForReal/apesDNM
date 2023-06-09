@@ -132,5 +132,5 @@ dmypy.json
 *.pth
 *.h5
 
-# plot images
-*.png
+# plot images for backend
+/project_web/backend/images/*.png
