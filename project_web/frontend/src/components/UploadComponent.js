@@ -350,17 +350,17 @@ export default function UploadComponent() {
 
     let data = {
       files: files,
-      isLabeled: labeledRadioValue === "idk" ? "unknown" : labeledRadioValue,
+      is_labeled: labeledRadioValue === "idk" ? "unknown" : labeledRadioValue,
       label: labeledRadioValue === "yes" ? localLabelColumn : -1,
-      isSupervised: isSupervisedCheckbox,
-      shuffleRows: shuffleRows,
-      separateTrainAndTest: separateTrainAndTestCheckbox,
-      trainDataPercentage: separateTrainAndTestCheckbox
+      is_supervised: isSupervisedCheckbox,
+      shuffle_rows: shuffleRows,
+      separate_train_and_test: separateTrainAndTestCheckbox,
+      train_data_percentage: separateTrainAndTestCheckbox
         ? localTrainDataPercentage
         : -1,
       classes: classes,
-      normalClass: normalClass,
-      indexOfNormalClass: classes.indexOf(normalClass),
+      normal_class: normalClass,
+      index_of_normal_class: classes.indexOf(normalClass),
       epochs: epochs,
     };
 
@@ -439,8 +439,8 @@ export default function UploadComponent() {
     let data = {
       dataset: selectedDataset,
       methods: selectedMethods,
-      solutionType:
-        selectedMethods.length > 1 ? "compareSolutions" : "retrieveData",
+      solution_type:
+        selectedMethods.length > 1 ? "compare_solutions" : "retrieve_data",
     };
 
     setDialogText(JSON.stringify(data, null, "\t"));
@@ -467,6 +467,11 @@ export default function UploadComponent() {
 
   // -------------------------------------------------------------------------
   async function sendUploadRequest(formData) {
+    setBackendConsole([]);
+    setBackendMLPlots([]);
+    setBackendCptions([]);
+    setBackendResults("");
+
     await loadingResultsScreen("processing");
     setShowResults(true);
 
@@ -841,36 +846,6 @@ export default function UploadComponent() {
               </Button>
             </Divv>
 
-            {showEDAButton && (
-              <Divv
-                style={{
-                  textAlign: "right",
-                }}
-              >
-                <Button
-                  style={{
-                    background:
-                      showEDAButtonHover === false ? "black" : "orange",
-                    color: showEDAButtonHover === false ? "white" : "black",
-                    fontWeight: "bold",
-                    position: "absolute",
-                    top: "100px",
-                    right: "25px",
-                  }}
-                  variant="contained"
-                  color="primary"
-                  size="large"
-                  onClick={() => {
-                    setShowEDA(true);
-                  }}
-                  onMouseEnter={() => setShowEDAButtonHover(true)}
-                  onMouseLeave={() => setShowEDAButtonHover(false)}
-                >
-                  show eda
-                </Button>
-              </Divv>
-            )}
-
             <Divv>
               <Label
                 style={{
@@ -899,7 +874,26 @@ export default function UploadComponent() {
                 {selectedFiles.length === 1
                   ? "1 file"
                   : selectedFiles.length + " files"}
-                : <br></br> {stringOfFilesUploaded}
+                : <br></br>
+                <Tooltip
+                  title={
+                    <Typography fontSize={14}>
+                      click to check eda again
+                    </Typography>
+                  }
+                >
+                  <span
+                    style={{
+                      textDecorationLine: "underline",
+                      cursor: "pointer",
+                    }}
+                    onClick={() => {
+                      setShowEDA(true);
+                    }}
+                  >
+                    {stringOfFilesUploaded}
+                  </span>
+                </Tooltip>
               </Divv>
             ) : (
               <div
@@ -915,7 +909,7 @@ export default function UploadComponent() {
             )}
 
             {showEDA && (
-              <Dialog open={true} maxWidth="xl" fullWidt={true}>
+              <Dialog open={true} maxWidth="xl" fullWidth={true}>
                 {/* <DialogTitle style={{ fontWeight: "bold" }}>
                   {"are you happy with your dataset motherfucker?"}
                 </DialogTitle> */}
@@ -993,6 +987,7 @@ export default function UploadComponent() {
                     onMouseEnter={() => setEDAConfirmButtonHover(true)}
                     onMouseLeave={() => setEDAConfirmButtonHover(false)}
                     onClick={() => {
+                      setEDAConfirmButtonHover(false);
                       setShowEDAButton(true);
                       setShowEDA(false);
                     }}
@@ -1042,12 +1037,10 @@ export default function UploadComponent() {
 
               <Tooltip
                 title={
-                  labeledRadioValue !== "yes" ? (
+                  labeledRadioValue !== "yes" && (
                     <Typography fontSize={14}>
                       if the dataset is not labeled, it cannot be supervised
                     </Typography>
-                  ) : (
-                    ""
                   )
                 }
                 onMouseEnter={() => setSupervisedCheckboxHover(true)}
@@ -1123,10 +1116,8 @@ export default function UploadComponent() {
 
               <Tooltip
                 title={
-                  separateTrainAndTestCheckbox ? (
+                  separateTrainAndTestCheckbox && (
                     <Typography fontSize={14}>default value is 0.7</Typography>
-                  ) : (
-                    ""
                   )
                 }
                 placement="top"
@@ -1167,7 +1158,7 @@ export default function UploadComponent() {
               return (
                 <TextFieldFlex style={{ marginTop: "10px" }}>
                   <Divv size="22.5px" style={{ margin: "25px", width: "60%" }}>
-                    {textfield === 1 ? (
+                    {textfield === 1 && (
                       <>
                         <span
                           style={{
@@ -1219,8 +1210,6 @@ export default function UploadComponent() {
                           ((+))
                         </span>
                       </>
-                    ) : (
-                      ""
                     )}
                   </Divv>
 
@@ -1407,7 +1396,12 @@ export default function UploadComponent() {
       )}
 
       <div style={{ display: "flex" }}>
-        <Dialog open={dialogOpen} maxWidth="xl" fullWidt={true}>
+        <Dialog
+          open={dialogOpen}
+          maxWidth="xl"
+          fullWidth={true}
+          scroll={"body"}
+        >
           <DialogTitle style={{ fontWeight: "bold" }}>
             {"proceed with these parameters?"}
           </DialogTitle>
