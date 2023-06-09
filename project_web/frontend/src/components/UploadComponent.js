@@ -61,6 +61,7 @@ export default function UploadComponent() {
   const [selectedMethods, setSelectedMethods] = useState([]);
 
   const [selectedFiles, setSelectedFiles] = useState([]);
+  const [archiveFound, setArchiveFound] = useState(false);
 
   const [labeledRadioValue, setLabeledRadioValue] = useState("yes");
 
@@ -194,7 +195,7 @@ export default function UploadComponent() {
   // -------------------------------------------------------------------------
   async function onFileChange(event) {
     if (event.target.files.length === 0) return;
-    console.log([...event.target.files]);
+    // console.log([...event.target.files]);
 
     setBackendConsole([]);
     setBackendMLPlots([]);
@@ -204,22 +205,25 @@ export default function UploadComponent() {
     resetAllFormErrorsAndData();
     setSelectedFiles([...event.target.files]);
 
-    let archiveFoundAndMultipleFiles = false;
+    let archiveFound = false,
+      multipleFiles = false;
 
-    if (event.target.files.length > 1) {
-      [...event.target.files].forEach((file) => {
-        if (file.name.includes(".zip") || file.name.includes(".rar")) {
-          archiveFoundAndMultipleFiles = true;
-        }
-      });
-    }
+    if (event.target.files.length > 1) multipleFiles = true;
 
-    if (archiveFoundAndMultipleFiles) {
+    [...event.target.files].forEach((file) => {
+      if (file.name.includes(".zip") || file.name.includes(".rar")) {
+        archiveFound = true;
+      }
+    });
+
+    if (archiveFound && multipleFiles) {
       setFileSelectionError(true);
       setFileSelectionErrorMessage("if sending archives, send only one...");
       setSelectedFiles([]);
       return;
     }
+
+    setArchiveFound(archiveFound);
 
     let localStringOfFilesUploaded = "";
 
@@ -253,8 +257,6 @@ export default function UploadComponent() {
 
     setBackendResults(data.results);
     setBEDatasetPath(data.path);
-
-    console.log("path is", data.path);
   }
 
   // -------------------------------------------------------------------------
@@ -389,8 +391,16 @@ export default function UploadComponent() {
     //   formData.append(`file${i}`, selectedFiles[i]);
     // }
 
-    formData.append("dataset_path", beDatasetPath);
-    console.log("again, path is", beDatasetPath);
+    if (archiveFound) {
+      formData.append(
+        "dataset_path",
+        beDatasetPath + "\\" + selectedFiles[0].name
+      );
+      console.log(beDatasetPath + "\\" + selectedFiles[0].name);
+    } else {
+      formData.append("dataset_path", beDatasetPath);
+      console.log(beDatasetPath);
+    }
 
     formData.append("is_labeled", labeledRadioValue === "yes");
     if (labeledRadioValue === "yes")
@@ -433,8 +443,6 @@ export default function UploadComponent() {
   async function onUseThisDataset() {
     setDatasetError(false);
     setDatasetErrorMessage("");
-
-    console.log(selectedMethods);
 
     if (selectedDataset === "") {
       setDatasetError(true);
@@ -695,7 +703,7 @@ export default function UploadComponent() {
                 <Select
                   label="data-type-select"
                   onChange={(event) => {
-                    console.log("now selected", event.target.value);
+                    // console.log("now selected", event.target.value);
                     setSelectedDataset(event.target.value);
                     setSelectedMethods([]);
                   }}
@@ -1272,7 +1280,7 @@ export default function UploadComponent() {
                 <Select
                   label="data-type-select"
                   onChange={(event) => {
-                    console.log("now selected", event.target.value);
+                    // console.log("now selected", event.target.value);
                     setNormalClass(event.target.value);
                   }}
                 >
@@ -1494,7 +1502,7 @@ export default function UploadComponent() {
 
       <WebSocketComponent
         onOutputUpdated={(data) => {
-          console.log("io:", data);
+          // console.log("io:", data);
 
           if (data.includes("\n") === false)
             setBackendConsole((backendConsole) => [...backendConsole, data]);
