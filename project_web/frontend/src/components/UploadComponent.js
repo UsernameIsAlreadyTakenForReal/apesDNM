@@ -52,7 +52,7 @@ export default function UploadComponent() {
 
   const [showEDA, setShowEDA] = useState(false);
 
-  const [showEDAAgain, setShowEDAAgain] = useState(false);
+  const [showEDAButton, setShowEDAButton] = useState(false);
 
   // data
   const [existingDatasets, setExistingDatasets] = useState([]);
@@ -114,7 +114,8 @@ export default function UploadComponent() {
 
   const [supervisedCheckboxHover, setSupervisedCheckboxHover] = useState(false);
 
-  const [edaButtonHover, setEDAButtonHover] = useState(false);
+  const [edaConfirmButtonHover, setEDAConfirmButtonHover] = useState(false);
+  const [showEDAButtonHover, setShowEDAButtonHover] = useState(false);
 
   // errors
   const [fileSelectionError, setFileSelectionError] = useState(false);
@@ -192,6 +193,11 @@ export default function UploadComponent() {
   async function onFileChange(event) {
     console.log([...event.target.files]);
 
+    setBackendConsole([]);
+    setBackendMLPlots([]);
+    setBackendCptions([]);
+    setBackendResults("");
+
     resetAllFormErrorsAndData();
     setSelectedFiles([...event.target.files]);
 
@@ -223,14 +229,13 @@ export default function UploadComponent() {
     setStringOfFilesUploaded(localStringOfFilesUploaded);
 
     await loadingResultsScreen("loading eda");
+    setShowEDA(true);
 
     const formData = new FormData();
 
     for (let i = 0; i < [...event.target.files].length; i++) {
       formData.append(`file${i}`, [...event.target.files][i]);
     }
-
-    setShowEDA(true);
 
     const response = await fetch(BASE_URL + "perform_eda", {
       method: "POST",
@@ -392,6 +397,7 @@ export default function UploadComponent() {
     formData.append("model_train_epochs", epochs);
 
     formData.append("saveData", saveDataCheckbox);
+    formData.append("clear_images", false);
 
     sendUploadRequest(formData);
   }
@@ -453,6 +459,8 @@ export default function UploadComponent() {
     formData.append("application_mode", applicationMode);
     formData.append("dataset_category", selectedDataset);
     formData.append("solution_index", selectedMethods);
+
+    formData.append("clear_images", true);
 
     sendUploadRequest(formData);
   }
@@ -833,7 +841,7 @@ export default function UploadComponent() {
               </Button>
             </Divv>
 
-            {showEDAAgain && (
+            {showEDAButton && (
               <Divv
                 style={{
                   textAlign: "right",
@@ -842,21 +850,21 @@ export default function UploadComponent() {
                 <Button
                   style={{
                     background:
-                      goBackButtonHover === false ? "black" : "orange",
-                    color: goBackButtonHover === false ? "white" : "black",
+                      showEDAButtonHover === false ? "black" : "orange",
+                    color: showEDAButtonHover === false ? "white" : "black",
                     fontWeight: "bold",
                     position: "absolute",
+                    top: "100px",
+                    right: "25px",
                   }}
                   variant="contained"
                   color="primary"
                   size="large"
                   onClick={() => {
-                    setShowExistingMethod(false);
-                    setShowFileUploadMethod(false);
-                    setGoBackButtonHover(false);
+                    setShowEDA(true);
                   }}
-                  onMouseEnter={() => setGoBackButtonHover(true)}
-                  onMouseLeave={() => setGoBackButtonHover(false)}
+                  onMouseEnter={() => setShowEDAButtonHover(true)}
+                  onMouseLeave={() => setShowEDAButtonHover(false)}
                 >
                   show eda
                 </Button>
@@ -914,6 +922,25 @@ export default function UploadComponent() {
                 <DialogContent>
                   <Divv>{backendResults}</Divv>
 
+                  <div
+                    style={{
+                      margin: "5px",
+                      width: "auto",
+                    }}
+                  >
+                    <Terminal name="python outputs">
+                      {backendConsole.map((line) => {
+                        if (line === "") return null;
+                        return (
+                          <>
+                            {">>>"} {line}
+                            <br></br>
+                          </>
+                        );
+                      })}
+                    </Terminal>
+                  </div>
+
                   <Divv left="0px">
                     {backendMLPlots.map((src, index) => (
                       <Tooltip
@@ -954,17 +981,19 @@ export default function UploadComponent() {
                 <DialogActions>
                   <Button
                     style={{
-                      background: edaButtonHover === false ? "black" : "orange",
-                      color: edaButtonHover === false ? "white" : "black",
+                      background:
+                        edaConfirmButtonHover === false ? "black" : "orange",
+                      color:
+                        edaConfirmButtonHover === false ? "white" : "black",
                       fontWeight: "bold",
                     }}
                     variant="contained"
                     color="primary"
                     size="large"
-                    onMouseEnter={() => setEDAButtonHover(true)}
-                    onMouseLeave={() => setEDAButtonHover(false)}
+                    onMouseEnter={() => setEDAConfirmButtonHover(true)}
+                    onMouseLeave={() => setEDAConfirmButtonHover(false)}
                     onClick={() => {
-                      setShowEDAAgain(true);
+                      setShowEDAButton(true);
                       setShowEDA(false);
                     }}
                   >

@@ -30,11 +30,10 @@ CORS(app)
 logger = Logger(socketio)
 
 # TODO
-# DONE --- add check for new image in emit messages
-# DONE --- something like "New picture saved || [full path] || caption"
-# DONE --- add image viewer for all images in /images folder
-# DONE --- add EKG1 and EKG2 to combobox/data.py
 # create new screen (component? for onFileChange?) for EDA and checks
+# position button
+# instantiate app and dataset in upload_file
+# create handler for eda()
 
 
 def cls():
@@ -89,6 +88,11 @@ def getDatasets():
 
 @app.route("/perform_eda", methods=["GET", "POST"])
 def perform_eda():
+    import shutil
+
+    shutil.rmtree("images")
+    os.makedirs("images")
+
     files = []
 
     logger.info("upload_file", "# of files sent is " + str(len(request.files)))
@@ -115,7 +119,7 @@ def perform_eda():
         "these are some results about the files you uploaded. there's also some plots"
     )
 
-    number_of_plots = random.randint(2, 10)
+    number_of_plots = random.randint(2, 4)
     logger.info("upload_file", "there are " + str(number_of_plots) + " plots")
 
     for _ in range(number_of_plots):
@@ -131,11 +135,12 @@ def upload_file():
     logger.info("upload_file", "upload has been triggered")
 
     # ###################### cleaning-up images folder #######################
+    clear_images = request.form.get("clear_images", True)
+    if clear_images:
+        import shutil
 
-    import shutil
-
-    shutil.rmtree("images")
-    os.makedirs("images")
+        shutil.rmtree("images")
+        os.makedirs("images")
 
     # ########################### files processing ###########################
 
@@ -180,7 +185,9 @@ def upload_file():
 
     # ########################### creating results ###########################
 
-    results = "run has been successful. for detailed steps, check the console."
+    results = (
+        "run has been successful. for detailed steps, check the console and the plots"
+    )
 
     result = {"results": results}
     return jsonify(result)
