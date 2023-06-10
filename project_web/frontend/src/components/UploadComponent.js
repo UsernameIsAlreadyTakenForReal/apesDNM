@@ -257,6 +257,8 @@ export default function UploadComponent() {
 
     setBackendResults(data.results);
     setBEDatasetPath(data.path);
+
+    console.log(data.path);
   }
 
   // -------------------------------------------------------------------------
@@ -739,9 +741,9 @@ export default function UploadComponent() {
                       <img src={lstmSVG} alt="m1" />
                     </>
                   }
-                  placement="bottom"
                   onMouseEnter={() => setMethod1Hover(true)}
                   onMouseLeave={() => setMethod1Hover(false)}
+                  placement="bottom"
                 >
                   <FormControlLabel
                     control={

@@ -14,6 +14,8 @@
 # shuffle_rows: True / False
 
 from apes_static_definitions import Shared_Definitions
+import pandas as pd
+import os
 
 
 class Dataset_Metadata:
@@ -151,3 +153,30 @@ class Application_Instance_Metadata:
             + self.dataset_metadata.getMetadataAsString()
         )
         self.Logger.info(self, info_message)
+
+
+class Dataset_EDA:
+    def __init__(self, Logger, dataset_path):
+        self.Logger = Logger
+        self.dataset_path = dataset_path
+
+    def perform_eda(self):
+        self.Logger.info(self, "EDA started for " + self.dataset_path)
+
+        for dirname, _, filenames in os.walk(self.dataset_path):
+            for filename in filenames:
+                full_path = os.path.join(dirname, filename)
+                self.Logger.info(self, full_path)
+
+                if "csv" in filename:
+                    df = pd.read_csv(full_path, header=None)
+                    # self.Logger.info(self, "shape: ")
+                    # self.Logger.info(self, df.shape)
+                    # self.Logger.info(self, "head: ")
+                    # self.Logger.info(self, df.head())
+                    # self.Logger.info(self, "info: ")
+                    # self.Logger.info(self, df.info())
+                    # self.Logger.info(self, "describe: ")
+                    # self.Logger.info(self, df.describe())
+                    # self.Logger.info(self, "missing data per columns")
+                    # self.Logger.info(self, df.isnull().sum())

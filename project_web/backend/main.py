@@ -19,7 +19,9 @@ import random
 
 import sys
 
-sys.path.insert(1, "../../project_apes/helpers_aiders_and_conveniencers")
+sys.path.append("../../project_apes/helpers_aiders_and_conveniencers")
+sys.path.append("../../project_apes")
+
 from logger import Logger
 
 app = Flask(__name__)
@@ -109,6 +111,7 @@ def perform_eda():
             logger.info("request", f"file{i}: " + file.filename)
 
     temp_dir = ""
+    path = ""  # equivalent to len(files) == 0
 
     if len(files) == 0:
         logger.info("file_save", "files processing done. no files to save")
@@ -118,17 +121,42 @@ def perform_eda():
             file.save(os.path.join(temp_dir, file.filename))
         logger.info("file_save", "files processing done. files saved at " + temp_dir)
 
+    # no files => np path
+    if len(files) == 0:
+        path = ""
+
+    # more than one file => folder
+    if len(files) > 1:
+        path = temp_dir
+
+    # one file and not archive => folder
+    if len(files) == 1 and not (
+        "zip" in file.seek(0).filename or "rar" in file.seek(0).filename
+    ):
+        path = temp_dir
+
+    # one file and archive => archive path
+    if len(files) == 1 and (
+        "zip" in file.seek(0).filename or "rar" in file.seek(0).filename
+    ):
+        path = os.path.join(temp_dir, file.filename)
+
     results = (
         "these are some results about the files you uploaded. there's also some plots"
     )
 
-    number_of_plots = random.randint(2, 4)
-    logger.info("upload_file", "there are " + str(number_of_plots) + " plots")
+    # number_of_plots = random.randint(2, 4)
+    # logger.info("upload_file", "there are " + str(number_of_plots) + " plots")
 
-    for _ in range(number_of_plots):
-        plot()
+    # for _ in range(number_of_plots):
+    #     plot()
 
-    return jsonify({"results": results, "path": temp_dir})
+    from apes_metadata_handler import Dataset_EDA
+
+    dataset_EDA = Dataset_EDA(logger, path)
+    dataset_EDA.perform_eda()
+
+    return jsonify({"results": results, "path": path})
 
 
 @app.route("/upload", methods=["GET", "POST"])
@@ -149,7 +177,6 @@ def upload_file():
 
     # ########################## gathering metadata ##########################
 
-    sys.path.insert(1, "../../project_apes")
     from apes_metadata_handler import Dataset_Metadata, Application_Instance_Metadata
     from apes_application import APES_Application
 
@@ -169,6 +196,7 @@ def upload_file():
 
     # application instance metadata
     display_dataFrames = request.form.get("display_dataFrames", False)
+    print(display_dataFrames)  # displays False, not (False,) # ????
     application_mode = request.form.get("application_mode", "compare_solutions")
     dataset_origin = request.form.get("dataset_origin", "new_dataset")
     dataset_category = request.form.get("dataset_category", "ekg")
@@ -209,14 +237,14 @@ def upload_file():
 
     apes_application_instance = APES_Application(logger, application_instance_metadata)
 
-    return_code, return_message = apes_application_instance.run()
-    logger.info("Program", return_message)
+    # return_code, return_message = apes_application_instance.run()
+    # logger.info("Program", return_message)
 
     # ########################### application run ############################
 
     # ########################### plot processing ############################
 
-    number_of_plots = random.randint(2, 10)
+    number_of_plots = random.randint(1, 5)
     logger.info("upload_file", "there are " + str(number_of_plots) + " plots")
 
     for _ in range(number_of_plots):
