@@ -4,40 +4,48 @@ import pandas as pd
 
 from datetime import datetime
 
+import seaborn as sns
+import matplotlib.pyplot as plt
 
-class Dataset_EDA:
-    def __init__(self, Logger, dataset_path):
-        self.Logger = Logger
-        self.dataset_path = dataset_path
+import seaborn as sns
 
-    def perform_eda(self):
-        self.Logger.info(self, "EDA started for " + self.dataset_path)
+from summarytools import dfSummary
 
-        for dirname, _, filenames in os.walk(path):
-            for filename in filenames:
-                full_path = os.path.join(dirname, filename)
-                print(full_path)
-
-                if "csv" in filename:
-                    df = pd.read_csv(full_path, header=None)
-                    print("-----------------------------------------------------------")
-                    print("shape: ")
-                    print(df.shape)
-                    print("---------------------------------")
-                    print("head: ")
-                    print(df.head())
-                    print("---------------------------------")
-                    print("info: ")
-                    print(df.info())
-                    print("---------------------------------")
-                    print("describe: ")
-                    print(df.describe())
-                    print("---------------------------------")
-                    print("missing data per columns")
-                    print(df.isnull().sum())
-                    print("-----------------------------------------------------------")
-
-                    print(filename + " has shape " + df.shape)
+path = r"D:\newAPES\Datasets\Dataset - ECG_Heartbeat\Dataset - ECG_Heartbeat\mitbih_test.csv"
 
 
-path = r"C:\Users\DANIEL~1\AppData\Local\Temp\tmp9bmp4_a6"
+df = pd.read_csv(path, header=None)
+
+
+# Set the figure size (optional)
+plt.figure()
+
+# Plot the heatmap using seaborn's heatmap function
+sns.heatmap(df.corr(), annot=True, cmap="YlGnBu")
+
+# Display the plot
+plt.show()
+
+# plt.figure()
+# heat_map = sns.heatmap(df, linewidth=1, annot=True)
+# plt.title("HeatMap using Seaborn Method")
+# plt.show()
+
+
+# dfSummary(df)
+
+
+# numerical_cols = df.select_dtypes(include="number").columns
+# df[numerical_cols].hist(bins=10)
+
+# correlation_matrix = df[numerical_cols].corr()
+# print(correlation_matrix)
+
+# plt.plot(correlation_matrix)
+# plt.show()
+
+
+# print(path)
+# print("file has shape " + str(df.shape))
+# print("df.head \n" + str(df.head()))
+# print(str(df.isnull().sum()))

@@ -259,6 +259,7 @@ export default function UploadComponent() {
     setBEDatasetPath(data.path);
 
     console.log(data.path);
+    console.log(data.eda);
   }
 
   // -------------------------------------------------------------------------
@@ -361,7 +362,7 @@ export default function UploadComponent() {
 
     let files = selectedFiles.map((file) => file.name);
 
-    let data = {
+    let dialogData = {
       files: files,
       is_labeled: labeledRadioValue === "idk" ? "unknown" : labeledRadioValue,
       label: labeledRadioValue === "yes" ? localLabelColumn : -1,
@@ -377,7 +378,7 @@ export default function UploadComponent() {
       epochs: epochs,
     };
 
-    setDialogText(JSON.stringify(data, null, "\t"));
+    setDialogText(JSON.stringify(dialogData, null, "\t"));
 
     setDialogOpen(true);
     return;
@@ -393,16 +394,7 @@ export default function UploadComponent() {
     //   formData.append(`file${i}`, selectedFiles[i]);
     // }
 
-    if (archiveFound) {
-      formData.append(
-        "dataset_path",
-        beDatasetPath + "\\" + selectedFiles[0].name
-      );
-      console.log(beDatasetPath + "\\" + selectedFiles[0].name);
-    } else {
-      formData.append("dataset_path", beDatasetPath);
-      console.log(beDatasetPath);
-    }
+    formData.append("dataset_path", beDatasetPath);
 
     formData.append("is_labeled", labeledRadioValue === "yes");
     if (labeledRadioValue === "yes")
@@ -462,14 +454,14 @@ export default function UploadComponent() {
 
     if (selectedMethods.length === 0) handleEKGMethodsCheckboxes(1);
 
-    let data = {
+    let dialogData = {
       dataset: selectedDataset,
       methods: selectedMethods,
       solution_type:
         selectedMethods.length > 1 ? "compare_solutions" : "retrieve_data",
     };
 
-    setDialogText(JSON.stringify(data, null, "\t"));
+    setDialogText(JSON.stringify(dialogData, null, "\t"));
 
     setDialogOpen(true);
     return;

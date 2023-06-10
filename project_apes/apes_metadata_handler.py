@@ -155,28 +155,63 @@ class Application_Instance_Metadata:
         self.Logger.info(self, info_message)
 
 
+from matplotlib import pyplot as plt
+import seaborn as sns
+import uuid
+
+
 class Dataset_EDA:
-    def __init__(self, Logger, dataset_path):
+    def __init__(
+        self,
+        Logger,
+        dataset_path,
+    ):
         self.Logger = Logger
         self.dataset_path = dataset_path
 
     def perform_eda(self):
+        results = []
+
         self.Logger.info(self, "EDA started for " + self.dataset_path)
 
         for dirname, _, filenames in os.walk(self.dataset_path):
-            for filename in filenames:
+            for index, filename in enumerate(filenames):
+                dict = {}
+
                 full_path = os.path.join(dirname, filename)
                 self.Logger.info(self, full_path)
 
-                if "csv" in filename:
-                    df = pd.read_csv(full_path, header=None)
-                    # self.Logger.info(self, "shape: ")
-                    # self.Logger.info(self, df.shape)
-                    # self.Logger.info(self, "head: ")
-                    # self.Logger.info(self, df.head())
-                    # self.Logger.info(self, "info: ")
-                    # self.Logger.info(self, df.info())
-                    # self.Logger.info(self, "describe: ")
-                    # self.Logger.info(self, df.describe())
-                    # self.Logger.info(self, "missing data per columns")
-                    # self.Logger.info(self, df.isnull().sum())
+                df = pd.read_csv(full_path, header=None)
+
+                dict["index"] = index
+                dict["filename"] = filename
+                dict["shape"] = str(df.shape)
+                dict["head"] = str(df.head(5)).split("\n")
+
+                missing_data = 0
+                nulls = df.isnull().sum().to_frame()
+                for index, row in nulls.iterrows():
+                    if row[0] != 0:
+                        missing_data = missing_data + 1
+
+                dict["missing_data"] = "in " + str(missing_data) + " columns"
+
+                plots = []
+
+                plt.figure()
+                sns.heatmap(df.corr(), annot=True, cmap="YlGnBu")
+                plt.savefig(os.path.join("images", str(uuid.uuid4()) + ".png"))
+
+                plots.append(
+                    {
+                        "path": os.path.join("images", str(uuid.uuid4()) + ".png"),
+                        "caption": "heatmap for file #" + index + ": " + filename,
+                    }
+                )
+
+                # dict["info"] = str(df.info())
+                # dict["describe"] = str(df.describe())
+
+                results.append(dict)
+
+        return str(results)

@@ -129,17 +129,12 @@ def perform_eda():
     if len(files) > 1:
         path = temp_dir
 
-    # one file and not archive => folder
-    if len(files) == 1 and not (
-        "zip" in file.seek(0).filename or "rar" in file.seek(0).filename
-    ):
-        path = temp_dir
-
-    # one file and archive => archive path
-    if len(files) == 1 and (
-        "zip" in file.seek(0).filename or "rar" in file.seek(0).filename
-    ):
-        path = os.path.join(temp_dir, file.filename)
+    if len(files) == 1:
+        for file in files:
+            if "zip" in file.filename or "rar" in file.filename:
+                path = os.path.join(temp_dir, file.filename)
+            else:
+                path = temp_dir
 
     results = (
         "these are some results about the files you uploaded. there's also some plots"
@@ -154,9 +149,9 @@ def perform_eda():
     from apes_metadata_handler import Dataset_EDA
 
     dataset_EDA = Dataset_EDA(logger, path)
-    dataset_EDA.perform_eda()
+    files_dicts = dataset_EDA.perform_eda()
 
-    return jsonify({"results": results, "path": path})
+    return jsonify({"results": results, "path": path, "eda": files_dicts})
 
 
 @app.route("/upload", methods=["GET", "POST"])

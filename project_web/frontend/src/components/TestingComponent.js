@@ -56,11 +56,20 @@ import cnnSVG from "../cnn.svg";
 
 import {
   Button,
+  CardContent,
+  Collapse,
   Dialog,
   DialogActions,
   DialogContent,
   DialogContentText,
   DialogTitle,
+  Typography,
+  Card,
+  CardHeader,
+  Avatar,
+  IconButton,
+  CardMedia,
+  CardActions,
 } from "@mui/material";
 
 const BASE_URL = process.env.REACT_APP_BACKEND;
@@ -70,8 +79,19 @@ function TestingComponent() {
     "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nulla et egestas elit. Pellentesque eleifend justo vel lectus mattis ullamcorper. Class aptent taciti sociosqu ad litora torquent per conubia nostra, per inceptos himenaeos. Donec eu tincidunt lorem. Quisque laoreet quam at nisl aliquet, et ultrices lacus placerat. Vestibulum dui nunc, ultricies rhoncus maximus non, lobortis sit amet enim. Integer at ultrices enim. Suspendisse mauris justo, suscipit ut pulvinar quis, malesuada et magna."
   );
 
-  const [showEDA, setShowEDA] = useState(true);
+  const [showEDA, setShowEDA] = useState(false);
   const [edaButtonHover, setEDAButtonHover] = useState(false);
+
+  const [expanded, setExpanded] = useState(false);
+
+  function handleExpandClick() {
+    setExpanded(!expanded);
+  }
+
+  const example = {
+    shape: "(21892, 188)",
+    head: "capu de tabel",
+  };
 
   return (
     <>
@@ -108,6 +128,31 @@ function TestingComponent() {
           </DialogActions>
         </Dialog>
       )}
+
+      <Card style={{ margin: "20px" }}>
+        <CardHeader
+          title="mitbih_test.csv --- file #0"
+          onClick={handleExpandClick}
+        />
+        <Collapse in={expanded} timeout="auto" unmountOnExit>
+          <CardContent>
+            <Typography paragrah>shape --- {example.shape}</Typography>
+            <Typography paragrah>head --- {example.head}</Typography>
+          </CardContent>
+        </Collapse>
+      </Card>
+      <Card style={{ margin: "20px" }}>
+        <CardHeader
+          title="mitbih_train.csv --- file #1"
+          onClick={handleExpandClick}
+        />
+        <Collapse in={expanded} timeout="auto" unmountOnExit>
+          <CardContent>
+            <Typography paragrah>shape --- {example.shape}</Typography>
+            <Typography paragrah>head --- {example.head}</Typography>
+          </CardContent>
+        </Collapse>
+      </Card>
     </>
   );
 }
