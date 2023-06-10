@@ -156,6 +156,8 @@ class Application_Instance_Metadata:
 
 
 from matplotlib import pyplot as plt
+from flask.json import jsonify
+from datetime import datetime
 import seaborn as sns
 import uuid
 
@@ -185,33 +187,70 @@ class Dataset_EDA:
 
                 dict["index"] = index
                 dict["filename"] = filename
-                dict["shape"] = str(df.shape)
-                dict["head"] = str(df.head(5)).split("\n")
+                dict["shape"] = str(df.shape).replace(",", ";")
+                # dict["head"] = str(df.head(5)).split("\n")
 
                 missing_data = 0
                 nulls = df.isnull().sum().to_frame()
-                for index, row in nulls.iterrows():
+                for _, row in nulls.iterrows():
                     if row[0] != 0:
                         missing_data = missing_data + 1
 
                 dict["missing_data"] = "in " + str(missing_data) + " columns"
 
                 plots = []
+                _, y = df.shape
 
+                # self.Logger.info(
+                #     self, "creating heatmap... this bitch might take a while"
+                # )
+                # beginning_time = datetime.now()
+
+                # plt.clf()
+                # plt.figure()
+                # sns.heatmap(df.corr(), annot=True, cmap="YlGnBu")
+                # plt.title("heatmap for file #" + str(index) + ": " + filename)
+                # plt.savefig(os.path.join("images", str(uuid.uuid4()) + ".png"))
+                # plots.append(
+                #     {
+                #         "path": os.path.join("images", str(uuid.uuid4()) + ".png"),
+                #         "caption": "heatmap for file #" + str(index) + ": " + filename,
+                #     }
+                # )
+
+                # difference_in_seconds = (datetime.now() - beginning_time).seconds
+                # self.Logger.info(
+                #     self,
+                #     "motherfucker took "
+                #     + str(difference_in_seconds)
+                #     + " seconds to create one fucking plot...",
+                # )
+
+                self.Logger.info(self, "creating histogram...")
+                plt.clf()
                 plt.figure()
-                sns.heatmap(df.corr(), annot=True, cmap="YlGnBu")
+                plt.hist(df.iloc[:, y - 1])
+                plt.xlabel("value")
+                plt.ylabel("frequency")
+                plt.title("histogram for file #" + str(index) + ": " + filename)
                 plt.savefig(os.path.join("images", str(uuid.uuid4()) + ".png"))
-
                 plots.append(
                     {
                         "path": os.path.join("images", str(uuid.uuid4()) + ".png"),
-                        "caption": "heatmap for file #" + index + ": " + filename,
+                        "caption": "histogram for file #"
+                        + str(index)
+                        + ": "
+                        + filename,
                     }
                 )
+
+                dict["plots"] = plots
 
                 # dict["info"] = str(df.info())
                 # dict["describe"] = str(df.describe())
 
                 results.append(dict)
 
-        return str(results)
+        self.Logger.info(self, "eda performed successfully")
+
+        return results

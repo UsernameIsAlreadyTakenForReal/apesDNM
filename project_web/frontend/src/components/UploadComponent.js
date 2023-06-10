@@ -33,6 +33,10 @@ import {
   DialogContentText,
   DialogActions,
   Slider,
+  Card,
+  CardHeader,
+  Collapse,
+  CardContent,
 } from "@mui/material";
 
 const BASE_URL = process.env.REACT_APP_BACKEND;
@@ -88,6 +92,9 @@ export default function UploadComponent() {
   const [backendConsole, setBackendConsole] = useState([]);
   const [backendResults, setBackendResults] = useState("");
   const [beDatasetPath, setBEDatasetPath] = useState("");
+  const [eda, setEDA] = useState([]);
+
+  const [fileEDAShow, setFileEDAShow] = useState([]);
 
   // hovers
   const [existingDatasetButtonHover, setExistingDatasetButtonHover] =
@@ -258,8 +265,16 @@ export default function UploadComponent() {
     setBackendResults(data.results);
     setBEDatasetPath(data.path);
 
-    console.log(data.path);
-    console.log(data.eda);
+    // console.log(data.eda);
+
+    let edaData = [];
+    data.eda.forEach((fileInEDA) => {
+      edaData.push(fileInEDA);
+    });
+
+    setEDA(data.eda);
+    setFileEDAShow(Array.from({ length: data.eda.length }, () => false));
+    console.log(Array.from({ length: data.eda.length }, () => false));
   }
 
   // -------------------------------------------------------------------------
@@ -956,7 +971,49 @@ export default function UploadComponent() {
                     </Terminal>
                   </div>
 
-                  <Divv>{backendResults}</Divv>
+                  {/* <Divv>{backendResults}</Divv> */}
+
+                  {eda.map((fileData, index) => {
+                    return (
+                      <Card
+                        style={{
+                          margin: "20px",
+                          backgroundColor: "#eeeee4",
+                          cursor: "pointer",
+                        }}
+                      >
+                        <CardHeader
+                          title={
+                            "file #" +
+                            fileData.index +
+                            " --- " +
+                            fileData.filename
+                          }
+                          onClick={() => {
+                            setFileEDAShow((oldFileEDAShow) => {
+                              const newFileEDAShow = [...oldFileEDAShow];
+                              newFileEDAShow[index] = !newFileEDAShow[index];
+                              return newFileEDAShow;
+                            });
+                          }}
+                        />
+                        <Collapse
+                          in={fileEDAShow[index]}
+                          timeout="auto"
+                          unmountOnExit
+                        >
+                          <CardContent>
+                            <Typography paragrah>
+                              shape --- {fileData.shape}
+                            </Typography>
+                            <Typography paragrah>
+                              head --- {fileData.head}
+                            </Typography>
+                          </CardContent>
+                        </Collapse>
+                      </Card>
+                    );
+                  })}
 
                   <Divv left="0px">
                     {backendMLPlots.map((src, index) => (

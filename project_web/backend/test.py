@@ -16,36 +16,11 @@ path = r"D:\newAPES\Datasets\Dataset - ECG_Heartbeat\Dataset - ECG_Heartbeat\mit
 
 df = pd.read_csv(path, header=None)
 
+_, y = df.shape
+column_index = y - 1
 
-# Set the figure size (optional)
-plt.figure()
-
-# Plot the heatmap using seaborn's heatmap function
-sns.heatmap(df.corr(), annot=True, cmap="YlGnBu")
-
-# Display the plot
+sns.boxplot(data=df.iloc[:, y - 1])
+plt.xlabel("Column")
+plt.ylabel("Value")
+plt.title("Box Plot")
 plt.show()
-
-# plt.figure()
-# heat_map = sns.heatmap(df, linewidth=1, annot=True)
-# plt.title("HeatMap using Seaborn Method")
-# plt.show()
-
-
-# dfSummary(df)
-
-
-# numerical_cols = df.select_dtypes(include="number").columns
-# df[numerical_cols].hist(bins=10)
-
-# correlation_matrix = df[numerical_cols].corr()
-# print(correlation_matrix)
-
-# plt.plot(correlation_matrix)
-# plt.show()
-
-
-# print(path)
-# print("file has shape " + str(df.shape))
-# print("df.head \n" + str(df.head()))
-# print(str(df.isnull().sum()))
