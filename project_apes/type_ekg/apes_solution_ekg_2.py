@@ -41,9 +41,17 @@ from keras.callbacks import EarlyStopping, ModelCheckpoint
 from datetime import datetime
 
 import sys
+import json
 
 sys.path.insert(1, "../helpers_aiders_and_conveniencers")
-from helpers_aiders_and_conveniencers.misc_functions import get_last_model
+from helpers_aiders_and_conveniencers.misc_functions import (
+    get_last_model,
+    model_filename_fits_expected_name,
+    get_full_path_of_given_model,
+    get_plot_save_filename,
+    write_to_solutions_runs_json_file,
+)
+from helpers_aiders_and_conveniencers.solution_serializer import Solution_Serializer
 
 # TODO: add gaussian noise?
 # TODO: resample?
@@ -52,12 +60,45 @@ from helpers_aiders_and_conveniencers.misc_functions import get_last_model
 class Solution_ekg_2:
     def __init__(self, app_instance_metadata, Logger):
         self.Logger = Logger
-
         self.Logger.info(self, "Creating object of type solution_ekg_2")
+
+        self.solution_serializer = Solution_Serializer()
+        self.solution_serializer._app_instance_ID = (
+            app_instance_metadata.app_instance_ID
+        )
+        self.solution_serializer._time_object_creation = datetime.now().strftime(
+            "%Y-%m-%d_%H:%M:%S"
+        )
+
+        self.plots_filenames = []
+        # self.datasets_names = []
+        self.solution_serializer.dataset_name = (
+            app_instance_metadata.dataset_metadata.dataset_name_stub
+        )
+
         self.app_instance_metadata = app_instance_metadata
         self.project_solution_model_filename = (
             app_instance_metadata.shared_definitions.project_solution_ekg_2_model_filename
         )
+
+    ## -------------- To JSON --------------
+    def toJSON(self):  # this is not used
+        return json.dumps(self, default=lambda o: o.__dict__, sort_keys=True, indent=4)
+
+    def save_run(self):
+        info_message = "save_run() -- begin"
+        self.Logger.info(self, info_message)
+
+        self.solution_serializer.plots_filenames = self.plots_filenames
+
+        write_to_solutions_runs_json_file(
+            self.Logger, "ekg1", self.solution_serializer, self.app_instance_metadata
+        )
+
+        info_message = "save_run() -- end"
+        self.Logger.info(self, info_message)
+
+        return 0, f"{self} -- save_run() completed successfully"
 
     ## -------------- General methods --------------
     ## Model methods

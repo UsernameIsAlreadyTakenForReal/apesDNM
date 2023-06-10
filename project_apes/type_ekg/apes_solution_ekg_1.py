@@ -211,8 +211,12 @@ class Solution_ekg_1:
             )
 
         MODEL_SAVE_PATH = (
-            MODEL_SAVE_PATH + "_" + datetime.now().strftime("%Y%m%d_%H%M%S")
+            MODEL_SAVE_PATH + "_" + datetime.now().strftime("%Y%m%d_%H%M%S") + ".pth"
         )
+        # Margareta = get_full_path_of_given_model(
+        #     MODEL_SAVE_PATH,
+        #     self.app_instance_metadata.shared_definitions.project_model_root_path,
+        # )
         info_message = "Saving model at " + MODEL_SAVE_PATH
         self.Logger.info(self, info_message)
         torch.save(self.model, MODEL_SAVE_PATH)
@@ -303,7 +307,7 @@ class Solution_ekg_1:
         self.solution_serializer.time_train_start = f1_time.strftime(
             "%Y-%m-%d_%H:%M:%S"
         )
-        self.solution_serializer._used_test_function = True
+        self.solution_serializer._used_train_function = True
         self.solution_serializer.time_train_end = f2_time.strftime("%Y-%m-%d_%H:%M:%S")
         self.solution_serializer.time_train_total = difference.seconds
         self.solution_serializer.train_epochs = epochs
