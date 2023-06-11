@@ -76,7 +76,11 @@ def get_last_model(Logger, solution_name, app_instance_metadata):
             new_path,
         )
     else:
-        return 1, "misc_functions.get_last_model found no suitable model", []
+        return (
+            1,
+            "misc_functions.get_last_model found no suitable model. Please train a model first, or check the path to the models directory",
+            [],
+        )
 
 
 def get_full_path_of_given_model(model_filename, project_model_root_path):

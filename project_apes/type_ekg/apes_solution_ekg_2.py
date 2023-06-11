@@ -288,6 +288,22 @@ class Solution_ekg_2:
         info_message = "##########################################################"
         self.Logger.info(self, info_message)
 
+        callbacks = [
+            EarlyStopping(monitor="val_loss", patience=8),
+            # ModelCheckpoint(
+            #     filepath=self.project_solution_model_filename,
+            #     monitor="val_loss",
+            #     save_best_only=True,
+            # ),
+        ]
+
+        predictions = self.model.predict(
+            self.X_test, batch_size=32, callbacks=callbacks, max_queue_size=10
+        )
+
+        print(predictions)
+        print(predictions.shape)
+
         f2_time = datetime.now()
         difference = f2_time - f1_time
         seconds_in_day = 24 * 60 * 60
