@@ -33,6 +33,9 @@ logger = Logger(socketio)
 
 # TODO
 # make sure to interrupt any perform_eda requests if upload_file is triggered
+# add all necessary thing for archives
+# add some error handling for frontend requests
+# add some error handling for backend? if something happens, how to ensure backend runs for next requests?
 
 
 def cls():

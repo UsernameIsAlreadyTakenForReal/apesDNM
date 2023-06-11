@@ -233,54 +233,56 @@ class Dataset_EDA:
 
                 plots = []
 
-                # self.Logger.info(
-                #     self, "creating heatmap... this bitch might take a while"
-                # )
-                # beginning_time = datetime.now()
+                self.Logger.info(
+                    self,
+                    "creating heatmap for " + filename + "... this might take a while",
+                )
+                beginning_time = datetime.now()
 
-                # plt.clf()
-                # plt.figure()
-                # sns.heatmap(df.corr(), annot=True, cmap="YlGnBu")
-                # plt.title("heatmap for file #" + str(index) + ": " + filename)
-                # full_path = os.path.join("images", str(uuid.uuid4()) + ".png")
-                # plt.savefig(full_path)
-                # plots.append(
-                #     {
-                #         "path": full_path,
-                #         "caption": "heatmap for file #" + str(index) + ": " + filename,
-                #     }
-                # )
-
-                # difference_in_seconds = (datetime.now() - beginning_time).seconds
-                # self.Logger.info(
-                #     self,
-                #     "motherfucker took "
-                #     + str(difference_in_seconds)
-                #     + " seconds to create one fucking plot...",
-                # )
-
-                self.Logger.info(self, "creating histogram...")
                 plt.clf()
                 plt.figure()
-                plt.hist(df.iloc[:, y - 1])
-                plt.xlabel("value")
-                plt.ylabel("frequency")
-                plt.title("histogram for file #" + str(index) + ": " + filename)
+                sns.heatmap(df.corr(), annot=True, cmap="YlGnBu")
+                caption = "heatmap for file #" + str(index) + ": " + filename
+                plt.title(caption)
                 full_path = os.path.join("images", str(uuid.uuid4()) + ".png")
                 plt.savefig(full_path)
                 plots.append(
                     {
                         "path": full_path,
-                        "caption": "histogram for file #"
-                        + str(index)
-                        + ": "
-                        + filename,
+                        "caption": caption,
                     }
                 )
 
-                for _ in range(random.randint(1, 5)):
-                    _full_path, _caption = plot()
-                    plots.append({"path": _full_path, "caption": _caption})
+                difference_in_seconds = (datetime.now() - beginning_time).seconds
+                self.Logger.info(
+                    self,
+                    "took " + str(difference_in_seconds) + " seconds to create...",
+                )
+
+                self.Logger.info(self, "creating histogram for " + filename + "...")
+                plt.clf()
+                plt.figure()
+                plt.hist(df.iloc[:, y - 1])
+                plt.xlabel("value")
+                plt.ylabel("frequency")
+                caption = "histogram for file #" + str(index) + ": " + filename
+                plt.title(caption)
+                full_path = os.path.join("images", str(uuid.uuid4()) + ".png")
+                plt.savefig(full_path)
+                plots.append({"path": full_path, "caption": caption})
+
+                plt.scatter(df.iloc[:, 0], df.iloc[:, 1])
+                plt.xlabel("column 0")
+                plt.ylabel("column 1")
+                caption = "scatter plot for file #" + str(index) + ": " + filename
+                plt.title(caption)
+                full_path = os.path.join("images", str(uuid.uuid4()) + ".png")
+                plt.savefig(full_path)
+                plots.append({"path": full_path, "caption": caption})
+
+                # for _ in range(random.randint(1, 5)):
+                #     _full_path, _caption = plot()
+                #     plots.append({"path": _full_path, "caption": _caption})
 
                 dict["plots"] = plots
 
@@ -289,6 +291,8 @@ class Dataset_EDA:
 
                 results.append(dict)
 
-        self.Logger.info(self, "eda performed successfully")
+        self.Logger.info(
+            self, "eda performed successfully for files in " + self.dataset_path
+        )
 
         return results

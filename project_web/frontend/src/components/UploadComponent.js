@@ -96,6 +96,7 @@ export default function UploadComponent() {
   const [eda, setEDA] = useState([]);
 
   const [fileEDAShow, setFileEDAShow] = useState([]);
+  const [fileEDAShowHover, setFileEDAShowHover] = useState([]);
 
   // hovers
   const [existingDatasetButtonHover, setExistingDatasetButtonHover] =
@@ -127,6 +128,9 @@ export default function UploadComponent() {
   const [edaConfirmButtonHover, setEDAConfirmButtonHover] = useState(false);
   const [showEDAButtonHover, setShowEDAButtonHover] = useState(false);
 
+  const [smallerFontButtonHover, setSmallerFontButtonHover] = useState(false);
+  const [largetFontButtonHover, setLargerFontButtonHover] = useState(false);
+
   // errors
   const [fileSelectionError, setFileSelectionError] = useState(false);
   const [fileSelectionErrorMessage, setFileSelectionErrorMessage] =
@@ -150,7 +154,7 @@ export default function UploadComponent() {
 
   // misc
   const [stringOfFilesUploaded, setStringOfFilesUploaded] = useState("");
-  const [terminalFontSize, setTerminalFontSize] = useState(18);
+  const [terminalFontSize, setTerminalFontSize] = useState(15);
 
   // image viewer
   const [imageViewerOpen, setImageViewerOpen] = useState(false);
@@ -288,6 +292,7 @@ export default function UploadComponent() {
     });
 
     setFileEDAShow(Array.from({ length: data.eda.length }, () => false));
+    setFileEDAShowHover(Array.from({ length: data.eda.length }, () => false));
     setEDA(data.eda);
   }
 
@@ -995,8 +1000,22 @@ export default function UploadComponent() {
                           backgroundColor: fileEDAShow[index]
                             ? "#eeeee4"
                             : "#eeeeee",
+
                           cursor: "pointer",
-                          // opacity: fileEDAShow[index] ? 1 : 0.5,
+                        }}
+                        onMouseEnter={() => {
+                          setFileEDAShowHover((oldFileEDAShow) => {
+                            const newFileEDAShow = [...oldFileEDAShow];
+                            newFileEDAShow[index] = true;
+                            return newFileEDAShow;
+                          });
+                        }}
+                        onMouseLeave={() => {
+                          setFileEDAShowHover((oldFileEDAShow) => {
+                            const newFileEDAShow = [...oldFileEDAShow];
+                            newFileEDAShow[index] = false;
+                            return newFileEDAShow;
+                          });
                         }}
                       >
                         <CardHeader
@@ -1014,7 +1033,7 @@ export default function UploadComponent() {
                             });
                           }}
                         />
-                        <Collapse in={fileEDAShow[index]} timeout="auto">
+                        <Collapse in={fileEDAShow[index]}>
                           <CardContent>
                             <Typography paragrah>
                               <span style={{ fontWeight: "bold" }}>shape</span>{" "}
@@ -1103,6 +1122,49 @@ export default function UploadComponent() {
                   )}
                 </DialogContent>
                 <DialogActions>
+                  <div style={{ flex: "1 0 0" }}>
+                    <Button
+                      style={{
+                        background:
+                          smallerFontButtonHover === false ? "black" : "orange",
+                        color:
+                          smallerFontButtonHover === false ? "white" : "black",
+                        fontWeight: "bold",
+                        marginRight: "10px",
+                      }}
+                      variant="contained"
+                      color="primary"
+                      size="medium"
+                      onMouseEnter={() => setSmallerFontButtonHover(true)}
+                      onMouseLeave={() => setSmallerFontButtonHover(false)}
+                      onClick={() => {
+                        if (terminalFontSize === 10) return;
+                        setTerminalFontSize(terminalFontSize - 1);
+                      }}
+                    >
+                      smaller font
+                    </Button>
+                    <Button
+                      style={{
+                        background:
+                          largetFontButtonHover === false ? "black" : "orange",
+                        color:
+                          largetFontButtonHover === false ? "white" : "black",
+                        fontWeight: "bold",
+                      }}
+                      variant="contained"
+                      color="primary"
+                      size="medium"
+                      onMouseEnter={() => setLargerFontButtonHover(true)}
+                      onMouseLeave={() => setLargerFontButtonHover(false)}
+                      onClick={() => {
+                        if (terminalFontSize === 30) return;
+                        setTerminalFontSize(terminalFontSize + 1);
+                      }}
+                    >
+                      larger font
+                    </Button>
+                  </div>
                   <Button
                     style={{
                       background:
