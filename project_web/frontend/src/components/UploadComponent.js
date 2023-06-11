@@ -1,4 +1,4 @@
-import { Fragment, createElement, useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 
 import { Divv, TextFieldFlex, Label } from "./StyledComponents";
 import WebSocketComponent from "./WebSocketComponent";
@@ -40,6 +40,7 @@ import {
 } from "@mui/material";
 
 const BASE_URL = process.env.REACT_APP_BACKEND;
+const nbsps = <>&nbsp;&nbsp;&nbsp;&nbsp;</>;
 
 export default function UploadComponent() {
   // show/hide elements
@@ -200,6 +201,19 @@ export default function UploadComponent() {
   }
 
   // -------------------------------------------------------------------------
+  function getImageIndexFromPath(path) {
+    let index = 0;
+    for (let i = 0; i < eda.length; i++) {
+      for (let j = 0; j < eda[i].plots.length; j++) {
+        if (eda[i].plots[j].path === path) {
+          return index;
+        } else index = index + 1;
+      }
+    }
+    return -1;
+  }
+
+  // -------------------------------------------------------------------------
   async function onFileChange(event) {
     if (event.target.files.length === 0) return;
     // console.log([...event.target.files]);
@@ -208,6 +222,7 @@ export default function UploadComponent() {
     setBackendMLPlots([]);
     setBackendCptions([]);
     setBackendResults("");
+    setEDA([]);
 
     resetAllFormErrorsAndData();
     setSelectedFiles([...event.target.files]);
@@ -272,9 +287,8 @@ export default function UploadComponent() {
       edaData.push(fileInEDA);
     });
 
-    setEDA(data.eda);
     setFileEDAShow(Array.from({ length: data.eda.length }, () => false));
-    console.log(Array.from({ length: data.eda.length }, () => false));
+    setEDA(data.eda);
   }
 
   // -------------------------------------------------------------------------
@@ -978,8 +992,11 @@ export default function UploadComponent() {
                       <Card
                         style={{
                           margin: "20px",
-                          backgroundColor: "#eeeee4",
+                          backgroundColor: fileEDAShow[index]
+                            ? "#eeeee4"
+                            : "#eeeeee",
                           cursor: "pointer",
+                          // opacity: fileEDAShow[index] ? 1 : 0.5,
                         }}
                       >
                         <CardHeader
@@ -997,25 +1014,114 @@ export default function UploadComponent() {
                             });
                           }}
                         />
-                        <Collapse
-                          in={fileEDAShow[index]}
-                          timeout="auto"
-                          unmountOnExit
-                        >
+                        <Collapse in={fileEDAShow[index]} timeout="auto">
                           <CardContent>
                             <Typography paragrah>
-                              shape --- {fileData.shape}
+                              <span style={{ fontWeight: "bold" }}>shape</span>{" "}
+                              --- {fileData.rows} rows, {fileData.columns}{" "}
+                              columns
                             </Typography>
+                            <br></br>
                             <Typography paragrah>
-                              head --- {fileData.head}
+                              <span style={{ fontWeight: "bold" }}>
+                                columns with missing data
+                              </span>{" "}
+                              --- {fileData.columns_with_missing_data}
                             </Typography>
+                            <br></br>
+                            <Typography paragrah>
+                              <span style={{ fontWeight: "bold" }}>
+                                head of file
+                              </span>{" "}
+                              --- <br></br>
+                              {fileData.head.map((line, index) => {
+                                if (
+                                  index === 0 ||
+                                  index === fileData.head.length - 1
+                                )
+                                  return null;
+                                return (
+                                  <Typography paragrah>
+                                    {line.split("").map((character) => {
+                                      if (character === " ") return nbsps;
+                                      else return character;
+                                    })}
+                                  </Typography>
+                                );
+                              })}
+                            </Typography>
+
+                            <Divv left="0px">
+                              {fileData.plots.map((plot, iindex) => {
+                                return (
+                                  <>
+                                    <Tooltip
+                                      title={
+                                        <Typography fontSize={14}>
+                                          {plot.caption}
+                                        </Typography>
+                                      }
+                                    >
+                                      <img
+                                        src={plot.path}
+                                        onClick={() => {
+                                          setImageViewerOpen(true);
+                                          setCurrentImage(
+                                            getImageIndexFromPath(plot.path)
+                                          );
+                                        }}
+                                        width="150"
+                                        key={index}
+                                        style={{
+                                          margin: "10px",
+                                          cursor: "pointer",
+                                        }}
+                                        alt=""
+                                      />
+                                    </Tooltip>
+
+                                    {/* {imageViewerOpen && (
+                                      <ImageViewer
+                                        backgroundStyle={{
+                                          backgroundColor: "rgba(0,0,0,0.75)",
+                                        }}
+                                        src={fileData.plots.map(
+                                          (item) => item.path
+                                        )}
+                                        currentIndex={currentImage}
+                                        disableScroll={false}
+                                        closeOnClickOutside={true}
+                                        onClose={() =>
+                                          setImageViewerOpen(false)
+                                        }
+                                      />
+                                    )} */}
+                                  </>
+                                );
+                              })}
+                            </Divv>
                           </CardContent>
                         </Collapse>
                       </Card>
                     );
                   })}
 
-                  <Divv left="0px">
+                  {imageViewerOpen && (
+                    <ImageViewer
+                      backgroundStyle={{
+                        backgroundColor: "rgba(0,0,0,0.75)",
+                      }}
+                      src={eda.map((eachEDA) =>
+                        eachEDA.plots.map((item) => item.path)
+                      )}
+                      currentIndex={currentImage}
+                      disableScroll={false}
+                      closeOnClickOutside={true}
+                      onClose={() => setImageViewerOpen(false)}
+                    />
+                  )}
+
+                  {/* <Divv left="0px">
                     {backendMLPlots.map((src, index) => (
                       <Tooltip
                         title={
@@ -1027,6 +1133,8 @@ export default function UploadComponent() {
                         <img
                           src={src}
                           onClick={() => {
+
+
                             setImageViewerOpen(true);
                             setCurrentImage(index);
                           }}
@@ -1050,7 +1158,7 @@ export default function UploadComponent() {
                         onClose={() => setImageViewerOpen(false)}
                       />
                     )}
-                  </Divv>
+                  </Divv> */}
                 </DialogContent>
                 <DialogActions>
                   <Button

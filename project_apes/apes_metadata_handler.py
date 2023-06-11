@@ -187,8 +187,12 @@ class Dataset_EDA:
 
                 dict["index"] = index
                 dict["filename"] = filename
-                dict["shape"] = str(df.shape).replace(",", ";")
-                # dict["head"] = str(df.head(5)).split("\n")
+
+                x, y = df.shape
+
+                dict["rows"] = str(x)
+                dict["columns"] = str(y)
+                dict["head"] = str(df.head(5)).split("\n")
 
                 missing_data = 0
                 nulls = df.isnull().sum().to_frame()
@@ -196,10 +200,9 @@ class Dataset_EDA:
                     if row[0] != 0:
                         missing_data = missing_data + 1
 
-                dict["missing_data"] = "in " + str(missing_data) + " columns"
+                dict["columns_with_missing_data"] = str(missing_data)
 
                 plots = []
-                _, y = df.shape
 
                 # self.Logger.info(
                 #     self, "creating heatmap... this bitch might take a while"
@@ -210,10 +213,11 @@ class Dataset_EDA:
                 # plt.figure()
                 # sns.heatmap(df.corr(), annot=True, cmap="YlGnBu")
                 # plt.title("heatmap for file #" + str(index) + ": " + filename)
-                # plt.savefig(os.path.join("images", str(uuid.uuid4()) + ".png"))
+                # full_path = os.path.join("images", str(uuid.uuid4()) + ".png")
+                # plt.savefig(full_path)
                 # plots.append(
                 #     {
-                #         "path": os.path.join("images", str(uuid.uuid4()) + ".png"),
+                #         "path": full_path,
                 #         "caption": "heatmap for file #" + str(index) + ": " + filename,
                 #     }
                 # )
@@ -233,10 +237,11 @@ class Dataset_EDA:
                 plt.xlabel("value")
                 plt.ylabel("frequency")
                 plt.title("histogram for file #" + str(index) + ": " + filename)
-                plt.savefig(os.path.join("images", str(uuid.uuid4()) + ".png"))
+                full_path = os.path.join("images", str(uuid.uuid4()) + ".png")
+                plt.savefig(full_path)
                 plots.append(
                     {
-                        "path": os.path.join("images", str(uuid.uuid4()) + ".png"),
+                        "path": full_path,
                         "caption": "histogram for file #"
                         + str(index)
                         + ": "

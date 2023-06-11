@@ -32,10 +32,7 @@ CORS(app)
 logger = Logger(socketio)
 
 # TODO
-# create new screen (component? for onFileChange?) for EDA and checks
-# position button
-# instantiate app and dataset in upload_file
-# create handler for eda()
+# make sure to interrupt any perform_eda requests if upload_file is triggered
 
 
 def cls():
