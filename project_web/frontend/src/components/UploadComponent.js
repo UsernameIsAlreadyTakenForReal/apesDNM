@@ -1054,49 +1054,30 @@ export default function UploadComponent() {
                             <Divv left="0px">
                               {fileData.plots.map((plot, iindex) => {
                                 return (
-                                  <>
-                                    <Tooltip
-                                      title={
-                                        <Typography fontSize={14}>
-                                          {plot.caption}
-                                        </Typography>
-                                      }
-                                    >
-                                      <img
-                                        src={plot.path}
-                                        onClick={() => {
-                                          setImageViewerOpen(true);
-                                          setCurrentImage(
-                                            getImageIndexFromPath(plot.path)
-                                          );
-                                        }}
-                                        width="150"
-                                        key={index}
-                                        style={{
-                                          margin: "10px",
-                                          cursor: "pointer",
-                                        }}
-                                        alt=""
-                                      />
-                                    </Tooltip>
-
-                                    {/* {imageViewerOpen && (
-                                      <ImageViewer
-                                        backgroundStyle={{
-                                          backgroundColor: "rgba(0,0,0,0.75)",
-                                        }}
-                                        src={fileData.plots.map(
-                                          (item) => item.path
-                                        )}
-                                        currentIndex={currentImage}
-                                        disableScroll={false}
-                                        closeOnClickOutside={true}
-                                        onClose={() =>
-                                          setImageViewerOpen(false)
-                                        }
-                                      />
-                                    )} */}
-                                  </>
+                                  <Tooltip
+                                    title={
+                                      <Typography fontSize={14}>
+                                        {plot.caption}
+                                      </Typography>
+                                    }
+                                  >
+                                    <img
+                                      src={plot.path}
+                                      onClick={() => {
+                                        setImageViewerOpen(true);
+                                        setCurrentImage(
+                                          getImageIndexFromPath(plot.path)
+                                        );
+                                      }}
+                                      width="150"
+                                      key={index}
+                                      style={{
+                                        margin: "10px",
+                                        cursor: "pointer",
+                                      }}
+                                      alt=""
+                                    />
+                                  </Tooltip>
                                 );
                               })}
                             </Divv>
@@ -1111,54 +1092,15 @@ export default function UploadComponent() {
                       backgroundStyle={{
                         backgroundColor: "rgba(0,0,0,0.75)",
                       }}
-                      src={eda.map((eachEDA) =>
-                        eachEDA.plots.map((item) => item.path)
-                      )}
+                      src={eda
+                        .flatMap((item) => item.plots)
+                        .map((plot) => plot.path)}
                       currentIndex={currentImage}
                       disableScroll={false}
                       closeOnClickOutside={true}
                       onClose={() => setImageViewerOpen(false)}
                     />
                   )}
-
-                  {/* <Divv left="0px">
-                    {backendMLPlots.map((src, index) => (
-                      <Tooltip
-                        title={
-                          <Typography fontSize={14}>
-                            {backendCptions[index]}
-                          </Typography>
-                        }
-                      >
-                        <img
-                          src={src}
-                          onClick={() => {
-
-
-                            setImageViewerOpen(true);
-                            setCurrentImage(index);
-                          }}
-                          width="200"
-                          key={index}
-                          style={{ margin: "10px", cursor: "pointer" }}
-                          alt=""
-                        />
-                      </Tooltip>
-                    ))}
-
-                    {imageViewerOpen && (
-                      <ImageViewer
-                        backgroundStyle={{
-                          backgroundColor: "rgba(0,0,0,0.75)",
-                        }}
-                        src={backendMLPlots}
-                        currentIndex={currentImage}
-                        disableScroll={false}
-                        closeOnClickOutside={true}
-                        onClose={() => setImageViewerOpen(false)}
-                      />
-                    )}
-                  </Divv> */}
                 </DialogContent>
                 <DialogActions>
                   <Button

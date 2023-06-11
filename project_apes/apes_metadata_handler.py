@@ -161,6 +161,35 @@ from datetime import datetime
 import seaborn as sns
 import uuid
 
+import random
+
+
+def plot():
+    number_of_points = random.randint(5, 15)
+    points_x = []
+    points_y = []
+
+    for _ in range(number_of_points):
+        points_x.append(random.randint(0, 100))
+        points_y.append(random.randint(0, 100))
+
+    plt.clf()
+
+    plt.plot(points_x, points_y)
+
+    plt.ylabel(str(number_of_points) + " random numbers")
+    plt.xlabel(str("just as many random numbers"))
+
+    plot_title = "a plot with " + str(number_of_points) + " random numbers"
+    plt.title(plot_title)
+
+    filename = str(uuid.uuid4()) + ".png"
+
+    figure_path_png = os.path.join("images", filename)
+
+    plt.savefig(figure_path_png)
+    return figure_path_png, plot_title
+
 
 class Dataset_EDA:
     def __init__(
@@ -248,6 +277,10 @@ class Dataset_EDA:
                         + filename,
                     }
                 )
+
+                for _ in range(random.randint(1, 5)):
+                    _full_path, _caption = plot()
+                    plots.append({"path": _full_path, "caption": _caption})
 
                 dict["plots"] = plots
 
