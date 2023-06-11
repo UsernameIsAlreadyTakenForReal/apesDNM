@@ -26,7 +26,8 @@
     "socket.io-client": "4.3.1",
     "styled-components": "^5.3.9",
     "tsparticles-engine": "^2.9.3",
-    "web-vitals": "^2.1.4"
+    "web-vitals": "^2.1.4",
+    "zustand": "^4.3.8"
   },
   "scripts": {
     "start": "react-scripts start",

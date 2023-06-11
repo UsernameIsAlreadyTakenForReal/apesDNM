@@ -1,9 +1,23 @@
 import { Link, useLocation, useNavigate } from "react-router-dom";
 import { Divv, RowFlex, Nav } from "./StyledComponents";
-import { Tooltip, Typography } from "@mui/material";
+import { Menu, MenuItem, Tooltip, Typography } from "@mui/material";
+import { useState } from "react";
+
+import useStore from "./store";
 
 export default function NavbarComponent() {
+  const [settingsOpen, setSettingsOpen] = useState(false);
+  const [menuAnchorElement, setMenuAnchorElement] = useState(null);
+
+  const increaseTerminalFontSize = useStore(
+    (state) => state.increaseTerminalFontSize
+  );
+  const decreaseTerminalFontSize = useStore(
+    (state) => state.decreaseTerminalFontSize
+  );
+
   const navigate = useNavigate();
+
   return (
     <>
       <Nav>
@@ -59,6 +73,40 @@ export default function NavbarComponent() {
             >
               contact
             </Link>
+          </Divv>
+
+          <Divv>
+            <Link
+              style={{
+                textDecoration: "none",
+                color: "black",
+                float: "right",
+              }}
+              onClick={(event) => {
+                setMenuAnchorElement(event.currentTarget);
+                setSettingsOpen(true);
+              }}
+            >
+              settings
+            </Link>
+            <Menu
+              id="demo-positioned-menu"
+              aria-labelledby="demo-positioned-button"
+              anchorEl={menuAnchorElement}
+              open={settingsOpen}
+              onClose={() => setSettingsOpen(false)}
+              anchorOrigin={{
+                vertical: "top",
+                horizontal: "right",
+              }}
+            >
+              <MenuItem onClick={() => increaseTerminalFontSize()}>
+                increase terminal font size
+              </MenuItem>
+              <MenuItem onClick={() => decreaseTerminalFontSize()}>
+                decrease terminal font size
+              </MenuItem>
+            </Menu>
           </Divv>
 
           {/* <Divv>

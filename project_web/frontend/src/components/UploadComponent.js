@@ -10,6 +10,8 @@ import Terminal from "react-terminal-ui";
 
 import ImageViewer from "react-simple-image-viewer";
 
+import useStore from "./store";
+
 import {
   Button,
   Backdrop,
@@ -43,6 +45,9 @@ const BASE_URL = process.env.REACT_APP_BACKEND;
 const nbsps = <>&nbsp;&nbsp;&nbsp;&nbsp;</>;
 
 export default function UploadComponent() {
+  // useStore variables
+  const terminalFontSize = useStore((state) => state.terminalFontSize);
+
   // show/hide elements
   const [showExistingMethod, setShowExistingMethod] = useState(false);
   const [showFileUploadMethod, setShowFileUploadMethod] = useState(false);
@@ -154,7 +159,7 @@ export default function UploadComponent() {
 
   // misc
   const [stringOfFilesUploaded, setStringOfFilesUploaded] = useState("");
-  const [terminalFontSize, setTerminalFontSize] = useState(15);
+  // const [terminalFontSize, setTerminalFontSize] = useState(15);
 
   // image viewer
   const [imageViewerOpen, setImageViewerOpen] = useState(false);
@@ -1122,7 +1127,7 @@ export default function UploadComponent() {
                   )}
                 </DialogContent>
                 <DialogActions>
-                  <div style={{ flex: "1 0 0" }}>
+                  {/* <div style={{ flex: "1 0 0" }}>
                     <Button
                       style={{
                         background:
@@ -1164,7 +1169,7 @@ export default function UploadComponent() {
                     >
                       larger font
                     </Button>
-                  </div>
+                  </div> */}
                   <Button
                     style={{
                       background:

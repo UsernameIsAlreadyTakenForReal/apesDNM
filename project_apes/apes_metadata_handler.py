@@ -233,31 +233,31 @@ class Dataset_EDA:
 
                 plots = []
 
-                self.Logger.info(
-                    self,
-                    "creating heatmap for " + filename + "... this might take a while",
-                )
-                beginning_time = datetime.now()
+                # self.Logger.info(
+                #     self,
+                #     "creating heatmap for " + filename + "... this might take a while",
+                # )
+                # beginning_time = datetime.now()
 
-                plt.clf()
-                plt.figure()
-                sns.heatmap(df.corr(), annot=True, cmap="YlGnBu")
-                caption = "heatmap for file #" + str(index) + ": " + filename
-                plt.title(caption)
-                full_path = os.path.join("images", str(uuid.uuid4()) + ".png")
-                plt.savefig(full_path)
-                plots.append(
-                    {
-                        "path": full_path,
-                        "caption": caption,
-                    }
-                )
+                # plt.clf()
+                # plt.figure()
+                # sns.heatmap(df.corr(), annot=True, cmap="YlGnBu")
+                # caption = "heatmap for file #" + str(index) + ": " + filename
+                # plt.title(caption)
+                # full_path = os.path.join("images", str(uuid.uuid4()) + ".png")
+                # plt.savefig(full_path)
+                # plots.append(
+                #     {
+                #         "path": full_path,
+                #         "caption": caption,
+                #     }
+                # )
 
-                difference_in_seconds = (datetime.now() - beginning_time).seconds
-                self.Logger.info(
-                    self,
-                    "took " + str(difference_in_seconds) + " seconds to create...",
-                )
+                # difference_in_seconds = (datetime.now() - beginning_time).seconds
+                # self.Logger.info(
+                #     self,
+                #     "took " + str(difference_in_seconds) + " seconds to create...",
+                # )
 
                 self.Logger.info(self, "creating histogram for " + filename + "...")
                 plt.clf()
