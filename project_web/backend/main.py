@@ -91,168 +91,182 @@ def get_datasets():
 
 @app.route("/perform_eda", methods=["GET", "POST"])
 def perform_eda():
-    print("perform_eda() function called")
+    try:
+        print("perform_eda() function called")
 
-    import shutil
-
-    shutil.rmtree("images")
-    os.makedirs("images")
-
-    files = []
-
-    logger.info("upload_file", "# of files sent is " + str(len(request.files)))
-
-    for i in range(len(request.files)):
-        if request.files.get(f"file{i}"):
-            files.append(request.files.get(f"file{i}"))
-
-            file = request.files.get(f"file{i}")
-
-            logger.info("request", f"file{i}: " + file.filename)
-
-    temp_dir = ""
-    path = ""  # equivalent to len(files) == 0
-
-    if len(files) == 0:
-        logger.info("file_save", "files processing done. no files to save")
-    else:
-        temp_dir = tempfile.mkdtemp()
-        for file in files:
-            file.save(os.path.join(temp_dir, file.filename))
-        logger.info("file_save", "files processing done. files saved at " + temp_dir)
-
-    # no files => np path
-    if len(files) == 0:
-        path = ""
-
-    # more than one file => folder
-    if len(files) > 1:
-        path = temp_dir
-
-    if len(files) == 1:
-        for file in files:
-            if "zip" in file.filename or "rar" in file.filename:
-                path = os.path.join(temp_dir, file.filename)
-            else:
-                path = temp_dir
-
-    results = (
-        "these are some results about the files you uploaded. there's also some plots"
-    )
-
-    # number_of_plots = random.randint(2, 4)
-    # logger.info("upload_file", "there are " + str(number_of_plots) + " plots")
-
-    # for _ in range(number_of_plots):
-    #     plot()
-
-    from apes_metadata_handler import Dataset_EDA
-
-    dataset_EDA = Dataset_EDA(logger, path)
-    files_dicts = dataset_EDA.perform_eda()
-
-    return jsonify({"results": results, "path": path, "eda": files_dicts})
-
-
-@app.route("/upload", methods=["GET", "POST"])
-def upload_file():
-    print("upload_file() function called")
-
-    logger.info("upload_file", "upload has been triggered")
-
-    # ###################### cleaning-up images folder #######################
-    clear_images = request.form.get("clear_images", True)
-    if clear_images:
         import shutil
 
         shutil.rmtree("images")
         os.makedirs("images")
 
-    # ########################### files processing ###########################
+        files = []
 
-    # ########################## gathering metadata ##########################
+        logger.info("upload_file", "# of files sent is " + str(len(request.files)))
 
-    from apes_metadata_handler import Dataset_Metadata, Application_Instance_Metadata
-    from apes_application import APES_Application
+        for i in range(len(request.files)):
+            if request.files.get(f"file{i}"):
+                files.append(request.files.get(f"file{i}"))
 
-    # dataset metadata
-    dataset_path = request.form.get("dataset_path", "")
-    is_labeled = request.form.get("is_labeled", True)
-    file_keyword_names = request.form.get("file_keyword_names", [])
-    class_names = request.form.get("class_names", [])
-    label_column_name = request.form.get("label_column_name", "target")
-    numerical_value_of_desired_label = request.form.get(
-        "numerical_value_of_desired_label", 0
-    )
-    desired_label = request.form.get("desired_label", "")  # ????
-    separate_train_and_test = request.form.get("separate_train_and_test", False)
-    percentage_of_split = request.form.get("percentage_of_split", 0.7)
-    shuffle_rows = request.form.get("shuffle_rows", False)
+                file = request.files.get(f"file{i}")
 
-    # application instance metadata
-    display_dataFrames = request.form.get("display_dataFrames", False)
-    print(display_dataFrames)  # displays False, not (False,) # ????
-    application_mode = request.form.get("application_mode", "compare_solutions")
-    dataset_origin = request.form.get("dataset_origin", "new_dataset")
-    dataset_category = request.form.get("dataset_category", "ekg")
-    solution_category = request.form.get("solution_category", "ekg")
-    solution_nature = request.form.get("solution_nature", "supervised")
-    solution_index = request.form.get("solution_index", [1])
-    model_origin = request.form.get("model_origin", "train_new_model")
-    model_train_epochs = request.form.get("model_train_epochs", 40)
+                logger.info("request", f"file{i}: " + file.filename)
 
-    save_data = request.form.get("save_data", False)
+        temp_dir = ""
+        path = ""  # equivalent to len(files) == 0
 
-    dataset_metadata = Dataset_Metadata(
-        logger,
-        dataset_path,
-        is_labeled,
-        file_keyword_names,
-        class_names,
-        label_column_name,
-        numerical_value_of_desired_label,
-        separate_train_and_test,
-        percentage_of_split,
-        shuffle_rows,
-    )
+        if len(files) == 0:
+            logger.info("file_save", "files processing done. no files to save")
+        else:
+            temp_dir = tempfile.mkdtemp()
+            for file in files:
+                file.save(os.path.join(temp_dir, file.filename))
+            logger.info(
+                "file_save", "files processing done. files saved at " + temp_dir
+            )
 
-    application_instance_metadata = Application_Instance_Metadata(
-        logger,
-        dataset_metadata,
-        display_dataFrames,
-        application_mode,
-        dataset_origin,
-        dataset_category,
-        solution_category,
-        solution_nature,
-        solution_index,
-        model_origin,
-        model_train_epochs,
-    )
+        # no files => np path
+        if len(files) == 0:
+            path = ""
 
-    apes_application_instance = APES_Application(logger, application_instance_metadata)
+        # more than one file => folder
+        if len(files) > 1:
+            path = temp_dir
 
-    # return_code, return_message = apes_application_instance.run()
-    # logger.info("Program", return_message)
+        if len(files) == 1:
+            for file in files:
+                if "zip" in file.filename or "rar" in file.filename:
+                    path = os.path.join(temp_dir, file.filename)
+                else:
+                    path = temp_dir
 
-    # ########################### application run ############################
+        results = "these are some results about the files you uploaded. there's also some plots"
 
-    # ########################### plot processing ############################
+        from apes_metadata_handler import Dataset_EDA
 
-    number_of_plots = random.randint(1, 5)
-    logger.info("upload_file", "there are " + str(number_of_plots) + " plots")
+        dataset_EDA = Dataset_EDA(logger, path)
+        files_dicts = dataset_EDA.perform_eda()
 
-    for _ in range(number_of_plots):
-        plot()
+        return jsonify({"results": results, "path": path, "eda": files_dicts})
+    except Exception as e:
+        logger.info(
+            "upload_file",
+            "there was an error when running the function, please check input and try again\n\n\n"
+            + "error was: "
+            + str(e),
+        )
 
-    # ########################### creating results ###########################
 
-    results = (
-        "run has been successful. for detailed steps, check the console and the plots"
-    )
+@app.route("/upload", methods=["GET", "POST"])
+def upload_file():
+    try:
+        print("upload_file() function called")
 
-    result = {"results": results}
-    return jsonify(result)
+        logger.info("upload_file", "upload has been triggered")
+
+        # ###################### cleaning-up images folder #######################
+        clear_images = request.form.get("clear_images", True)
+        if clear_images:
+            import shutil
+
+            shutil.rmtree("images")
+            os.makedirs("images")
+
+        # ########################### files processing ###########################
+
+        # ########################## gathering metadata ##########################
+
+        from apes_metadata_handler import (
+            Dataset_Metadata,
+            Application_Instance_Metadata,
+        )
+        from apes_application import APES_Application
+
+        # dataset metadata
+        dataset_path = request.form.get("dataset_path", "")
+        is_labeled = request.form.get("is_labeled", True)
+        file_keyword_names = request.form.get("file_keyword_names", [])
+        class_names = request.form.get("class_names", [])
+        label_column_name = request.form.get("label_column_name", "target")
+        numerical_value_of_desired_label = request.form.get(
+            "numerical_value_of_desired_label", 0
+        )
+        desired_label = request.form.get("desired_label", "")  # ????
+        separate_train_and_test = request.form.get("separate_train_and_test", False)
+        percentage_of_split = request.form.get("percentage_of_split", 0.7)
+        shuffle_rows = request.form.get("shuffle_rows", False)
+
+        # application instance metadata
+        display_dataFrames = request.form.get("display_dataFrames", False)
+        print(display_dataFrames)  # displays False, not (False,) # ????
+        application_mode = request.form.get("application_mode", "compare_solutions")
+        dataset_origin = request.form.get("dataset_origin", "new_dataset")
+        dataset_category = request.form.get("dataset_category", "ekg")
+        solution_category = request.form.get("solution_category", "ekg")
+        solution_nature = request.form.get("solution_nature", "supervised")
+        solution_index = request.form.get("solution_index", [1])
+        model_origin = request.form.get("model_origin", "train_new_model")
+        model_train_epochs = request.form.get("model_train_epochs", 40)
+
+        save_data = request.form.get("save_data", False)
+
+        dataset_metadata = Dataset_Metadata(
+            logger,
+            dataset_path,
+            is_labeled,
+            file_keyword_names,
+            class_names,
+            label_column_name,
+            numerical_value_of_desired_label,
+            separate_train_and_test,
+            percentage_of_split,
+            shuffle_rows,
+        )
+
+        application_instance_metadata = Application_Instance_Metadata(
+            logger,
+            dataset_metadata,
+            display_dataFrames,
+            application_mode,
+            dataset_origin,
+            dataset_category,
+            solution_category,
+            solution_nature,
+            solution_index,
+            model_origin,
+            model_train_epochs,
+        )
+
+        apes_application_instance = APES_Application(
+            logger, application_instance_metadata
+        )
+
+        # ########################### application run ############################
+
+        return_code, return_message = apes_application_instance.run()
+        logger.info("Program", return_message)
+
+        # ########################### plot processing ############################
+
+        number_of_plots = random.randint(1, 5)
+        logger.info("upload_file", "there are " + str(number_of_plots) + " plots")
+
+        for _ in range(number_of_plots):
+            plot()
+
+        # ########################### creating results ###########################
+
+        results = return_message
+
+        result = {"results": results}
+        return jsonify(result)
+
+    except Exception as e:
+        logger.info(
+            "upload_file",
+            "there was an error when running the function, please check input and try again\n\n\n"
+            + "error was: "
+            + str(e),
+        )
 
 
 @app.route("/images/<path:filename>")

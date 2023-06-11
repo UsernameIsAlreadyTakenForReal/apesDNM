@@ -280,14 +280,14 @@ class Dataset_EDA:
                 plt.savefig(full_path)
                 plots.append({"path": full_path, "caption": caption})
 
-                # for _ in range(random.randint(1, 5)):
-                #     _full_path, _caption = plot()
-                #     plots.append({"path": _full_path, "caption": _caption})
+                for _ in range(random.randint(1, 3)):
+                    _full_path, _caption = plot()
+                    plots.append({"path": _full_path, "caption": _caption})
 
                 dict["plots"] = plots
 
-                # dict["info"] = str(df.info())
-                # dict["describe"] = str(df.describe())
+                dict["info"] = str(df.info())
+                dict["describe"] = str(df.describe()).split("\n")
 
                 results.append(dict)
 

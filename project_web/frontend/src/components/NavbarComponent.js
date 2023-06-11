@@ -1,13 +1,23 @@
 import { Link, useLocation, useNavigate } from "react-router-dom";
 import { Divv, RowFlex, Nav } from "./StyledComponents";
-import { Menu, MenuItem, Tooltip, Typography } from "@mui/material";
+import {
+  Divider,
+  ListItemText,
+  Menu,
+  MenuItem,
+  Tooltip,
+  Typography,
+} from "@mui/material";
 import { useState } from "react";
 
 import useStore from "./store";
+import Terminal from "react-terminal-ui";
 
 export default function NavbarComponent() {
   const [settingsOpen, setSettingsOpen] = useState(false);
   const [menuAnchorElement, setMenuAnchorElement] = useState(null);
+
+  const terminalFontSize = useStore((state) => state.terminalFontSize);
 
   const increaseTerminalFontSize = useStore(
     (state) => state.increaseTerminalFontSize
@@ -89,24 +99,40 @@ export default function NavbarComponent() {
             >
               settings
             </Link>
-            <Menu
-              id="demo-positioned-menu"
-              aria-labelledby="demo-positioned-button"
-              anchorEl={menuAnchorElement}
-              open={settingsOpen}
-              onClose={() => setSettingsOpen(false)}
-              anchorOrigin={{
-                vertical: "top",
-                horizontal: "right",
-              }}
-            >
-              <MenuItem onClick={() => increaseTerminalFontSize()}>
-                increase terminal font size
-              </MenuItem>
-              <MenuItem onClick={() => decreaseTerminalFontSize()}>
-                decrease terminal font size
-              </MenuItem>
-            </Menu>
+            <div style={{ display: "flex", flexDirection: "row" }}>
+              <Menu
+                anchorEl={menuAnchorElement}
+                open={settingsOpen}
+                onClose={() => setSettingsOpen(false)}
+                anchorOrigin={{
+                  vertical: "top",
+                  horizontal: "right",
+                }}
+              >
+                <MenuItem>current font size: {terminalFontSize}</MenuItem>
+                <Divider />
+                <MenuItem onClick={() => increaseTerminalFontSize()}>
+                  increase terminal font size
+                </MenuItem>
+                <MenuItem onClick={() => decreaseTerminalFontSize()}>
+                  decrease terminal font size
+                </MenuItem>
+              </Menu>
+
+              {/* {settingsOpen && (
+                <Terminal id="eda-terminal" name="python outputs">
+                  <span style={{ fontSize: terminalFontSize }}>
+                    {">>> hello there"}
+                    {">>> hello there"}
+                    {">>> hello there"}
+                    {">>> hello there"}
+                    {">>> hello there"}
+                    {">>> hello there"}
+                    <br></br>
+                  </span>
+                </Terminal>
+              )} */}
+            </div>
           </Divv>
 
           {/* <Divv>

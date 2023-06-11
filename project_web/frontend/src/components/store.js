@@ -4,7 +4,7 @@ const useStore = create((set) => ({
   terminalFontSize: 14,
   increaseTerminalFontSize: () =>
     set((state) => {
-      if (state.terminalFontSize === 30) return state;
+      if (state.terminalFontSize === 24) return state;
       else return { terminalFontSize: state.terminalFontSize + 1 };
     }),
   decreaseTerminalFontSize: () =>

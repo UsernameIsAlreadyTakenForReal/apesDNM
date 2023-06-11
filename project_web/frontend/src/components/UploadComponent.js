@@ -60,9 +60,9 @@ export default function UploadComponent() {
 
   const [showResults, setShowResults] = useState(false);
 
-  const [showEDA, setShowEDA] = useState(false);
+  const [showEda, setShowEda] = useState(false);
 
-  const [showEDAButton, setShowEDAButton] = useState(false);
+  const [showEdaButton, setShowEdaButton] = useState(false);
 
   // data
   const [existingDatasets, setExistingDatasets] = useState([]);
@@ -98,10 +98,16 @@ export default function UploadComponent() {
   const [backendConsole, setBackendConsole] = useState([]);
   const [backendResults, setBackendResults] = useState("");
   const [beDatasetPath, setBEDatasetPath] = useState("");
-  const [eda, setEDA] = useState([]);
+  const [eda, setEda] = useState([]);
 
-  const [fileEDAShow, setFileEDAShow] = useState([]);
-  const [fileEDAShowHover, setFileEDAShowHover] = useState([]);
+  const [fileEdaShow, setFileEdaShow] = useState([]);
+  const [fileEdaShowHover, setFileEdaShowHover] = useState([]);
+
+  const [edaRequestStarted, setEdaRequestStarted] = useState(false);
+  const [edaRequestCompleted, setEdaRequestCompleted] = useState(false);
+
+  const [uploadRequestStarted, setUploadRequestStarted] = useState(false);
+  const [uploadRequestCompleted, setUploadRequestCompleted] = useState(false);
 
   // hovers
   const [existingDatasetButtonHover, setExistingDatasetButtonHover] =
@@ -130,8 +136,8 @@ export default function UploadComponent() {
 
   const [supervisedCheckboxHover, setSupervisedCheckboxHover] = useState(false);
 
-  const [edaConfirmButtonHover, setEDAConfirmButtonHover] = useState(false);
-  const [showEDAButtonHover, setShowEDAButtonHover] = useState(false);
+  const [edaConfirmButtonHover, setEdaConfirmButtonHover] = useState(false);
+  const [showEdaButtonHover, setShowEdaButtonHover] = useState(false);
 
   const [smallerFontButtonHover, setSmallerFontButtonHover] = useState(false);
   const [largetFontButtonHover, setLargerFontButtonHover] = useState(false);
@@ -231,7 +237,7 @@ export default function UploadComponent() {
     setBackendMLPlots([]);
     setBackendCptions([]);
     setBackendResults("");
-    setEDA([]);
+    setEda([]);
 
     resetAllFormErrorsAndData();
     setSelectedFiles([...event.target.files]);
@@ -268,7 +274,7 @@ export default function UploadComponent() {
 
     // eda-request
     await loadingResultsScreen("loading eda");
-    setShowEDA(true);
+    setShowEda(true);
 
     const formData = new FormData();
 
@@ -292,13 +298,13 @@ export default function UploadComponent() {
     // console.log(data.eda);
 
     let edaData = [];
-    data.eda.forEach((fileInEDA) => {
-      edaData.push(fileInEDA);
+    data.eda.forEach((fileInEda) => {
+      edaData.push(fileInEda);
     });
 
-    setFileEDAShow(Array.from({ length: data.eda.length }, () => false));
-    setFileEDAShowHover(Array.from({ length: data.eda.length }, () => false));
-    setEDA(data.eda);
+    setFileEdaShow(Array.from({ length: data.eda.length }, () => false));
+    setFileEdaShowHover(Array.from({ length: data.eda.length }, () => false));
+    setEda(data.eda);
   }
 
   // -------------------------------------------------------------------------
@@ -949,7 +955,7 @@ export default function UploadComponent() {
                       cursor: "pointer",
                     }}
                     onClick={() => {
-                      setShowEDA(true);
+                      setShowEda(true);
                     }}
                   >
                     {stringOfFilesUploaded}
@@ -969,7 +975,7 @@ export default function UploadComponent() {
               </div>
             )}
 
-            {showEDA && (
+            {showEda && (
               <Dialog open={true} maxWidth="xl" fullWidth={true}>
                 {/* <DialogTitle style={{ fontWeight: "bold" }}>
                   {"are you happy with your dataset motherfucker?"}
@@ -1002,24 +1008,30 @@ export default function UploadComponent() {
                       <Card
                         style={{
                           margin: "20px",
-                          backgroundColor: fileEDAShow[index]
+                          backgroundColor: fileEdaShow[index]
                             ? "#eeeee4"
                             : "#eeeeee",
 
                           cursor: "pointer",
                         }}
                         onMouseEnter={() => {
-                          setFileEDAShowHover((oldFileEDAShow) => {
-                            const newFileEDAShow = [...oldFileEDAShow];
-                            newFileEDAShow[index] = true;
-                            return newFileEDAShow;
+                          setFileEdaShowHover((oldFileEdaShow) => {
+                            const newFileEdaShow = Array.from(
+                              { length: oldFileEdaShow.length },
+                              () => false
+                            );
+                            newFileEdaShow[index] = true;
+                            return newFileEdaShow;
                           });
                         }}
                         onMouseLeave={() => {
-                          setFileEDAShowHover((oldFileEDAShow) => {
-                            const newFileEDAShow = [...oldFileEDAShow];
-                            newFileEDAShow[index] = false;
-                            return newFileEDAShow;
+                          setFileEdaShowHover((oldFileEdaShow) => {
+                            const newFileEdaShow = Array.from(
+                              { length: oldFileEdaShow.length },
+                              () => false
+                            );
+                            newFileEdaShow[index] = false;
+                            return newFileEdaShow;
                           });
                         }}
                       >
@@ -1031,14 +1043,17 @@ export default function UploadComponent() {
                             fileData.filename
                           }
                           onClick={() => {
-                            setFileEDAShow((oldFileEDAShow) => {
-                              const newFileEDAShow = [...oldFileEDAShow];
-                              newFileEDAShow[index] = !newFileEDAShow[index];
-                              return newFileEDAShow;
+                            setFileEdaShow((oldFileEdaShow) => {
+                              const newFileEdaShow = Array.from(
+                                { length: oldFileEdaShow.length },
+                                () => false
+                              );
+                              newFileEdaShow[index] = !oldFileEdaShow[index];
+                              return newFileEdaShow;
                             });
                           }}
                         />
-                        <Collapse in={fileEDAShow[index]}>
+                        <Collapse in={fileEdaShow[index]}>
                           <CardContent>
                             <Typography paragrah>
                               <span style={{ fontWeight: "bold" }}>shape</span>{" "}
@@ -1054,6 +1069,11 @@ export default function UploadComponent() {
                             </Typography>
                             <br></br>
                             <Typography paragrah>
+                              <span style={{ fontWeight: "bold" }}>info</span>{" "}
+                              --- {fileData.info}
+                            </Typography>
+                            <br></br>
+                            <Typography paragrah>
                               <span style={{ fontWeight: "bold" }}>
                                 head of file
                               </span>{" "}
@@ -1062,6 +1082,28 @@ export default function UploadComponent() {
                                 if (
                                   index === 0 ||
                                   index === fileData.head.length - 1
+                                )
+                                  return null;
+                                return (
+                                  <Typography paragrah>
+                                    {line.split("").map((character) => {
+                                      if (character === " ") return nbsps;
+                                      else return character;
+                                    })}
+                                  </Typography>
+                                );
+                              })}
+                            </Typography>
+                            <br></br>
+                            <Typography paragrah>
+                              <span style={{ fontWeight: "bold" }}>
+                                describe
+                              </span>{" "}
+                              --- <br></br>
+                              {fileData.describe.map((line, index) => {
+                                if (
+                                  index === 0 ||
+                                  index === fileData.describe.length - 1
                                 )
                                   return null;
                                 return (
@@ -1127,49 +1169,6 @@ export default function UploadComponent() {
                   )}
                 </DialogContent>
                 <DialogActions>
-                  {/* <div style={{ flex: "1 0 0" }}>
-                    <Button
-                      style={{
-                        background:
-                          smallerFontButtonHover === false ? "black" : "orange",
-                        color:
-                          smallerFontButtonHover === false ? "white" : "black",
-                        fontWeight: "bold",
-                        marginRight: "10px",
-                      }}
-                      variant="contained"
-                      color="primary"
-                      size="medium"
-                      onMouseEnter={() => setSmallerFontButtonHover(true)}
-                      onMouseLeave={() => setSmallerFontButtonHover(false)}
-                      onClick={() => {
-                        if (terminalFontSize === 10) return;
-                        setTerminalFontSize(terminalFontSize - 1);
-                      }}
-                    >
-                      smaller font
-                    </Button>
-                    <Button
-                      style={{
-                        background:
-                          largetFontButtonHover === false ? "black" : "orange",
-                        color:
-                          largetFontButtonHover === false ? "white" : "black",
-                        fontWeight: "bold",
-                      }}
-                      variant="contained"
-                      color="primary"
-                      size="medium"
-                      onMouseEnter={() => setLargerFontButtonHover(true)}
-                      onMouseLeave={() => setLargerFontButtonHover(false)}
-                      onClick={() => {
-                        if (terminalFontSize === 30) return;
-                        setTerminalFontSize(terminalFontSize + 1);
-                      }}
-                    >
-                      larger font
-                    </Button>
-                  </div> */}
                   <Button
                     style={{
                       background:
@@ -1181,12 +1180,12 @@ export default function UploadComponent() {
                     variant="contained"
                     color="primary"
                     size="large"
-                    onMouseEnter={() => setEDAConfirmButtonHover(true)}
-                    onMouseLeave={() => setEDAConfirmButtonHover(false)}
+                    onMouseEnter={() => setEdaConfirmButtonHover(true)}
+                    onMouseLeave={() => setEdaConfirmButtonHover(false)}
                     onClick={() => {
-                      setEDAConfirmButtonHover(false);
-                      setShowEDAButton(true);
-                      setShowEDA(false);
+                      setEdaConfirmButtonHover(false);
+                      setShowEdaButton(true);
+                      setShowEda(false);
                     }}
                   >
                     got it
