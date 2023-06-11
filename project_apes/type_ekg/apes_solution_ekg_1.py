@@ -138,6 +138,7 @@ class Solution_ekg_1:
 
         self.plots_filenames = []
         # self.datasets_names = []
+        self.solution_serializer.solution_name = "ekg1"
         self.solution_serializer.dataset_name = (
             app_instance_metadata.dataset_metadata.dataset_name_stub
         )

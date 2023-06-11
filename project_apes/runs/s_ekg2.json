@@ -1,0 +1,91 @@
+{
+  "solution": "ekg2",
+  "runs": [
+    {
+      "_app_instance_ID": "230611_222849",
+      "_time_object_creation": "2023-06-11_22:28:54",
+      "_used_test_function": true,
+      "dataset_full_size": [
+        5000,
+        141
+    ],
+      "dataset_name": "ekg1",
+      "dataset_test_size": [
+        4500,
+        139,
+        1
+    ],
+      "dataset_train_size": [
+        500,
+        139,
+        1
+    ],
+      "model_filename": "s_ekg2_d_ekg1_20230611_221523.h5",
+      "plots_filenames": [],
+      "solution_name": "ekg2",
+      "time_test_end": "2023-06-11_22:28:55",
+      "time_test_start": "2023-06-11_22:28:55",
+      "time_test_total": 0
+    },
+    {
+      "_app_instance_ID": "230611_222950",
+      "_time_object_creation": "2023-06-11_22:29:55",
+      "_used_test_function": true,
+      "_used_train_function": true,
+      "dataset_full_size": [
+        5000,
+        141
+    ],
+      "dataset_name": "ekg1",
+      "dataset_test_size": [
+        4500,
+        139,
+        1
+    ],
+      "dataset_train_size": [
+        500,
+        139,
+        1
+    ],
+      "plots_filenames": [],
+      "solution_name": "ekg2",
+      "time_test_end": "2023-06-11_22:30:02",
+      "time_test_start": "2023-06-11_22:30:02",
+      "time_test_total": 0,
+      "time_train_end": "2023-06-11_22:30:01",
+      "time_train_start": "2023-06-11_22:29:55",
+      "time_train_total": 6,
+      "train_epochs": 5
+    },
+    {
+      "_app_instance_ID": "230611_223028",
+      "_time_object_creation": "2023-06-11_22:30:45",
+      "_used_test_function": true,
+      "_used_train_function": true,
+      "dataset_full_size": [
+        131338,
+        188
+    ],
+      "dataset_name": "ekg2",
+      "dataset_test_size": [
+        43784,
+        186,
+        1
+    ],
+      "dataset_train_size": [
+        87554,
+        186,
+        1
+    ],
+      "plots_filenames": [],
+      "solution_name": "ekg2",
+      "time_test_end": "2023-06-11_22:35:07",
+      "time_test_start": "2023-06-11_22:35:07",
+      "time_test_total": 0,
+      "time_train_end": "2023-06-11_22:35:07",
+      "time_train_start": "2023-06-11_22:30:45",
+      "time_train_total": 261,
+      "train_epochs": 5
+    }
+  ]
+}

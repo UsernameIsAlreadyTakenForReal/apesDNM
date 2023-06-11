@@ -128,6 +128,89 @@
       "time_train_start": "2023-06-10_09:01:11",
       "time_train_total": 189,
       "train_epochs": 5
+    },
+    {
+      "_app_instance_ID": "230611_221409",
+      "_time_object_creation": "2023-06-11_22:14:15",
+      "_used_test_function": true,
+      "_used_train_function": true,
+      "dataset_full_size": [
+        5000,
+        141
+    ],
+      "dataset_name": "ekg1",
+      "dataset_test_size": [
+        4500,
+        139,
+        1
+    ],
+      "dataset_train_size": [
+        500,
+        139,
+        1
+    ],
+      "plots_filenames": [],
+      "time_test_end": "2023-06-11_22:14:23",
+      "time_test_start": "2023-06-11_22:14:23",
+      "time_test_total": 0,
+      "time_train_end": "2023-06-11_22:14:23",
+      "time_train_start": "2023-06-11_22:14:15",
+      "time_train_total": 7,
+      "train_epochs": 5
+    },
+    {
+      "_app_instance_ID": "230611_221512",
+      "_time_object_creation": "2023-06-11_22:15:17",
+      "_used_test_function": true,
+      "_used_train_function": true,
+      "dataset_full_size": [
+        5000,
+        141
+    ],
+      "dataset_name": "ekg1",
+      "dataset_test_size": [
+        4500,
+        139,
+        1
+    ],
+      "dataset_train_size": [
+        500,
+        139,
+        1
+    ],
+      "plots_filenames": [],
+      "time_test_end": "2023-06-11_22:15:23",
+      "time_test_start": "2023-06-11_22:15:23",
+      "time_test_total": 0,
+      "time_train_end": "2023-06-11_22:15:23",
+      "time_train_start": "2023-06-11_22:15:17",
+      "time_train_total": 5,
+      "train_epochs": 5
+    },
+    {
+      "_app_instance_ID": "230611_222709",
+      "_time_object_creation": "2023-06-11_22:27:15",
+      "_used_test_function": true,
+      "dataset_full_size": [
+        5000,
+        141
+    ],
+      "dataset_name": "ekg1",
+      "dataset_test_size": [
+        4500,
+        139,
+        1
+    ],
+      "dataset_train_size": [
+        500,
+        139,
+        1
+    ],
+      "model_filename": "s_ekg2_d_ekg1_20230611_221523.h5",
+      "plots_filenames": [],
+      "time_test_end": "2023-06-11_22:27:15",
+      "time_test_start": "2023-06-11_22:27:15",
+      "time_test_total": 0
     }
   ]
 }

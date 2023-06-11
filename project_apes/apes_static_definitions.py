@@ -24,18 +24,19 @@ class Shared_Definitions:
     ]  # also acts as priority when loading files
 
     ## Solutions-related parameters
-    supported_model_extensions = [".pth", "h5"]
+    supported_model_extensions = [".pth", ".h5"]
     project_model_root_path = "./models"  # "./models" is relative to where temp_main_mockup.py (or apes_static_definitions??)
     project_solution_runs_path = "./runs"
 
     project_solution_ekg_1_model_filename = "apes_solution_ekg_1_model.pth"
     project_solution_ekg_1_model_filename_last_good_one = (
-        "------s_ekg1_d_ekg2_20230606_233300.pth"
+        "----s_ekg1_d_ekg2_20230606_233300.pth"
     )
 
     project_solution_ekg_2_model_filename = "apes_solution_ekg_2_model.h5"
-    project_solution_ekg_2_model_filename_last_good_one = ""
-
+    project_solution_ekg_2_model_filename_last_good_one = (
+        "----s_ekg2_d_ekg1_20230611_221423.h5"
+    )
     plot_savefile_format = "png"
     plot_show_at_runtime = False
     plot_savefile_location = "./../project_web/backend/images/"  # '.' is proejct_apes

@@ -72,6 +72,7 @@ class Solution_ekg_2:
 
         self.plots_filenames = []
         # self.datasets_names = []
+        self.solution_serializer.solution_name = "ekg2"
         self.solution_serializer.dataset_name = (
             app_instance_metadata.dataset_metadata.dataset_name_stub
         )
@@ -92,7 +93,7 @@ class Solution_ekg_2:
         self.solution_serializer.plots_filenames = self.plots_filenames
 
         write_to_solutions_runs_json_file(
-            self.Logger, "ekg1", self.solution_serializer, self.app_instance_metadata
+            self.Logger, "ekg2", self.solution_serializer, self.app_instance_metadata
         )
 
         info_message = "save_run() -- end"
@@ -160,7 +161,7 @@ class Solution_ekg_2:
             )
 
         MODEL_SAVE_PATH = (
-            MODEL_SAVE_PATH + "_" + datetime.now().strftime("%Y%m%d_%H%M%S")
+            MODEL_SAVE_PATH + "_" + datetime.now().strftime("%Y%m%d_%H%M%S") + ".h5"
         )
         info_message = "Saving model as " + MODEL_SAVE_PATH
         self.Logger.info(self, info_message)
@@ -180,26 +181,31 @@ class Solution_ekg_2:
         elif filename != "":
             pass
         else:
-            try:
-                info_message = "Trying to load the last good model saved"
+            if model_filename_fits_expected_name(
+                "ekg2",
+                self.app_instance_metadata,
+                self.app_instance_metadata.shared_definitions.project_solution_ekg_2_model_filename_last_good_one,
+            ):
+                info_message = "Loading the last good model saved"
                 self.Logger.info(self, info_message)
-                self.model = keras.models.load_model(
+                model_absolute_path = get_full_path_of_given_model(
                     self.app_instance_metadata.shared_definitions.project_solution_ekg_2_model_filename_last_good_one,
-                    map_location=lambda storage, loc: storage.cuda(1),
+                    self.app_instance_metadata.shared_definitions.project_model_root_path,
                 )
-            except:
-                info_message = "Failed to load the last saved good model. Could be an error, or there is none saved. Loading last available model"
+                self.model = keras.models.load_model(model_absolute_path)
+                self.solution_serializer.model_filename = model_path.split("/")[-1]
+            else:
+                info_message = "Loading last available model"
                 self.Logger.info(self, info_message)
                 return_code, return_message, model_path = get_last_model(
                     self.Logger, "ekg2", self.app_instance_metadata
                 )
                 if return_code != 0:
                     self.Logger.info(self, return_message)
-                    return
+                    return return_code, return_message
                 else:
-                    self.model = keras.models.load_model(
-                        model_path, map_location=lambda storage, loc: storage.cuda(0)
-                    )
+                    self.model = keras.models.load_model(model_path)
+                    self.solution_serializer.model_filename = model_path.split("/")[-1]
 
         info_message = "load_model() -- end"
         self.Logger.info(self, info_message)
@@ -223,11 +229,11 @@ class Solution_ekg_2:
         f1_time = datetime.now()
         callbacks = [
             EarlyStopping(monitor="val_loss", patience=8),
-            ModelCheckpoint(
-                filepath=self.project_solution_model_filename,
-                monitor="val_loss",
-                save_best_only=True,
-            ),
+            # ModelCheckpoint(
+            #     filepath=self.project_solution_model_filename,
+            #     monitor="val_loss",
+            #     save_best_only=True,
+            # ),
         ]
 
         history = self.model.fit(
@@ -243,6 +249,17 @@ class Solution_ekg_2:
         difference = f2_time - f1_time
         seconds_in_day = 24 * 60 * 60
         divmod(difference.days * seconds_in_day + difference.seconds, 60)
+
+        ## Save run serialization data -- begin
+        self.solution_serializer.time_train_start = f1_time.strftime(
+            "%Y-%m-%d_%H:%M:%S"
+        )
+        self.solution_serializer._used_train_function = True
+        self.solution_serializer.time_train_end = f2_time.strftime("%Y-%m-%d_%H:%M:%S")
+        self.solution_serializer.time_train_total = difference.seconds
+        self.solution_serializer.train_epochs = epochs
+        ## Save run serialization data -- end
+
         info_message = f"Training - it took {difference} for {epochs} epochs"
         self.Logger.info(self, info_message)
 
@@ -255,6 +272,27 @@ class Solution_ekg_2:
     def test(self):
         info_message = "Begining testing"
         self.Logger.info(self, info_message)
+
+        f1_time = datetime.now()
+
+        f2_time = datetime.now()
+        difference = f2_time - f1_time
+        seconds_in_day = 24 * 60 * 60
+        divmod(difference.days * seconds_in_day + difference.seconds, 60)
+
+        ## Save run serialization data -- begin
+        self.solution_serializer.time_test_start = f1_time.strftime("%Y-%m-%d_%H:%M:%S")
+        self.solution_serializer._used_test_function = True
+        self.solution_serializer.time_test_end = f2_time.strftime("%Y-%m-%d_%H:%M:%S")
+        self.solution_serializer.time_test_total = difference.seconds
+        # self.solution_serializer.correct_normal_predictions = (
+        #     f"{normal_correct}/{len(self.test_normal_dataset)}"
+        # )
+        # self.solution_serializer.correct_abnormal_predictions = (
+        #     f"{anomaly_correct}/{len(anomaly_dataset)}"
+        # )
+        ## Save run serialization data -- end
+
         info_message = f"Testing - it took "
         self.Logger.info(self, info_message)
 
@@ -269,6 +307,13 @@ class Solution_ekg_2:
     ):
         info_message = "adapt_dataset() -- begin"
         self.Logger.info(self, info_message)
+
+        full_length = [x.shape[0] for x in list_of_dataFrames]
+        full_length = sum(full_length)
+        self.solution_serializer.dataset_full_size = (
+            full_length,
+            list_of_dataFrames[0].shape[1],
+        )
 
         try:
             train_df = list_of_dataFrames[
@@ -289,6 +334,8 @@ class Solution_ekg_2:
             self.X_train = X_train.reshape(len(X_train), X_train.shape[1], 1)
             info_message = f"Created X_train (shape {self.X_train.shape}) and y_train (shape {self.y_train.shape})"
             self.Logger.info(self, info_message)
+
+            self.solution_serializer.dataset_train_size = self.X_train.shape
         except:
             info_message = "No train dataFrame"
             self.Logger.info(self, info_message)
@@ -310,6 +357,8 @@ class Solution_ekg_2:
             self.X_test = X_test.reshape(len(X_test), X_test.shape[1], 1)
             info_message = f"Created X_test (shape {self.X_test.shape}) and y_test (shape {self.y_test.shape})"
             self.Logger.info(self, info_message)
+
+            self.solution_serializer.dataset_test_size = self.X_test.shape
         except:
             info_message = "No test dataFrame"
             self.Logger.info(self, info_message)
@@ -325,6 +374,8 @@ class Solution_ekg_2:
             self.X_val = X_val.reshape(len(X_val), X_val.shape[1], 1)
             info_message = f"Created X_val (shape {self.X_val.shape}) and y_val (shape {self.y_val.shape})"
             self.Logger.info(self, info_message)
+
+            self.solution_serializer.dataset_val_size = self.X_val.shape
         except:
             info_message = "No val dataFrame"
             self.Logger.info(self, info_message)
@@ -340,6 +391,8 @@ class Solution_ekg_2:
             self.X_run = X_run.reshape(len(X_run), X_run.shape[1], 1)
             info_message = f"Created X_run (shape {self.X_run.shape}) and y_run (shape {self.y_run.shape})"
             self.Logger.info(self, info_message)
+
+            self.solution_serializer.dataset_run_size = self.X_run.shape
         except:
             info_message = "No run dataFrame"
             self.Logger.info(self, info_message)
