@@ -9,8 +9,8 @@
       "device_used": "cuda",
       "model_filename": "s_ekg1_d_ekg1_20230607_185907.pth",
       "plots_filenames": [
-          "s_ekg1_d_ekg1__Beat_and_prediction__20230610_000905.png"
-    ],
+        "s_ekg1_d_ekg1__Beat_and_prediction__20230610_000905.png"
+      ],
       "time_test_end": "2023-06-10_00:09:05",
       "time_test_start": "2023-06-10_00:08:47",
       "time_test_total": 17
@@ -23,8 +23,8 @@
       "device_used": "cuda",
       "model_filename": "s_ekg1_d_ekg2_20230607_220738.pth",
       "plots_filenames": [
-          "s_ekg1_d_ekg2__Beat_and_prediction__20230610_003107.png"
-    ],
+        "s_ekg1_d_ekg2__Beat_and_prediction__20230610_003107.png"
+      ],
       "time_test_end": "2023-06-10_00:31:07",
       "time_test_start": "2023-06-10_00:17:46",
       "time_test_total": 800
@@ -35,28 +35,16 @@
       "_used_test_function": true,
       "correct_abnormal_predictions": "145/145",
       "correct_normal_predictions": "0/145",
-      "dataset_full_size": [
-        5000,
-        141
-    ],
+      "dataset_full_size": [5000, 141],
       "dataset_name": "ekg1",
-      "dataset_test_size": [
-        145,
-        140
-    ],
-      "dataset_train_size": [
-        2481,
-        140
-    ],
-      "dataset_val_size": [
-        293,
-        140
-    ],
+      "dataset_test_size": [145, 140],
+      "dataset_train_size": [2481, 140],
+      "dataset_val_size": [293, 140],
       "device_used": "cuda",
       "model_filename": "s_ekg1_d_ekg1_20230607_185907.pth",
       "plots_filenames": [
-          "s_ekg1_d_ekg1__Beat_and_prediction__20230610_083602.png"
-    ],
+        "s_ekg1_d_ekg1__Beat_and_prediction__20230610_083602.png"
+      ],
       "time_test_end": "2023-06-10_08:36:02",
       "time_test_start": "2023-06-10_08:35:41",
       "time_test_total": 21
@@ -67,28 +55,16 @@
       "_used_test_function": true,
       "correct_abnormal_predictions": "2574/5382",
       "correct_normal_predictions": "4524/5382",
-      "dataset_full_size": [
-        131338,
-        188
-    ],
+      "dataset_full_size": [131338, 188],
       "dataset_name": "ekg2",
-      "dataset_test_size": [
-        5382,
-        187
-    ],
-      "dataset_train_size": [
-        92400,
-        187
-    ],
-      "dataset_val_size": [
-        10925,
-        187
-    ],
+      "dataset_test_size": [5382, 187],
+      "dataset_train_size": [92400, 187],
+      "dataset_val_size": [10925, 187],
       "device_used": "cuda",
       "model_filename": "s_ekg1_d_ekg2_20230607_220738.pth",
       "plots_filenames": [
-          "s_ekg1_d_ekg2__Beat_and_prediction__20230610_084929.png"
-    ],
+        "s_ekg1_d_ekg2__Beat_and_prediction__20230610_084929.png"
+      ],
       "time_test_end": "2023-06-10_08:49:29",
       "time_test_start": "2023-06-10_08:37:17",
       "time_test_total": 731
@@ -99,28 +75,16 @@
       "_used_test_function": true,
       "correct_abnormal_predictions": "145/145",
       "correct_normal_predictions": "1/145",
-      "dataset_full_size": [
-        5000,
-        141
-    ],
+      "dataset_full_size": [5000, 141],
       "dataset_name": "ekg1",
-      "dataset_test_size": [
-        145,
-        140
-    ],
-      "dataset_train_size": [
-        2481,
-        140
-    ],
-      "dataset_val_size": [
-        293,
-        140
-    ],
+      "dataset_test_size": [145, 140],
+      "dataset_train_size": [2481, 140],
+      "dataset_val_size": [293, 140],
       "device_used": "cuda",
       "plots_filenames": [
-          "s_ekg1_d_ekg1__Loss_over_training_epochs__20230610_090421.png",
-          "s_ekg1_d_ekg1__Beat_and_prediction__20230610_090438.png"
-    ],
+        "s_ekg1_d_ekg1__Loss_over_training_epochs__20230610_090421.png",
+        "s_ekg1_d_ekg1__Beat_and_prediction__20230610_090438.png"
+      ],
       "time_test_end": "2023-06-10_09:04:38",
       "time_test_start": "2023-06-10_09:04:21",
       "time_test_total": 16,
@@ -134,21 +98,10 @@
       "_time_object_creation": "2023-06-11_22:14:15",
       "_used_test_function": true,
       "_used_train_function": true,
-      "dataset_full_size": [
-        5000,
-        141
-    ],
+      "dataset_full_size": [5000, 141],
       "dataset_name": "ekg1",
-      "dataset_test_size": [
-        4500,
-        139,
-        1
-    ],
-      "dataset_train_size": [
-        500,
-        139,
-        1
-    ],
+      "dataset_test_size": [4500, 139, 1],
+      "dataset_train_size": [500, 139, 1],
       "plots_filenames": [],
       "time_test_end": "2023-06-11_22:14:23",
       "time_test_start": "2023-06-11_22:14:23",
@@ -163,21 +116,10 @@
       "_time_object_creation": "2023-06-11_22:15:17",
       "_used_test_function": true,
       "_used_train_function": true,
-      "dataset_full_size": [
-        5000,
-        141
-    ],
+      "dataset_full_size": [5000, 141],
       "dataset_name": "ekg1",
-      "dataset_test_size": [
-        4500,
-        139,
-        1
-    ],
-      "dataset_train_size": [
-        500,
-        139,
-        1
-    ],
+      "dataset_test_size": [4500, 139, 1],
+      "dataset_train_size": [500, 139, 1],
       "plots_filenames": [],
       "time_test_end": "2023-06-11_22:15:23",
       "time_test_start": "2023-06-11_22:15:23",
@@ -191,26 +133,110 @@
       "_app_instance_ID": "230611_222709",
       "_time_object_creation": "2023-06-11_22:27:15",
       "_used_test_function": true,
-      "dataset_full_size": [
-        5000,
-        141
-    ],
+      "dataset_full_size": [5000, 141],
       "dataset_name": "ekg1",
-      "dataset_test_size": [
-        4500,
-        139,
-        1
-    ],
-      "dataset_train_size": [
-        500,
-        139,
-        1
-    ],
+      "dataset_test_size": [4500, 139, 1],
+      "dataset_train_size": [500, 139, 1],
       "model_filename": "s_ekg2_d_ekg1_20230611_221523.h5",
       "plots_filenames": [],
       "time_test_end": "2023-06-11_22:27:15",
       "time_test_start": "2023-06-11_22:27:15",
       "time_test_total": 0
+    },
+    {
+      "_app_instance_ID": "230611_223722",
+      "_time_object_creation": "2023-06-11_22:37:30",
+      "_used_test_function": true,
+      "_used_train_function": true,
+      "correct_abnormal_predictions": "145/145",
+      "correct_normal_predictions": "2/145",
+      "dataset_full_size": [5000, 141],
+      "dataset_name": "ekg1",
+      "dataset_test_size": [145, 140],
+      "dataset_train_size": [2481, 140],
+      "dataset_val_size": [293, 140],
+      "device_used": "cuda",
+      "plots_filenames": [
+        "s_ekg1_d_ekg1__Loss_over_training_epochs__20230611_224100.png",
+        "s_ekg1_d_ekg1__Beat_and_prediction__20230611_224120.png"
+      ],
+      "solution_name": "ekg1",
+      "time_test_end": "2023-06-11_22:41:20",
+      "time_test_start": "2023-06-11_22:41:00",
+      "time_test_total": 19,
+      "time_train_end": "2023-06-11_22:40:59",
+      "time_train_start": "2023-06-11_22:37:38",
+      "time_train_total": 201,
+      "train_epochs": 5
+    },
+    {
+      "_app_instance_ID": "230611_224506",
+      "_time_object_creation": "2023-06-11_22:45:11",
+      "_used_test_function": true,
+      "correct_abnormal_predictions": "145/145",
+      "correct_normal_predictions": "0/145",
+      "dataset_full_size": [5000, 141],
+      "dataset_name": "ekg1",
+      "dataset_test_size": [145, 140],
+      "dataset_train_size": [2481, 140],
+      "dataset_val_size": [293, 140],
+      "device_used": "cuda",
+      "model_filename": "s_ekg1_d_ekg1_20230611_224100.pth",
+      "plots_filenames": [
+        "s_ekg1_d_ekg1__Beat_and_prediction__20230611_224531.png"
+      ],
+      "prediction_threshold": 16,
+      "solution_name": "ekg1",
+      "test_loss": [77.6109390258789],
+      "time_test_end": "2023-06-11_22:45:31",
+      "time_test_start": "2023-06-11_22:45:13",
+      "time_test_total": 18
+    },
+    {
+      "_app_instance_ID": "230611_224544",
+      "_time_object_creation": "2023-06-11_22:45:48",
+      "_used_test_function": true,
+      "correct_abnormal_predictions": "145/145",
+      "correct_normal_predictions": "2/145",
+      "dataset_full_size": [5000, 141],
+      "dataset_name": "ekg1",
+      "dataset_test_size": [145, 140],
+      "dataset_train_size": [2481, 140],
+      "dataset_val_size": [293, 140],
+      "device_used": "cuda",
+      "model_filename": "s_ekg1_d_ekg1_20230611_224100.pth",
+      "plots_filenames": [
+        "s_ekg1_d_ekg1__Beat_and_prediction__20230611_224607.png"
+      ],
+      "prediction_threshold": 26,
+      "solution_name": "ekg1",
+      "test_loss": [75.11820220947266],
+      "time_test_end": "2023-06-11_22:46:07",
+      "time_test_start": "2023-06-11_22:45:50",
+      "time_test_total": 17
+    },
+    {
+      "_app_instance_ID": "230611_225001",
+      "_time_object_creation": "2023-06-11_22:50:05",
+      "_used_test_function": true,
+      "correct_abnormal_predictions": "144/145",
+      "correct_normal_predictions": "121/145",
+      "dataset_full_size": [5000, 141],
+      "dataset_name": "ekg1",
+      "dataset_test_size": [145, 140],
+      "dataset_train_size": [2481, 140],
+      "dataset_val_size": [293, 140],
+      "device_used": "cuda",
+      "model_filename": "s_ekg1_d_ekg1_20230611_224100.pth",
+      "plots_filenames": [
+        "s_ekg1_d_ekg1__Beat_and_prediction__20230611_225025.png"
+      ],
+      "prediction_threshold": 46,
+      "solution_name": "ekg1",
+      "test_loss_average": 76.95724684616616,
+      "time_test_end": "2023-06-11_22:50:25",
+      "time_test_start": "2023-06-11_22:50:07",
+      "time_test_total": 17
     }
   ]
 }

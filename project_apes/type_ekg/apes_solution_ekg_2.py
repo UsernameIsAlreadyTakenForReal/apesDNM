@@ -266,14 +266,27 @@ class Solution_ekg_2:
         info_message = "train() -- end"
         self.Logger.info(self, info_message)
 
+        self.solution_serializer.train_loss = history.history["loss"][-1]
+        self.solution_serializer.train_accuracy = history.history["accuracy"][-1]
+        self.solution_serializer.train_val_loss = history.history["val_loss"][-1]
+        self.solution_serializer.train_val_accuracy = history.history["val_accuracy"][
+            -1
+        ]
+
         return 0, f"{self} -- train() completed successfully"
-        return history
 
     def test(self):
         info_message = "Begining testing"
         self.Logger.info(self, info_message)
 
         f1_time = datetime.now()
+
+        info_message = "##########################################################"
+        self.Logger.info(self, info_message)
+        info_message = f"Begining testing for solution_ekg_2"
+        self.Logger.info(self, info_message)
+        info_message = "##########################################################"
+        self.Logger.info(self, info_message)
 
         f2_time = datetime.now()
         difference = f2_time - f1_time

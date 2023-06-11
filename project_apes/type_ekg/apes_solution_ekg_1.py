@@ -286,7 +286,7 @@ class Solution_ekg_1:
 
         info_message = "##########################################################"
         self.Logger.info(self, info_message)
-        info_message = f"Begining training for solution_ekg_1. Number of epochs: {epochs}. Using device {self.device}"
+        info_message = f"Beginning training for solution_ekg_1. Number of epochs: {epochs}. Using device {self.device}"
         self.Logger.info(self, info_message)
         info_message = "##########################################################"
         self.Logger.info(self, info_message)
@@ -353,14 +353,19 @@ class Solution_ekg_1:
 
         f1_time = datetime.now()
 
+        info_message = "##########################################################"
+        self.Logger.info(self, info_message)
+        info_message = (
+            f"Beginning testing for solution_ekg_1. Using device {self.device}"
+        )
+        self.Logger.info(self, info_message)
+        info_message = "##########################################################"
+        self.Logger.info(self, info_message)
+
         _, losses = self.predict(self.model, self.train_dataset)
         sns.displot(losses, bins=50, kde=True)
 
-        # Using the threshold, we can turn the problem into a simple binary classification task:
-        # If the reconstruction loss for an example is below the threshold, we’ll classify it
-        #   as a normal heartbeat
-        # Alternatively, if the loss is higher than the threshold, we’ll classify it as an anomaly
-        THRESHOLD = 26
+        THRESHOLD = 46
 
         # normal heartbeats
         predictions, pred_losses = self.predict(self.model, self.test_normal_dataset)
@@ -395,6 +400,8 @@ class Solution_ekg_1:
         self.solution_serializer.correct_abnormal_predictions = (
             f"{anomaly_correct}/{len(anomaly_dataset)}"
         )
+        self.solution_serializer.test_loss_average = sum(pred_losses) / len(pred_losses)
+        self.solution_serializer.prediction_threshold = THRESHOLD
         ## Save run serialization data -- end
 
         plt.figure()
@@ -530,6 +537,9 @@ class Solution_ekg_1:
 
             info_message = f"Epoch {epoch}: train loss {train_loss}%, val loss {val_loss}%. Time: {(datetime.now() - time_temp).seconds}s"
             self.Logger.info(self, info_message)
+
+        self.solution_serializer.train_loss = train_loss
+        self.solution_serializer.train_val_loss = val_loss
 
         model.load_state_dict(best_model_wts)
         return model.eval(), history
