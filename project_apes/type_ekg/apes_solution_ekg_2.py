@@ -19,6 +19,7 @@ import pandas as pd
 import seaborn as sns
 import matplotlib.pyplot as plt
 import warnings
+import itertools
 
 warnings.filterwarnings("ignore")
 
@@ -309,6 +310,15 @@ class Solution_ekg_2:
         seconds_in_day = 24 * 60 * 60
         divmod(difference.days * seconds_in_day + difference.seconds, 60)
 
+        sklearn_confusion_matrix = confusion_matrix(
+            self.y_test.argmax(axis=1), predictions.argmax(axis=1)
+        )
+
+        self.plot_confusion_matrix(
+            sklearn_confusion_matrix,
+            self.app_instance_metadata.dataset_metadata.class_names,
+        )
+
         ## Save run serialization data -- begin
         self.solution_serializer.time_test_start = f1_time.strftime("%Y-%m-%d_%H:%M:%S")
         self.solution_serializer._used_test_function = True
@@ -432,3 +442,60 @@ class Solution_ekg_2:
         return 0, f"{self} -- adapt_dataset() completed successfully"
 
     ## -------------- Particular methods --------------
+    def plot_confusion_matrix(self, sklearn_confusion_matrix, classes, normalize=False):
+        """
+        This function prints and plots the confusion matrix.
+        Normalization can be applied by setting `normalize=True`.
+        """
+        if normalize:
+            sklearn_confusion_matrix = (
+                sklearn_confusion_matrix.astype("float")
+                / sklearn_confusion_matrix.sum(axis=1)[:, np.newaxis]
+            )
+            info_message = "Creating confusion matrix, normalized"
+            self.Logger.info(self, info_message)
+        else:
+            info_message = "Creating confusion matrix, non-normalized"
+            self.Logger.info(self, info_message)
+
+        plot_name = "Confusion matrix"
+        plt.imshow(sklearn_confusion_matrix, interpolation="nearest", cmap=plt.cm.Blues)
+        plt.title(plot_name)
+        plt.colorbar()
+        tick_marks = np.arange(len(classes))
+        plt.xticks(tick_marks, classes, rotation=45)
+        plt.yticks(tick_marks, classes)
+
+        fmt = ".2f" if normalize else "d"
+        thresh = sklearn_confusion_matrix.max() / 2.0
+
+        for i, j in itertools.product(
+            range(sklearn_confusion_matrix.shape[0]),
+            range(sklearn_confusion_matrix.shape[1]),
+        ):
+            plt.text(
+                j,
+                i,
+                format(sklearn_confusion_matrix[i, j], fmt),
+                horizontalalignment="center",
+                color="white" if sklearn_confusion_matrix[i, j] > thresh else "black",
+            )
+
+        plt.tight_layout()
+        plt.ylabel("True label")
+        plt.xlabel("Predicted label")
+        if self.app_instance_metadata.shared_definitions.plot_show_at_runtime == True:
+            plt.show()
+
+        ## Save plot section -- begin
+        plot_save_filename, plot_save_location = get_plot_save_filename(
+            plot_name.replace(" ", "_"), "ekg1", self.app_instance_metadata
+        )
+        plt.savefig(
+            plot_save_location,
+            format=self.app_instance_metadata.shared_definitions.plot_savefile_format,
+        )
+        info_message = f"Created picture at ./project_web/backend/images/ || {plot_save_location} || {plot_name}"
+        self.Logger.info(self, info_message)
+        self.plots_filenames.append(plot_save_location.split(os.sep)[-1])
+        ## Save plot section -- end

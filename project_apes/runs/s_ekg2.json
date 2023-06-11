@@ -322,6 +322,98 @@
       "time_test_end": "2023-06-12_00:09:46",
       "time_test_start": "2023-06-12_00:09:45",
       "time_test_total": 1
+    },
+    {
+      "_app_instance_ID": "230612_013541",
+      "_time_object_creation": "2023-06-12_01:35:46",
+      "_used_test_function": true,
+      "dataset_full_size": [
+        5000,
+        141
+    ],
+      "dataset_name": "ekg1",
+      "dataset_test_size": [
+        4500,
+        139,
+        1
+    ],
+      "dataset_train_size": [
+        500,
+        139,
+        1
+    ],
+      "model_filename": "s_ekg2_d_ekg1_20230611_233439.h5",
+      "plots_filenames": [
+          "s_ekg1_d_ekg1__Confusion_matrix__20230612_013547.png"
+    ],
+      "solution_name": "ekg2",
+      "time_test_end": "2023-06-12_01:35:47",
+      "time_test_start": "2023-06-12_01:35:46",
+      "time_test_total": 0
+    },
+    {
+      "_app_instance_ID": "230612_013745",
+      "_time_object_creation": "2023-06-12_01:37:50",
+      "_used_test_function": true,
+      "_used_train_function": true,
+      "dataset_full_size": [
+        5000,
+        141
+    ],
+      "dataset_name": "ekg1",
+      "dataset_test_size": [
+        4500,
+        139,
+        1
+    ],
+      "dataset_train_size": [
+        500,
+        139,
+        1
+    ],
+      "plots_filenames": [
+          "s_ekg1_d_ekg1__Confusion_matrix__20230612_013757.png"
+    ],
+      "solution_name": "ekg2",
+      "time_test_end": "2023-06-12_01:37:57",
+      "time_test_start": "2023-06-12_01:37:56",
+      "time_test_total": 0,
+      "time_train_end": "2023-06-12_01:37:56",
+      "time_train_start": "2023-06-12_01:37:50",
+      "time_train_total": 5,
+      "train_accuracy": 0.9779999852180481,
+      "train_epochs": 5,
+      "train_loss": 0.088093101978302,
+      "train_val_accuracy": 0.88355553150177,
+      "train_val_loss": 1.1204051971435547
+    },
+    {
+      "_app_instance_ID": "230612_013856",
+      "_time_object_creation": "2023-06-12_01:39:01",
+      "_used_test_function": true,
+      "dataset_full_size": [
+        5000,
+        141
+    ],
+      "dataset_name": "ekg1",
+      "dataset_test_size": [
+        4500,
+        139,
+        1
+    ],
+      "dataset_train_size": [
+        500,
+        139,
+        1
+    ],
+      "model_filename": "s_ekg2_d_ekg1_20230612_013756.h5",
+      "plots_filenames": [
+          "s_ekg1_d_ekg1__Confusion_matrix__20230612_013902.png"
+    ],
+      "solution_name": "ekg2",
+      "time_test_end": "2023-06-12_01:39:02",
+      "time_test_start": "2023-06-12_01:39:01",
+      "time_test_total": 0
     }
   ]
 }
