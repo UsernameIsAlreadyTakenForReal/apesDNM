@@ -51,6 +51,7 @@ from helpers_aiders_and_conveniencers.misc_functions import (
     get_full_path_of_given_model,
     get_plot_save_filename,
     write_to_solutions_runs_json_file,
+    get_accuracies_from_confusion_matrix,
 )
 from helpers_aiders_and_conveniencers.solution_serializer import Solution_Serializer
 
@@ -82,6 +83,9 @@ class Solution_ekg_2:
         self.project_solution_model_filename = (
             app_instance_metadata.shared_definitions.project_solution_ekg_2_model_filename
         )
+
+        self.ACCURACY_THRESHOLD_PER_CLASS = 70
+        self.MEAN_ACCURACY_THRESHOLD = 70
 
     ## -------------- To JSON --------------
     def toJSON(self):  # this is not used
@@ -167,6 +171,7 @@ class Solution_ekg_2:
         info_message = "Saving model as " + MODEL_SAVE_PATH
         self.Logger.info(self, info_message)
         self.model.save(MODEL_SAVE_PATH)
+        self.solution_serializer.model_filename = MODEL_SAVE_PATH.split("/")[-1]
 
         info_message = "save_model() -- end"
         self.Logger.info(self, info_message)
@@ -302,8 +307,8 @@ class Solution_ekg_2:
             self.X_test, batch_size=32, callbacks=callbacks, max_queue_size=10
         )
 
-        print(predictions)
-        print(predictions.shape)
+        # print(predictions)
+        # print(predictions.shape)
 
         f2_time = datetime.now()
         difference = f2_time - f1_time
@@ -312,6 +317,15 @@ class Solution_ekg_2:
 
         sklearn_confusion_matrix = confusion_matrix(
             self.y_test.argmax(axis=1), predictions.argmax(axis=1)
+        )
+
+        print(sklearn_confusion_matrix)
+
+        accuracy_per_class, mean_total_accuracy = get_accuracies_from_confusion_matrix(
+            self.Logger,
+            sklearn_confusion_matrix,
+            self.ACCURACY_THRESHOLD_PER_CLASS,
+            self.MEAN_ACCURACY_THRESHOLD,
         )
 
         self.plot_confusion_matrix(
@@ -324,6 +338,8 @@ class Solution_ekg_2:
         self.solution_serializer._used_test_function = True
         self.solution_serializer.time_test_end = f2_time.strftime("%Y-%m-%d_%H:%M:%S")
         self.solution_serializer.time_test_total = difference.seconds
+        self.solution_serializer.accuracy_per_class = accuracy_per_class
+        self.solution_serializer.mean_total_accuracy = mean_total_accuracy
         # self.solution_serializer.correct_normal_predictions = (
         #     f"{normal_correct}/{len(self.test_normal_dataset)}"
         # )

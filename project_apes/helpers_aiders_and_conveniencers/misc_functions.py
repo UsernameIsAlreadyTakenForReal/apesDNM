@@ -212,3 +212,22 @@ def write_to_solutions_runs_json_file(
     file = open(json_file_path, "w")
     file.writelines(all_lines)
     file.close()
+
+
+def get_accuracies_from_confusion_matrix(
+    Logger, confusion_matrix, THRESHOLD_PER_CLASS, THRESHOLD_PER_TOTAL
+):
+    accuracy_per_class = []
+
+    for i in range(len(confusion_matrix)):
+        x = (confusion_matrix[i][i] * 100) / sum(confusion_matrix[i])
+        accuracy_per_class.append(x)
+        if x > THRESHOLD_PER_CLASS:
+            info_message = f"Class {i} was predicted with good enough accuracy"
+            Logger.info(
+                "misc_functions.get_accuracies_from_confusion_matrix", info_message
+            )
+
+    mean_total_accuracy = sum(accuracy_per_class) / len(accuracy_per_class)
+
+    return accuracy_per_class, mean_total_accuracy
