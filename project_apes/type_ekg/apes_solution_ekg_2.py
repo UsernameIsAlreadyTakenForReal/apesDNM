@@ -52,6 +52,7 @@ from helpers_aiders_and_conveniencers.misc_functions import (
     get_plot_save_filename,
     write_to_solutions_runs_json_file,
     get_accuracies_from_confusion_matrix,
+    asses_whether_to_save_model_as_best,
 )
 from helpers_aiders_and_conveniencers.solution_serializer import Solution_Serializer
 
@@ -182,6 +183,15 @@ class Solution_ekg_2:
         self.Logger.info(self, info_message)
         self.model.save(MODEL_SAVE_PATH)
         self.solution_serializer.model_filename = MODEL_SAVE_PATH.split("/")[-1]
+
+        asses_whether_to_save_model_as_best(
+            self.Logger,
+            self.app_instance_metadata,
+            "ekg2",
+            MODEL_SAVE_PATH.split("/")[-1],
+            self.accuracy_per_class,
+            self.mean_total_accuracy,
+        )
 
         info_message = "save_model() -- end"
         self.Logger.info(self, info_message)
@@ -333,7 +343,10 @@ class Solution_ekg_2:
 
         print(sklearn_confusion_matrix)
 
-        accuracy_per_class, mean_total_accuracy = get_accuracies_from_confusion_matrix(
+        (
+            self.accuracy_per_class,
+            self.mean_total_accuracy,
+        ) = get_accuracies_from_confusion_matrix(
             self.Logger,
             sklearn_confusion_matrix,
             self.ACCURACY_THRESHOLD_PER_CLASS,
@@ -350,8 +363,8 @@ class Solution_ekg_2:
         self.solution_serializer._used_test_function = True
         self.solution_serializer.time_test_end = f2_time.strftime("%Y-%m-%d_%H:%M:%S")
         self.solution_serializer.time_test_total = difference.seconds
-        self.solution_serializer.accuracy_per_class = accuracy_per_class
-        self.solution_serializer.mean_total_accuracy = mean_total_accuracy
+        self.solution_serializer.accuracy_per_class = self.accuracy_per_class
+        self.solution_serializer.mean_total_accuracy = self.mean_total_accuracy
         # self.solution_serializer.correct_normal_predictions = (
         #     f"{normal_correct}/{len(self.test_normal_dataset)}"
         # )

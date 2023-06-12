@@ -231,3 +231,34 @@ def get_accuracies_from_confusion_matrix(
     mean_total_accuracy = sum(accuracy_per_class) / len(accuracy_per_class)
 
     return accuracy_per_class, mean_total_accuracy
+
+
+def asses_whether_to_save_model_as_best(
+    Logger,
+    app_instance_metadata,
+    solution_name,
+    model_filename,
+    accuracy_per_class,
+    mean_total_accuracy,
+):
+    import json
+
+    # from jsonpath_ng import jsonpath, parse
+    from jsonpath_rw import jsonpath, parse
+
+    file_to_load = f"{app_instance_metadata.shared_definitions.project_solution_runs_path}/s_{solution_name}.json"
+    file = open(file_to_load)
+    shared_data = json.load(file)
+    file.close()
+
+    jsonpath_expression = parse(
+        f'$.runs[?(@.model_filename="{model_filename}")]._app_instance_ID'
+    )
+    # jsonpath_expression = parse(f"$.runs[*]._app_instance_ID")
+
+    match = jsonpath_expression.find(shared_data)
+
+    info_message = f"Found data: {match}"
+    Logger.info("misc_functions.asses_whether_to_save_model_as_best", info_message)
+
+    pass

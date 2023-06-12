@@ -296,11 +296,11 @@ class APES_Application:
                 if return_code != 0:
                     return return_code, return_message
 
-                return_code, return_message = solution.save_model()
+                return_code, return_message = solution.test()
                 if return_code != 0:
                     return return_code, return_message
 
-                return_code, return_message = solution.test()
+                return_code, return_message = solution.save_model()
                 if return_code != 0:
                     return return_code, return_message
             else:
