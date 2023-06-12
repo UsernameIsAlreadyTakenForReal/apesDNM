@@ -239,6 +239,9 @@ export default function UploadComponent() {
     setBackendResults("");
     setEda([]);
 
+    setEdaRequestStarted(false);
+    setEdaRequestCompleted(false);
+
     resetAllFormErrorsAndData();
     setSelectedFiles([...event.target.files]);
 
@@ -282,6 +285,8 @@ export default function UploadComponent() {
       formData.append(`file${i}`, [...event.target.files][i]);
     }
 
+    setEdaRequestStarted(true);
+
     const response = await fetch(BASE_URL + "perform_eda", {
       method: "POST",
       body: formData,
@@ -289,6 +294,8 @@ export default function UploadComponent() {
 
     const textResponse = await response.text();
     setResponseData(textResponse);
+
+    setEdaRequestCompleted(true);
 
     const data = JSON.parse(textResponse);
 
@@ -539,6 +546,8 @@ export default function UploadComponent() {
     await loadingResultsScreen("processing");
     setShowResults(true);
 
+    setUploadRequestStarted(true);
+
     const response = await fetch(BASE_URL + "upload", {
       method: "POST",
       body: formData,
@@ -546,6 +555,8 @@ export default function UploadComponent() {
 
     const textResponse = await response.text();
     setResponseData(textResponse);
+
+    setUploadRequestCompleted(true);
 
     handleResults(textResponse);
   }
@@ -976,11 +987,10 @@ export default function UploadComponent() {
             )}
 
             {showEda && (
-              <Dialog open={true} maxWidth="xl" fullWidth={true}>
-                {/* <DialogTitle style={{ fontWeight: "bold" }}>
-                  {"are you happy with your dataset motherfucker?"}
-                </DialogTitle> */}
-                <DialogContent>
+              <Dialog open={showEda} maxWidth="xl" fullWidth={true}>
+                <DialogContent
+                  style={{ height: "100vh", overflow: "-moz-scrollbars-none" }}
+                >
                   <div
                     style={{
                       margin: "5px",
@@ -1506,25 +1516,47 @@ export default function UploadComponent() {
               />
             </TextFieldFlex>
 
-            <Divv>
-              <Button
-                style={{
-                  background:
-                    fileUploadButtonHover === false ? "black" : "orange",
-                  color: fileUploadButtonHover === false ? "white" : "black",
-                  fontWeight: "bold",
-                }}
-                disabled={loading === true}
-                variant="contained"
-                color="primary"
-                size="large"
-                onClick={() => onFileUpload()}
-                onMouseEnter={() => setFileUploadButtonHover(true)}
-                onMouseLeave={() => setFileUploadButtonHover(false)}
-              >
-                Upload file
-              </Button>
-            </Divv>
+            <Tooltip
+              title={
+                edaRequestStarted === true &&
+                edaRequestCompleted === false && (
+                  <Typography fontSize={14}>
+                    eda is still taking place
+                  </Typography>
+                )
+              }
+              placement="bottom"
+              arrow={false}
+            >
+              <Divv>
+                <Button
+                  style={{
+                    background:
+                      edaRequestStarted === true &&
+                      edaRequestCompleted === false
+                        ? "gray"
+                        : fileUploadButtonHover === false
+                        ? "black"
+                        : "orange",
+                    color: fileUploadButtonHover === false ? "white" : "black",
+                    fontWeight: "bold",
+                  }}
+                  disabled={
+                    loading === true ||
+                    (edaRequestStarted === true &&
+                      edaRequestCompleted === false)
+                  }
+                  variant="contained"
+                  color="primary"
+                  size="large"
+                  onClick={() => onFileUpload()}
+                  onMouseEnter={() => setFileUploadButtonHover(true)}
+                  onMouseLeave={() => setFileUploadButtonHover(false)}
+                >
+                  Upload file
+                </Button>
+              </Divv>
+            </Tooltip>
           </div>
         )
       )}
