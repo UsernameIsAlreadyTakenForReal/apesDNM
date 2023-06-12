@@ -272,6 +272,41 @@
       "time_test_end": "2023-06-12_00:09:45",
       "time_test_start": "2023-06-12_00:09:21",
       "time_test_total": 23
+    },
+    {
+      "_app_instance_ID": "230612_233949",
+      "_time_object_creation": "2023-06-12_23:39:53",
+      "_used_test_function": true,
+      "correct_abnormal_predictions": "144/145",
+      "correct_normal_predictions": "121/145",
+      "dataset_full_size": [
+        5000,
+        141
+    ],
+      "dataset_name": "ekg1",
+      "dataset_test_size": [
+        145,
+        140
+    ],
+      "dataset_train_size": [
+        2481,
+        140
+    ],
+      "dataset_val_size": [
+        293,
+        140
+    ],
+      "device_used": "cuda",
+      "model_filename": "s_ekg1_d_ekg1_20230611_224100.pth",
+      "plots_filenames": [
+          "s_ekg1_d_ekg1__Beat_and_prediction__20230612_234013.png"
+    ],
+      "prediction_threshold": 46,
+      "solution_name": "ekg1",
+      "test_loss_average": 76.95724684616616,
+      "time_test_end": "2023-06-12_23:40:13",
+      "time_test_start": "2023-06-12_23:39:55",
+      "time_test_total": 18
     }
   ]
 }

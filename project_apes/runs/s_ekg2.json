@@ -621,6 +621,78 @@
       "train_loss": 0.015038151293992996,
       "train_val_accuracy": 0.9834185838699341,
       "train_val_loss": 0.09556273370981216
+    },
+    {
+      "_app_instance_ID": "230612_231741",
+      "_time_object_creation": "2023-06-12_23:18:03",
+      "_used_test_function": true,
+      "accuracy_per_class": [
+        99.40942708908268,
+        80.57553956834532,
+        94.88950276243094,
+        77.1604938271605,
+        98.81840796019901
+    ],
+      "dataset_full_size": [
+        131338,
+        188
+    ],
+      "dataset_name": "ekg2",
+      "dataset_test_size": [
+        43784,
+        186,
+        1
+    ],
+      "dataset_train_size": [
+        87554,
+        186,
+        1
+    ],
+      "mean_total_accuracy": 90.17067424144369,
+      "model_filename": "s_ekg2_d_ekg2_20230611_223507.h5",
+      "plots_filenames": [
+          "s_ekg1_d_ekg2__Confusion_matrix__20230612_231814.png"
+    ],
+      "solution_name": "ekg2",
+      "time_test_end": "2023-06-12_23:18:13",
+      "time_test_start": "2023-06-12_23:18:04",
+      "time_test_total": 9
+    },
+    {
+      "_app_instance_ID": "230612_232051",
+      "_time_object_creation": "2023-06-12_23:20:57",
+      "_used_test_function": true,
+      "accuracy_per_class": [
+        0.34259611724400457,
+        28.050314465408807,
+        41.86046511627907,
+        73.14285714285714,
+        0.0
+    ],
+      "dataset_full_size": [
+        5000,
+        141
+    ],
+      "dataset_name": "ekg1",
+      "dataset_test_size": [
+        4500,
+        139,
+        1
+    ],
+      "dataset_train_size": [
+        500,
+        139,
+        1
+    ],
+      "mean_total_accuracy": 28.679246568357804,
+      "model_filename": "s_ekg2_d_ekg1_20230611_221523.h5",
+      "plots_filenames": [
+          "s_ekg1_d_ekg1__Confusion_matrix__20230612_232059.png"
+    ],
+      "solution_name": "ekg2",
+      "time_test_end": "2023-06-12_23:20:58",
+      "time_test_start": "2023-06-12_23:20:57",
+      "time_test_total": 1
     }
   ]
 }

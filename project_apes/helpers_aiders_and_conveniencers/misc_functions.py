@@ -223,7 +223,7 @@ def get_accuracies_from_confusion_matrix(
         x = (confusion_matrix[i][i] * 100) / sum(confusion_matrix[i])
         accuracy_per_class.append(x)
         if x > THRESHOLD_PER_CLASS:
-            info_message = f"Class {i} was predicted with good enough accuracy"
+            info_message = f"Class {i} was predicted with good enough accuracy (> {THRESHOLD_PER_CLASS}%)"
             Logger.info(
                 "misc_functions.get_accuracies_from_confusion_matrix", info_message
             )

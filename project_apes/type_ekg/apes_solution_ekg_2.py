@@ -83,6 +83,16 @@ class Solution_ekg_2:
         self.project_solution_model_filename = (
             app_instance_metadata.shared_definitions.project_solution_ekg_2_model_filename
         )
+        self.last_good_suitable_model = ""
+        match self.solution_serializer.dataset_name:
+            case "ekg1":
+                self.last_good_suitable_model = (
+                    app_instance_metadata.shared_definitions.project_solution_ekg_2_d_ekg_1_best_model_filename
+                )
+            case "ekg2":
+                self.last_good_suitable_model = (
+                    app_instance_metadata.shared_definitions.project_solution_ekg_2_d_ekg_2_best_model_filename
+                )
 
         self.ACCURACY_THRESHOLD_PER_CLASS = 70
         self.MEAN_ACCURACY_THRESHOLD = 70
@@ -190,16 +200,18 @@ class Solution_ekg_2:
             if model_filename_fits_expected_name(
                 "ekg2",
                 self.app_instance_metadata,
-                self.app_instance_metadata.shared_definitions.project_solution_ekg_2_model_filename_last_good_one,
+                self.last_good_suitable_model,
             ):
                 info_message = "Loading the last good model saved"
                 self.Logger.info(self, info_message)
                 model_absolute_path = get_full_path_of_given_model(
-                    self.app_instance_metadata.shared_definitions.project_solution_ekg_2_model_filename_last_good_one,
+                    self.last_good_suitable_model,
                     self.app_instance_metadata.shared_definitions.project_model_root_path,
                 )
                 self.model = keras.models.load_model(model_absolute_path)
-                self.solution_serializer.model_filename = model_path.split("/")[-1]
+                self.solution_serializer.model_filename = model_absolute_path.split(
+                    "/"
+                )[-1]
             else:
                 info_message = "Loading last available model"
                 self.Logger.info(self, info_message)

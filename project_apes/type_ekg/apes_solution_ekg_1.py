@@ -153,6 +153,16 @@ class Solution_ekg_1:
         self.project_solution_model_filename = (
             app_instance_metadata.shared_definitions.project_solution_ekg_1_model_filename
         )
+        self.last_good_suitable_model = ""
+        match self.solution_serializer.dataset_name:
+            case "ekg1":
+                self.last_good_suitable_model = (
+                    app_instance_metadata.shared_definitions.project_solution_ekg_1_d_ekg_1_best_model_filename
+                )
+            case "ekg2":
+                self.last_good_suitable_model = (
+                    app_instance_metadata.shared_definitions.project_solution_ekg_1_d_ekg_2_best_model_filename
+                )
 
     ## -------------- To JSON --------------
     def toJSON(self):  # this is not used
@@ -240,16 +250,18 @@ class Solution_ekg_1:
                 model_filename_fits_expected_name(
                     "ekg1",
                     self.app_instance_metadata,
-                    self.app_instance_metadata.shared_definitions.project_solution_ekg_1_model_filename_last_good_one,
+                    self.last_good_suitable_model,
                 )
                 == True
             ):
                 info_message = "Loading the last good model saved"
                 self.Logger.info(self, info_message)
                 model_absolute_path = get_full_path_of_given_model(
-                    self.app_instance_metadata.shared_definitions.project_solution_ekg_1_model_filename_last_good_one,
+                    self.last_good_suitable_model,
                     self.app_instance_metadata.shared_definitions.project_model_root_path,
                 )
+                info_message = f"Loading {model_absolute_path}"
+                self.Logger.info(self, info_message)
                 self.model = torch.load(
                     model_absolute_path,
                     map_location=lambda storage, loc: storage.cuda(0),
@@ -267,6 +279,8 @@ class Solution_ekg_1:
                     self.Logger.info(self, return_message)
                     return return_code, return_message
                 else:
+                    info_message = f"Loading {model_path}"
+                    self.Logger.info(self, info_message)
                     self.model = torch.load(
                         model_path, map_location=lambda storage, loc: storage.cuda(0)
                     )
