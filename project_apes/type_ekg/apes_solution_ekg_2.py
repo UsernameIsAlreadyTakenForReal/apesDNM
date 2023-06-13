@@ -112,6 +112,18 @@ class Solution_ekg_2:
             self.Logger, "ekg2", self.solution_serializer, self.app_instance_metadata
         )
 
+        info_message = "save_run() -- asses_whether_to_save_model_as_best"
+        self.Logger.info(self, info_message)
+
+        asses_whether_to_save_model_as_best(
+            self.Logger,
+            self.app_instance_metadata,
+            "ekg2",
+            self.MODEL_SAVE_PATH.split("/")[-1],
+            self.accuracy_per_class,
+            self.mean_total_accuracy,
+        )
+
         info_message = "save_run() -- end"
         self.Logger.info(self, info_message)
 
@@ -165,33 +177,27 @@ class Solution_ekg_2:
         info_message = "save_model() -- begin"
         self.Logger.info(self, info_message)
 
-        MODEL_SAVE_PATH = ""
+        self.MODEL_SAVE_PATH = ""
         if filename != "" and path != "":
-            MODEL_SAVE_PATH += filename + path
+            self.MODEL_SAVE_PATH += filename + path
         elif filename != "":
-            MODEL_SAVE_PATH += filename
+            self.MODEL_SAVE_PATH += filename
         else:
-            MODEL_SAVE_PATH = (
+            self.MODEL_SAVE_PATH = (
                 "s_ekg2_d_"
                 + self.app_instance_metadata.dataset_metadata.dataset_name_stub
             )
 
-        MODEL_SAVE_PATH = (
-            MODEL_SAVE_PATH + "_" + datetime.now().strftime("%Y%m%d_%H%M%S") + ".h5"
+        self.MODEL_SAVE_PATH = (
+            self.MODEL_SAVE_PATH
+            + "_"
+            + datetime.now().strftime("%Y%m%d_%H%M%S")
+            + ".h5"
         )
-        info_message = "Saving model as " + MODEL_SAVE_PATH
+        info_message = "Saving model as " + self.MODEL_SAVE_PATH
         self.Logger.info(self, info_message)
-        self.model.save(MODEL_SAVE_PATH)
-        self.solution_serializer.model_filename = MODEL_SAVE_PATH.split("/")[-1]
-
-        asses_whether_to_save_model_as_best(
-            self.Logger,
-            self.app_instance_metadata,
-            "ekg2",
-            MODEL_SAVE_PATH.split("/")[-1],
-            self.accuracy_per_class,
-            self.mean_total_accuracy,
-        )
+        self.model.save(self.MODEL_SAVE_PATH)
+        self.solution_serializer.model_filename = self.MODEL_SAVE_PATH.split("/")[-1]
 
         info_message = "save_model() -- end"
         self.Logger.info(self, info_message)

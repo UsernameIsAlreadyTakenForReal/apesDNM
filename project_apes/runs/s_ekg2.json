@@ -828,6 +828,1131 @@
       "train_loss": 0.08874443918466568,
       "train_val_accuracy": 0.4946666657924652,
       "train_val_loss": 1.3198562860488892
+    },
+    {
+      "_app_instance_ID": "230613_193633",
+      "_time_object_creation": "2023-06-13_19:36:46",
+      "_used_test_function": true,
+      "_used_train_function": true,
+      "accuracy_per_class": [
+        74.60982108869433,
+        84.21383647798743,
+        69.76744186046511,
+        0.5714285714285714,
+        4.545454545454546
+    ],
+      "dataset_full_size": [
+        5000,
+        141
+    ],
+      "dataset_name": "ekg1",
+      "dataset_test_size": [
+        4500,
+        139,
+        1
+    ],
+      "dataset_train_size": [
+        500,
+        139,
+        1
+    ],
+      "mean_total_accuracy": 46.741596508806,
+      "model_filename": "s_ekg2_d_ekg1_20230613_193655.h5",
+      "plots_filenames": [
+          "s_ekg1_d_ekg1__Confusion_matrix__20230613_193655.png"
+    ],
+      "solution_name": "ekg2",
+      "time_test_end": "2023-06-13_19:36:54",
+      "time_test_start": "2023-06-13_19:36:53",
+      "time_test_total": 0,
+      "time_train_end": "2023-06-13_19:36:53",
+      "time_train_start": "2023-06-13_19:36:47",
+      "time_train_total": 6,
+      "train_accuracy": 0.9760000109672546,
+      "train_epochs": 5,
+      "train_loss": 0.08139161765575409,
+      "train_val_accuracy": 0.7468888759613037,
+      "train_val_loss": 1.3523765802383423
+    },
+    {
+      "_app_instance_ID": "230613_193806",
+      "_time_object_creation": "2023-06-13_19:38:11",
+      "_used_test_function": true,
+      "_used_train_function": true,
+      "accuracy_per_class": [
+        0.03806623524933384,
+        99.81132075471699,
+        1.1627906976744187,
+        0.0,
+        0.0
+    ],
+      "dataset_full_size": [
+        5000,
+        141
+    ],
+      "dataset_name": "ekg1",
+      "dataset_test_size": [
+        4500,
+        139,
+        1
+    ],
+      "dataset_train_size": [
+        500,
+        139,
+        1
+    ],
+      "mean_total_accuracy": 20.20243553752815,
+      "model_filename": "s_ekg2_d_ekg1_20230613_193818.h5",
+      "plots_filenames": [
+          "s_ekg1_d_ekg1__Confusion_matrix__20230613_193818.png"
+    ],
+      "solution_name": "ekg2",
+      "time_test_end": "2023-06-13_19:38:17",
+      "time_test_start": "2023-06-13_19:38:17",
+      "time_test_total": 0,
+      "time_train_end": "2023-06-13_19:38:17",
+      "time_train_start": "2023-06-13_19:38:11",
+      "time_train_total": 5,
+      "train_accuracy": 0.984000027179718,
+      "train_epochs": 5,
+      "train_loss": 0.05388924852013588,
+      "train_val_accuracy": 0.3531111180782318,
+      "train_val_loss": 1.2522344589233398
+    },
+    {
+      "_app_instance_ID": "230613_193835",
+      "_time_object_creation": "2023-06-13_19:38:40",
+      "_used_test_function": true,
+      "_used_train_function": true,
+      "accuracy_per_class": [
+        0.03806623524933384,
+        97.48427672955975,
+        1.1627906976744187,
+        24.571428571428573,
+        0.0
+    ],
+      "dataset_full_size": [
+        5000,
+        141
+    ],
+      "dataset_name": "ekg1",
+      "dataset_test_size": [
+        4500,
+        139,
+        1
+    ],
+      "dataset_train_size": [
+        500,
+        139,
+        1
+    ],
+      "mean_total_accuracy": 24.651312446782416,
+      "model_filename": "s_ekg2_d_ekg1_20230613_193847.h5",
+      "plots_filenames": [
+          "s_ekg1_d_ekg1__Confusion_matrix__20230613_193847.png"
+    ],
+      "solution_name": "ekg2",
+      "time_test_end": "2023-06-13_19:38:47",
+      "time_test_start": "2023-06-13_19:38:46",
+      "time_test_total": 0,
+      "time_train_end": "2023-06-13_19:38:46",
+      "time_train_start": "2023-06-13_19:38:40",
+      "time_train_total": 5,
+      "train_accuracy": 0.9779999852180481,
+      "train_epochs": 5,
+      "train_loss": 0.07781349867582321,
+      "train_val_accuracy": 0.3544444441795349,
+      "train_val_loss": 1.3519458770751953
+    },
+    {
+      "_app_instance_ID": "230613_193932",
+      "_time_object_creation": "2023-06-13_19:39:37",
+      "_used_test_function": true,
+      "_used_train_function": true,
+      "accuracy_per_class": [
+        97.25923106204796,
+        96.1006289308176,
+        2.3255813953488373,
+        36.0,
+        0.0
+    ],
+      "dataset_full_size": [
+        5000,
+        141
+    ],
+      "dataset_name": "ekg1",
+      "dataset_test_size": [
+        4500,
+        139,
+        1
+    ],
+      "dataset_train_size": [
+        500,
+        139,
+        1
+    ],
+      "mean_total_accuracy": 46.33708827764288,
+      "model_filename": "s_ekg2_d_ekg1_20230613_193944.h5",
+      "plots_filenames": [
+          "s_ekg1_d_ekg1__Confusion_matrix__20230613_193944.png"
+    ],
+      "solution_name": "ekg2",
+      "time_test_end": "2023-06-13_19:39:44",
+      "time_test_start": "2023-06-13_19:39:43",
+      "time_test_total": 0,
+      "time_train_end": "2023-06-13_19:39:43",
+      "time_train_start": "2023-06-13_19:39:37",
+      "time_train_total": 5,
+      "train_accuracy": 0.9739999771118164,
+      "train_epochs": 5,
+      "train_loss": 0.07148681581020355,
+      "train_val_accuracy": 0.9217777848243713,
+      "train_val_loss": 1.0888206958770752
+    },
+    {
+      "_app_instance_ID": "230613_194324",
+      "_time_object_creation": "2023-06-13_19:43:30",
+      "_used_test_function": true,
+      "_used_train_function": true,
+      "accuracy_per_class": [
+        99.69547011800533,
+        97.61006289308176,
+        0.0,
+        0.0,
+        9.090909090909092
+    ],
+      "dataset_full_size": [
+        5000,
+        141
+    ],
+      "dataset_name": "ekg1",
+      "dataset_test_size": [
+        4500,
+        139,
+        1
+    ],
+      "dataset_train_size": [
+        500,
+        139,
+        1
+    ],
+      "mean_total_accuracy": 41.27928842039924,
+      "model_filename": "s_ekg2_d_ekg1_20230613_194337.h5",
+      "plots_filenames": [
+          "s_ekg1_d_ekg1__Confusion_matrix__20230613_194337.png"
+    ],
+      "solution_name": "ekg2",
+      "time_test_end": "2023-06-13_19:43:37",
+      "time_test_start": "2023-06-13_19:43:36",
+      "time_test_total": 0,
+      "time_train_end": "2023-06-13_19:43:36",
+      "time_train_start": "2023-06-13_19:43:30",
+      "time_train_total": 6,
+      "train_accuracy": 0.9800000190734863,
+      "train_epochs": 5,
+      "train_loss": 0.07750146836042404,
+      "train_val_accuracy": 0.9273333549499512,
+      "train_val_loss": 0.9403943419456482
+    },
+    {
+      "_app_instance_ID": "230613_194709",
+      "_time_object_creation": "2023-06-13_19:47:14",
+      "_used_test_function": true,
+      "_used_train_function": true,
+      "accuracy_per_class": [
+        65.05519604111153,
+        89.37106918238993,
+        4.651162790697675,
+        41.142857142857146,
+        4.545454545454546
+    ],
+      "dataset_full_size": [
+        5000,
+        141
+    ],
+      "dataset_name": "ekg1",
+      "dataset_test_size": [
+        4500,
+        139,
+        1
+    ],
+      "dataset_train_size": [
+        500,
+        139,
+        1
+    ],
+      "mean_total_accuracy": 40.953147940502156,
+      "model_filename": "s_ekg2_d_ekg1_20230613_194724.h5",
+      "plots_filenames": [
+          "s_ekg1_d_ekg1__Confusion_matrix__20230613_194723.png"
+    ],
+      "solution_name": "ekg2",
+      "time_test_end": "2023-06-13_19:47:23",
+      "time_test_start": "2023-06-13_19:47:22",
+      "time_test_total": 0,
+      "time_train_end": "2023-06-13_19:47:22",
+      "time_train_start": "2023-06-13_19:47:14",
+      "time_train_total": 7,
+      "train_accuracy": 0.9819999933242798,
+      "train_epochs": 5,
+      "train_loss": 0.06905291974544525,
+      "train_val_accuracy": 0.7126666903495789,
+      "train_val_loss": 1.336323857307434
+    },
+    {
+      "_app_instance_ID": "230613_195511",
+      "_time_object_creation": "2023-06-13_19:55:17",
+      "_used_test_function": true,
+      "_used_train_function": true,
+      "accuracy_per_class": [
+        77.00799390940236,
+        93.52201257861635,
+        61.627906976744185,
+        34.285714285714285,
+        0.0
+    ],
+      "dataset_full_size": [
+        5000,
+        141
+    ],
+      "dataset_name": "ekg1",
+      "dataset_test_size": [
+        4500,
+        139,
+        1
+    ],
+      "dataset_train_size": [
+        500,
+        139,
+        1
+    ],
+      "mean_total_accuracy": 53.28872555009544,
+      "model_filename": "s_ekg2_d_ekg1_20230613_195525.h5",
+      "plots_filenames": [
+          "s_ekg1_d_ekg1__Confusion_matrix__20230613_195525.png"
+    ],
+      "solution_name": "ekg2",
+      "time_test_end": "2023-06-13_19:55:25",
+      "time_test_start": "2023-06-13_19:55:24",
+      "time_test_total": 0,
+      "time_train_end": "2023-06-13_19:55:24",
+      "time_train_start": "2023-06-13_19:55:17",
+      "time_train_total": 6,
+      "train_accuracy": 0.9779999852180481,
+      "train_epochs": 5,
+      "train_loss": 0.07203007489442825,
+      "train_val_accuracy": 0.8051111102104187,
+      "train_val_loss": 1.2922531366348267
+    },
+    {
+      "_app_instance_ID": "230613_195649",
+      "_time_object_creation": "2023-06-13_19:56:55",
+      "_used_test_function": true,
+      "_used_train_function": true,
+      "accuracy_per_class": [
+        0.0,
+        100.0,
+        0.0,
+        0.0,
+        0.0
+    ],
+      "dataset_full_size": [
+        5000,
+        141
+    ],
+      "dataset_name": "ekg1",
+      "dataset_test_size": [
+        4500,
+        139,
+        1
+    ],
+      "dataset_train_size": [
+        500,
+        139,
+        1
+    ],
+      "mean_total_accuracy": 20.0,
+      "model_filename": "s_ekg2_d_ekg1_20230613_195704.h5",
+      "plots_filenames": [
+          "s_ekg1_d_ekg1__Confusion_matrix__20230613_195704.png"
+    ],
+      "solution_name": "ekg2",
+      "time_test_end": "2023-06-13_19:57:04",
+      "time_test_start": "2023-06-13_19:57:03",
+      "time_test_total": 0,
+      "time_train_end": "2023-06-13_19:57:03",
+      "time_train_start": "2023-06-13_19:56:55",
+      "time_train_total": 7,
+      "train_accuracy": 0.9679999947547913,
+      "train_epochs": 5,
+      "train_loss": 0.09583938121795654,
+      "train_val_accuracy": 0.35333332419395447,
+      "train_val_loss": 1.3340853452682495
+    },
+    {
+      "_app_instance_ID": "230613_195754",
+      "_time_object_creation": "2023-06-13_19:57:59",
+      "_used_test_function": true,
+      "_used_train_function": true,
+      "accuracy_per_class": [
+        61.971830985915496,
+        4.528301886792453,
+        39.53488372093023,
+        91.42857142857143,
+        0.0
+    ],
+      "dataset_full_size": [
+        5000,
+        141
+    ],
+      "dataset_name": "ekg1",
+      "dataset_test_size": [
+        4500,
+        139,
+        1
+    ],
+      "dataset_train_size": [
+        500,
+        139,
+        1
+    ],
+      "mean_total_accuracy": 39.49271760444192,
+      "model_filename": "s_ekg2_d_ekg1_20230613_195806.h5",
+      "plots_filenames": [
+          "s_ekg1_d_ekg1__Confusion_matrix__20230613_195806.png"
+    ],
+      "solution_name": "ekg2",
+      "time_test_end": "2023-06-13_19:58:06",
+      "time_test_start": "2023-06-13_19:58:05",
+      "time_test_total": 0,
+      "time_train_end": "2023-06-13_19:58:05",
+      "time_train_start": "2023-06-13_19:57:59",
+      "time_train_total": 5,
+      "train_accuracy": 0.9779999852180481,
+      "train_epochs": 5,
+      "train_loss": 0.07830607891082764,
+      "train_val_accuracy": 0.42088890075683594,
+      "train_val_loss": 1.3928260803222656
+    },
+    {
+      "_app_instance_ID": "230613_195851",
+      "_time_object_creation": "2023-06-13_19:58:56",
+      "_used_test_function": true,
+      "_used_train_function": true,
+      "accuracy_per_class": [
+        93.07194518462124,
+        89.74842767295597,
+        0.0,
+        56.0,
+        0.0
+    ],
+      "dataset_full_size": [
+        5000,
+        141
+    ],
+      "dataset_name": "ekg1",
+      "dataset_test_size": [
+        4500,
+        139,
+        1
+    ],
+      "dataset_train_size": [
+        500,
+        139,
+        1
+    ],
+      "mean_total_accuracy": 47.764074571515444,
+      "model_filename": "s_ekg2_d_ekg1_20230613_195903.h5",
+      "plots_filenames": [
+          "s_ekg1_d_ekg1__Confusion_matrix__20230613_195903.png"
+    ],
+      "solution_name": "ekg2",
+      "time_test_end": "2023-06-13_19:59:03",
+      "time_test_start": "2023-06-13_19:59:02",
+      "time_test_total": 0,
+      "time_train_end": "2023-06-13_19:59:02",
+      "time_train_start": "2023-06-13_19:58:56",
+      "time_train_total": 5,
+      "train_accuracy": 0.9760000109672546,
+      "train_epochs": 5,
+      "train_loss": 0.07430309057235718,
+      "train_val_accuracy": 0.8822222352027893,
+      "train_val_loss": 0.9976271986961365
+    },
+    {
+      "_app_instance_ID": "230613_200121",
+      "_time_object_creation": "2023-06-13_20:01:26",
+      "_used_test_function": true,
+      "_used_train_function": true,
+      "accuracy_per_class": [
+        4.301484583174724,
+        99.43396226415095,
+        1.1627906976744187,
+        0.0,
+        0.0
+    ],
+      "dataset_full_size": [
+        5000,
+        141
+    ],
+      "dataset_name": "ekg1",
+      "dataset_test_size": [
+        4500,
+        139,
+        1
+    ],
+      "dataset_train_size": [
+        500,
+        139,
+        1
+    ],
+      "mean_total_accuracy": 20.97964750900002,
+      "model_filename": "s_ekg2_d_ekg1_20230613_200133.h5",
+      "plots_filenames": [
+          "s_ekg1_d_ekg1__Confusion_matrix__20230613_200133.png"
+    ],
+      "solution_name": "ekg2",
+      "time_test_end": "2023-06-13_20:01:33",
+      "time_test_start": "2023-06-13_20:01:32",
+      "time_test_total": 0,
+      "time_train_end": "2023-06-13_20:01:32",
+      "time_train_start": "2023-06-13_20:01:26",
+      "time_train_total": 5,
+      "train_accuracy": 0.9800000190734863,
+      "train_epochs": 5,
+      "train_loss": 0.07309835404157639,
+      "train_val_accuracy": 0.3766666650772095,
+      "train_val_loss": 1.2882535457611084
+    },
+    {
+      "_app_instance_ID": "230613_200148",
+      "_time_object_creation": "2023-06-13_20:01:53",
+      "_used_test_function": true,
+      "_used_train_function": true,
+      "accuracy_per_class": [
+        64.06547392462885,
+        0.0,
+        4.651162790697675,
+        98.85714285714286,
+        0.0
+    ],
+      "dataset_full_size": [
+        5000,
+        141
+    ],
+      "dataset_name": "ekg1",
+      "dataset_test_size": [
+        4500,
+        139,
+        1
+    ],
+      "dataset_train_size": [
+        500,
+        139,
+        1
+    ],
+      "mean_total_accuracy": 33.514755914493875,
+      "model_filename": "s_ekg2_d_ekg1_20230613_200200.h5",
+      "plots_filenames": [
+          "s_ekg1_d_ekg1__Confusion_matrix__20230613_200200.png"
+    ],
+      "solution_name": "ekg2",
+      "time_test_end": "2023-06-13_20:02:00",
+      "time_test_start": "2023-06-13_20:01:59",
+      "time_test_total": 0,
+      "time_train_end": "2023-06-13_20:01:59",
+      "time_train_start": "2023-06-13_20:01:53",
+      "time_train_total": 5,
+      "train_accuracy": 0.9739999771118164,
+      "train_epochs": 5,
+      "train_loss": 0.07616538554430008,
+      "train_val_accuracy": 0.41333332657814026,
+      "train_val_loss": 1.4362363815307617
+    },
+    {
+      "_app_instance_ID": "230613_200646",
+      "_time_object_creation": "2023-06-13_20:06:52",
+      "_used_test_function": true,
+      "_used_train_function": true,
+      "accuracy_per_class": [
+        0.2664636467453369,
+        85.53459119496856,
+        1.1627906976744187,
+        50.285714285714285,
+        0.0
+    ],
+      "dataset_full_size": [
+        5000,
+        141
+    ],
+      "dataset_name": "ekg1",
+      "dataset_test_size": [
+        4500,
+        139,
+        1
+    ],
+      "dataset_train_size": [
+        500,
+        139,
+        1
+    ],
+      "mean_total_accuracy": 27.449911965020522,
+      "model_filename": "s_ekg2_d_ekg1_20230613_200701.h5",
+      "plots_filenames": [
+          "s_ekg1_d_ekg1__Confusion_matrix__20230613_200701.png"
+    ],
+      "solution_name": "ekg2",
+      "time_test_end": "2023-06-13_20:07:00",
+      "time_test_start": "2023-06-13_20:06:59",
+      "time_test_total": 1,
+      "time_train_end": "2023-06-13_20:06:59",
+      "time_train_start": "2023-06-13_20:06:52",
+      "time_train_total": 7,
+      "train_accuracy": 0.9819999933242798,
+      "train_epochs": 5,
+      "train_loss": 0.06560253351926804,
+      "train_val_accuracy": 0.3235555589199066,
+      "train_val_loss": 1.426580786705017
+    },
+    {
+      "_app_instance_ID": "230613_200805",
+      "_time_object_creation": "2023-06-13_20:08:11",
+      "_used_test_function": true,
+      "_used_train_function": true,
+      "accuracy_per_class": [
+        0.0,
+        90.31446540880503,
+        45.348837209302324,
+        2.857142857142857,
+        0.0
+    ],
+      "dataset_full_size": [
+        5000,
+        141
+    ],
+      "dataset_name": "ekg1",
+      "dataset_test_size": [
+        4500,
+        139,
+        1
+    ],
+      "dataset_train_size": [
+        500,
+        139,
+        1
+    ],
+      "mean_total_accuracy": 27.704089095050044,
+      "model_filename": "s_ekg2_d_ekg1_20230613_200819.h5",
+      "plots_filenames": [
+          "s_ekg1_d_ekg1__Confusion_matrix__20230613_200819.png"
+    ],
+      "solution_name": "ekg2",
+      "time_test_end": "2023-06-13_20:08:19",
+      "time_test_start": "2023-06-13_20:08:18",
+      "time_test_total": 0,
+      "time_train_end": "2023-06-13_20:08:18",
+      "time_train_start": "2023-06-13_20:08:11",
+      "time_train_total": 6,
+      "train_accuracy": 0.9800000190734863,
+      "train_epochs": 5,
+      "train_loss": 0.08054901659488678,
+      "train_val_accuracy": 0.3288888931274414,
+      "train_val_loss": 1.520369291305542
+    },
+    {
+      "_app_instance_ID": "230613_200855",
+      "_time_object_creation": "2023-06-13_20:09:00",
+      "_used_test_function": true,
+      "_used_train_function": true,
+      "accuracy_per_class": [
+        0.951655881233346,
+        0.25157232704402516,
+        1.1627906976744187,
+        98.28571428571429,
+        0.0
+    ],
+      "dataset_full_size": [
+        5000,
+        141
+    ],
+      "dataset_name": "ekg1",
+      "dataset_test_size": [
+        4500,
+        139,
+        1
+    ],
+      "dataset_train_size": [
+        500,
+        139,
+        1
+    ],
+      "mean_total_accuracy": 20.130346638333215,
+      "model_filename": "s_ekg2_d_ekg1_20230613_200908.h5",
+      "plots_filenames": [
+          "s_ekg1_d_ekg1__Confusion_matrix__20230613_200908.png"
+    ],
+      "solution_name": "ekg2",
+      "time_test_end": "2023-06-13_20:09:07",
+      "time_test_start": "2023-06-13_20:09:06",
+      "time_test_total": 0,
+      "time_train_end": "2023-06-13_20:09:06",
+      "time_train_start": "2023-06-13_20:09:00",
+      "time_train_total": 5,
+      "train_accuracy": 0.9779999852180481,
+      "train_epochs": 5,
+      "train_loss": 0.08270400762557983,
+      "train_val_accuracy": 0.04488888755440712,
+      "train_val_loss": 1.4221497774124146
+    },
+    {
+      "_app_instance_ID": "230613_201033",
+      "_time_object_creation": "2023-06-13_20:10:39",
+      "_used_test_function": true,
+      "_used_train_function": true,
+      "accuracy_per_class": [
+        6.318995051389417,
+        78.74213836477988,
+        1.1627906976744187,
+        50.285714285714285,
+        0.0
+    ],
+      "dataset_full_size": [
+        5000,
+        141
+    ],
+      "dataset_name": "ekg1",
+      "dataset_test_size": [
+        4500,
+        139,
+        1
+    ],
+      "dataset_train_size": [
+        500,
+        139,
+        1
+    ],
+      "mean_total_accuracy": 27.301927679911604,
+      "model_filename": "s_ekg2_d_ekg1_20230613_201047.h5",
+      "plots_filenames": [
+          "s_ekg1_d_ekg1__Confusion_matrix__20230613_201047.png"
+    ],
+      "solution_name": "ekg2",
+      "time_test_end": "2023-06-13_20:10:47",
+      "time_test_start": "2023-06-13_20:10:46",
+      "time_test_total": 1,
+      "time_train_end": "2023-06-13_20:10:46",
+      "time_train_start": "2023-06-13_20:10:39",
+      "time_train_total": 6,
+      "train_accuracy": 0.9819999933242798,
+      "train_epochs": 5,
+      "train_loss": 0.06459765136241913,
+      "train_val_accuracy": 0.33488887548446655,
+      "train_val_loss": 1.3130700588226318
+    },
+    {
+      "_app_instance_ID": "230613_201407",
+      "_time_object_creation": "2023-06-13_20:14:12",
+      "_used_test_function": true,
+      "_used_train_function": true,
+      "accuracy_per_class": [
+        32.775028549676435,
+        96.41509433962264,
+        2.3255813953488373,
+        38.285714285714285,
+        0.0
+    ],
+      "dataset_full_size": [
+        5000,
+        141
+    ],
+      "dataset_name": "ekg1",
+      "dataset_test_size": [
+        4500,
+        139,
+        1
+    ],
+      "dataset_train_size": [
+        500,
+        139,
+        1
+    ],
+      "mean_total_accuracy": 33.96028371407244,
+      "model_filename": "s_ekg2_d_ekg1_20230613_201420.h5",
+      "plots_filenames": [
+          "s_ekg1_d_ekg1__Confusion_matrix__20230613_201420.png"
+    ],
+      "solution_name": "ekg2",
+      "time_test_end": "2023-06-13_20:14:19",
+      "time_test_start": "2023-06-13_20:14:18",
+      "time_test_total": 0,
+      "time_train_end": "2023-06-13_20:14:18",
+      "time_train_start": "2023-06-13_20:14:12",
+      "time_train_total": 5,
+      "train_accuracy": 0.9739999771118164,
+      "train_epochs": 5,
+      "train_loss": 0.08706450462341309,
+      "train_val_accuracy": 0.5473333597183228,
+      "train_val_loss": 1.2844687700271606
+    },
+    {
+      "_app_instance_ID": "230613_201549",
+      "_time_object_creation": "2023-06-13_20:15:54",
+      "_used_test_function": true,
+      "_used_train_function": true,
+      "accuracy_per_class": [
+        0.0,
+        99.55974842767296,
+        1.1627906976744187,
+        0.5714285714285714,
+        0.0
+    ],
+      "dataset_full_size": [
+        5000,
+        141
+    ],
+      "dataset_name": "ekg1",
+      "dataset_test_size": [
+        4500,
+        139,
+        1
+    ],
+      "dataset_train_size": [
+        500,
+        139,
+        1
+    ],
+      "mean_total_accuracy": 20.25879353935519,
+      "model_filename": "s_ekg2_d_ekg1_20230613_201601.h5",
+      "plots_filenames": [
+          "s_ekg1_d_ekg1__Confusion_matrix__20230613_201601.png"
+    ],
+      "solution_name": "ekg2",
+      "time_test_end": "2023-06-13_20:16:01",
+      "time_test_start": "2023-06-13_20:16:00",
+      "time_test_total": 0,
+      "time_train_end": "2023-06-13_20:16:00",
+      "time_train_start": "2023-06-13_20:15:54",
+      "time_train_total": 5,
+      "train_accuracy": 0.9779999852180481,
+      "train_epochs": 5,
+      "train_loss": 0.06527535617351532,
+      "train_val_accuracy": 0.3522222340106964,
+      "train_val_loss": 1.350948452949524
+    },
+    {
+      "_app_instance_ID": "230613_204131",
+      "_time_object_creation": "2023-06-13_20:41:37",
+      "_used_test_function": true,
+      "_used_train_function": true,
+      "accuracy_per_class": [
+        0.0,
+        99.37106918238993,
+        3.488372093023256,
+        0.0,
+        0.0
+    ],
+      "dataset_full_size": [
+        5000,
+        141
+    ],
+      "dataset_name": "ekg1",
+      "dataset_test_size": [
+        4500,
+        139,
+        1
+    ],
+      "dataset_train_size": [
+        500,
+        139,
+        1
+    ],
+      "mean_total_accuracy": 20.571888255082637,
+      "model_filename": "s_ekg2_d_ekg1_20230613_204146.h5",
+      "plots_filenames": [
+          "s_ekg1_d_ekg1__Confusion_matrix__20230613_204145.png"
+    ],
+      "solution_name": "ekg2",
+      "time_test_end": "2023-06-13_20:41:45",
+      "time_test_start": "2023-06-13_20:41:44",
+      "time_test_total": 1,
+      "time_train_end": "2023-06-13_20:41:44",
+      "time_train_start": "2023-06-13_20:41:38",
+      "time_train_total": 6,
+      "train_accuracy": 0.984000027179718,
+      "train_epochs": 5,
+      "train_loss": 0.0641818568110466,
+      "train_val_accuracy": 0.3517777919769287,
+      "train_val_loss": 1.5633912086486816
+    },
+    {
+      "_app_instance_ID": "230613_204432",
+      "_time_object_creation": "2023-06-13_20:44:37",
+      "_used_test_function": true,
+      "_used_train_function": true,
+      "accuracy_per_class": [
+        93.1480776551199,
+        99.18238993710692,
+        0.0,
+        0.0,
+        0.0
+    ],
+      "dataset_full_size": [
+        5000,
+        141
+    ],
+      "dataset_name": "ekg1",
+      "dataset_test_size": [
+        4500,
+        139,
+        1
+    ],
+      "dataset_train_size": [
+        500,
+        139,
+        1
+    ],
+      "mean_total_accuracy": 38.46609351844536,
+      "model_filename": "s_ekg2_d_ekg1_20230613_204445.h5",
+      "plots_filenames": [
+          "s_ekg1_d_ekg1__Confusion_matrix__20230613_204445.png"
+    ],
+      "solution_name": "ekg2",
+      "time_test_end": "2023-06-13_20:44:45",
+      "time_test_start": "2023-06-13_20:44:44",
+      "time_test_total": 0,
+      "time_train_end": "2023-06-13_20:44:44",
+      "time_train_start": "2023-06-13_20:44:38",
+      "time_train_total": 6,
+      "train_accuracy": 0.9760000109672546,
+      "train_epochs": 5,
+      "train_loss": 0.08181173354387283,
+      "train_val_accuracy": 0.8942221999168396,
+      "train_val_loss": 1.1250172853469849
+    },
+    {
+      "_app_instance_ID": "230613_204453",
+      "_time_object_creation": "2023-06-13_20:44:57",
+      "_used_test_function": true,
+      "_used_train_function": true,
+      "accuracy_per_class": [
+        82.14693566806243,
+        99.74842767295597,
+        0.0,
+        0.0,
+        0.0
+    ],
+      "dataset_full_size": [
+        5000,
+        141
+    ],
+      "dataset_name": "ekg1",
+      "dataset_test_size": [
+        4500,
+        139,
+        1
+    ],
+      "dataset_train_size": [
+        500,
+        139,
+        1
+    ],
+      "mean_total_accuracy": 36.379072668203676,
+      "model_filename": "s_ekg2_d_ekg1_20230613_204505.h5",
+      "plots_filenames": [
+          "s_ekg1_d_ekg1__Confusion_matrix__20230613_204505.png"
+    ],
+      "solution_name": "ekg2",
+      "time_test_end": "2023-06-13_20:45:05",
+      "time_test_start": "2023-06-13_20:45:04",
+      "time_test_total": 0,
+      "time_train_end": "2023-06-13_20:45:04",
+      "time_train_start": "2023-06-13_20:44:58",
+      "time_train_total": 6,
+      "train_accuracy": 0.9819999933242798,
+      "train_epochs": 5,
+      "train_loss": 0.07241521030664444,
+      "train_val_accuracy": 0.8320000171661377,
+      "train_val_loss": 1.1117746829986572
+    },
+    {
+      "_app_instance_ID": "230613_204738",
+      "_time_object_creation": "2023-06-13_20:47:44",
+      "_used_test_function": true,
+      "_used_train_function": true,
+      "accuracy_per_class": [
+        90.59763989341454,
+        20.566037735849058,
+        0.0,
+        88.57142857142857,
+        0.0
+    ],
+      "dataset_full_size": [
+        5000,
+        141
+    ],
+      "dataset_name": "ekg1",
+      "dataset_test_size": [
+        4500,
+        139,
+        1
+    ],
+      "dataset_train_size": [
+        500,
+        139,
+        1
+    ],
+      "mean_total_accuracy": 39.947021240138426,
+      "model_filename": "s_ekg2_d_ekg1_20230613_204751.h5",
+      "plots_filenames": [
+          "s_ekg1_d_ekg1__Confusion_matrix__20230613_204751.png"
+    ],
+      "solution_name": "ekg2",
+      "time_test_end": "2023-06-13_20:47:50",
+      "time_test_start": "2023-06-13_20:47:50",
+      "time_test_total": 0,
+      "time_train_end": "2023-06-13_20:47:50",
+      "time_train_start": "2023-06-13_20:47:44",
+      "time_train_total": 5,
+      "train_accuracy": 0.9760000109672546,
+      "train_epochs": 5,
+      "train_loss": 0.07289472967386246,
+      "train_val_accuracy": 0.6359999775886536,
+      "train_val_loss": 1.2049227952957153
+    },
+    {
+      "_app_instance_ID": "230613_204814",
+      "_time_object_creation": "2023-06-13_20:48:20",
+      "_used_test_function": true,
+      "_used_train_function": true,
+      "accuracy_per_class": [
+        0.0,
+        99.937106918239,
+        0.0,
+        0.0,
+        0.0
+    ],
+      "dataset_full_size": [
+        5000,
+        141
+    ],
+      "dataset_name": "ekg1",
+      "dataset_test_size": [
+        4500,
+        139,
+        1
+    ],
+      "dataset_train_size": [
+        500,
+        139,
+        1
+    ],
+      "mean_total_accuracy": 19.9874213836478,
+      "model_filename": "s_ekg2_d_ekg1_20230613_204828.h5",
+      "plots_filenames": [
+          "s_ekg1_d_ekg1__Confusion_matrix__20230613_204828.png"
+    ],
+      "solution_name": "ekg2",
+      "time_test_end": "2023-06-13_20:48:27",
+      "time_test_start": "2023-06-13_20:48:26",
+      "time_test_total": 0,
+      "time_train_end": "2023-06-13_20:48:26",
+      "time_train_start": "2023-06-13_20:48:20",
+      "time_train_total": 6,
+      "train_accuracy": 0.9760000109672546,
+      "train_epochs": 5,
+      "train_loss": 0.08089742809534073,
+      "train_val_accuracy": 0.3531111180782318,
+      "train_val_loss": 1.4231797456741333
+    },
+    {
+      "_app_instance_ID": "230613_210134",
+      "_time_object_creation": "2023-06-13_21:01:40",
+      "_used_test_function": true,
+      "_used_train_function": true,
+      "accuracy_per_class": [
+        94.63266082984393,
+        88.36477987421384,
+        4.651162790697675,
+        53.714285714285715,
+        0.0
+    ],
+      "dataset_full_size": [
+        5000,
+        141
+    ],
+      "dataset_name": "ekg1",
+      "dataset_test_size": [
+        4500,
+        139,
+        1
+    ],
+      "dataset_train_size": [
+        500,
+        139,
+        1
+    ],
+      "mean_total_accuracy": 48.27257784180823,
+      "model_filename": "s_ekg2_d_ekg1_20230613_210148.h5",
+      "plots_filenames": [
+          "s_ekg1_d_ekg1__Confusion_matrix__20230613_210148.png"
+    ],
+      "solution_name": "ekg2",
+      "time_test_end": "2023-06-13_21:01:47",
+      "time_test_start": "2023-06-13_21:01:46",
+      "time_test_total": 0,
+      "time_train_end": "2023-06-13_21:01:46",
+      "time_train_start": "2023-06-13_21:01:40",
+      "time_train_total": 6,
+      "train_accuracy": 0.9760000109672546,
+      "train_epochs": 5,
+      "train_loss": 0.08860170096158981,
+      "train_val_accuracy": 0.8864444494247437,
+      "train_val_loss": 1.1887565851211548
+    },
+    {
+      "_app_instance_ID": "230613_235157",
+      "_time_object_creation": "2023-06-13_23:52:06",
+      "_used_test_function": true,
+      "_used_train_function": true,
+      "accuracy_per_class": [
+        36.42938713361249,
+        94.96855345911949,
+        51.16279069767442,
+        0.0,
+        0.0
+    ],
+      "dataset_full_size": [
+        5000,
+        141
+    ],
+      "dataset_name": "ekg1",
+      "dataset_test_size": [
+        4500,
+        139,
+        1
+    ],
+      "dataset_train_size": [
+        500,
+        139,
+        1
+    ],
+      "mean_total_accuracy": 36.51214625808127,
+      "model_filename": "s_ekg2_d_ekg1_20230613_235215.h5",
+      "plots_filenames": [
+          "s_ekg1_d_ekg1__Confusion_matrix__20230613_235215.png"
+    ],
+      "solution_name": "ekg2",
+      "time_test_end": "2023-06-13_23:52:14",
+      "time_test_start": "2023-06-13_23:52:13",
+      "time_test_total": 0,
+      "time_train_end": "2023-06-13_23:52:13",
+      "time_train_start": "2023-06-13_23:52:06",
+      "time_train_total": 7,
+      "train_accuracy": 0.9800000190734863,
+      "train_epochs": 5,
+      "train_loss": 0.07013797014951706,
+      "train_val_accuracy": 0.5580000281333923,
+      "train_val_loss": 1.3130695819854736
     }
   ]
 }

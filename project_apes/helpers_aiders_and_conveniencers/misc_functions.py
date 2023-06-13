@@ -242,23 +242,22 @@ def asses_whether_to_save_model_as_best(
     mean_total_accuracy,
 ):
     import json
-
-    # from jsonpath_ng import jsonpath, parse
-    from jsonpath_rw import jsonpath, parse
+    from jsonpath_ng.ext import parse
 
     file_to_load = f"{app_instance_metadata.shared_definitions.project_solution_runs_path}/s_{solution_name}.json"
     file = open(file_to_load)
     shared_data = json.load(file)
     file.close()
 
+    print(model_filename)
     jsonpath_expression = parse(
-        f'$.runs[?(@.model_filename="{model_filename}")]._app_instance_ID'
+        f"$.runs[?(@.model_filename== '{model_filename}')]._app_instance_ID"
     )
-    # jsonpath_expression = parse(f"$.runs[*]._app_instance_ID")
 
-    match = jsonpath_expression.find(shared_data)
-
-    info_message = f"Found data: {match}"
+    info_message = f"jsonpath: {jsonpath_expression}"
     Logger.info("misc_functions.asses_whether_to_save_model_as_best", info_message)
+
+    for match in jsonpath_expression.find(shared_data):
+        print(match.value)
 
     pass
