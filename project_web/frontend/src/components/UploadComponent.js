@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { Fragment, useEffect, useState } from "react";
 
 import { Divv, TextFieldFlex, Label } from "./StyledComponents";
 import WebSocketComponent from "./WebSocketComponent";
@@ -70,8 +70,11 @@ export default function UploadComponent() {
   const [selectedDataset, setSelectedDataset] = useState("");
   const [selectedMethods, setSelectedMethods] = useState([]);
 
+  const [method1Selected, setMethod1Selected] = useState(false);
+  const [method2Selected, setMethod2Selected] = useState(false);
+  const [method3Selected, setMethod3Selected] = useState(false);
+
   const [selectedFiles, setSelectedFiles] = useState([]);
-  const [archiveFound, setArchiveFound] = useState(false);
 
   const [labeledRadioValue, setLabeledRadioValue] = useState("yes");
 
@@ -109,6 +112,8 @@ export default function UploadComponent() {
   const [uploadRequestStarted, setUploadRequestStarted] = useState(false);
   const [uploadRequestCompleted, setUploadRequestCompleted] = useState(false);
 
+  const [modelOrigin, setModelOrigin] = useState("use_existing_model");
+
   // hovers
   const [existingDatasetButtonHover, setExistingDatasetButtonHover] =
     useState(false);
@@ -130,17 +135,10 @@ export default function UploadComponent() {
   const [dialogConfirmButtonHover, setDialogConfirmButtonHover] =
     useState(false);
 
-  const [method1Hover, setMethod1Hover] = useState(false);
-  const [method2Hover, setMethod2Hover] = useState(false);
-  const [method3Hover, setMethod3Hover] = useState(false);
-
   const [supervisedCheckboxHover, setSupervisedCheckboxHover] = useState(false);
 
   const [edaConfirmButtonHover, setEdaConfirmButtonHover] = useState(false);
   const [showEdaButtonHover, setShowEdaButtonHover] = useState(false);
-
-  const [smallerFontButtonHover, setSmallerFontButtonHover] = useState(false);
-  const [largetFontButtonHover, setLargerFontButtonHover] = useState(false);
 
   // errors
   const [fileSelectionError, setFileSelectionError] = useState(false);
@@ -263,8 +261,6 @@ export default function UploadComponent() {
       return;
     }
 
-    setArchiveFound(archiveFound);
-
     let localStringOfFilesUploaded = "";
 
     [...event.target.files].forEach((file) => {
@@ -275,7 +271,7 @@ export default function UploadComponent() {
     localStringOfFilesUploaded = localStringOfFilesUploaded.slice(0, -2);
     setStringOfFilesUploaded(localStringOfFilesUploaded);
 
-    // eda-request
+    // eda-request-for-new-files
     await loadingResultsScreen("loading eda");
     setShowEda(true);
 
@@ -294,6 +290,8 @@ export default function UploadComponent() {
 
     const textResponse = await response.text();
     setResponseData(textResponse);
+
+    console.log("error", response.status === 400);
 
     setEdaRequestCompleted(true);
 
@@ -482,7 +480,70 @@ export default function UploadComponent() {
       tempSelectedMethods.splice(tempSelectedMethods.indexOf(methodNumber), 1);
     } else tempSelectedMethods.push(methodNumber);
 
-    setSelectedMethods(tempSelectedMethods.sort());
+    return tempSelectedMethods.sort();
+  }
+
+  // -------------------------------------------------------------------------
+  async function onSelectDataset(value) {
+    setShowEdaButton(false);
+
+    setSelectedDataset(value);
+    setSelectedMethods([]);
+
+    setSelectedFiles([]);
+
+    setMethod1Selected(false);
+    setMethod2Selected(false);
+    setMethod3Selected(false);
+
+    setBackendConsole([]);
+    setBackendMLPlots([]);
+    setBackendCptions([]);
+    setBackendResults("");
+    setEda([]);
+
+    let localSelectedMethod = value
+      .replace(" ", "")
+      .replace("#", "")
+      .toLowerCase();
+
+    console.log("selected methods is", localSelectedMethod);
+
+    // eda-request-for-existing-datasets
+    await loadingResultsScreen("loading eda");
+    setShowEda(true);
+
+    const formData = new FormData();
+    formData.append("dataset_category", localSelectedMethod);
+    formData.append("solution_category", localSelectedMethod);
+
+    setEdaRequestStarted(true);
+
+    const response = await fetch(BASE_URL + "perform_eda", {
+      method: "POST",
+      body: formData,
+    });
+
+    const textResponse = await response.text();
+    setResponseData(textResponse);
+
+    console.log("error", response.status === 400);
+
+    setEdaRequestCompleted(true);
+
+    const data = JSON.parse(textResponse);
+
+    setBackendResults(data.results);
+    setBEDatasetPath(data.path);
+
+    let edaData = [];
+    data.eda.forEach((fileInEda) => {
+      edaData.push(fileInEda);
+    });
+
+    setFileEdaShow(Array.from({ length: data.eda.length }, () => false));
+    setFileEdaShowHover(Array.from({ length: data.eda.length }, () => false));
+    setEda(data.eda);
   }
 
   // -------------------------------------------------------------------------
@@ -490,27 +551,38 @@ export default function UploadComponent() {
     setDatasetError(false);
     setDatasetErrorMessage("");
 
+    let localSelectedMethods = [];
+
+    if (method1Selected) localSelectedMethods = handleEKGMethodsCheckboxes(1);
+    if (method2Selected) localSelectedMethods = handleEKGMethodsCheckboxes(2);
+    if (method3Selected) localSelectedMethods = handleEKGMethodsCheckboxes(3);
+
     if (selectedDataset === "") {
       setDatasetError(true);
       setDatasetErrorMessage("you need to select a data-set first...");
       return;
     }
 
-    if (selectedDataset.includes("EKG") && selectedMethods.length === 0) {
+    if (
+      selectedDataset.includes("EKG") &&
+      (method1Selected || method2Selected || method3Selected) === 0
+    ) {
       setDatasetError(true);
       setDatasetErrorMessage("you need to select a method for ekg first");
       return;
     }
 
-    if (!selectedDataset.includes("EKG")) handleEKGMethodsCheckboxes(1);
+    if (!selectedDataset.includes("EKG"))
+      localSelectedMethods = handleEKGMethodsCheckboxes(1);
 
-    if (selectedMethods.length === 0) handleEKGMethodsCheckboxes(1);
+    if (selectedMethods.length === 0)
+      localSelectedMethods = handleEKGMethodsCheckboxes(1);
 
     let dialogData = {
       dataset: selectedDataset,
-      methods: selectedMethods,
+      methods: localSelectedMethods,
       solution_type:
-        selectedMethods.length > 1 ? "compare_solutions" : "retrieve_data",
+        localSelectedMethods.length > 1 ? "compare_solutions" : "retrieve_data",
     };
 
     setDialogText(JSON.stringify(dialogData, null, "\t"));
@@ -695,7 +767,7 @@ export default function UploadComponent() {
               </Tooltip>
             </Divv>
 
-            {true && (
+            {false && (
               <Button
                 onClick={() => {
                   setShowResults(true);
@@ -752,18 +824,23 @@ export default function UploadComponent() {
                 <InputLabel id="data-type-select">data type</InputLabel>
                 <Select
                   label="data-type-select"
-                  onChange={(event) => {
-                    // console.log("now selected", event.target.value);
-                    setSelectedDataset(event.target.value);
-                    setSelectedMethods([]);
-                  }}
+                  onChange={(event) => onSelectDataset(event.target.value)}
                 >
-                  <MenuItem key="0" value="" disabled>
+                  <MenuItem
+                    key="0"
+                    value=""
+                    disabled
+                    style={{ justifyContent: "center" }}
+                  >
                     choose a dataset
                   </MenuItem>
                   {existingDatasets.map((item) => {
                     return (
-                      <MenuItem key={item.id} value={item.dataset}>
+                      <MenuItem
+                        key={item.id}
+                        value={item.dataset}
+                        style={{ justifyContent: "center" }}
+                      >
                         {item.dataset}
                       </MenuItem>
                     );
@@ -789,21 +866,16 @@ export default function UploadComponent() {
                       <img src={lstmSVG} alt="m1" />
                     </>
                   }
-                  onMouseEnter={() => setMethod1Hover(true)}
-                  onMouseLeave={() => setMethod1Hover(false)}
                   placement="bottom"
                 >
                   <FormControlLabel
+                    style={{ margin: "25px", width: "10%" }}
                     control={
                       <Checkbox
-                        checked={selectedMethods.includes(1)}
+                        checked={method1Selected}
                         color="default"
-                        style={{
-                          backgroundColor: method1Hover ? "lightgray" : "",
-                          transition: "background 0.4s linear",
-                        }}
                         onChange={() => {
-                          handleEKGMethodsCheckboxes(1);
+                          setMethod1Selected(!method1Selected);
                         }}
                       />
                     }
@@ -824,20 +896,15 @@ export default function UploadComponent() {
                     </>
                   }
                   placement="bottom"
-                  onMouseEnter={() => setMethod2Hover(true)}
-                  onMouseLeave={() => setMethod2Hover(false)}
                 >
                   <FormControlLabel
+                    style={{ margin: "25px", width: "10%" }}
                     control={
                       <Checkbox
-                        checked={selectedMethods.includes(2)}
+                        checked={method2Selected}
                         color="default"
-                        style={{
-                          backgroundColor: method2Hover ? "lightgray" : "",
-                          transition: "background 0.4s linear",
-                        }}
                         onChange={() => {
-                          handleEKGMethodsCheckboxes(2);
+                          setMethod2Selected(!method2Selected);
                         }}
                       />
                     }
@@ -850,20 +917,15 @@ export default function UploadComponent() {
                     <Typography fontSize={14}>###PLACEHOLDER3###</Typography>
                   }
                   placement="bottom"
-                  onMouseEnter={() => setMethod3Hover(true)}
-                  onMouseLeave={() => setMethod3Hover(false)}
                 >
                   <FormControlLabel
+                    style={{ margin: "25px", width: "10%" }}
                     control={
                       <Checkbox
-                        checked={selectedMethods.includes(3)}
+                        checked={method3Selected}
                         color="default"
-                        style={{
-                          backgroundColor: method3Hover ? "lightgray" : "",
-                          transition: "background 0.4s linear",
-                        }}
                         onChange={() => {
-                          handleEKGMethodsCheckboxes(3);
+                          setMethod3Selected(!method3Selected);
                         }}
                       />
                     }
@@ -874,6 +936,28 @@ export default function UploadComponent() {
             )}
 
             <Divv top="0px">
+              {showEdaButton && (
+                <Button
+                  style={{
+                    background:
+                      showEdaButtonHover === false ? "black" : "orange",
+                    color: showEdaButtonHover === false ? "white" : "black",
+                    fontWeight: "bold",
+                    marginRight: "15px",
+                  }}
+                  variant="contained"
+                  color="primary"
+                  size="large"
+                  onClick={() => {
+                    setShowEdaButtonHover(false);
+                    setShowEda(true);
+                  }}
+                  onMouseEnter={() => setShowEdaButtonHover(true)}
+                  onMouseLeave={() => setShowEdaButtonHover(false)}
+                >
+                  show eda again
+                </Button>
+              )}
               <Button
                 style={{
                   background:
@@ -881,6 +965,7 @@ export default function UploadComponent() {
                   color:
                     existingDatasetButtonHover === false ? "white" : "black",
                   fontWeight: "bold",
+                  marginLeft: "15px",
                 }}
                 variant="contained"
                 color="primary"
@@ -889,7 +974,7 @@ export default function UploadComponent() {
                 onMouseEnter={() => setExistingDatasetButtonHover(true)}
                 onMouseLeave={() => setExistingDatasetButtonHover(false)}
               >
-                Use this dataset
+                use this dataset
               </Button>
             </Divv>
           </form>
@@ -984,224 +1069,6 @@ export default function UploadComponent() {
                   {fileSelectionErrorMessage}&nbsp;&nbsp;
                 </Divv>
               </div>
-            )}
-
-            {showEda && (
-              <Dialog open={showEda} maxWidth="xl" fullWidth={true}>
-                <DialogContent
-                  style={{ height: "100vh", overflow: "-moz-scrollbars-none" }}
-                >
-                  <div
-                    style={{
-                      margin: "5px",
-                      width: "auto",
-                    }}
-                  >
-                    <Terminal id="eda-terminal" name="python outputs">
-                      {backendConsole.map((line) => {
-                        if (line === "") return null;
-
-                        return (
-                          <span style={{ fontSize: terminalFontSize }}>
-                            {">>>"} {line}
-                            <br></br>
-                          </span>
-                        );
-                      })}
-                    </Terminal>
-                  </div>
-
-                  {/* <Divv>{backendResults}</Divv> */}
-
-                  {eda.map((fileData, index) => {
-                    return (
-                      <Card
-                        style={{
-                          margin: "20px",
-                          backgroundColor: fileEdaShow[index]
-                            ? "#eeeee4"
-                            : "#eeeeee",
-
-                          cursor: "pointer",
-                        }}
-                        onMouseEnter={() => {
-                          setFileEdaShowHover((oldFileEdaShow) => {
-                            const newFileEdaShow = Array.from(
-                              { length: oldFileEdaShow.length },
-                              () => false
-                            );
-                            newFileEdaShow[index] = true;
-                            return newFileEdaShow;
-                          });
-                        }}
-                        onMouseLeave={() => {
-                          setFileEdaShowHover((oldFileEdaShow) => {
-                            const newFileEdaShow = Array.from(
-                              { length: oldFileEdaShow.length },
-                              () => false
-                            );
-                            newFileEdaShow[index] = false;
-                            return newFileEdaShow;
-                          });
-                        }}
-                      >
-                        <CardHeader
-                          title={
-                            "file #" +
-                            fileData.index +
-                            " --- " +
-                            fileData.filename
-                          }
-                          onClick={() => {
-                            setFileEdaShow((oldFileEdaShow) => {
-                              const newFileEdaShow = Array.from(
-                                { length: oldFileEdaShow.length },
-                                () => false
-                              );
-                              newFileEdaShow[index] = !oldFileEdaShow[index];
-                              return newFileEdaShow;
-                            });
-                          }}
-                        />
-                        <Collapse in={fileEdaShow[index]}>
-                          <CardContent>
-                            <Typography paragrah>
-                              <span style={{ fontWeight: "bold" }}>shape</span>{" "}
-                              --- {fileData.rows} rows, {fileData.columns}{" "}
-                              columns
-                            </Typography>
-                            <br></br>
-                            <Typography paragrah>
-                              <span style={{ fontWeight: "bold" }}>
-                                columns with missing data
-                              </span>{" "}
-                              --- {fileData.columns_with_missing_data}
-                            </Typography>
-                            <br></br>
-                            <Typography paragrah>
-                              <span style={{ fontWeight: "bold" }}>info</span>{" "}
-                              --- {fileData.info}
-                            </Typography>
-                            <br></br>
-                            <Typography paragrah>
-                              <span style={{ fontWeight: "bold" }}>
-                                head of file
-                              </span>{" "}
-                              --- <br></br>
-                              {fileData.head.map((line, index) => {
-                                if (
-                                  index === 0 ||
-                                  index === fileData.head.length - 1
-                                )
-                                  return null;
-                                return (
-                                  <Typography paragrah>
-                                    {line.split("").map((character) => {
-                                      if (character === " ") return nbsps;
-                                      else return character;
-                                    })}
-                                  </Typography>
-                                );
-                              })}
-                            </Typography>
-                            <br></br>
-                            <Typography paragrah>
-                              <span style={{ fontWeight: "bold" }}>
-                                describe
-                              </span>{" "}
-                              --- <br></br>
-                              {fileData.describe.map((line, index) => {
-                                if (
-                                  index === 0 ||
-                                  index === fileData.describe.length - 1
-                                )
-                                  return null;
-                                return (
-                                  <Typography paragrah>
-                                    {line.split("").map((character) => {
-                                      if (character === " ") return nbsps;
-                                      else return character;
-                                    })}
-                                  </Typography>
-                                );
-                              })}
-                            </Typography>
-
-                            <Divv left="0px">
-                              {fileData.plots.map((plot, iindex) => {
-                                return (
-                                  <Tooltip
-                                    title={
-                                      <Typography fontSize={14}>
-                                        {plot.caption}
-                                      </Typography>
-                                    }
-                                  >
-                                    <img
-                                      src={plot.path}
-                                      onClick={() => {
-                                        setImageViewerOpen(true);
-                                        setCurrentImage(
-                                          getImageIndexFromPath(plot.path)
-                                        );
-                                      }}
-                                      width="150"
-                                      key={index}
-                                      style={{
-                                        margin: "10px",
-                                        cursor: "pointer",
-                                      }}
-                                      alt=""
-                                    />
-                                  </Tooltip>
-                                );
-                              })}
-                            </Divv>
-                          </CardContent>
-                        </Collapse>
-                      </Card>
-                    );
-                  })}
-
-                  {imageViewerOpen && (
-                    <ImageViewer
-                      backgroundStyle={{
-                        backgroundColor: "rgba(0,0,0,0.75)",
-                      }}
-                      src={eda
-                        .flatMap((item) => item.plots)
-                        .map((plot) => plot.path)}
-                      currentIndex={currentImage}
-                      disableScroll={false}
-                      closeOnClickOutside={true}
-                      onClose={() => setImageViewerOpen(false)}
-                    />
-                  )}
-                </DialogContent>
-                <DialogActions>
-                  <Button
-                    style={{
-                      background:
-                        edaConfirmButtonHover === false ? "black" : "orange",
-                      color:
-                        edaConfirmButtonHover === false ? "white" : "black",
-                      fontWeight: "bold",
-                    }}
-                    variant="contained"
-                    color="primary"
-                    size="large"
-                    onMouseEnter={() => setEdaConfirmButtonHover(true)}
-                    onMouseLeave={() => setEdaConfirmButtonHover(false)}
-                    onClick={() => {
-                      setEdaConfirmButtonHover(false);
-                      setShowEdaButton(true);
-                      setShowEda(false);
-                    }}
-                  >
-                    got it
-                  </Button>
-                </DialogActions>
-              </Dialog>
             )}
 
             <TextFieldFlex style={{ marginTop: "10px" }}>
@@ -1516,6 +1383,119 @@ export default function UploadComponent() {
               />
             </TextFieldFlex>
 
+            <div style={{ marginBottom: "20px" }}>
+              <Tooltip
+                title={
+                  <>
+                    <Typography
+                      fontSize={14}
+                      style={{ marginBottom: "5px", padding: "5px" }}
+                    >
+                      lstm auto-encoder (pytorch)
+                    </Typography>
+                    <img src={lstmSVG} alt="m1" />
+                  </>
+                }
+                placement="bottom"
+              >
+                <FormControlLabel
+                  style={{ margin: "25px", width: "10%" }}
+                  control={
+                    <Checkbox
+                      checked={method1Selected}
+                      color="default"
+                      onChange={() => {
+                        setMethod1Selected(!method1Selected);
+                      }}
+                    />
+                  }
+                  label="method #1"
+                />
+              </Tooltip>
+
+              <Tooltip
+                title={
+                  <>
+                    <Typography
+                      fontSize={14}
+                      style={{ marginBottom: "5px", padding: "5px" }}
+                    >
+                      convolutional nn (tensorflow/keras)
+                    </Typography>
+                    <img src={cnnSVG} alt="m2" />
+                  </>
+                }
+                placement="bottom"
+              >
+                <FormControlLabel
+                  style={{ margin: "25px", width: "10%" }}
+                  control={
+                    <Checkbox
+                      checked={method2Selected}
+                      color="default"
+                      onChange={() => {
+                        setMethod2Selected(!method2Selected);
+                      }}
+                    />
+                  }
+                  label="method #2"
+                />
+              </Tooltip>
+
+              <Tooltip
+                title={
+                  <Typography fontSize={14}>###PLACEHOLDER3###</Typography>
+                }
+                placement="bottom"
+              >
+                <FormControlLabel
+                  style={{ margin: "25px", width: "10%" }}
+                  control={
+                    <Checkbox
+                      checked={method3Selected}
+                      color="default"
+                      onChange={() => {
+                        setMethod3Selected(!method3Selected);
+                      }}
+                    />
+                  }
+                  label="method #3"
+                />
+              </Tooltip>
+            </div>
+
+            <FormControl
+              style={{
+                margin: "25px",
+                marginTop: "0px",
+                display: "flex",
+                alignItems: "center",
+              }}
+            >
+              <RadioGroup
+                row
+                defaultValue="use_existing_model"
+                value={modelOrigin}
+                onChange={(event) => setModelOrigin(event.target.value)}
+              >
+                <FormControlLabel
+                  value="use_existing_model"
+                  control={<Radio />}
+                  label="use an existing model if found"
+                />
+                <Tooltip
+                  placement="right"
+                  title={<Typography fontSize={14}>please don't</Typography>}
+                >
+                  <FormControlLabel
+                    value="train_new_model"
+                    control={<Radio />}
+                    label="train new model"
+                  />
+                </Tooltip>
+              </RadioGroup>
+            </FormControl>
+
             <Tooltip
               title={
                 edaRequestStarted === true &&
@@ -1698,6 +1678,210 @@ export default function UploadComponent() {
           <Divv color="white">{loadingText}</Divv>
         </Backdrop>
       </div>
+
+      {showEda && (
+        <Dialog open={showEda} maxWidth="xl" fullWidth={true}>
+          <DialogContent
+            style={{ height: "100vh", overflow: "-moz-scrollbars-none" }}
+          >
+            <div
+              style={{
+                margin: "5px",
+                width: "auto",
+              }}
+            >
+              <Terminal id="eda-terminal" name="python outputs">
+                {backendConsole.map((line) => {
+                  if (line === "") return null;
+
+                  return (
+                    <span style={{ fontSize: terminalFontSize }}>
+                      {">>>"} {line}
+                      <br></br>
+                    </span>
+                  );
+                })}
+              </Terminal>
+            </div>
+
+            {/* <Divv>{backendResults}</Divv> */}
+
+            {eda.map((fileData, index) => {
+              return (
+                <Card
+                  style={{
+                    margin: "20px",
+                    backgroundColor: fileEdaShow[index] ? "#eeeee4" : "#eeeeee",
+
+                    cursor: "pointer",
+                  }}
+                  onMouseEnter={() => {
+                    setFileEdaShowHover((oldFileEdaShow) => {
+                      const newFileEdaShow = Array.from(
+                        { length: oldFileEdaShow.length },
+                        () => false
+                      );
+                      newFileEdaShow[index] = true;
+                      return newFileEdaShow;
+                    });
+                  }}
+                  onMouseLeave={() => {
+                    setFileEdaShowHover((oldFileEdaShow) => {
+                      const newFileEdaShow = Array.from(
+                        { length: oldFileEdaShow.length },
+                        () => false
+                      );
+                      newFileEdaShow[index] = false;
+                      return newFileEdaShow;
+                    });
+                  }}
+                >
+                  <CardHeader
+                    title={
+                      "file #" + fileData.index + " --- " + fileData.filename
+                    }
+                    onClick={() => {
+                      setFileEdaShow((oldFileEdaShow) => {
+                        const newFileEdaShow = Array.from(
+                          { length: oldFileEdaShow.length },
+                          () => false
+                        );
+                        newFileEdaShow[index] = !oldFileEdaShow[index];
+                        return newFileEdaShow;
+                      });
+                    }}
+                  />
+                  <Collapse in={fileEdaShow[index]}>
+                    <CardContent>
+                      <Typography paragrah>
+                        <span style={{ fontWeight: "bold" }}>shape</span> ---{" "}
+                        {fileData.rows} rows, {fileData.columns} columns
+                      </Typography>
+                      <br></br>
+                      <Typography paragrah>
+                        <span style={{ fontWeight: "bold" }}>
+                          columns with missing data
+                        </span>{" "}
+                        --- {fileData.columns_with_missing_data}
+                      </Typography>
+                      <br></br>
+                      {/* <Typography paragrah>
+                              <span style={{ fontWeight: "bold" }}>info</span>{" "}
+                              --- {fileData.info}
+                            </Typography>
+                            <br></br> */}
+                      <Typography paragrah>
+                        <span style={{ fontWeight: "bold" }}>head of file</span>{" "}
+                        --- <br></br>
+                        {fileData.head.map((line, index) => {
+                          if (index === 0 || index === fileData.head.length - 1)
+                            return null;
+                          return (
+                            <Typography paragrah>
+                              {line.split("").map((character) => {
+                                if (character === " ") return nbsps;
+                                else return character;
+                              })}
+                            </Typography>
+                          );
+                        })}
+                      </Typography>
+                      {/* <br></br>
+                            <Typography paragrah>
+                              <span style={{ fontWeight: "bold" }}>
+                                describe
+                              </span>{" "}
+                              --- <br></br>
+                              {fileData.describe.map((line, index) => {
+                                if (
+                                  index === 0 ||
+                                  index === fileData.describe.length - 1
+                                )
+                                  return null;
+                                return (
+                                  <Typography paragrah>
+                                    {line.split("").map((character) => {
+                                      if (character === " ") return nbsps;
+                                      else return character;
+                                    })}
+                                  </Typography>
+                                );
+                              })}
+                            </Typography> */}
+
+                      <Divv left="0px">
+                        {fileData.plots.map((plot, iindex) => {
+                          return (
+                            <Tooltip
+                              title={
+                                <Typography fontSize={14}>
+                                  {plot.caption}
+                                </Typography>
+                              }
+                            >
+                              <img
+                                src={plot.path}
+                                onClick={() => {
+                                  setImageViewerOpen(true);
+                                  setCurrentImage(
+                                    getImageIndexFromPath(plot.path)
+                                  );
+                                }}
+                                width="150"
+                                key={index}
+                                style={{
+                                  margin: "10px",
+                                  cursor: "pointer",
+                                }}
+                                alt=""
+                              />
+                            </Tooltip>
+                          );
+                        })}
+                      </Divv>
+                    </CardContent>
+                  </Collapse>
+                </Card>
+              );
+            })}
+
+            {imageViewerOpen && (
+              <ImageViewer
+                backgroundStyle={{
+                  backgroundColor: "rgba(0,0,0,0.75)",
+                }}
+                src={eda.flatMap((item) => item.plots).map((plot) => plot.path)}
+                currentIndex={currentImage}
+                disableScroll={false}
+                closeOnClickOutside={true}
+                onClose={() => setImageViewerOpen(false)}
+              />
+            )}
+          </DialogContent>
+          <DialogActions>
+            <Button
+              style={{
+                background:
+                  edaConfirmButtonHover === false ? "black" : "orange",
+                color: edaConfirmButtonHover === false ? "white" : "black",
+                fontWeight: "bold",
+              }}
+              variant="contained"
+              color="primary"
+              size="large"
+              onMouseEnter={() => setEdaConfirmButtonHover(true)}
+              onMouseLeave={() => setEdaConfirmButtonHover(false)}
+              onClick={() => {
+                setEdaConfirmButtonHover(false);
+                setShowEdaButton(true);
+                setShowEda(false);
+              }}
+            >
+              got it
+            </Button>
+          </DialogActions>
+        </Dialog>
+      )}
 
       <WebSocketComponent
         onOutputUpdated={(data) => {

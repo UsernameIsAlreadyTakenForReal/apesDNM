@@ -150,9 +150,18 @@ def perform_eda():
     except Exception as e:
         logger.info(
             "upload_file",
-            "there was an error when running the function, please check input and try again\n\n\n"
+            "there was an error when running the function, please check input and try again\n"
             + "error was: "
             + str(e),
+        )
+
+        return (
+            jsonify(
+                {
+                    "results": "the program ran into an eror. please check the console and try again."
+                },
+            ),
+            400,
         )
 
 
@@ -263,9 +272,18 @@ def upload_file():
     except Exception as e:
         logger.info(
             "upload_file",
-            "there was an error when running the function, please check input and try again\n\n\n"
+            "there was an error when running the function, please check input and try again\n"
             + "error was: "
             + str(e),
+        )
+
+        return (
+            jsonify(
+                {
+                    "results": "the program ran into an eror. please check the console and try again."
+                }
+            ),
+            400,
         )
 
 
