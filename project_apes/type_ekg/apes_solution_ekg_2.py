@@ -537,7 +537,7 @@ class Solution_ekg_2:
 
         ## Save plot section -- begin
         plot_save_filename, plot_save_location = get_plot_save_filename(
-            plot_name.replace(" ", "_"), "ekg1", self.app_instance_metadata
+            plot_name.replace(" ", "_"), "ekg2", self.app_instance_metadata
         )
         plt.savefig(
             plot_save_location,
