@@ -233,7 +233,7 @@ def get_accuracies_from_confusion_matrix(
     return accuracy_per_class, mean_total_accuracy
 
 
-def asses_whether_to_save_model_as_best(
+def assess_whether_to_save_model_as_best(
     Logger,
     app_instance_metadata,
     solution_name,
@@ -244,20 +244,155 @@ def asses_whether_to_save_model_as_best(
     import json
     from jsonpath_ng.ext import parse
 
+    ### Section 1 -- get runs data and instances where the best model appears
+    # first, the current model
     file_to_load = f"{app_instance_metadata.shared_definitions.project_solution_runs_path}/s_{solution_name}.json"
     file = open(file_to_load)
     shared_data = json.load(file)
     file.close()
 
-    print(model_filename)
-    jsonpath_expression = parse(
-        f"$.runs[?(@.model_filename== '{model_filename}')]._app_instance_ID"
+    list_of_current_model_appInstance_matches = []
+    jsonpath_expression_get_appInstances_of_current_model = parse(
+        f"$.runs[?(@.model_filename=='{model_filename}')]._app_instance_ID"
     )
 
-    info_message = f"jsonpath: {jsonpath_expression}"
+    for match in jsonpath_expression_get_appInstances_of_current_model.find(
+        shared_data
+    ):
+        list_of_current_model_appInstance_matches.append(match.value)
+
+    info_message = f"list_of_current_model_appInstance_matches: {list_of_current_model_appInstance_matches}"
+    Logger.info("misc_functions.asses_whether_to_save_model_as_best", info_message)
+    list_of_current_model_meanTotalAccuracy = []
+    list_of_current_model_accuracyPerClass = []
+
+    for occurence in list_of_current_model_appInstance_matches:
+        jsonpath_expression_get_meanTotalAccuracy_of_current_model = parse(
+            f"$.runs[?(@._app_instance_ID=='{occurence}')].mean_total_accuracy"
+        )
+        for match in jsonpath_expression_get_meanTotalAccuracy_of_current_model.find(
+            shared_data
+        ):
+            list_of_current_model_meanTotalAccuracy.append(match.value)
+
+        jsonpath_expression_get_accuracyPerClass_of_current_model = parse(
+            f"$.runs[?(@._app_instance_ID=='{occurence}')].accuracy_per_class"
+        )
+        for match in jsonpath_expression_get_accuracyPerClass_of_current_model.find(
+            shared_data
+        ):
+            list_of_current_model_accuracyPerClass.append(match.value)
+
+    info_message = f"list_of_current_model_meanTotalAccuracy: {list_of_current_model_meanTotalAccuracy}"
+    Logger.info("misc_functions.asses_whether_to_save_model_as_best", info_message)
+    info_message = f"list_of_current_model_accuracyPerClass: {list_of_current_model_accuracyPerClass}"
     Logger.info("misc_functions.asses_whether_to_save_model_as_best", info_message)
 
-    for match in jsonpath_expression.find(shared_data):
-        print(match.value)
+    ## then, the best model to date. Taken directly from the static_definitions json to avoid a huge match case statement
+    file_to_load = "apes_static_definitions.json"
+    file = open(file_to_load)
+    static_definitions = json.load(file)
+    file.close()
 
-    pass
+    field_search = "project_solution_ekg1_d_ekg1_best_model_filename"
+    field_search = f"project_solution_{solution_name}_d_{app_instance_metadata.dataset_metadata.dataset_name_stub}_best_model_filename"
+    model_filename = static_definitions[field_search]
+
+    list_of_best_model_appInstance_matches = []
+
+    jsonpath_expression_get_appInstances_of_best_model = parse(
+        f"$.runs[?(@.model_filename=='{model_filename}')]._app_instance_ID"
+    )
+
+    for match in jsonpath_expression_get_appInstances_of_best_model.find(shared_data):
+        list_of_best_model_appInstance_matches.append(match.value)
+
+    info_message = f"list_of_best_model_appInstance_matches: {list_of_best_model_appInstance_matches}"
+    Logger.info("misc_functions.asses_whether_to_save_model_as_best", info_message)
+    list_of_best_model_meanTotalAccuracy = []
+    list_of_best_model_accuracyPerClass = []
+
+    for occurence in list_of_best_model_appInstance_matches:
+        print(occurence)
+        jsonpath_expression_get_meanTotalAccuracy_of_best_model = parse(
+            f"$.runs[?(@._app_instance_ID=='{occurence}')].mean_total_accuracy"
+        )
+        for match in jsonpath_expression_get_meanTotalAccuracy_of_best_model.find(
+            shared_data
+        ):
+            list_of_best_model_meanTotalAccuracy.append(match.value)
+
+        jsonpath_expression_get_accuracyPerClass_of_best_model = parse(
+            f"$.runs[?(@._app_instance_ID=='{occurence}')].accuracy_per_class"
+        )
+        for match in jsonpath_expression_get_accuracyPerClass_of_best_model.find(
+            shared_data
+        ):
+            list_of_best_model_accuracyPerClass.append(match.value)
+
+    info_message = (
+        f"list_of_best_model_meanTotalAccuracy: {list_of_best_model_meanTotalAccuracy}"
+    )
+    Logger.info("misc_functions.asses_whether_to_save_model_as_best", info_message)
+    info_message = (
+        f"list_of_best_model_accuracyPerClass: {list_of_best_model_accuracyPerClass}"
+    )
+    Logger.info("misc_functions.asses_whether_to_save_model_as_best", info_message)
+
+    ### Section 2 -- compare with the current model
+    if (
+        compare_model_performance(
+            Logger,
+            solution_name,
+            list_of_best_model_meanTotalAccuracy,
+            list_of_best_model_accuracyPerClass,
+            list_of_current_model_meanTotalAccuracy,
+            list_of_current_model_accuracyPerClass,
+        )
+        == False
+    ):
+        return
+
+    ### Section 3 -- save model as best model
+    info_message = f"Saving model {model_filename} as best model"
+    Logger.info("misc_functions.asses_whether_to_save_model_as_best", info_message)
+    file_to_load = "apes_static_definitions.json"
+    file = open(file_to_load)
+    static_definitions = json.load(file)
+    file.close()
+    static_definitions[field_search] = model_filename
+    file = open(file_to_load, "w")
+    json.dump(static_definitions, file)
+
+
+def compare_model_performance(
+    Logger,
+    solution,
+    list_of_best_model_meanTotalAccuracy,
+    list_of_best_model_accuracyPerClass,
+    list_of_current_model_meanTotalAccuracy,
+    list_of_current_model_accuracyPerClass,
+):
+    for best_model_meanTotalAccuracy in list_of_best_model_meanTotalAccuracy:
+        if list_of_current_model_meanTotalAccuracy[0] < best_model_meanTotalAccuracy:
+            info_message = "mean_total_accuracy of current model is lower than a previous instance of the best model. Exiting"
+            Logger.info(
+                "misc_functions.asses_whether_to_save_model_as_best", info_message
+            )
+            return False
+
+    # this is pretty shitty and also good. It forces EVERY class to be good
+    for best_model_accuracyPerClass in list_of_best_model_accuracyPerClass:
+        for i in range(len(best_model_accuracyPerClass)):
+            if (
+                list_of_current_model_accuracyPerClass[0][i]
+                < best_model_accuracyPerClass[i]
+            ):
+                info_message = "class accuracy of current model for a certain class is lower than a previous instance of the best model. Exiting"
+                Logger.info(
+                    "misc_functions.asses_whether_to_save_model_as_best",
+                    info_message,
+                )
+                return False
+
+    return True

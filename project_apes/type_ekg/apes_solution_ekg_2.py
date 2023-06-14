@@ -52,7 +52,7 @@ from helpers_aiders_and_conveniencers.misc_functions import (
     get_plot_save_filename,
     write_to_solutions_runs_json_file,
     get_accuracies_from_confusion_matrix,
-    asses_whether_to_save_model_as_best,
+    assess_whether_to_save_model_as_best,
 )
 from helpers_aiders_and_conveniencers.solution_serializer import Solution_Serializer
 
@@ -82,17 +82,17 @@ class Solution_ekg_2:
 
         self.app_instance_metadata = app_instance_metadata
         self.project_solution_model_filename = (
-            app_instance_metadata.shared_definitions.project_solution_ekg_2_model_filename
+            app_instance_metadata.shared_definitions.project_solution_ekg2_model_filename
         )
         self.last_good_suitable_model = ""
         match self.solution_serializer.dataset_name:
             case "ekg1":
                 self.last_good_suitable_model = (
-                    app_instance_metadata.shared_definitions.project_solution_ekg_2_d_ekg_1_best_model_filename
+                    app_instance_metadata.shared_definitions.project_solution_ekg2_d_ekg1_best_model_filename
                 )
             case "ekg2":
                 self.last_good_suitable_model = (
-                    app_instance_metadata.shared_definitions.project_solution_ekg_2_d_ekg_2_best_model_filename
+                    app_instance_metadata.shared_definitions.project_solution_ekg2_d_ekg2_best_model_filename
                 )
 
         self.ACCURACY_THRESHOLD_PER_CLASS = 70
@@ -112,17 +112,18 @@ class Solution_ekg_2:
             self.Logger, "ekg2", self.solution_serializer, self.app_instance_metadata
         )
 
-        info_message = "save_run() -- asses_whether_to_save_model_as_best"
+        info_message = "save_run() -- assess_whether_to_save_model_as_best"
         self.Logger.info(self, info_message)
 
-        asses_whether_to_save_model_as_best(
-            self.Logger,
-            self.app_instance_metadata,
-            "ekg2",
-            self.MODEL_SAVE_PATH.split("/")[-1],
-            self.accuracy_per_class,
-            self.mean_total_accuracy,
-        )
+        if self.solution_serializer._used_train_function == True:
+            assess_whether_to_save_model_as_best(
+                self.Logger,
+                self.app_instance_metadata,
+                "ekg2",
+                self.MODEL_SAVE_PATH.split("/")[-1],
+                self.accuracy_per_class,
+                self.mean_total_accuracy,
+            )
 
         info_message = "save_run() -- end"
         self.Logger.info(self, info_message)

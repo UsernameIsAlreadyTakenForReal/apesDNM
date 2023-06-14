@@ -30,13 +30,13 @@ class Shared_Definitions:
     project_model_root_path = "./models"  # "./models" is relative to where temp_main_mockup.py (or apes_static_definitions??)
     project_solution_runs_path = "./runs"
 
-    project_solution_ekg_1_model_filename = "apes_solution_ekg_1_model.pth"
-    project_solution_ekg_1_d_ekg_1_best_model_filename = (
+    project_solution_ekg1_model_filename = "apes_solution_ekg_1_model.pth"
+    project_solution_ekg1_d_ekg1_best_model_filename = (
         "----s_ekg1_d_ekg2_20230606_233300.pth"
     )
 
-    project_solution_ekg_2_model_filename = "apes_solution_ekg_2_model.h5"
-    project_solution_ekg_2_model_filename_last_good_one = (
+    project_solution_ekg2_model_filename = "apes_solution_ekg_2_model.h5"
+    project_solution_ekg2_model_filename_last_good_one = (
         "----s_ekg2_d_ekg1_20230611_221423.h5"
     )
     plot_savefile_format = "png"
@@ -68,31 +68,31 @@ class Shared_Definitions:
         )
 
         ## S_EKG1
-        self.project_solution_ekg_1_class_filename = data[
-            "project_solution_ekg_1_class_filename"
+        self.project_solution_ekg1_class_filename = data[
+            "project_solution_ekg1_class_filename"
         ]
-        self.project_solution_ekg_1_model_filename = data[
-            "project_solution_ekg_1_model_filename"
+        self.project_solution_ekg1_model_filename = data[
+            "project_solution_ekg1_model_filename"
         ]
-        self.project_solution_ekg_1_d_ekg_1_best_model_filename = data[
-            "project_solution_ekg_1_d_ekg_1_best_model_filename"
+        self.project_solution_ekg1_d_ekg1_best_model_filename = data[
+            "project_solution_ekg1_d_ekg1_best_model_filename"
         ]
-        self.project_solution_ekg_1_d_ekg_2_best_model_filename = data[
-            "project_solution_ekg_1_d_ekg_2_best_model_filename"
+        self.project_solution_ekg1_d_ekg2_best_model_filename = data[
+            "project_solution_ekg1_d_ekg2_best_model_filename"
         ]
 
         ## S_EKG2
-        self.project_solution_ekg_2_class_filename = data[
-            "project_solution_ekg_2_class_filename"
+        self.project_solution_ekg2_class_filename = data[
+            "project_solution_ekg2_class_filename"
         ]
-        self.project_solution_ekg_2_model_filename = data[
-            "project_solution_ekg_2_model_filename"
+        self.project_solution_ekg2_model_filename = data[
+            "project_solution_ekg2_model_filename"
         ]
-        self.project_solution_ekg_2_d_ekg_1_best_model_filename = data[
-            "project_solution_ekg_2_d_ekg_1_best_model_filename"
+        self.project_solution_ekg2_d_ekg1_best_model_filename = data[
+            "project_solution_ekg2_d_ekg1_best_model_filename"
         ]
-        self.project_solution_ekg_2_d_ekg_2_best_model_filename = data[
-            "project_solution_ekg_2_d_ekg_2_best_model_filename"
+        self.project_solution_ekg2_d_ekg2_best_model_filename = data[
+            "project_solution_ekg2_d_ekg2_best_model_filename"
         ]
 
         ## PLOTS

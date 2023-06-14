@@ -151,17 +151,17 @@ class Solution_ekg_1:
 
         self.app_instance_metadata = app_instance_metadata
         self.project_solution_model_filename = (
-            app_instance_metadata.shared_definitions.project_solution_ekg_1_model_filename
+            app_instance_metadata.shared_definitions.project_solution_ekg1_model_filename
         )
         self.last_good_suitable_model = ""
         match self.solution_serializer.dataset_name:
             case "ekg1":
                 self.last_good_suitable_model = (
-                    app_instance_metadata.shared_definitions.project_solution_ekg_1_d_ekg_1_best_model_filename
+                    app_instance_metadata.shared_definitions.project_solution_ekg1_d_ekg1_best_model_filename
                 )
             case "ekg2":
                 self.last_good_suitable_model = (
-                    app_instance_metadata.shared_definitions.project_solution_ekg_1_d_ekg_2_best_model_filename
+                    app_instance_metadata.shared_definitions.project_solution_ekg1_d_ekg2_best_model_filename
                 )
 
     ## -------------- To JSON --------------
