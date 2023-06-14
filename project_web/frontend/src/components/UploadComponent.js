@@ -112,6 +112,8 @@ export default function UploadComponent() {
   const [uploadRequestStarted, setUploadRequestStarted] = useState(false);
   const [uploadRequestCompleted, setUploadRequestCompleted] = useState(false);
 
+  const [edaRequestError, setEdaRequestError] = useState(false);
+
   const [modelOrigin, setModelOrigin] = useState("use_existing_model");
 
   // hovers
@@ -291,7 +293,8 @@ export default function UploadComponent() {
     const textResponse = await response.text();
     setResponseData(textResponse);
 
-    console.log("error", response.status === 400);
+    if (response.status === 400) setEdaRequestError(true);
+    else setEdaRequestError(false);
 
     setEdaRequestCompleted(true);
 
@@ -480,11 +483,14 @@ export default function UploadComponent() {
       tempSelectedMethods.splice(tempSelectedMethods.indexOf(methodNumber), 1);
     } else tempSelectedMethods.push(methodNumber);
 
+    // tempSelectedMethods.push(methodNumber);
+
     return tempSelectedMethods.sort();
   }
 
   // -------------------------------------------------------------------------
   async function onSelectDataset(value) {
+    setDatasetError(false);
     setShowEdaButton(false);
 
     setSelectedDataset(value);
@@ -507,7 +513,7 @@ export default function UploadComponent() {
       .replace("#", "")
       .toLowerCase();
 
-    console.log("selected methods is", localSelectedMethod);
+    console.log("selected method is", localSelectedMethod);
 
     // eda-request-for-existing-datasets
     await loadingResultsScreen("loading eda");
@@ -527,7 +533,8 @@ export default function UploadComponent() {
     const textResponse = await response.text();
     setResponseData(textResponse);
 
-    console.log("error", response.status === 400);
+    if (response.status === 400) setEdaRequestError(true);
+    else setEdaRequestError(false);
 
     setEdaRequestCompleted(true);
 
@@ -553,19 +560,19 @@ export default function UploadComponent() {
 
     let localSelectedMethods = [];
 
-    if (method1Selected) localSelectedMethods = handleEKGMethodsCheckboxes(1);
-    if (method2Selected) localSelectedMethods = handleEKGMethodsCheckboxes(2);
-    if (method3Selected) localSelectedMethods = handleEKGMethodsCheckboxes(3);
-
     if (selectedDataset === "") {
       setDatasetError(true);
       setDatasetErrorMessage("you need to select a data-set first...");
       return;
     }
 
+    if (method1Selected) localSelectedMethods.push(1);
+    if (method2Selected) localSelectedMethods.push(2);
+    if (method3Selected) localSelectedMethods.push(3);
+
     if (
       selectedDataset.includes("EKG") &&
-      (method1Selected || method2Selected || method3Selected) === 0
+      (method1Selected || method2Selected || method3Selected) === false
     ) {
       setDatasetError(true);
       setDatasetErrorMessage("you need to select a method for ekg first");
@@ -575,7 +582,7 @@ export default function UploadComponent() {
     if (!selectedDataset.includes("EKG"))
       localSelectedMethods = handleEKGMethodsCheckboxes(1);
 
-    if (selectedMethods.length === 0)
+    if (localSelectedMethods.length === 0)
       localSelectedMethods = handleEKGMethodsCheckboxes(1);
 
     let dialogData = {
@@ -802,6 +809,7 @@ export default function UploadComponent() {
                 setShowExistingMethod(false);
                 setShowFileUploadMethod(false);
                 setGoBackButtonHover(false);
+                setShowEdaButton(false);
               }}
               onMouseEnter={() => setGoBackButtonHover(true)}
               onMouseLeave={() => setGoBackButtonHover(false)}
@@ -1498,10 +1506,13 @@ export default function UploadComponent() {
 
             <Tooltip
               title={
-                edaRequestStarted === true &&
-                edaRequestCompleted === false && (
+                (edaRequestError === true ||
+                  (edaRequestStarted === true &&
+                    edaRequestCompleted === false)) && (
                   <Typography fontSize={14}>
-                    eda is still taking place
+                    {edaRequestError
+                      ? "eda request error. check file type"
+                      : "eda is still taking place"}
                   </Typography>
                 )
               }
@@ -1512,8 +1523,9 @@ export default function UploadComponent() {
                 <Button
                   style={{
                     background:
-                      edaRequestStarted === true &&
-                      edaRequestCompleted === false
+                      edaRequestError ||
+                      (edaRequestStarted === true &&
+                        edaRequestCompleted === false)
                         ? "gray"
                         : fileUploadButtonHover === false
                         ? "black"
@@ -1522,6 +1534,7 @@ export default function UploadComponent() {
                     fontWeight: "bold",
                   }}
                   disabled={
+                    edaRequestError === true ||
                     loading === true ||
                     (edaRequestStarted === true &&
                       edaRequestCompleted === false)
