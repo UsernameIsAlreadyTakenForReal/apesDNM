@@ -70,6 +70,9 @@ import {
   IconButton,
   CardMedia,
   CardActions,
+  Tooltip,
+  FormControlLabel,
+  Checkbox,
 } from "@mui/material";
 
 const BASE_URL = process.env.REACT_APP_BACKEND;
@@ -95,7 +98,7 @@ function TestingComponent() {
 
   return (
     <>
-      {showEDA && (
+      {false && (
         <Dialog open={true} maxWidth="xl" fullWidt={true}>
           <DialogTitle style={{ fontWeight: "bold" }}>
             {"are you happy with your dataset motherfucker?"}
@@ -129,30 +132,52 @@ function TestingComponent() {
         </Dialog>
       )}
 
-      <Card style={{ margin: "20px" }}>
-        <CardHeader
-          title="mitbih_test.csv --- file #0"
-          onClick={handleExpandClick}
+      {false && (
+        <>
+          <Card style={{ margin: "20px" }}>
+            <CardHeader
+              title="mitbih_test.csv --- file #0"
+              onClick={handleExpandClick}
+            />
+            <Collapse in={expanded} timeout="auto" unmountOnExit>
+              <CardContent>
+                <Typography paragrah>shape --- {example.shape}</Typography>
+                <Typography paragrah>head --- {example.head}</Typography>
+              </CardContent>
+            </Collapse>
+          </Card>
+          <Card style={{ margin: "20px" }}>
+            <CardHeader
+              title="mitbih_train.csv --- file #1"
+              onClick={handleExpandClick}
+            />
+            <Collapse in={expanded} timeout="auto" unmountOnExit>
+              <CardContent>
+                <Typography paragrah>shape --- {example.shape}</Typography>
+                <Typography paragrah>head --- {example.head}</Typography>
+              </CardContent>
+            </Collapse>
+          </Card>
+        </>
+      )}
+
+      <Tooltip
+        title={
+          <Typography fontSize={14}>lstm auto-encoder (pytorch)</Typography>
+        }
+      >
+        <FormControlLabel
+          style={{ margin: "25px", width: "10%", color: "black" }}
+          control={
+            <Checkbox
+              style={{ color: "black" }}
+              color="default"
+              onChange={() => {}}
+            />
+          }
+          label="method #1"
         />
-        <Collapse in={expanded} timeout="auto" unmountOnExit>
-          <CardContent>
-            <Typography paragrah>shape --- {example.shape}</Typography>
-            <Typography paragrah>head --- {example.head}</Typography>
-          </CardContent>
-        </Collapse>
-      </Card>
-      <Card style={{ margin: "20px" }}>
-        <CardHeader
-          title="mitbih_train.csv --- file #1"
-          onClick={handleExpandClick}
-        />
-        <Collapse in={expanded} timeout="auto" unmountOnExit>
-          <CardContent>
-            <Typography paragrah>shape --- {example.shape}</Typography>
-            <Typography paragrah>head --- {example.head}</Typography>
-          </CardContent>
-        </Collapse>
-      </Card>
+      </Tooltip>
     </>
   );
 }

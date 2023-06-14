@@ -1,3 +1,8 @@
+// TODO stuff
+// # add all necessary processing for unarchiving and saving the new adress
+// add methods to upload-file-requests
+// add error for no method checkbox selected
+
 import { Fragment, useEffect, useState } from "react";
 
 import { Divv, TextFieldFlex, Label } from "./StyledComponents";
@@ -39,6 +44,7 @@ import {
   CardHeader,
   Collapse,
   CardContent,
+  FormGroup,
 } from "@mui/material";
 
 const BASE_URL = process.env.REACT_APP_BACKEND;
@@ -73,6 +79,8 @@ export default function UploadComponent() {
   const [method1Selected, setMethod1Selected] = useState(false);
   const [method2Selected, setMethod2Selected] = useState(false);
   const [method3Selected, setMethod3Selected] = useState(false);
+
+  const [methodsError, setMethodsError] = useState(false);
 
   const [selectedFiles, setSelectedFiles] = useState([]);
 
@@ -338,6 +346,7 @@ export default function UploadComponent() {
     setLabelColumnError(false);
     setClassesTextfieldsError(false);
     setNormalClassError(false);
+    setMethodsError(false);
 
     // file logic
     if (!selectedFiles[0]) {
@@ -413,6 +422,20 @@ export default function UploadComponent() {
       return;
     }
 
+    // methods logic
+    let localSelectedMethods = [];
+
+    if (method1Selected) localSelectedMethods.push(1);
+    if (method2Selected) localSelectedMethods.push(2);
+    if (method3Selected) localSelectedMethods.push(3);
+
+    if (localSelectedMethods.length === 0) {
+      setMethodsError(true);
+      return;
+    }
+
+    setSelectedMethods(localSelectedMethods);
+
     let files = selectedFiles.map((file) => file.name);
 
     let dialogData = {
@@ -428,6 +451,8 @@ export default function UploadComponent() {
       classes: classes,
       normal_class: normalClass,
       index_of_normal_class: classes.indexOf(normalClass),
+      dataset_origin: modelOrigin,
+      methods: localSelectedMethods,
       epochs: epochs,
     };
 
@@ -466,11 +491,12 @@ export default function UploadComponent() {
 
     const solutionNature = isSupervisedCheckbox ? "supervised" : "unsupervised";
     formData.append("solution_nature", solutionNature);
-    formData.append("dataset_origin", "new_dataset");
+    formData.append("dataset_origin", modelOrigin);
     formData.append("model_train_epochs", epochs);
+    formData.append("solution_index", selectedMethods);
 
     formData.append("save_data", saveDataCheckbox);
-    formData.append("clear_images", false);
+    formData.append("clear_images", true);
 
     sendUploadRequest(formData);
   }
@@ -489,7 +515,7 @@ export default function UploadComponent() {
   }
 
   // -------------------------------------------------------------------------
-  async function onSelectDataset(value) {
+  async function onDatasetSelect(value) {
     setDatasetError(false);
     setShowEdaButton(false);
 
@@ -562,7 +588,7 @@ export default function UploadComponent() {
 
     if (selectedDataset === "") {
       setDatasetError(true);
-      setDatasetErrorMessage("you need to select a data-set first...");
+      setDatasetErrorMessage("you need to select a data-set first");
       return;
     }
 
@@ -570,26 +596,24 @@ export default function UploadComponent() {
     if (method2Selected) localSelectedMethods.push(2);
     if (method3Selected) localSelectedMethods.push(3);
 
-    if (
-      selectedDataset.includes("EKG") &&
-      (method1Selected || method2Selected || method3Selected) === false
-    ) {
+    if (selectedDataset.includes("EKG") && localSelectedMethods.length === 0) {
       setDatasetError(true);
       setDatasetErrorMessage("you need to select a method for ekg first");
       return;
     }
 
-    if (!selectedDataset.includes("EKG"))
-      localSelectedMethods = handleEKGMethodsCheckboxes(1);
+    if (!selectedDataset.includes("EKG")) localSelectedMethods.push(1);
 
-    if (localSelectedMethods.length === 0)
-      localSelectedMethods = handleEKGMethodsCheckboxes(1);
+    if (localSelectedMethods.length === 0) localSelectedMethods.push(1);
+
+    setSelectedMethods(localSelectedMethods);
 
     let dialogData = {
       dataset: selectedDataset,
       methods: localSelectedMethods,
       solution_type:
         localSelectedMethods.length > 1 ? "compare_solutions" : "retrieve_data",
+      model_origin: "use_existing_model",
     };
 
     setDialogText(JSON.stringify(dialogData, null, "\t"));
@@ -832,13 +856,13 @@ export default function UploadComponent() {
                 <InputLabel id="data-type-select">data type</InputLabel>
                 <Select
                   label="data-type-select"
-                  onChange={(event) => onSelectDataset(event.target.value)}
+                  onChange={(event) => onDatasetSelect(event.target.value)}
                 >
                   <MenuItem
                     key="0"
                     value=""
-                    disabled
                     style={{ justifyContent: "center" }}
+                    disabled
                   >
                     choose a dataset
                   </MenuItem>
@@ -1407,9 +1431,14 @@ export default function UploadComponent() {
                 placement="bottom"
               >
                 <FormControlLabel
-                  style={{ margin: "25px", width: "10%" }}
+                  style={{
+                    margin: "25px",
+                    width: "10%",
+                    color: methodsError ? "red" : "",
+                  }}
                   control={
                     <Checkbox
+                      style={{ color: methodsError ? "red" : "" }}
                       checked={method1Selected}
                       color="default"
                       onChange={() => {
@@ -1436,9 +1465,14 @@ export default function UploadComponent() {
                 placement="bottom"
               >
                 <FormControlLabel
-                  style={{ margin: "25px", width: "10%" }}
+                  style={{
+                    margin: "25px",
+                    width: "10%",
+                    color: methodsError ? "red" : "",
+                  }}
                   control={
                     <Checkbox
+                      style={{ color: methodsError ? "red" : "" }}
                       checked={method2Selected}
                       color="default"
                       onChange={() => {
@@ -1457,9 +1491,14 @@ export default function UploadComponent() {
                 placement="bottom"
               >
                 <FormControlLabel
-                  style={{ margin: "25px", width: "10%" }}
+                  style={{
+                    margin: "25px",
+                    width: "10%",
+                    color: methodsError ? "red" : "",
+                  }}
                   control={
                     <Checkbox
+                      style={{ color: methodsError ? "red" : "" }}
                       checked={method3Selected}
                       color="default"
                       onChange={() => {
