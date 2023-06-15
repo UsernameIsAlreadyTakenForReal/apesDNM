@@ -128,6 +128,7 @@ def perform_eda():
 
         if len(files) == 1:
             for file in files:
+                # if archive, it will only be one - as per front-end restrictions
                 if "zip" in file.filename or "rar" in file.filename:
                     path = os.path.join(temp_dir, file.filename)
                 else:

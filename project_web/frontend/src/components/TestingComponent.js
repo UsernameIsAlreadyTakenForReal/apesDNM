@@ -75,6 +75,8 @@ import {
   Checkbox,
 } from "@mui/material";
 
+const inputString = ["Item1  Item2", "Item3    Item4", "Item5      Item6"];
+
 const BASE_URL = process.env.REACT_APP_BACKEND;
 
 function TestingComponent() {
@@ -161,23 +163,39 @@ function TestingComponent() {
         </>
       )}
 
-      <Tooltip
-        title={
-          <Typography fontSize={14}>lstm auto-encoder (pytorch)</Typography>
-        }
-      >
-        <FormControlLabel
-          style={{ margin: "25px", width: "10%", color: "black" }}
-          control={
-            <Checkbox
-              style={{ color: "black" }}
-              color="default"
-              onChange={() => {}}
-            />
+      {false && (
+        <Tooltip
+          title={
+            <Typography fontSize={14}>lstm auto-encoder (pytorch)</Typography>
           }
-          label="method #1"
-        />
-      </Tooltip>
+        >
+          <FormControlLabel
+            style={{ margin: "25px", width: "10%", color: "black" }}
+            control={
+              <Checkbox
+                style={{ color: "black" }}
+                color="default"
+                onChange={() => {}}
+              />
+            }
+            label="method #1"
+          />
+        </Tooltip>
+      )}
+
+      {false && (
+        <table>
+          <tbody>
+            {inputString.map((row, rowIndex) => (
+              <tr key={rowIndex}>
+                {row.split(/\s+/).map((item, itemIndex) => (
+                  <td key={itemIndex}>{item}</td>
+                ))}
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      )}
     </>
   );
 }

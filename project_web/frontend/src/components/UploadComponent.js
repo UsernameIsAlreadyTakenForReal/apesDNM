@@ -2,6 +2,7 @@
 // # add all necessary processing for unarchiving and saving the new adress
 // add methods to upload-file-requests
 // add error for no method checkbox selected
+// disable use this dataset button while eda is performed
 
 import { Fragment, useEffect, useState } from "react";
 
@@ -173,7 +174,7 @@ export default function UploadComponent() {
 
   // misc
   const [stringOfFilesUploaded, setStringOfFilesUploaded] = useState("");
-  // const [terminalFontSize, setTerminalFontSize] = useState(15);
+  const [triggerUseEffect, setTriggerUseEffect] = useState(false);
 
   // image viewer
   const [imageViewerOpen, setImageViewerOpen] = useState(false);
@@ -311,15 +312,19 @@ export default function UploadComponent() {
     setBackendResults(data.results);
     setBEDatasetPath(data.path);
 
-    // console.log(data.eda);
+    console.log();
 
     let edaData = [];
     data.eda.forEach((fileInEda) => {
       edaData.push(fileInEda);
     });
 
+    var tempEdaArray = JSON.parse(JSON.stringify(data.eda));
+
     setFileEdaShow(Array.from({ length: data.eda.length }, () => false));
     setFileEdaShowHover(Array.from({ length: data.eda.length }, () => false));
+    // setEda([...data.eda]);
+    // setEda(tempEdaArray);
     setEda(data.eda);
   }
 
@@ -576,6 +581,7 @@ export default function UploadComponent() {
 
     setFileEdaShow(Array.from({ length: data.eda.length }, () => false));
     setFileEdaShowHover(Array.from({ length: data.eda.length }, () => false));
+    // setEda([...data.eda]);
     setEda(data.eda);
   }
 
@@ -691,6 +697,8 @@ export default function UploadComponent() {
   useEffect(() => {
     getExistingDatasetItems();
   }, []);
+
+  useEffect(() => {}, [triggerUseEffect]);
 
   return (
     <>
@@ -1759,6 +1767,7 @@ export default function UploadComponent() {
             {/* <Divv>{backendResults}</Divv> */}
 
             {eda.map((fileData, index) => {
+              // console.log("eda-refreshed");
               return (
                 <Card
                   style={{
@@ -1817,11 +1826,13 @@ export default function UploadComponent() {
                         --- {fileData.columns_with_missing_data}
                       </Typography>
                       <br></br>
-                      {/* <Typography paragrah>
-                              <span style={{ fontWeight: "bold" }}>info</span>{" "}
-                              --- {fileData.info}
-                            </Typography>
-                            <br></br> */}
+                      {/* 
+                      <Typography paragrah>
+                        <span style={{ fontWeight: "bold" }}>info</span> ---{" "}
+                        {fileData.info}
+                      </Typography>
+                      <br></br>
+                       */}
                       <Typography paragrah>
                         <span style={{ fontWeight: "bold" }}>head of file</span>{" "}
                         --- <br></br>
@@ -1838,28 +1849,25 @@ export default function UploadComponent() {
                           );
                         })}
                       </Typography>
-                      {/* <br></br>
-                            <Typography paragrah>
-                              <span style={{ fontWeight: "bold" }}>
-                                describe
-                              </span>{" "}
-                              --- <br></br>
-                              {fileData.describe.map((line, index) => {
-                                if (
-                                  index === 0 ||
-                                  index === fileData.describe.length - 1
-                                )
-                                  return null;
-                                return (
-                                  <Typography paragrah>
-                                    {line.split("").map((character) => {
-                                      if (character === " ") return nbsps;
-                                      else return character;
-                                    })}
-                                  </Typography>
-                                );
-                              })}
-                            </Typography> */}
+
+                      <br></br>
+                      <Typography paragrah>
+                        <span style={{ fontWeight: "bold" }}>
+                          description of data
+                        </span>{" "}
+                        ---
+                        <table>
+                          <tbody>
+                            {fileData.describe.map((row, rowIndex) => (
+                              <tr key={rowIndex}>
+                                {row.split(/\s+/).map((item, itemIndex) => (
+                                  <td key={itemIndex}>{item}</td>
+                                ))}
+                              </tr>
+                            ))}
+                          </tbody>
+                        </table>
+                      </Typography>
 
                       <Divv left="0px">
                         {fileData.plots.map((plot, iindex) => {
