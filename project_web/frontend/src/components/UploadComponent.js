@@ -1823,7 +1823,7 @@ export default function UploadComponent() {
                         <span style={{ fontWeight: "bold" }}>
                           columns with missing data
                         </span>{" "}
-                        --- {fileData.columns_with_missing_data}
+                        --- {fileData.columns_with_missing_data} column(s)
                       </Typography>
                       <br></br>
                       {/* 
@@ -1835,19 +1835,23 @@ export default function UploadComponent() {
                        */}
                       <Typography paragrah>
                         <span style={{ fontWeight: "bold" }}>head of file</span>{" "}
-                        --- <br></br>
-                        {fileData.head.map((line, index) => {
-                          if (index === 0 || index === fileData.head.length - 1)
-                            return null;
-                          return (
-                            <Typography paragrah>
-                              {line.split("").map((character) => {
-                                if (character === " ") return nbsps;
-                                else return character;
-                              })}
-                            </Typography>
-                          );
-                        })}
+                        ---{" "}
+                        <table>
+                          <tbody>
+                            {fileData.head.map((row, rowIndex) => (
+                              <tr key={rowIndex}>
+                                {row.split(/\s+/).map((item, itemIndex) => (
+                                  <td
+                                    style={{ paddingRight: "15px" }}
+                                    key={itemIndex}
+                                  >
+                                    {item}
+                                  </td>
+                                ))}
+                              </tr>
+                            ))}
+                          </tbody>
+                        </table>
                       </Typography>
 
                       <br></br>
@@ -1861,7 +1865,12 @@ export default function UploadComponent() {
                             {fileData.describe.map((row, rowIndex) => (
                               <tr key={rowIndex}>
                                 {row.split(/\s+/).map((item, itemIndex) => (
-                                  <td key={itemIndex}>{item}</td>
+                                  <td
+                                    style={{ paddingRight: "15px" }}
+                                    key={itemIndex}
+                                  >
+                                    {item}
+                                  </td>
                                 ))}
                               </tr>
                             ))}
