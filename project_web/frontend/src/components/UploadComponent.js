@@ -1,8 +1,5 @@
 // TODO stuff
-// # add all necessary processing for unarchiving and saving the new adress
-// add methods to upload-file-requests
-// add error for no method checkbox selected
-// disable use this dataset button while eda is performed
+// add all necessary processing for unarchiving and saving the new adress
 
 import { Fragment, useEffect, useState } from "react";
 
@@ -726,9 +723,10 @@ export default function UploadComponent() {
               <Tooltip
                 title={
                   <Typography fontSize={14}>
-                    here you can choose one of the existing dataset that we have
-                    provided, such as images or EKGs, and you will get back
-                    details about their respective solutions
+                    here you can choose one of the existing datasets that we
+                    have provided, such as images or EKGs running on already
+                    existing models, and you will get back details about their
+                    respective solutions
                   </Typography>
                 }
                 placement="bottom"
@@ -998,24 +996,51 @@ export default function UploadComponent() {
                   show eda again
                 </Button>
               )}
-              <Button
-                style={{
-                  background:
-                    existingDatasetButtonHover === false ? "black" : "orange",
-                  color:
-                    existingDatasetButtonHover === false ? "white" : "black",
-                  fontWeight: "bold",
-                  marginLeft: "15px",
-                }}
-                variant="contained"
-                color="primary"
-                size="large"
-                onClick={() => onUseThisDataset()}
-                onMouseEnter={() => setExistingDatasetButtonHover(true)}
-                onMouseLeave={() => setExistingDatasetButtonHover(false)}
+              <Tooltip
+                title={
+                  (edaRequestError === true ||
+                    (edaRequestStarted === true &&
+                      edaRequestCompleted === false)) && (
+                    <Typography fontSize={14}>
+                      {edaRequestError
+                        ? "eda request error. check file type"
+                        : "eda is still taking place"}
+                    </Typography>
+                  )
+                }
+                placement="bottom"
+                arrow={false}
               >
-                use this dataset
-              </Button>
+                <Button
+                  style={{
+                    background:
+                      edaRequestError ||
+                      (edaRequestStarted === true &&
+                        edaRequestCompleted === false)
+                        ? "gray"
+                        : existingDatasetButtonHover === false
+                        ? "black"
+                        : "orange",
+                    color:
+                      existingDatasetButtonHover === false ? "white" : "black",
+                    fontWeight: "bold",
+                  }}
+                  disabled={
+                    edaRequestError === true ||
+                    loading === true ||
+                    (edaRequestStarted === true &&
+                      edaRequestCompleted === false)
+                  }
+                  variant="contained"
+                  color="primary"
+                  size="large"
+                  onClick={() => onUseThisDataset()}
+                  onMouseEnter={() => setExistingDatasetButtonHover(true)}
+                  onMouseLeave={() => setExistingDatasetButtonHover(false)}
+                >
+                  use this dataset
+                </Button>
+              </Tooltip>
             </Divv>
           </form>
         </div>
@@ -1741,30 +1766,28 @@ export default function UploadComponent() {
 
       {showEda && (
         <Dialog open={showEda} maxWidth="xl" fullWidth={true}>
-          <DialogContent
-            style={{ height: "100vh", overflow: "-moz-scrollbars-none" }}
-          >
-            <div
+          <DialogContent>
+            <Terminal
+              id="eda-terminal"
+              name="python outputs"
               style={{
                 margin: "5px",
                 width: "auto",
               }}
             >
-              <Terminal id="eda-terminal" name="python outputs">
-                {backendConsole.map((line) => {
-                  if (line === "") return null;
+              {backendConsole.map((line) => {
+                if (line === "") return null;
 
-                  return (
-                    <span style={{ fontSize: terminalFontSize }}>
-                      {">>>"} {line}
-                      <br></br>
-                    </span>
-                  );
-                })}
-              </Terminal>
-            </div>
+                return (
+                  <span style={{ fontSize: terminalFontSize }}>
+                    {">>>"} {line}
+                    <br></br>
+                  </span>
+                );
+              })}
+            </Terminal>
 
-            {/* <Divv>{backendResults}</Divv> */}
+            <Divv>{backendResults}</Divv>
 
             {eda.map((fileData, index) => {
               console.log("eda-rerendered");
