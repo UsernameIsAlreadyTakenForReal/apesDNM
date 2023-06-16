@@ -1767,7 +1767,7 @@ export default function UploadComponent() {
             {/* <Divv>{backendResults}</Divv> */}
 
             {eda.map((fileData, index) => {
-              // console.log("eda-refreshed");
+              console.log("eda-rerendered");
               return (
                 <Card
                   style={{
