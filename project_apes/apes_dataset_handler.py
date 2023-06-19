@@ -370,69 +370,45 @@ def process_singular_file_type(Logger, file, app_instance_metadata):
 
     match pathlib.Path(file).suffix:
         case ".csv":
-            df = []
-            loaded_with_header = False
-            try:
-                info_message = f"Trying to load file {file} without header"
-                Logger.info(
-                    "apes_dataset_handler.process_singular_file_type", info_message
-                )
-                df = pd.read_csv(file, header=None, dtype=np.float64)
-            except:
-                info_message = f"Trying to load file {file} with header"
-                Logger.info(
-                    "apes_dataset_handler.process_singular_file_type", info_message
-                )
-                df = pd.read_csv(file, dtype=np.float64)
-                loaded_with_header = True
-            finally:
-                if loaded_with_header == True:
-                    info_message = (
-                        f"Loaded file {file} with header and then defaulted the header"
-                    )
-                else:
-                    info_message = f"Loaded file {file} without header"
-                Logger.info(
-                    "apes_dataset_handler.process_singular_file_type", info_message
-                )
-                info_message = f"DataFrame is of shape {df.shape}"
-                Logger.info(
-                    "apes_dataset_handler.process_singular_file_type", info_message
-                )
+            return_code, return_message, df = load_file_type(Logger, file)
+            if return_code != 0:
+                return return_code, return_message
+            info_message = f"DataFrame is of shape {df.shape}"
+            Logger.info("apes_dataset_handler.process_singular_file_type", info_message)
 
-                if app_instance_metadata.dataset_metadata.shuffle_rows == True:
-                    info_message = f"Shuffling rows for file {file}"
-                    Logger.info(
-                        "apes_dataset_handler.process_singular_file_type", info_message
-                    )
-                    df = df.sample(frac=1).reset_index(drop=True)
-                    df.columns = list(range(len(df.columns)))
-                    if app_instance_metadata.dataset_metadata.is_labeled == True:
-                        # assuming label resides in the last column
-                        classes_list = [
-                            int(x) for x in df.iloc[:, df.shape[1] - 1].values
-                        ]
-                        if (
-                            app_instance_metadata.dataset_metadata.number_of_classes
-                            != how_many_different_values_in_list(classes_list)
-                        ):
-                            return (
-                                1,
-                                "Number of classes in dataFrame does not correspond to number of classes inputted",
-                                df,
-                            )
-                        df = normalize_label_column(Logger, app_instance_metadata, df)
-                return (
-                    0,
-                    "apes_dataset_handler.process_singular_file_type exited successfully",
-                    df,
+            if app_instance_metadata.dataset_metadata.shuffle_rows == True:
+                info_message = f"Shuffling rows for file {file}"
+                Logger.info(
+                    "apes_dataset_handler.process_singular_file_type", info_message
                 )
+                df = df.sample(frac=1).reset_index(drop=True)
+                df.columns = list(range(len(df.columns)))
+                if app_instance_metadata.dataset_metadata.is_labeled == True:
+                    # assuming label resides in the last column
+                    classes_list = [int(x) for x in df.iloc[:, df.shape[1] - 1].values]
+                    if (
+                        app_instance_metadata.dataset_metadata.number_of_classes
+                        != how_many_different_values_in_list(classes_list)
+                    ):
+                        return (
+                            1,
+                            "Number of classes in dataFrame does not correspond to number of classes inputted",
+                            df,
+                        )
+                    df = normalize_label_column(Logger, app_instance_metadata, df)
+            return (
+                0,
+                "apes_dataset_handler.process_singular_file_type exited successfully",
+                df,
+            )
         case ".arff":
-            data = loadarff(file)
-            df = pd.DataFrame(data[0])
+            return_code, return_message, df = load_file_type(Logger, file)
+            if return_code != 0:
+                return return_code, return_message
             info_message = f"Loaded file {file}. DataFrame is of shape {df.shape}"
             Logger.info("apes_dataset_handler.process_singular_file_type", info_message)
             df.columns = list(range(len(df.columns)))
+
             if app_instance_metadata.dataset_metadata.is_labeled == True:
                 # assuming label resides in the last column
                 classes_list = [int(x) for x in df.iloc[:, df.shape[1] - 1].values]
@@ -457,6 +433,35 @@ def process_singular_file_type(Logger, file, app_instance_metadata):
             return "npz"
         case other:
             return 1, "Could not idenfity file type.", df
+
+
+def load_file_type(Logger, file):
+    match pathlib.Path(file).suffix:
+        case ".csv":
+            df = []
+            loaded_with_header = False
+            try:
+                info_message = f"Trying to load file {file} without header"
+                Logger.info("apes_dataset_handler.load_file_type", info_message)
+                df = pd.read_csv(file, header=None, dtype=np.float64)
+            except:
+                info_message = f"Trying to load file {file} with header"
+                Logger.info("apes_dataset_handler.load_file_type", info_message)
+                df = pd.read_csv(file, dtype=np.float64)
+                loaded_with_header = True
+            finally:
+                if loaded_with_header == True:
+                    info_message = (
+                        f"Loaded file {file} with header and then defaulted the header"
+                    )
+                else:
+                    info_message = f"Loaded file {file} without header"
+                Logger.info("apes_dataset_handler.load_file_type", info_message)
+                return 0, "loaded .csv correctly", df
+        case ".arff":
+            data = loadarff(file)
+            df = pd.DataFrame(data[0])
+            return 0, "loaded .arff correctly", df
 
 
 # [1, 2, 3, 4] -> [0, 1, 2, 3]

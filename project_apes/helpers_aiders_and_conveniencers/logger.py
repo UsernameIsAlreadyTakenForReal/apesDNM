@@ -15,7 +15,7 @@ class Singleton(type):
 class Logger(metaclass=Singleton):
     _instance = None
 
-    def __init__(self, socketio=None):
+    def __init__(self, socketio=None, skip_print=False):
         self.socketio = socketio
         self.message_in_queue = (
             "Nothing to print in Logger. This may mean something is wrong."

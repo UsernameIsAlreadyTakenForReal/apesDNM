@@ -11,33 +11,30 @@
 
 from apes_dataset_handler import *
 from helpers_aiders_and_conveniencers.misc_functions import *
+from apes_EDA_handler import *
 
 # TODO:
 # * check solution_nature against dataset_metadata.is_labeled and process dataset if necessary
 
 
 class APES_Application:
-    def __init__(self, Logger, application_instance_metadata):
+    def __init__(self, Logger):
         self.Logger = Logger
-        self.application_instance_metadata = application_instance_metadata
+        # self.application_instance_metadata = application_instance_metadata
 
         info_message = "Created object of type APES_Application"
         self.Logger.info(self, info_message)
         info_message = "Starting run. This is a mock-up run"
         self.Logger.info(self, info_message)
 
+    def update_app_instance_metadata(self, application_instance_metadata):
+        self.application_instance_metadata = application_instance_metadata
+
     def run(self):
         self.application_instance_metadata.printMetadata()
 
         ## Part 0 -- Checks and info
         return_code, return_message = self.p0_checks()
-        if return_code != 0:
-            return (return_code, return_message)
-        else:
-            self.Logger.info(self, return_message)
-
-        ## Part 1 -- Get the desired datasets as a pandas dataFrames
-        return_code, return_message = self.p1_get_datasets_as_dataFrames()
         if return_code != 0:
             return (return_code, return_message)
         else:
@@ -58,6 +55,18 @@ class APES_Application:
             self.Logger.info(self, return_message)
 
         return (0, "Program exited successfully")
+
+    def run_EDA(self, path):
+        ## Part 1.5 -- Display dataset informations
+        (
+            return_code,
+            return_message,
+            files_dicts,
+        ) = self.p15_display_dataset_informations(path)
+        if return_code != 0:
+            return (return_code, return_message, files_dicts)
+        else:
+            self.Logger.info(self, return_message)
 
     def p0_checks(self):
         if (
@@ -156,8 +165,10 @@ class APES_Application:
 
         return (0, "Function p1_get_datasets_as_dataFrames exited successfully")
 
-    def p15_display_dataset_informations(self):
-        pass
+    def p15_display_dataset_informations(self, path):
+        dataset_EDA = Dataset_EDA(self.Logger, path)
+        files_dicts = dataset_EDA.perform_eda()
+        return 0, "p15_display_dataset_informations exited successfully", files_dicts
 
     def p2_get_desired_solutions(self):
         solution_indexes = list(self.application_instance_metadata.solution_index)
