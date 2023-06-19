@@ -72,7 +72,7 @@ application_metadata__solution_nature = "supervised"
 application_metadata__solution_index = solution_index
 application_metadata__model_origin = "train_new_model"
 # application_metadata__model_origin = "use_existing_model"
-application_metadata__model_train_epochs = 50
+application_metadata__model_train_epochs = 5
 
 dataset_metadata = Dataset_Metadata(
     Logger,

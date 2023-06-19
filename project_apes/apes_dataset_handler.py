@@ -24,6 +24,7 @@
 # NON-TODO: if there are 2 "train" files, maybe user has different use-cases. Couldn't think of a scenario in which this happens.
 # TODO: fuck knows how, but make sure the label/target is in the last column
 # TODO: test if all shapes from all files align
+# TODO: when concat-ing dataFrames to get just one per label, how about padding or error if their shapes do not match?
 
 import sys
 

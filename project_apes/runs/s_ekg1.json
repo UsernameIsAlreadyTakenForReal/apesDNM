@@ -307,6 +307,48 @@
       "time_test_end": "2023-06-12_23:40:13",
       "time_test_start": "2023-06-12_23:39:55",
       "time_test_total": 18
+    },
+    {
+      "_app_instance_ID": "230619_190212",
+      "_time_object_creation": "2023-06-19_19:02:16",
+      "_used_test_function": true,
+      "_used_train_function": true,
+      "correct_abnormal_predictions": "145/145",
+      "correct_normal_predictions": "120/145",
+      "dataset_full_size": [
+        5000,
+        141
+    ],
+      "dataset_name": "ekg1",
+      "dataset_test_size": [
+        145,
+        140
+    ],
+      "dataset_train_size": [
+        2481,
+        140
+    ],
+      "dataset_val_size": [
+        293,
+        140
+    ],
+      "device_used": "cuda",
+      "plots_filenames": [
+          "s_ekg1_d_ekg1__Loss_over_training_epochs__20230619_190532.png",
+          "s_ekg1_d_ekg1__Beat_and_prediction__20230619_190549.png"
+    ],
+      "prediction_threshold": 46,
+      "solution_name": "ekg1",
+      "test_loss_average": 83.1340033432533,
+      "time_test_end": "2023-06-19_19:05:49",
+      "time_test_start": "2023-06-19_19:05:32",
+      "time_test_total": 17,
+      "time_train_end": "2023-06-19_19:05:31",
+      "time_train_start": "2023-06-19_19:02:20",
+      "time_train_total": 191,
+      "train_epochs": 5,
+      "train_loss": 44.42853074456261,
+      "train_val_loss": 39.670670252204346
     }
   ]
 }
