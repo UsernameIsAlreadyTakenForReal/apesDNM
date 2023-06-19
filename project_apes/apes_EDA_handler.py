@@ -59,9 +59,8 @@ class Dataset_EDA:
                 full_path = os.path.join(dirname, filename)
                 self.Logger.info(self, full_path)
 
-                df = load_file_type(self.Logger, full_path)
-
-                df = pd.read_csv(full_path, header=None)
+                return_code, return_message, df = load_file_type(self.Logger, full_path)
+                # self.Logger.info(self, str(type(df)))
 
                 dict["index"] = index
                 dict["filename"] = filename

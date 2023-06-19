@@ -63,10 +63,12 @@ class APES_Application:
             return_message,
             files_dicts,
         ) = self.p15_display_dataset_informations(path)
-        if return_code != 0:
-            return (return_code, return_message, files_dicts)
-        else:
-            self.Logger.info(self, return_message)
+        # if return_code != 0:
+        #     return return_code, return_message, files_dicts
+        # else:
+        #     self.Logger.info(self, return_message)
+
+        return return_code, return_message, files_dicts
 
     def p0_checks(self):
         if (

@@ -460,7 +460,9 @@ def load_file_type(Logger, file):
                 return 0, "loaded .csv correctly", df
         case ".arff":
             data = loadarff(file)
+
             df = pd.DataFrame(data[0])
+
             return 0, "loaded .arff correctly", df
 
 

@@ -163,7 +163,9 @@ def perform_eda():
 
         # from apes_EDA_handler import Dataset_EDA
 
-        return_code, return_message, files_dicts = apes_application_instance.run_EDA()
+        return_code, return_message, files_dicts = apes_application_instance.run_EDA(
+            path
+        )
 
         # dataset_EDA = Dataset_EDA(logger, path)
         # files_dicts = dataset_EDA.perform_eda()
@@ -192,9 +194,6 @@ def run_apesdnm():
     try:
         print("run_apesdnm() function called")
 
-        logger.info("run_apesdnm", "upload has been triggered")
-
-        apes_application_instance.run()
         # ###################### cleaning-up images folder #######################
         clear_images = request.form.get("clear_images", True)
         if clear_images:
