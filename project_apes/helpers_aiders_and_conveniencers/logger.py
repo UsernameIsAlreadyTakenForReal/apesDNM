@@ -15,12 +15,12 @@ class Singleton(type):
 class Logger(metaclass=Singleton):
     _instance = None
 
-    def __init__(self, socketio=None):
+    def __init__(self, socketio=None, skip_print=False):
         self.socketio = socketio
         self.message_in_queue = (
             "Nothing to print in Logger. This may mean something is wrong."
         )
-        self.skip_print = skip_print
+        self.skip_print = False
         pass
 
     def info(self, sender, text_to_log):

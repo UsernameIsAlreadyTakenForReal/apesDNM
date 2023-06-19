@@ -4,7 +4,7 @@ import { Link } from "react-router-dom";
 export default function Contact() {
   return (
     <Divv size="22.5px">
-      cîșlianu radu| sim | 94286 on upb teams | radu.cislianu@gmail.com | (+40)
+      cîșlianu radu| sim | 94286 on upb teams | cislianu.radu@gmail.com | (+40)
       736-455-655 |
       <Link
         style={{ color: "black", textDecoration: "none" }}

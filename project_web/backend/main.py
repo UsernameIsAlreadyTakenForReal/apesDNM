@@ -23,6 +23,8 @@ sys.path.append("../../project_apes/helpers_aiders_and_conveniencers")
 sys.path.append("../../project_apes")
 
 from logger import Logger
+from apes_application import APES_Application
+
 
 app = Flask(__name__)
 app.config["SECRET_KEY"] = "apesDNM"
@@ -30,6 +32,7 @@ socketio = SocketIO(app, cors_allowed_origins="*", async_mode="gevent")
 CORS(app)
 
 logger = Logger(socketio)
+apes_application_instance = APES_Application(logger)
 
 
 def cls():
@@ -158,12 +161,16 @@ def perform_eda():
 
         results = "above you will find some results about how the processing went. check below for individual files' details and plots"
 
-        from apes_metadata_handler import Dataset_EDA
+        # from apes_EDA_handler import Dataset_EDA
 
-        dataset_EDA = Dataset_EDA(logger, path)
-        files_dicts = dataset_EDA.perform_eda()
+        return_code, return_message, files_dicts = apes_application_instance.run_EDA(
+            path
+        )
 
-        return jsonify({"results": results, "path": path, "eda": files_dicts})
+        # dataset_EDA = Dataset_EDA(logger, path)
+        # files_dicts = dataset_EDA.perform_eda()
+
+        return jsonify({"results": return_message, "path": path, "eda": files_dicts})
     except Exception as e:
         logger.info(
             "perform_eda",
@@ -185,9 +192,17 @@ def perform_eda():
 @app.route("/upload", methods=["GET", "POST"])
 def run_apesdnm():
     try:
-        print("run_apesdnm() function called")
+        import subprocess
 
-        logger.info("run_apesdnm", "upload has been triggered")
+        subprocess.call(
+            ["python", "../../project_apes/temp_main_mockup.py", "1", "1", logger]
+        )
+        return "ok"
+    except Exception as e:
+        return "not ok" + str(e)
+
+    try:
+        print("run_apesdnm() function called")
 
         # ###################### cleaning-up images folder #######################
         clear_images = request.form.get("clear_images", True)
@@ -205,7 +220,6 @@ def run_apesdnm():
             Dataset_Metadata,
             Application_Instance_Metadata,
         )
-        from apes_application import APES_Application
 
         # dataset metadata
         dataset_path = request.form.get("dataset_path", "")
@@ -262,8 +276,12 @@ def run_apesdnm():
             model_train_epochs,
         )
 
-        apes_application_instance = APES_Application(
-            logger, application_instance_metadata
+        # apes_application_instance = APES_Application(
+        #     logger, application_instance_metadata
+        # )
+
+        apes_application_instance.update_app_instance_metadata(
+            application_instance_metadata
         )
 
         # ########################### application run ############################
