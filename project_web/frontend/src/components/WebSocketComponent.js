@@ -9,9 +9,7 @@ const WebSocketComponent = ({ onOutputUpdated }) => {
 
     socket.on("console", (data) => onOutputUpdated(data));
 
-    return () => {
-      socket.disconnect();
-    };
+    return () => socket.disconnect();
   }, []);
 
   return null;

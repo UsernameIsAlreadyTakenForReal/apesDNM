@@ -94,22 +94,39 @@ def perform_eda():
         os.makedirs("images")
 
         files = []
+        temp_dir = ""
+        path = ""
 
-        logger.info("upload_file", "# of files sent is " + str(len(request.files)))
+        logger.info("perform_eda", "# of files sent is " + str(len(request.files)))
 
         for i in range(len(request.files)):
             if request.files.get(f"file{i}"):
-                files.append(request.files.get(f"file{i}"))
-
                 file = request.files.get(f"file{i}")
+
+                files.append(file)
 
                 logger.info("request", f"file{i}: " + file.filename)
 
-        temp_dir = ""
-        path = ""  # equivalent to len(files) == 0
-
         if len(files) == 0:
-            logger.info("file_save", "files processing done. no files to save")
+            logger.info("file_save", "files processing done. no files sent by user")
+            logger.info(
+                "file_save", "checking if existing dataset category has been selected"
+            )
+
+            dataset_category = request.form.get("dataset_category", None)
+
+            if dataset_category is None:
+                logger.info("file_save", "no dataset selected. exiting eda")
+                return jsonify({"results": "there was nothing to perform eda on"}), 400
+            else:
+                if dataset_category == "ekg1":
+                    logger.info("file_save", "ekg1 dataset selected")
+                    path = "../../../Datasets/Dataset - ECG5000"
+
+                if dataset_category == "ekg2":
+                    logger.info("file_save", "ekg2 dataset selected")
+                    path = "../../../Datasets/Dataset - ECG_Heartbeat/Dataset - ECG_Heartbeat"
+
         else:
             temp_dir = tempfile.mkdtemp()
             for file in files:
@@ -118,23 +135,28 @@ def perform_eda():
                 "file_save", "files processing done. files saved at " + temp_dir
             )
 
-        # no files => np path
-        if len(files) == 0:
-            path = ""
-
-        # more than one file => folder
-        if len(files) > 1:
+        if path == "":
             path = temp_dir
 
-        if len(files) == 1:
-            for file in files:
-                # if archive, it will only be one - as per front-end restrictions
-                if "zip" in file.filename or "rar" in file.filename:
-                    path = os.path.join(temp_dir, file.filename)
-                else:
-                    path = temp_dir
+        if len(files) == 1 and (
+            "zip" in files[0].filename or "rar" in files[0].filename
+        ):
+            # unarchive
+            import patoolib, pathlib
 
-        results = "these are some results about the files you uploaded. there's also some plots"
+            archive_path = os.path.join(temp_dir, files[0].filename)
+
+            new_path = archive_path.replace(pathlib.Path(archive_path).suffix, "")
+            if os.path.exists(new_path) == False:
+                os.mkdir(new_path)
+            patoolib.extract_archive(archive_path, outdir=new_path)
+
+            os.remove(archive_path)
+
+            path = new_path
+            logger.info("unarchive", "new path is " + path)
+
+        results = "above you will find some results about how the processing went. check below for individual files' details and plots"
 
         from apes_metadata_handler import Dataset_EDA
 
@@ -144,7 +166,7 @@ def perform_eda():
         return jsonify({"results": results, "path": path, "eda": files_dicts})
     except Exception as e:
         logger.info(
-            "upload_file",
+            "perform_eda",
             "there was an error when running the function, please check input and try again\n"
             + "error was: "
             + str(e),
@@ -153,7 +175,7 @@ def perform_eda():
         return (
             jsonify(
                 {
-                    "results": "the program ran into an eror. please check the console and try again."
+                    "results": "the program ran into an error. please check the console and try again."
                 },
             ),
             400,
@@ -161,11 +183,11 @@ def perform_eda():
 
 
 @app.route("/upload", methods=["GET", "POST"])
-def upload_file():
+def run_apesdnm():
     try:
-        print("upload_file() function called")
+        print("run_apesdnm() function called")
 
-        logger.info("upload_file", "upload has been triggered")
+        logger.info("run_apesdnm", "upload has been triggered")
 
         # ###################### cleaning-up images folder #######################
         clear_images = request.form.get("clear_images", True)
@@ -252,7 +274,7 @@ def upload_file():
         # ########################### plot processing ############################
 
         number_of_plots = random.randint(1, 5)
-        logger.info("upload_file", "there are " + str(number_of_plots) + " plots")
+        logger.info("run_apesdnm", "there are " + str(number_of_plots) + " plots")
 
         for _ in range(number_of_plots):
             plot()
@@ -266,7 +288,7 @@ def upload_file():
 
     except Exception as e:
         logger.info(
-            "upload_file",
+            "run_apesdnm",
             "there was an error when running the function, please check input and try again\n"
             + "error was: "
             + str(e),
@@ -275,7 +297,7 @@ def upload_file():
         return (
             jsonify(
                 {
-                    "results": "the program ran into an eror. please check the console and try again."
+                    "results": "the program ran into an error. please check the console and try again."
                 }
             ),
             400,

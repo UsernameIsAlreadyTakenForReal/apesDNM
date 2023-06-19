@@ -212,6 +212,8 @@ class Dataset_EDA:
                 full_path = os.path.join(dirname, filename)
                 self.Logger.info(self, full_path)
 
+                # df = functie(path)
+
                 df = pd.read_csv(full_path, header=None)
 
                 dict["index"] = index
@@ -232,6 +234,8 @@ class Dataset_EDA:
                 dict["columns_with_missing_data"] = str(missing_data)
 
                 plots = []
+
+                # #############################################################
 
                 # self.Logger.info(
                 #     self,
@@ -259,6 +263,18 @@ class Dataset_EDA:
                 #     "took " + str(difference_in_seconds) + " seconds to create...",
                 # )
 
+                # #############################################################
+
+                plt.clf()
+                plt.scatter(df.iloc[:, 0], df.iloc[:, 1])
+                plt.xlabel("column 0")
+                plt.ylabel("column 1")
+                caption = "scatter plot for file #" + str(index) + ": " + filename
+                plt.title(caption)
+                full_path = os.path.join("images", str(uuid.uuid4()) + ".png")
+                plt.savefig(full_path)
+                plots.append({"path": full_path, "caption": caption})
+
                 self.Logger.info(self, "creating histogram for " + filename + "...")
                 plt.clf()
                 plt.figure()
@@ -271,18 +287,9 @@ class Dataset_EDA:
                 plt.savefig(full_path)
                 plots.append({"path": full_path, "caption": caption})
 
-                plt.scatter(df.iloc[:, 0], df.iloc[:, 1])
-                plt.xlabel("column 0")
-                plt.ylabel("column 1")
-                caption = "scatter plot for file #" + str(index) + ": " + filename
-                plt.title(caption)
-                full_path = os.path.join("images", str(uuid.uuid4()) + ".png")
-                plt.savefig(full_path)
-                plots.append({"path": full_path, "caption": caption})
-
-                for _ in range(random.randint(1, 3)):
-                    _full_path, _caption = plot()
-                    plots.append({"path": _full_path, "caption": _caption})
+                # for _ in range(random.randint(1, 3)):
+                #     _full_path, _caption = plot()
+                #     plots.append({"path": _full_path, "caption": _caption})
 
                 dict["plots"] = plots
 

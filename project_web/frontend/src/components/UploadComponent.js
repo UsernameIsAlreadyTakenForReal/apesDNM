@@ -172,6 +172,7 @@ export default function UploadComponent() {
   // misc
   const [stringOfFilesUploaded, setStringOfFilesUploaded] = useState("");
   const [triggerUseEffect, setTriggerUseEffect] = useState(false);
+  const [alreadyRendered, setAlreadyRendered] = useState(false);
 
   // image viewer
   const [imageViewerOpen, setImageViewerOpen] = useState(false);
@@ -321,8 +322,8 @@ export default function UploadComponent() {
     setFileEdaShow(Array.from({ length: data.eda.length }, () => false));
     setFileEdaShowHover(Array.from({ length: data.eda.length }, () => false));
     // setEda([...data.eda]);
-    // setEda(tempEdaArray);
-    setEda(data.eda);
+    setEda(tempEdaArray);
+    // setEda(data.eda);
   }
 
   // -------------------------------------------------------------------------
@@ -614,7 +615,7 @@ export default function UploadComponent() {
     let dialogData = {
       dataset: selectedDataset,
       methods: localSelectedMethods,
-      solution_type:
+      application_mode:
         localSelectedMethods.length > 1 ? "compare_solutions" : "retrieve_data",
       model_origin: "use_existing_model",
     };
@@ -630,11 +631,17 @@ export default function UploadComponent() {
     // upload-request for existing datasets
     const formData = new FormData();
 
+    let localSelectedMethod = selectedDataset
+      .replace(" ", "")
+      .replace("#", "")
+      .toLowerCase();
+
     const applicationMode =
-      selectedMethods.length > 1 ? "retrieve_data" : "compare_solutions";
+      selectedMethods.length > 1 ? "compare_solutions" : "retrieve_data";
 
     formData.append("application_mode", applicationMode);
-    formData.append("dataset_category", selectedDataset);
+    formData.append("dataset_category", localSelectedMethod);
+    formData.append("solution_category", localSelectedMethod);
     formData.append("solution_index", selectedMethods);
 
     formData.append("clear_images", true);
@@ -1176,7 +1183,7 @@ export default function UploadComponent() {
               <Tooltip
                 title={
                   labeledRadioValue !== "yes" && (
-                    <Typography fontSize={14}>
+                    <Typography fontSize={14} style={{ textAlign: "center" }}>
                       if the dataset is not labeled, it cannot be supervised
                     </Typography>
                   )
@@ -1565,7 +1572,12 @@ export default function UploadComponent() {
                 />
                 <Tooltip
                   placement="right"
-                  title={<Typography fontSize={14}>please don't</Typography>}
+                  title={
+                    <Typography fontSize={14}>
+                      please don't. it will take a lot of time and cost us a lot
+                      of money on aws, especially with... {epochs} epochs?!?!?
+                    </Typography>
+                  }
                 >
                   <FormControlLabel
                     value="train_new_model"
@@ -1764,7 +1776,7 @@ export default function UploadComponent() {
         </Backdrop>
       </div>
 
-      {showEda && (
+      {
         <Dialog open={showEda} maxWidth="xl" fullWidth={true}>
           <DialogContent>
             <Terminal
@@ -1973,7 +1985,7 @@ export default function UploadComponent() {
             </Button>
           </DialogActions>
         </Dialog>
-      )}
+      }
 
       <WebSocketComponent
         onOutputUpdated={(data) => {
