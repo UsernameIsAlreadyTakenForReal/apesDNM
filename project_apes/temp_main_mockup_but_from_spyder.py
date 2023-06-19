@@ -44,7 +44,7 @@ application_instance_metadata = Application_Instance_Metadata(
     "ekg",
     "ekg",
     "supervised",
-    [2],
+    [1],
     "train_new_model",
     5,
 )

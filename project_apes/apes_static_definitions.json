@@ -1,0 +1,21 @@
+{
+  "default_file_to_dataset_label": "train",
+  "rough_filename_searches": ["train", "test", "validation", "run"],
+  "supported_file_formats": [".csv", ".arff", ".txt", ".npz", ".ts"],
+  "supported_model_extensions": [".pth", ".h5"],
+  "project_model_root_path_development": "./models",
+  "project_solution_runs_path_development": "./runs",
+
+  "project_solution_ekg1_class_filename": "apes_solution_ekg_1.py",
+  "project_solution_ekg1_model_filename": "apes_solution_ekg_1_model.pth",
+  "project_solution_ekg1_d_ekg1_best_model_filename": "s_ekg1_d_ekg1_20230611_224100.pth",
+  "project_solution_ekg1_d_ekg2_best_model_filename": "s_ekg1_d_ekg2_20230607_220738.pth",
+
+  "project_solution_ekg2_class_filename": "apes_solution_ekg_2.py",
+  "project_solution_ekg2_model_filename": "apes_solution_ekg_2_model.h5",
+  "project_solution_ekg2_d_ekg1_best_model_filename": "s_ekg2_d_ekg1_20230611_221523.h5",
+  "project_solution_ekg2_d_ekg2_best_model_filename": "s_ekg2_d_ekg2_20230611_223507.h5",
+
+  "plot_savefile_format": "png",
+  "plot_savefile_location_development": "./../project_web/backend/images/"
+}

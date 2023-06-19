@@ -213,7 +213,7 @@ def network(X_train, y_train, X_test, y_test):
     history = model.fit(
         X_train,
         y_train,
-        epochs=40,
+        epochs=5,
         callbacks=callbacks,
         batch_size=32,
         validation_data=(X_test, y_test),

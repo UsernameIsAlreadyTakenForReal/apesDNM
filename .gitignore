@@ -131,6 +131,7 @@ dmypy.json
 # apesDNM models
 *.pth
 *.h5
+!/project_apes/models/s_ekg2_d_ekg1_20230614_161924.h5
 
-# backend images
+# plot images for backend
 /project_web/backend/images/*.png

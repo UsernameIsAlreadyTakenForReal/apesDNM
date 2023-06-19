@@ -4,6 +4,7 @@
 # ############ Dataset metada:
 # is_labeled: True/False
 # file_keyword_names: [] (files usually come as either 'something_train.csv' and 'something_test.csv'. User can give keywords to search by)
+# dataset_name_stub: string (short name that comes from user, but since we're not doing that, well...)
 #
 # * For labeled datasets:
 # class_names: list (e.g. ['normal', 'Q on F'] etc)
@@ -23,8 +24,10 @@ class Dataset_Metadata:
         self,
         Logger,
         dataset_path="",
+        dataset_name_stub="",
         is_labeled=True,
         file_keyword_names=[],
+        number_of_classes=5,
         class_names=[],
         label_column_name="target",
         numerical_value_of_desired_label=0,
@@ -35,8 +38,10 @@ class Dataset_Metadata:
         self.Logger = Logger
 
         self.dataset_path = dataset_path
+        self.dataset_name_stub = dataset_name_stub
         self.is_labeled = is_labeled
         self.file_keyword_names = file_keyword_names
+        self.number_of_classes = number_of_classes
         self.class_names = class_names
         self.label_column_name = label_column_name
         self.numerical_value_of_desired_label = numerical_value_of_desired_label
@@ -52,8 +57,12 @@ class Dataset_Metadata:
             "\nDataset_metadata"
             + "\n|___dataset_path = "
             + str(self.dataset_path)
+            + "\n|___dataset_name_stub = "
+            + str(self.dataset_name_stub)
             + "\n|___is_labeled = "
             + str(self.is_labeled)
+            + "\n|___number_of_classes = "
+            + str(self.number_of_classes)
             + "\n|___file_keyword_names = "
             + str(self.file_keyword_names)
             + "\n|___class_names = "
@@ -94,20 +103,23 @@ class Application_Instance_Metadata:
         self,
         Logger,
         dataset_metadata,
+        app_instance_ID,
         display_dataFrames=False,
         application_mode="compare_solutions",
         dataset_origin="new_dataset",
         dataset_category="ekg",
         solution_category="ekg",
         solution_nature="supervised",
-        solution_index=1,
+        solution_index=[1],
         model_origin="train_new_model",
         model_train_epochs=40,
     ):
         self.Logger = Logger
         self.dataset_metadata = dataset_metadata
 
-        self.display_dataFrames = (display_dataFrames,)
+        self.app_instance_ID = app_instance_ID
+
+        self.display_dataFrames = display_dataFrames
 
         self.application_mode = application_mode
         self.dataset_origin = dataset_origin
@@ -126,23 +138,23 @@ class Application_Instance_Metadata:
     def getMetadataAsString(self):
         return (
             "\nApplication_metadata"
-            + "\n----display_dataFrames = "
+            + "\n|___display_dataFrames = "
             + str(self.display_dataFrames)
-            + "\n----application_mode = "
+            + "\n|___application_mode = "
             + str(self.application_mode)
-            + "\n----dataset_origin = "
+            + "\n|___dataset_origin = "
             + str(self.dataset_origin)
-            + "\n----dataset_category = "
+            + "\n|___dataset_category = "
             + str(self.dataset_category)
-            + "\n----solution_category = "
+            + "\n|___solution_category = "
             + str(self.solution_category)
-            + "\n----solution_nature = "
+            + "\n|___solution_nature = "
             + str(self.solution_nature)
-            + "\n----solution_index = "
+            + "\n|___solution_index = "
             + str(self.solution_index)
-            + "\n----model_origin = "
+            + "\n|___model_origin = "
             + str(self.model_origin)
-            + "\n----model_train_epochs = "
+            + "\n|___model_train_epochs = "
             + str(self.model_train_epochs)
         )
 

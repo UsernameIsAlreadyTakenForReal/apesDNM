@@ -20,6 +20,7 @@ class Logger(metaclass=Singleton):
         self.message_in_queue = (
             "Nothing to print in Logger. This may mean something is wrong."
         )
+        self.skip_print = skip_print
         pass
 
     def info(self, sender, text_to_log):
