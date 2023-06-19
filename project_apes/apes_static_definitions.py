@@ -95,6 +95,17 @@ class Shared_Definitions:
             "project_solution_ekg2_d_ekg2_best_model_filename"
         ]
 
+        ## S_IMG1
+        self.project_solution_img1_class_filename = data[
+            "project_solution_img1_class_filename"
+        ]
+        self.project_solution_img1_model_filename = data[
+            "project_solution_img1_model_filename"
+        ]
+        self.project_solution_img1_d_img1_best_model_filename = data[
+            "project_solution_img1_d_img1_best_model_filename"
+        ]
+
         ## PLOTS
         self.plot_savefile_format = data["plot_savefile_format"]
         self.plot_savefile_location = (

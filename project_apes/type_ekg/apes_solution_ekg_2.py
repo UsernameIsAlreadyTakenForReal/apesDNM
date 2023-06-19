@@ -11,8 +11,6 @@
 # adapt_dataset(self, application_instance_metadata, list_of_dataFrames, list_of_dataFramesUtilityLabels)
 #       -- purpose: self.X_train, self.y_train, self.X_test, self.y_test etc exist
 
-# TODO: how many output neurons bro
-
 import os
 import numpy as np
 import pandas as pd
@@ -136,6 +134,8 @@ class Solution_ekg_2:
         info_message = "create_model() -- begin"
         self.Logger.info(self, info_message)
 
+        no_of_classes = self.app_instance_metadata.dataset_metadata.number_of_classes
+
         time_model_begin = datetime.now()
 
         im_shape = (self.X_train.shape[1], 1)
@@ -158,7 +158,9 @@ class Solution_ekg_2:
 
         dense_end1 = Dense(64, activation="relu")(flatten)
         dense_end2 = Dense(32, activation="relu")(dense_end1)
-        main_output = Dense(5, activation="softmax", name="main_output")(dense_end2)
+        main_output = Dense(no_of_classes, activation="softmax", name="main_output")(
+            dense_end2
+        )
 
         self.model = Model(inputs=inputs_cnn, outputs=main_output)
         self.model.compile(
