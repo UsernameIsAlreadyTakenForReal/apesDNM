@@ -15,6 +15,8 @@
 # shuffle_rows: True / False
 
 from apes_static_definitions import Shared_Definitions
+import pandas as pd
+import os
 
 
 class Dataset_Metadata:

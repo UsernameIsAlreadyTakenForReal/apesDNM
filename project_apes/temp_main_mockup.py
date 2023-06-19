@@ -12,6 +12,7 @@ dataset_metadata__dataset_name_stub = ""
 solution_index = []
 
 if int(sys.argv[1]) == 1:
+    # if True:
     print("Running with dataset egk1")
     example_path = "../../Datasets/Dataset - ECG5000/Dataset - ECG5000"
     dataset_metadata__dataset_name_stub = "ekg1"
@@ -103,7 +104,12 @@ application_instance_metadata = Application_Instance_Metadata(
     application_metadata__model_train_epochs,
 )
 
-apes_application_instance = APES_Application(Logger, application_instance_metadata)
+apes_application_instance = APES_Application(Logger)
+
+return_code, return_message = apes_application_instance.run_EDA()
+Logger.info("Program.run_EDA()", return_message)
+
+apes_application_instance.update_app_instance_metadata(application_instance_metadata)
 
 return_code, return_message = apes_application_instance.run()
-Logger.info("Program", return_message)
+Logger.info("Program.run_EDA()", return_message)
