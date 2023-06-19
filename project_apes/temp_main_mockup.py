@@ -12,6 +12,7 @@ dataset_metadata__dataset_name_stub = ""
 solution_index = []
 
 if int(sys.argv[1]) == 1:
+    # if True:
     print("Running with dataset egk1")
     example_path = "../../Datasets/Dataset - ECG5000/Dataset - ECG5000"
     dataset_metadata__dataset_name_stub = "ekg1"

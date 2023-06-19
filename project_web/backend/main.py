@@ -185,6 +185,16 @@ def perform_eda():
 @app.route("/upload", methods=["GET", "POST"])
 def run_apesdnm():
     try:
+        import subprocess
+
+        subprocess.call(
+            ["python", "../../project_apes/temp_main_mockup.py", "1", "1", logger]
+        )
+        return "ok"
+    except Exception as e:
+        return "not ok" + str(e)
+
+    try:
         print("run_apesdnm() function called")
 
         logger.info("run_apesdnm", "upload has been triggered")

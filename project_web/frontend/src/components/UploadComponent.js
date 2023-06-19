@@ -669,6 +669,8 @@ export default function UploadComponent() {
     const textResponse = await response.text();
     setResponseData(textResponse);
 
+    console.log(textResponse);
+
     setUploadRequestCompleted(true);
 
     handleResults(textResponse);
@@ -1802,7 +1804,7 @@ export default function UploadComponent() {
             <Divv>{backendResults}</Divv>
 
             {eda.map((fileData, index) => {
-              console.log("eda-rerendered");
+              // console.log("eda-rerendered");
               return (
                 <Card
                   style={{
