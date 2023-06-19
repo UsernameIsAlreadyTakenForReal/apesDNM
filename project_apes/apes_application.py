@@ -10,6 +10,7 @@
 
 
 from apes_dataset_handler import *
+from helpers_aiders_and_conveniencers.misc_functions import *
 
 # TODO:
 # * check solution_nature against dataset_metadata.is_labeled and process dataset if necessary
@@ -185,7 +186,7 @@ class APES_Application:
                         from type_ekg.apes_solution_ekg_1 import Solution_ekg_1
 
                         self.solution = Solution_ekg_1(
-                            self.application_instance_metadata.shared_definitions,
+                            self.application_instance_metadata,
                             self.Logger,
                         )
                         self.solutions_list.append(self.solution)
@@ -201,7 +202,7 @@ class APES_Application:
                         from type_ekg.apes_solution_ekg_2 import Solution_ekg_2
 
                         self.solution = Solution_ekg_2(
-                            self.application_instance_metadata.shared_definitions,
+                            self.application_instance_metadata,
                             self.Logger,
                         )
                         self.solutions_list.append(self.solution)
@@ -243,11 +244,11 @@ class APES_Application:
                         self.Logger.info(self, info_message)
 
                         self.solution_1 = Solution_ekg_1(
-                            self.application_instance_metadata.shared_definitions,
+                            self.application_instance_metadata,
                             self.Logger,
                         )
                         self.solution_2 = Solution_ekg_2(
-                            self.application_instance_metadata.shared_definitions,
+                            self.application_instance_metadata,
                             self.Logger,
                         )
                         self.solutions_list.append(self.solution_1)
@@ -270,20 +271,52 @@ class APES_Application:
 
     def p3_run_solutions(self):
         for solution in self.solutions_list:
-            solution.adapt_dataset(
+            info_message = f"Beginning run for solution {solution}"
+            self.Logger.info(self, info_message)
+
+            return_code, return_message = solution.adapt_dataset(
                 self.application_instance_metadata,
                 self.dataFramesList,
                 self.dataFramesUtilityList,
             )
+            if return_code != 0:
+                return return_code, return_message
 
-        if self.application_instance_metadata.model_origin == "train_new_model":
-            solution.create_model()
-            solution.train(self.application_instance_metadata.model_train_epochs)
-            solution.save_model()
-            solution.test()
-        else:
-            ## check if sizes compatible with dataset's sizes
-            solution.load_model()
-            solution.test()
+            if self.application_instance_metadata.model_origin == "train_new_model":
+                info_message = f"Directive to train new model"
+                self.Logger.info(self, info_message)
 
+                return_code, return_message = solution.create_model()
+                if return_code != 0:
+                    return return_code, return_message
+
+                return_code, return_message = solution.train(
+                    self.application_instance_metadata.model_train_epochs
+                )
+                if return_code != 0:
+                    return return_code, return_message
+
+                return_code, return_message = solution.test()
+                if return_code != 0:
+                    return return_code, return_message
+
+                return_code, return_message = solution.save_model()
+                if return_code != 0:
+                    return return_code, return_message
+            else:
+                ## check if sizes compatible with dataset's sizes
+                info_message = f"Directive to use existing model"
+                self.Logger.info(self, info_message)
+
+                return_code, return_message = solution.load_model()
+                if return_code != 0:
+                    return return_code, return_message
+
+                return_code, return_message = solution.test()
+                if return_code != 0:
+                    return return_code, return_message
+
+            return_code, return_message = solution.save_run()
+            if return_code != 0:
+                return return_code, return_message
         return 0, "Function p3_run_solutions exited successfully"

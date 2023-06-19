@@ -34,7 +34,7 @@
 
 
 ### ECG5000 ###
-	- Classes: ["Normal", "R on T", "PVC", "SP", "UB"]
+	- Classes: [1: "Normal", 2: "R on T", 3: "PVC", 4: "SP", 5: "UB"]
 	- Number of Samples: 
 	- Elements per sample: 141 (140 + 1)
 	- Data Source: Physionet's MIT-BIH Arrhythmia Dataset

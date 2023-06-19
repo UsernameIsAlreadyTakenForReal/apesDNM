@@ -23,6 +23,10 @@
 # TODO: files_to_load must not contain dummy/dud files
 # NON-TODO: if there are 2 "train" files, maybe user has different use-cases. Couldn't think of a scenario in which this happens.
 # TODO: fuck knows how, but make sure the label/target is in the last column
+# TODO: test if all shapes from all files align
+# TODO: when concat-ing dataFrames to get just one per label, how about padding or error if their shapes do not match?
+
+import sys
 
 import arff
 import math
@@ -31,6 +35,9 @@ import pandas as pd
 import numpy as np
 
 from scipy.io.arff import loadarff
+from helpers_aiders_and_conveniencers.misc_functions import (
+    how_many_different_values_in_list,
+)
 
 import re
 import os
@@ -147,7 +154,7 @@ def treat_files(
             app_instance_metadata.dataset_metadata.file_keyword_names
         )
 
-    try:
+    if True:
         if len(files_to_load) == 0:
             files_to_load = app_instance_metadata.dataset_metadata.dataset_path
             flag_enter = True
@@ -253,95 +260,86 @@ def treat_files(
             list_of_dataFrames,
             list_of_dataFramesUtilityLabels,
         )
-    except:
-        return (
-            1,
-            "apes_dataset_handler.treat_file exited with error",
-            list_of_dataFrames,
-            list_of_dataFramesUtilityLabels,
-        )
 
 
 def treat_folder(Logger, app_instance_metadata):
-    try:
-        no_of_files_in_folder = 0
-        no_of_files_in_dir_and_subdirs = []
-        possible_files_list = []
+    no_of_files_in_folder = 0
+    no_of_files_in_dir_and_subdirs = []
+    possible_files_list = []
 
-        # check if there are subdirectories
-        for dirname, _, filenames in os.walk(
-            app_instance_metadata.dataset_metadata.dataset_path
-        ):
-            no_of_files_in_dir_and_subdirs.append(len(filenames))
+    # check if there are subdirectories
+    for dirname, _, filenames in os.walk(
+        app_instance_metadata.dataset_metadata.dataset_path
+    ):
+        no_of_files_in_dir_and_subdirs.append(len(filenames))
 
-        # if subdirs and there is at least one file outside of the main dir
-        if (
-            len(no_of_files_in_dir_and_subdirs) != 1
-            and sum(no_of_files_in_dir_and_subdirs) != no_of_files_in_dir_and_subdirs[0]
-        ):
-            info_message = f"There seem to be {len(no_of_files_in_dir_and_subdirs) - 1} subdirectories in this directory. Number of files for each: {no_of_files_in_dir_and_subdirs}"
-            Logger.info("apes_dataset_handler.treat_folder", info_message)
-            return 1, "Subdirectories present. Case not yet handled", []
-        else:
-            info_message = f"There seem to be {no_of_files_in_dir_and_subdirs[0]} files in this directory. No subdirectories"
-            Logger.info("apes_dataset_handler.treat_folder", info_message)
+    # if subdirs and there is at least one file outside of the main dir
+    if (
+        len(no_of_files_in_dir_and_subdirs) != 1
+        and sum(no_of_files_in_dir_and_subdirs) != no_of_files_in_dir_and_subdirs[0]
+    ):
+        info_message = f"There seem(s) to be {len(no_of_files_in_dir_and_subdirs) - 1} subdirectories in this directory. Number of files for each: {no_of_files_in_dir_and_subdirs}"
+        Logger.info("apes_dataset_handler.treat_folder", info_message)
+        return 1, "Subdirectories present. Case not yet handled", []
+    else:
+        info_message = f"There seem(s) to be {no_of_files_in_dir_and_subdirs[0]} files in this directory. No subdirectories"
+        Logger.info("apes_dataset_handler.treat_folder", info_message)
 
-            # search for keynames given by the user
-            if len(app_instance_metadata.dataset_metadata.file_keyword_names) != 0:
-                for dirname, _, filenames in os.walk(
-                    app_instance_metadata.dataset_metadata.dataset_path
-                ):
-                    for filename in filenames:
-                        if (
-                            pathlib.Path(filename).suffix
-                            in app_instance_metadata.shared_definitions.supported_file_formats
-                        ):
-                            if (
-                                rough_filename_filter(
-                                    filename.lower(),
-                                    app_instance_metadata.dataset_metadata.file_keyword_names,
-                                )
-                                == True
-                            ):
-                                possible_files_list.append(filename)
-
-            # search for keynames 'test', 'train', 'val' if user didn't prescribe keywords or they failed
-            elif (
-                len(app_instance_metadata.dataset_metadata.file_keyword_names) == 0
-                or len(possible_files_list) == 0
+        # search for keynames given by the user
+        if len(app_instance_metadata.dataset_metadata.file_keyword_names) != 0:
+            for dirname, _, filenames in os.walk(
+                app_instance_metadata.dataset_metadata.dataset_path
             ):
-                for dirname, _, filenames in os.walk(
-                    app_instance_metadata.dataset_metadata.dataset_path
-                ):
-                    for filename in filenames:
+                for filename in filenames:
+                    if (
+                        pathlib.Path(filename).suffix
+                        in app_instance_metadata.shared_definitions.supported_file_formats
+                    ):
                         if (
-                            pathlib.Path(filename).suffix
-                            in app_instance_metadata.shared_definitions.supported_file_formats
+                            rough_filename_filter(
+                                filename.lower(),
+                                app_instance_metadata.dataset_metadata.file_keyword_names,
+                            )
+                            == True
                         ):
-                            if rough_filename_filter(filename.lower()) == True:
-                                possible_files_list.append(filename)
+                            possible_files_list.append(filename)
 
-            # if that doesn't work either, just load all files and mash them all files into the same dataFrame (hoping it works)
-            else:
-                for dirname, _, filenames in os.walk(
-                    app_instance_metadata.dataset_metadata.dataset_path
-                ):
-                    for filename in filenames:
-                        possible_files_list.append(filename)
-                pass
+        # search for keynames 'test', 'train', 'val' if user didn't prescribe keywords or they failed
+        elif (
+            len(app_instance_metadata.dataset_metadata.file_keyword_names) == 0
+            or len(possible_files_list) == 0
+        ):
+            for dirname, _, filenames in os.walk(
+                app_instance_metadata.dataset_metadata.dataset_path
+            ):
+                for filename in filenames:
+                    if (
+                        pathlib.Path(filename).suffix
+                        in app_instance_metadata.shared_definitions.supported_file_formats
+                    ):
+                        if rough_filename_filter(filename.lower()) == True:
+                            possible_files_list.append(filename)
 
-        files_to_load = filter_files_in_folder_list(
-            app_instance_metadata, possible_files_list
-        )
+        # if that doesn't work either, just load all files and mash them all files into the same dataFrame (hoping it works)
+        else:
+            for dirname, _, filenames in os.walk(
+                app_instance_metadata.dataset_metadata.dataset_path
+            ):
+                for filename in filenames:
+                    possible_files_list.append(filename)
+            pass
 
-        info_message = f"Possible files to load: {possible_files_list}"
-        Logger.info("apes_dataset_handler.treat_folder", info_message)
-        info_message = f"Files that will be loaded: {files_to_load}"
-        Logger.info("apes_dataset_handler.treat_folder", info_message)
+    files_to_load = filter_files_in_folder_list(
+        app_instance_metadata, possible_files_list
+    )
 
-        return 0, "apes_dataset_handler.treat_folder exited successfully", files_to_load
-    except:
-        return 1, "apes_dataset_handler.treat_folder exited with error", []
+    info_message = f"Possible files to load: {possible_files_list}"
+    Logger.info("apes_dataset_handler.treat_folder", info_message)
+    info_message = f"Files that will be loaded: {files_to_load}"
+    Logger.info("apes_dataset_handler.treat_folder", info_message)
+
+    return 0, "apes_dataset_handler.treat_folder exited successfully", files_to_load
+    # return 1, "apes_dataset_handler.treat_folder exited with error", []
 
 
 def treat_archive(Logger, app_instance_metadata):
@@ -386,7 +384,6 @@ def process_singular_file_type(Logger, file, app_instance_metadata):
                     "apes_dataset_handler.process_singular_file_type", info_message
                 )
                 df = pd.read_csv(file, dtype=np.float64)
-                df.columns = list(range(len(df.columns)))
                 loaded_with_header = True
             finally:
                 if loaded_with_header == True:
@@ -409,6 +406,22 @@ def process_singular_file_type(Logger, file, app_instance_metadata):
                         "apes_dataset_handler.process_singular_file_type", info_message
                     )
                     df = df.sample(frac=1).reset_index(drop=True)
+                    df.columns = list(range(len(df.columns)))
+                    if app_instance_metadata.dataset_metadata.is_labeled == True:
+                        # assuming label resides in the last column
+                        classes_list = [
+                            int(x) for x in df.iloc[:, df.shape[1] - 1].values
+                        ]
+                        if (
+                            app_instance_metadata.dataset_metadata.number_of_classes
+                            != how_many_different_values_in_list(classes_list)
+                        ):
+                            return (
+                                1,
+                                "Number of classes in dataFrame does not correspond to number of classes inputted",
+                                df,
+                            )
+                        df = normalize_label_column(Logger, app_instance_metadata, df)
                 return (
                     0,
                     "apes_dataset_handler.process_singular_file_type exited successfully",
@@ -419,6 +432,20 @@ def process_singular_file_type(Logger, file, app_instance_metadata):
             df = pd.DataFrame(data[0])
             info_message = f"Loaded file {file}. DataFrame is of shape {df.shape}"
             Logger.info("apes_dataset_handler.process_singular_file_type", info_message)
+            df.columns = list(range(len(df.columns)))
+            if app_instance_metadata.dataset_metadata.is_labeled == True:
+                # assuming label resides in the last column
+                classes_list = [int(x) for x in df.iloc[:, df.shape[1] - 1].values]
+                if (
+                    app_instance_metadata.dataset_metadata.number_of_classes
+                    != how_many_different_values_in_list(classes_list)
+                ):
+                    return (
+                        1,
+                        "Number of classes in dataFrame does not correspond to number of classes inputted",
+                        df,
+                    )
+                df = normalize_label_column(Logger, app_instance_metadata, df)
             return (
                 0,
                 "apes_dataset_handler.process_singular_file_type exited successfully",
@@ -430,6 +457,37 @@ def process_singular_file_type(Logger, file, app_instance_metadata):
             return "npz"
         case other:
             return 1, "Could not idenfity file type.", df
+
+
+# [1, 2, 3, 4] -> [0, 1, 2, 3]
+def normalize_label_column(Logger, app_instance_metadata, dataFrame):
+    df = []
+    cols = dataFrame.shape[1] - 1
+
+    if app_instance_metadata.dataset_metadata.is_labeled == True:
+        # assuming label resides in the last column
+        target_list = [int(x) for x in dataFrame.iloc[:, cols].values]
+        info_message = "These many unique values in list: " + str(
+            how_many_different_values_in_list(target_list)
+        )
+        Logger.info("apes_dataset_handler.normalize_label_column", info_message)
+        # info_message = f"Old targets are {target_list}"
+        # Logger.info("apes_dataset_handler.normalize_label_column", info_message)
+
+        if min(target_list) > 0:
+            minimum = min(target_list)
+            target_list = [x - minimum for x in target_list]
+
+        # info_message = f"New targets are {target_list}"
+        # Logger.info("apes_dataset_handler.normalize_label_column", info_message)
+
+        df = dataFrame.drop(labels=cols, axis=1)
+        new_targets = pd.DataFrame(target_list)
+        new_targets.columns = ["temp_labels_targets"]
+        df = df.join(new_targets)
+        df.columns = list(range(len(df.columns)))
+        return df
+    return dataFrame
 
 
 def rough_filename_filter(filename, keywords=rough_filename_searches):
