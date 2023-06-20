@@ -40,6 +40,13 @@ class APES_Application:
         else:
             self.Logger.info(self, return_message)
 
+        ## Part 1 -- get_datasets_as_dataFrames
+        return_code, return_message = self.p1_get_datasets_as_dataFrames()
+        if return_code != 0:
+            return (return_code, return_message)
+        else:
+            self.Logger.info(self, return_message)
+
         ## Part 2 -- Get the desired solution(s) runners
         return_code, return_message = self.p2_get_desired_solutions()
         if return_code != 0:

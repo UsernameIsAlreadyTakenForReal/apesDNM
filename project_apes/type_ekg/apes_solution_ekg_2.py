@@ -546,4 +546,5 @@ class Solution_ekg_2:
         info_message = f"Created picture at ./project_web/backend/images/ || {plot_save_location} || {plot_name}"
         self.Logger.info(self, info_message)
         self.plots_filenames.append(plot_save_location.split(os.sep)[-1])
+        plt.clf()
         ## Save plot section -- end
