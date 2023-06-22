@@ -5,6 +5,8 @@
   "supported_model_extensions": [".pth", ".h5"],
   "project_model_root_path_development": "./models",
   "project_solution_runs_path_development": "./runs",
+  "project_model_root_path": "./models",
+  "project_solution_runs_path": "./runs",
 
   "project_solution_ekg1_class_filename": "apes_solution_ekg_1.py",
   "project_solution_ekg1_model_filename": "apes_solution_ekg_1_model.pth",
