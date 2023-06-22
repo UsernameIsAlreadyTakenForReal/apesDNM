@@ -85,7 +85,7 @@ AWS_REGION="eu-central-1"
 AWS_EC2_TAG_NAME="APESDNM-DEV-EC2"
 AWS_VOLUME_TAG_NAME="APESDNM-DEV-EBS"
 
-PYTHON_VERSION=3.11.3
+PYTHON_VERSION=3.10.10
 NODEJS_VERSION=v16.20.0
 CUSTOM_USERNAME="apesdnm_user"
 CUSTOM_PASSWD="tempPa55wd!"
@@ -159,7 +159,7 @@ if [ -d \${PROJECT_DIR}/apesdnm_python_venv ]; then
     echo "Python venv exists on EBS."
 else
     echo "Python venv does not exist on EBS. Creating..."
-    sudo python3.11 -m venv \${PROJECT_DIR}/apesdnm_python_venv
+    sudo python3.10 -m venv \${PROJECT_DIR}/apesdnm_python_venv
 fi
 
 ############
@@ -245,7 +245,7 @@ AWS_REGION="eu-central-1"
 AWS_EC2_TAG_NAME="APESDNM-DEV-EC2"
 AWS_VOLUME_TAG_NAME="APESDNM-DEV-EBS"
 
-PYTHON_VERSION=3.11.3
+PYTHON_VERSION=3.10.10
 NODEJS_VERSION=v16.20.0
 CUSTOM_USERNAME="apesdnm_user"
 CUSTOM_PASSWD="tempPa55wd!"
@@ -260,7 +260,7 @@ if [ -d \${PROJECT_DIR}/apesdnm_python_venv ]; then
     pip install -r requirements.txt --no-cache-dir
 else
     echo "Python venv does not exist on EBS. It should be here, tho..."
-    sudo python3.11 -m venv \${PROJECT_DIR}/apesdnm_python_venv
+    sudo python3.10 -m venv \${PROJECT_DIR}/apesdnm_python_venv
     source \${PROJECT_DIR}/apesdnm_python_venv/bin/activate
     pip install --upgrade pip --no-cache-dir
     pip install -r requirements.txt --no-cache-dir
@@ -283,7 +283,7 @@ AWS_REGION="eu-central-1"
 AWS_EC2_TAG_NAME="APESDNM-DEV-EC2"
 AWS_VOLUME_TAG_NAME="APESDNM-DEV-EBS"
 
-PYTHON_VERSION=3.11.3
+PYTHON_VERSION=3.10.10
 NODEJS_VERSION=v16.20.0
 CUSTOM_USERNAME="apesdnm_user"
 CUSTOM_PASSWD="tempPa55wd!"
