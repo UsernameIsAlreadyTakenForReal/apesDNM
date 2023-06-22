@@ -18,6 +18,7 @@ import tensorflow as tf
 import pathlib
 import json
 import sys
+import os
 
 from tensorflow import keras
 from keras import layers
@@ -219,6 +220,38 @@ class Solution_img_1:
 
         info_message = f"Training - it took {difference} for {epochs} epochs"
         self.Logger.info(self, info_message)
+
+        epochs_range = range(epochs)
+
+        plt.figure(figsize=(8, 8))
+        plt.subplot(1, 2, 1)
+        plt.plot(epochs_range, self.loss, label="Training Loss")
+        plt.plot(epochs_range, self.val_loss, label="Validation Loss")
+        plt.legend(loc="lower left")
+        plt.title("Training and Validation Loss")
+
+        plt.subplot(1, 2, 2)
+        plt.plot(epochs_range, self.acc, label="Training Accuracy")
+        plt.plot(epochs_range, self.val_acc, label="Validation Accuracy")
+        plt.legend(loc="lower right")
+        plt.title("Training and Validation Accuracy")
+        if self.app_instance_metadata.shared_definitions.plot_show_at_runtime == True:
+            plt.show()
+
+        ## Save plot section -- begin
+        plot_name = "Training and Validation Accuracy" + " -- " + "Training and Validation Loss"
+        plot_save_filename, plot_save_location = get_plot_save_filename(
+            plot_name.replace(" ", "_"), "img1", self.app_instance_metadata
+        )
+        plt.savefig(
+            plot_save_location,
+            format=self.app_instance_metadata.shared_definitions.plot_savefile_format,
+        )
+        info_message = f"Created picture at ./project_web/backend/images/ || {plot_save_location} || {plot_name}"
+        self.Logger.info(self, info_message)
+        self.plots_filenames.append(plot_save_location.split(os.sep)[-1])
+        ## Save plot section -- end
+
 
         info_message = "train() -- end"
         self.Logger.info(self, info_message)
