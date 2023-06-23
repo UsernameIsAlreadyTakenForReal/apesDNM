@@ -1,4 +1,5 @@
 import sys
+import platform
 
 n = len(sys.argv)
 print("Total number of arguments passed: ", n)
@@ -16,17 +17,26 @@ solution_category = ""
 if int(sys.argv[1]) == 1:
     # if True:
     print("Running with dataset egk1")
-    example_path = "../../Datasets/Dataset - ECG5000/Dataset - ECG5000"
+    if platform.system() == "Windows":
+        example_path = "../../Datasets/Dataset - ECG5000/Dataset - ECG5000"
+    else:
+        example_path = "/ebs_data/project_datasets/d_ekg1"
     dataset_metadata__dataset_name_stub = "ekg1"
     dataset_category = "ekg"
 elif int(sys.argv[1]) == 2:
     print("Running with dataset ekg2")
-    example_path = "../../Datasets/Dataset - ECG_Heartbeat/Dataset - ECG_Heartbeat.zip"
+    if platform.system() == "Windows":
+        example_path = "../../Datasets/Dataset - ECG_Heartbeat/Dataset - ECG_Heartbeat.zip"
+    else:
+        example_path = "/ebs_data/project_datasets/d_ekg2"
     dataset_metadata__dataset_name_stub = "ekg2"
     dataset_category = "ekg"
 elif int(sys.argv[1]) == 3:
     print("Running with dataset img1")
-    example_path = "D:\Facultate\Master II\Sem I\PCIM\Proiect\Proj\dataset_tensor_test"
+    if platform.system() == "Windows":
+        example_path = "D:\Facultate\Master II\Sem I\PCIM\Proiect\Proj\dataset_tensor_test"
+    else:
+        example_path = "/ebs_data/project_datasets/d_img1"
     dataset_metadata__dataset_name_stub = "img1"
     dataset_category = "img"
 
