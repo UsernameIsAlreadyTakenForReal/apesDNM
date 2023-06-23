@@ -1,4 +1,5 @@
 import json
+import platform
 
 
 class Solution_Serializer:
@@ -6,6 +7,7 @@ class Solution_Serializer:
         _app_instance_ID = ""
         _solution_name = ""
         _time_object_creation = ""
+        _platform = platform.system()
 
         _used_test_function = ""
         _used_train_function = ""
