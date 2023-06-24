@@ -98,6 +98,8 @@ export default function UploadComponent() {
 
   const [normalClass, setNormalClass] = useState("");
 
+  const [datasetId, setDatasetId] = useState("");
+
   const [epochs, setEpochs] = useState(40);
 
   const [responseData, setResponseData] = useState(null);
@@ -169,6 +171,9 @@ export default function UploadComponent() {
   const [classesTextfieldsErrorMessage, setClassesTextfieldsErrorMessage] =
     useState(false);
 
+  const [datasetIdError, setDatasetIdError] = useState(false);
+  const [datasetIdErrorMessage, setDatasetIdErrorMessage] = useState("");
+
   // misc
   const [stringOfFilesUploaded, setStringOfFilesUploaded] = useState("");
   const [triggerUseEffect, setTriggerUseEffect] = useState(false);
@@ -211,6 +216,13 @@ export default function UploadComponent() {
     setLabelColumnError(false);
     setNormalClassError(false);
     setClassesTextfieldsError(false);
+    setDatasetIdError(false);
+  }
+
+  // -------------------------------------------------------------------------
+  function isNaturalNumber(value) {
+    var pattern = /^(0|([1-9]\d*))$/;
+    return pattern.test(value);
   }
 
   // -------------------------------------------------------------------------
@@ -350,6 +362,7 @@ export default function UploadComponent() {
     setClassesTextfieldsError(false);
     setNormalClassError(false);
     setMethodsError(false);
+    setDatasetIdError(false);
 
     // file logic
     if (!selectedFiles[0]) {
@@ -425,6 +438,38 @@ export default function UploadComponent() {
       return;
     }
 
+    // dataset id logic
+    let localDatasetId = "";
+    localDatasetId = document.getElementById("dataset-id-field").value;
+
+    console.log(localDatasetId);
+
+    if (localDatasetId === "" || isNaN(localDatasetId)) {
+      setDatasetIdError(true);
+      setDatasetIdErrorMessage("please provide a natural number");
+      return;
+    }
+
+    if (+localDatasetId < 0 || parseInt(+localDatasetId) != +localDatasetId) {
+      setDatasetIdError(true);
+      setDatasetIdErrorMessage("number must be natural");
+      return;
+    }
+
+    if (+localDatasetId < 4) {
+      setDatasetIdError(true);
+      setDatasetIdErrorMessage("numbers 1-3 are reserved");
+      return;
+    }
+
+    if (+localDatasetId > 999) {
+      setDatasetIdError(true);
+      setDatasetIdErrorMessage("please stop trying to break the app");
+      return;
+    }
+
+    setDatasetId(localDatasetId);
+
     // methods logic
     let localSelectedMethods = [];
 
@@ -457,6 +502,7 @@ export default function UploadComponent() {
       dataset_origin: modelOrigin,
       methods: localSelectedMethods,
       epochs: epochs,
+      dataset_identifier: localDatasetId,
     };
 
     setDialogText(JSON.stringify(dialogData, null, "\t"));
@@ -497,6 +543,8 @@ export default function UploadComponent() {
     formData.append("dataset_origin", modelOrigin);
     formData.append("model_train_epochs", epochs);
     formData.append("solution_index", selectedMethods);
+
+    formData.append("dataset_identifier", datasetId);
 
     formData.append("save_data", saveDataCheckbox);
     formData.append("clear_images", true);
@@ -1397,6 +1445,7 @@ export default function UploadComponent() {
                       marginBottom:
                         textfield === classesTextfields.length ? "25px" : "0px",
                     }}
+                    normalClass
                     error={classesTextfieldsError}
                     helperText={
                       classesTextfieldsError &&
@@ -1467,6 +1516,37 @@ export default function UploadComponent() {
               />
             </TextFieldFlex>
 
+            <TextFieldFlex style={{ marginTop: "10px" }} flexDirection="row">
+              <Tooltip
+                title={
+                  <Typography
+                    fontSize={14}
+                    style={{ marginBottom: "5px", padding: "5px" }}
+                  >
+                    you can use this same id if you ever want to upload the same
+                    files again, as the app will use the same solution category
+                  </Typography>
+                }
+                placement="bottom"
+              >
+                <Divv
+                  size="22.5px"
+                  style={{ margin: "25px", width: "60%" }}
+                  // color={labeledRadioValue === "yes" ? "black" : "lightgray"}
+                >
+                  give your dataset an identifier
+                </Divv>
+              </Tooltip>
+              <TextField
+                style={{ margin: "25px", width: "40%" }}
+                error={datasetIdError}
+                helperText={datasetIdError ? datasetIdErrorMessage : ""}
+                id="dataset-id-field"
+                variant="outlined"
+                label="dataset identifier"
+              />
+            </TextFieldFlex>
+
             <TextFieldFlex style={{ marginTop: "10px" }}>
               <Divv size="22.5px" style={{ margin: "25px", width: "60%" }}>
                 {/* save my data for future uses */}
@@ -1486,6 +1566,9 @@ export default function UploadComponent() {
             </TextFieldFlex>
 
             <div style={{ marginBottom: "20px" }}>
+              <Divv top="75px" bottom="0px">
+                choose method(s) to use for classification
+              </Divv>
               <Tooltip
                 title={
                   <>
@@ -1503,6 +1586,7 @@ export default function UploadComponent() {
                 <FormControlLabel
                   style={{
                     margin: "25px",
+                    marginBottom: "10px",
                     width: "10%",
                     color: methodsError ? "red" : "",
                   }}
@@ -1537,6 +1621,7 @@ export default function UploadComponent() {
                 <FormControlLabel
                   style={{
                     margin: "25px",
+                    marginBottom: "10px",
                     width: "10%",
                     color: methodsError ? "red" : "",
                   }}
@@ -1563,6 +1648,8 @@ export default function UploadComponent() {
                 <FormControlLabel
                   style={{
                     margin: "25px",
+                    marginBottom: "10px",
+
                     width: "10%",
                     color: methodsError ? "red" : "",
                   }}
@@ -1603,10 +1690,15 @@ export default function UploadComponent() {
                 <Tooltip
                   placement="right"
                   title={
-                    <Typography fontSize={14}>
-                      please don't. it will take a lot of time and cost us a lot
-                      of money on aws, especially with... {epochs} epochs?!?!?
-                    </Typography>
+                    epochs > 20 ? (
+                      <Typography fontSize={14}>
+                        please don't. it will take a lot of time and cost us a
+                        lot of money on aws, especially with... {epochs}{" "}
+                        epochs?!?!?
+                      </Typography>
+                    ) : (
+                      ""
+                    )
                   }
                 >
                   <FormControlLabel
@@ -1633,7 +1725,7 @@ export default function UploadComponent() {
               placement="bottom"
               arrow={false}
             >
-              <Divv>
+              <Divv top="75px">
                 <Button
                   style={{
                     background:
