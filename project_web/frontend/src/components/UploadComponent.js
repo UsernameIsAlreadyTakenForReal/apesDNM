@@ -700,6 +700,7 @@ export default function UploadComponent() {
 
     formData.append("application_mode", applicationMode);
     formData.append("dataset_name_stub", localSelectedDataset);
+    formData.append("dataset_origin", "existing_dataset");
     // formData.append("dataset_category", localSelectedDataset);
     // formData.append("solution_category", localSelectedDataset);
 
