@@ -537,22 +537,26 @@ export default function UploadComponent() {
     setBackendResults("");
     setEda([]);
 
-    let localSelectedMethod = value
+    let localSelectedDataset = value
       .replace(" ", "")
       .replace("#", "")
       .toLowerCase();
 
-    console.log("selected method is", localSelectedMethod);
+    console.log("selected dataset is", localSelectedDataset);
 
     // eda-request-for-existing-datasets
     await loadingResultsScreen("loading eda");
     setShowEda(true);
 
     const formData = new FormData();
-    formData.append("dataset_category", localSelectedMethod);
+    formData.append("dataset_name_stub", localSelectedDataset);
+    formData.append(
+      "dataset_category",
+      localSelectedDataset.replace(/[0-9]/g, "")
+    );
     formData.append(
       "solution_category",
-      localSelectedMethod.replace(/[0-9]/g, "")
+      localSelectedDataset.replace(/[0-9]/g, "")
     );
 
     setEdaRequestStarted(true);

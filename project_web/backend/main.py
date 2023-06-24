@@ -323,6 +323,7 @@ def run_apesdnm():
         )
 
         # dataset metadata
+        dataset_name_stub = request.form.get("dataset_name_stub", "")
         dataset_path = request.form.get("dataset_path", "")
         is_labeled = request.form.get("is_labeled", True)
         file_keyword_names = request.form.get("file_keyword_names", [])
@@ -338,10 +339,10 @@ def run_apesdnm():
 
         # application instance metadata
         display_dataFrames = request.form.get("display_dataFrames", False)
-        print(display_dataFrames)  # displays False, not (False,) # ????
+        # print(display_dataFrames)  # displays False, not (False,) # ????
         application_mode = request.form.get("application_mode", "compare_solutions")
         dataset_origin = request.form.get("dataset_origin", "new_dataset")
-        dataset_category = request.form.get("dataset_category", "ekg")
+        dataset_category = request.form.get("dataset_category", "")
         solution_category = request.form.get("solution_category", "ekg")
         solution_nature = request.form.get("solution_nature", "supervised")
         solution_index = request.form.get("solution_index", [1])
