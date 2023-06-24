@@ -372,6 +372,7 @@ def run_apesdnm():
         application_instance_metadata = Application_Instance_Metadata(
             logger,
             dataset_metadata,
+            application_metadata__app_instance_ID,
             display_dataFrames,
             application_mode,
             dataset_origin,
