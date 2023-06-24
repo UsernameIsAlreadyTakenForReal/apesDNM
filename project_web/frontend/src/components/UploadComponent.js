@@ -638,7 +638,7 @@ export default function UploadComponent() {
     // upload-request for existing datasets
     const formData = new FormData();
 
-    let localSelectedMethod = selectedDataset
+    let localSelectedDataset = selectedDataset
       .replace(" ", "")
       .replace("#", "")
       .toLowerCase();
@@ -647,8 +647,19 @@ export default function UploadComponent() {
       selectedMethods.length > 1 ? "compare_solutions" : "retrieve_data";
 
     formData.append("application_mode", applicationMode);
-    formData.append("dataset_category", localSelectedMethod);
-    formData.append("solution_category", localSelectedMethod);
+    formData.append("dataset_name_stub", localSelectedDataset);
+    // formData.append("dataset_category", localSelectedDataset);
+    // formData.append("solution_category", localSelectedDataset);
+
+    formData.append(
+      "dataset_category",
+      localSelectedDataset.replace(/[0-9]/g, "")
+    );
+    formData.append(
+      "solution_category",
+      localSelectedDataset.replace(/[0-9]/g, "")
+    );
+
     formData.append("solution_index", selectedMethods);
 
     formData.append("clear_images", true);
