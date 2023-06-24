@@ -119,20 +119,20 @@ def perform_eda():
                 "file_save", "checking if existing dataset category has been selected"
             )
 
-            dataset_category = request.form.get("dataset_category", None)
+            dataset_name_stub = request.form.get("dataset_name_stub", None)
 
-            if dataset_category is None:
+            if dataset_name_stub is None:
                 logger.info("file_save", "no dataset selected. exiting eda")
                 return jsonify({"results": "there was nothing to perform eda on"}), 400
             else:
-                if dataset_category == "ekg1":
+                if dataset_name_stub == "ekg1":
                     logger.info("file_save", "ekg1 dataset selected")
                     if platform.system() == "Windows":
                         path = "../../../Datasets/Dataset - ECG5000"
                     else:
                         path = "/ebs_data/project_datasets/d_ekg1"
 
-                if dataset_category == "ekg2":
+                if dataset_name_stub == "ekg2":
                     logger.info("file_save", "ekg2 dataset selected")
                     if platform.system() == "Windows":
                         path = "../../../Datasets/Dataset - ECG_Heartbeat/Dataset - ECG_Heartbeat"
@@ -352,7 +352,9 @@ def run_apesdnm():
         save_data = request.form.get("save_data", False)
 
         number_of_classes = len(class_names)
-        application_metadata__app_instance_ID = datetime.now().strftime("%Y%m%d_%H%M%S")[2:]
+        application_metadata__app_instance_ID = datetime.now().strftime(
+            "%Y%m%d_%H%M%S"
+        )[2:]
 
         dataset_metadata = Dataset_Metadata(
             logger,
