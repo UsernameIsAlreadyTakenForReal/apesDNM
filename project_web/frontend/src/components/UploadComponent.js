@@ -669,6 +669,8 @@ export default function UploadComponent() {
     const textResponse = await response.text();
     setResponseData(textResponse);
 
+    console.log(textResponse);
+
     setUploadRequestCompleted(true);
 
     handleResults(textResponse);
@@ -811,11 +813,19 @@ export default function UploadComponent() {
               </Tooltip>
             </Divv>
 
-            {false && (
+            {true && (
               <Button
                 onClick={() => {
                   setShowResults(true);
-                  sendUploadRequest({ id: 1 });
+
+                  // let datasetPath = String.raw`C:\Users\DANIEL~1\AppData\Local\Temp\tmpuov3ww7j`;
+                  let datasetPath = String.raw`C:\Users\DANIEL~1\AppData\Local\Temp\tmpyh57kodh`;
+
+                  const formData = new FormData();
+                  formData.append("test_run", true);
+                  formData.append("dataset_path", datasetPath);
+
+                  sendUploadRequest(formData);
                 }}
               >
                 Fetch test
@@ -847,6 +857,7 @@ export default function UploadComponent() {
                 setShowFileUploadMethod(false);
                 setGoBackButtonHover(false);
                 setShowEdaButton(false);
+                setEdaRequestError(false);
               }}
               onMouseEnter={() => setGoBackButtonHover(true)}
               onMouseLeave={() => setGoBackButtonHover(false)}
@@ -1073,6 +1084,7 @@ export default function UploadComponent() {
                   setShowExistingMethod(false);
                   setShowFileUploadMethod(false);
                   setGoBackButtonHover(false);
+                  setEdaRequestError(false);
                 }}
                 onMouseEnter={() => setGoBackButtonHover(true)}
                 onMouseLeave={() => setGoBackButtonHover(false)}
@@ -1660,7 +1672,7 @@ export default function UploadComponent() {
               </Terminal>
             </div>
 
-            <Divv>{backendResults}</Divv>
+            <Divv>{backendResults.toLowerCase()}</Divv>
 
             <Divv left="0px">
               {backendMLPlots.map((src, index) => (
@@ -1802,7 +1814,7 @@ export default function UploadComponent() {
             <Divv>{backendResults}</Divv>
 
             {eda.map((fileData, index) => {
-              console.log("eda-rerendered");
+              // console.log("eda-rerendered");
               return (
                 <Card
                   style={{
@@ -2004,11 +2016,12 @@ export default function UploadComponent() {
           }
 
           if (data.toLowerCase().includes("created picture")) {
+            // console.log("image", data);
             let imageData = data.split("||");
 
             setBackendMLPlots((backendMLPlots) => [
               ...backendMLPlots,
-              imageData[1].trim(),
+              "images" + "\\" + imageData[1].split("images")[1].trim(),
             ]);
 
             setBackendCptions((backendCaptions) => [
