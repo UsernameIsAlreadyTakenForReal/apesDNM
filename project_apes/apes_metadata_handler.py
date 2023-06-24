@@ -130,6 +130,8 @@ class Application_Instance_Metadata:
         self.model_origin = model_origin
         self.model_train_epochs = model_train_epochs
 
+        print("debugggggg")
+
         self.shared_definitions = Shared_Definitions()
 
         info_message = "Created object of type Application_Instance_Metadata"
