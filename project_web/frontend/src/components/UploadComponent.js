@@ -215,7 +215,7 @@ export default function UploadComponent() {
 
   // -------------------------------------------------------------------------
   async function getExistingDatasetItems() {
-    const response = await fetch(BASE_URL + "datasets", {
+    const response = await fetch("datasets", {
       method: "get",
     });
     const data = await response.json();
@@ -292,7 +292,7 @@ export default function UploadComponent() {
 
     setEdaRequestStarted(true);
 
-    const response = await fetch(BASE_URL + "perform_eda", {
+    const response = await fetch("perform_eda", {
       method: "POST",
       body: formData,
     });
@@ -554,7 +554,7 @@ export default function UploadComponent() {
 
     setEdaRequestStarted(true);
 
-    const response = await fetch(BASE_URL + "perform_eda", {
+    const response = await fetch("perform_eda", {
       method: "POST",
       body: formData,
     });
@@ -661,7 +661,7 @@ export default function UploadComponent() {
 
     setUploadRequestStarted(true);
 
-    const response = await fetch(BASE_URL + "upload", {
+    const response = await fetch("upload", {
       method: "POST",
       body: formData,
     });
