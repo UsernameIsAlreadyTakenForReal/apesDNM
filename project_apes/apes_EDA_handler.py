@@ -42,8 +42,8 @@ class Dataset_EDA:
     def __init__(
         self,
         Logger,
-        shared_definitions,
         dataset_path,
+        shared_definitions,
     ):
         self.Logger = Logger
         self.shared_definitions = shared_definitions

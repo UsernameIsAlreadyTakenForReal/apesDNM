@@ -175,7 +175,8 @@ def perform_eda():
         # from apes_EDA_handler import Dataset_EDA
 
         return_code, return_message, files_dicts, dataset_category = apes_application_instance.run_EDA(
-            path
+            path,
+            shared_definitions
         )
 
         # dataset_EDA = Dataset_EDA(logger, path)
