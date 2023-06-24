@@ -352,7 +352,7 @@ def run_apesdnm():
         model_origin = request.form.get("model_origin", "train_new_model")
         model_train_epochs = request.form.get("model_train_epochs", 40)
 
-        data_identifier = request.form.get("data_identifier", "777")
+        data_identifier = request.form.get("data_identifier", "1108")
 
 
         save_data = request.form.get("save_data", False)
