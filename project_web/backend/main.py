@@ -326,6 +326,10 @@ def run_apesdnm():
             Application_Instance_Metadata,
         )
 
+        # see what the system flow is
+        system_flow = request.form.get("system_flow", "using_a_previously_existing_dataset")
+        dataset_name_stub = request.form.get("dataset_name_stub", "")
+
         # dataset metadata
         dataset_path = request.form.get("dataset_path", "")
         is_labeled = request.form.get("is_labeled", True)
@@ -341,6 +345,9 @@ def run_apesdnm():
         shuffle_rows = request.form.get("shuffle_rows", False)
 
         # application instance metadata
+        app_instance_ID = datetime.now().strftime(
+            "%Y%m%d_%H%M%S"
+        )[2:]
         display_dataFrames = request.form.get("display_dataFrames", False)
         # print(display_dataFrames)  # displays False, not (False,) # ????
         application_mode = request.form.get("application_mode", "compare_solutions")
@@ -354,16 +361,40 @@ def run_apesdnm():
 
         data_identifier = request.form.get("data_identifier", "1108")
 
-
         save_data = request.form.get("save_data", False)
-
         dataset_name_stub = dataset_category + data_identifier
-
-
         number_of_classes = len(class_names)
-        application_metadata__app_instance_ID = datetime.now().strftime(
-            "%Y%m%d_%H%M%S"
-        )[2:]
+
+        ## If using an existing dataset, overwrite the stuff with the saved one
+        if system_flow == "using_a_previously_existing_dataset":
+            import json
+            import platform
+
+            if platform.system() == "Windows":
+                file = open(f"../../project_apes/datasets/d_{dataset_name_stub}_description.json")
+            else:
+                file = open(f"/ebs_data/project_datasets/d_{dataset_name_stub}/d_{dataset_name_stub}_description.json")
+
+            data = json.load(file)
+
+            if platform.system() == "Windows":
+                dataset_path = data["dataset_path_windows"]
+            else:
+                dataset_path = data["dataset_path_linux"]
+            is_labeled = data["is_labeled"]
+            number_of_classes = data["number_of_classes"]
+            class_names = data["class_names"]
+            label_column_name = data["label_column_name"]
+            numerical_value_of_desired_label = data["numerical_value_of_desired_label"]
+            separate_train_and_test = data["separate_train_and_test"]
+            percentage_of_split = data["percentage_of_split"]
+            shuffle_rows = data["shuffle_rows"]
+            file_keyword_names = data["file_keyword_names"]
+
+            dataset_category = data["dataset_category"]
+
+            dataset_origin = "existing_dataset"
+        ##
 
         dataset_metadata = Dataset_Metadata(
             logger,
@@ -384,7 +415,7 @@ def run_apesdnm():
             logger,
             shared_definitions,
             dataset_metadata,
-            application_metadata__app_instance_ID,
+            app_instance_ID,
             display_dataFrames,
             application_mode,
             dataset_origin,

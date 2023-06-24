@@ -675,7 +675,9 @@ export default function UploadComponent() {
       dataset: selectedDataset,
       methods: localSelectedMethods,
       application_mode:
-        localSelectedMethods.length > 1 ? "compare_solutions" : "retrieve_data",
+        localSelectedMethods.length > 1
+          ? "compare_solutions"
+          : "run_one_solution",
       model_origin: "use_existing_model",
     };
 
@@ -695,11 +697,14 @@ export default function UploadComponent() {
       .replace("#", "")
       .toLowerCase();
 
+    // System flow and dataset identifier first and foremost
+    formData.append("system_flow", "using_a_previously_existing_dataset");
+    formData.append("dataset_name_stub", localSelectedDataset);
+
     const applicationMode =
-      selectedMethods.length > 1 ? "compare_solutions" : "retrieve_data";
+      selectedMethods.length > 1 ? "compare_solutions" : "run_one_solution";
 
     formData.append("application_mode", applicationMode);
-    formData.append("dataset_name_stub", localSelectedDataset);
     formData.append("dataset_origin", "existing_dataset");
     // formData.append("dataset_category", localSelectedDataset);
     // formData.append("solution_category", localSelectedDataset);
