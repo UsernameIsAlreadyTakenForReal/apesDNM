@@ -162,6 +162,10 @@ class Application_Instance_Metadata:
         )
 
     def printMetadata(self):
+        print("magar imputit")
+        print(self.getMetadataAsString())
+        print("magar imputit2")
+        print(self.dataset_metadata.getMetadataAsString())
         info_message = (
             "Running with this configuration: "
             + self.getMetadataAsString()
