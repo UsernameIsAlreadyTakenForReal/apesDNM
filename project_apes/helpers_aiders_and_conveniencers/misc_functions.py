@@ -22,7 +22,7 @@ def get_last_model(Logger, solution_name, app_instance_metadata):
     match solution_name:
         case "ekg1":
             file_extension = ".pth"
-        case "ekg2":
+        case "ekg2", "img1":
             file_extension = ".h5"
 
     for dirname, _, filenames in os.walk(
@@ -173,8 +173,9 @@ def write_to_solutions_runs_json_file(
 ):
     import json
     import os
+    import platform
 
-    json_file = f"s_{solution}.json"
+    json_file = f"s_{solution}_{platform.system()}.json"
     json_file_path = (
         app_instance_metadata.shared_definitions.project_solution_runs_path
         + os.sep

@@ -6,7 +6,26 @@
 CUSTOM_USERNAME="apesdnm_user"
 
 ############
-## Create the first script. Need to restart terminal after running this one
+## Create the 0th script. Update and install general use stuff
+############
+tee 0script.sh << EOF
+############
+## Update and install stuff
+############
+echo "-----------------------------------------"
+echo "----- STEP: Update and install stuff ----"
+echo "-----------------------------------------"
+yum update -y
+yum install git -y
+yum -y install epel-release
+yum -y install wget make cmake gcc bzip2-devel libffi-devel zlib-devel
+yum -y groupinstall "Development Tools"
+EOF
+
+chmod 755 0script.sh
+
+############
+## Create the first script. Install OpenSSL for Python's pip install stuff. Need to restart terminal after running this one
 ############
 tee 1script.sh << EOF
 #!/bin/bash
@@ -29,18 +48,6 @@ CUSTOM_PASSWD="tempPa55wd!"
 
 MOUNT_DIR="/ebs_data"
 PROJECT_DIR=\${MOUNT_DIR}/project_home
-
-############
-## Update and install stuff
-############
-echo "-----------------------------------------"
-echo "----- STEP: Update and install stuff ----"
-echo "-----------------------------------------"
-yum update -y
-yum install git -y
-yum -y install epel-release
-yum -y install wget make cmake gcc bzip2-devel libffi-devel zlib-devel
-yum -y groupinstall "Development Tools"
 
 ############
 ## Update and install openSSL
@@ -220,6 +227,14 @@ chmod 755 /home/\${CUSTOM_USERNAME}/startup/pip_script.sh
 chmod 755 /home/\${CUSTOM_USERNAME}/startup/nodejs_script.sh
 chown apesdnm_user /home/\${CUSTOM_USERNAME}/startup/pip_script.sh
 chown apesdnm_user /home/\${CUSTOM_USERNAME}/startup/nodejs_script.sh
+
+############
+## Add swap memory (needs to finish configuration manually)
+############
+fallocate -l 2G /swapfile
+chmod 600 /swapfile
+mkswap /swapfile
+swapon /swapfile
 EOF
 
 chmod 755 2script.sh
@@ -294,6 +309,15 @@ echo "cache=\${NODE_CACHE_DIR}" >> .npmrc
 npm install
 EOF
 
+############
+## Create the install all BUT openssl script
+############
+tee run_all_without_openssl.sh << EOF
+#!/bin/bash
+
+sh 0script.sh >> run_all_without_openssl_0.log
+sh 2script.sh >> run_all_without_openssl_2.log
+EOF
 
 ## clone if folder doesn't exist
 ## pip install reqs as user!!
