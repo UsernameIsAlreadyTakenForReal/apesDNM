@@ -3,7 +3,13 @@
 # run() follows these steps:
 # * Part 0      -- Checks and info;
 # * Part 1      -- Get the desired datasets as a pandas dataFrames
-# * * * At the end of the p1_get_datasets_as_dataFrames() there will either be a self.dataFrameMap (df + label) or an error;
+# * * * At the end of the p1_get_targeted_dataset() there will be:
+# * * * * * for ekg:
+# * * * * * * * * quasi_processed_datasets_list         -   containing datasets as pandas.DataFrames
+# * * * * * * * * quasi_processed_datasets_utility_list -   containing utility labels for those DataFrames
+# * * * * * for img:
+# * * * * * * * * quasi_processed_datasets_list         -   containing images paths
+# * * * * * * * * quasi_processed_datasets_utility_list -   containing images sizes
 # * Part 1.5    -- Display dataset informations
 # * Part 2      -- Get the suitable solution(s) (by user input or by APES's recommendation);
 # * Part 3      -- Run selected solution(s);
@@ -30,6 +36,20 @@ class APES_Application:
     def update_app_instance_metadata(self, application_instance_metadata):
         self.application_instance_metadata = application_instance_metadata
 
+    def run_EDA(self, path):
+        ## Part 1.5 -- Display dataset informations
+        (
+            return_code,
+            return_message,
+            files_dicts,
+        ) = self.p15_display_dataset_informations(path)
+        # if return_code != 0:
+        #     return return_code, return_message, files_dicts
+        # else:
+        #     self.Logger.info(self, return_message)
+
+        return return_code, return_message, files_dicts
+
     def run(self):
         self.application_instance_metadata.printMetadata()
 
@@ -40,8 +60,8 @@ class APES_Application:
         else:
             self.Logger.info(self, return_message)
 
-        ## Part 1 -- get_datasets_as_dataFrames
-        return_code, return_message = self.p1_get_datasets_as_dataFrames()
+        ## Part 1 -- Get the desired datasets as a pandas dataFrames, as picture paths or whatever it needs
+        return_code, return_message = self.p1_get_targeted_dataset()
         if return_code != 0:
             return (return_code, return_message)
         else:
@@ -62,20 +82,6 @@ class APES_Application:
             self.Logger.info(self, return_message)
 
         return (0, "Program exited successfully")
-
-    def run_EDA(self, path):
-        ## Part 1.5 -- Display dataset informations
-        (
-            return_code,
-            return_message,
-            files_dicts,
-        ) = self.p15_display_dataset_informations(path)
-        # if return_code != 0:
-        #     return return_code, return_message, files_dicts
-        # else:
-        #     self.Logger.info(self, return_message)
-
-        return return_code, return_message, files_dicts
 
     def p0_checks(self):
         if (
@@ -101,78 +107,60 @@ class APES_Application:
 
         return (0, "Function p0_checks exited successfully")
 
-    def p1_get_datasets_as_dataFrames(self):
+    def p1_get_targeted_dataset(self):
         if self.application_instance_metadata.dataset_origin == "new_dataset":
             info_message = "Dataset is not coming from our database."
             self.Logger.info(self, info_message)
-
-            if self.application_instance_metadata.dataset_category == "N/A":
-                info_message = "We do not seem to know what kind of dataset this is. Calling the discerner"
-                self.Logger.info(self, info_message)
-
-                from apes_discerner import Discerner
-
-                discerner = Discerner(self.Logger)
-
-            else:
-                info_message = "We know this dataset is of type " + str(
-                    self.application_instance_metadata.dataset_category
-                )
-                self.Logger.info(self, info_message)
-
-                (
-                    return_code,
-                    return_message,
-                    self.dataFramesList,
-                    self.dataFramesUtilityList,
-                ) = handle_dataset_from_path(
-                    self.Logger, self.application_instance_metadata
-                )
-                if return_code != 0:
-                    return (return_code, return_message)
-                else:
-                    self.Logger.info(self, return_message)
-                pass
-
         else:
             info_message = "Dataset is coming from our database"
             self.Logger.info(self, info_message)
 
-            # We don't have unidentified databases at the moment of writing this code, but just in case.
-            if self.application_instance_metadata.dataset_category == "N/A":
-                info_message = "We do not seem to know what kind of dataset this is. Calling the discerner"
-                self.Logger.info(self, info_message)
+        if self.application_instance_metadata.dataset_category == "N/A":
+            info_message = "We do not seem to know what kind of dataset this is. Calling the discerner"
+            self.Logger.info(self, info_message)
 
-                from apes_discerner import Discerner
+            from apes_discerner import Discerner
 
-                discerner = Discerner(self.Logger)
+            discerner = Discerner(self.Logger)
 
+        else:
+            info_message = "We know this dataset is of type " + str(
+                self.application_instance_metadata.dataset_category
+            )
+            self.Logger.info(self, info_message)
+            (
+                return_code,
+                return_message,
+                self.quasi_processed_datasets_list,
+                self.quasi_processed_datasets_utility_list,
+            ) = handle_dataset_from_path(
+                self.Logger, self.application_instance_metadata
+            )
+            if return_code != 0:
+                return (return_code, return_message)
             else:
-                info_message = "We know this dataset is of type " + str(
-                    self.application_instance_metadata.dataset_category
-                )
-                self.Logger.info(self, info_message)
+                self.Logger.info(self, return_message)
 
-                (
-                    return_code,
-                    return_message,
-                    self.dataFramesList,
-                    self.dataFramesUtilityList,
-                ) = handle_dataset_from_path(
-                    self.Logger, self.application_instance_metadata
-                )
-                if return_code != 0:
-                    return (return_code, return_message)
-                else:
-                    self.Logger.info(self, return_message)
-                pass
+            match self.application_instance_metadata.dataset_category:
+                case "ekg":
+                    info_message = (
+                        "p1_get_targeted_dataset returned the following [ekg]:"
+                    )
+                    for i in range(0, len(self.quasi_processed_datasets_list)):
+                        info_message += f"\nDataset {i}\n|___label = {self.quasi_processed_datasets_utility_list[i]}\n|___shape = {self.quasi_processed_datasets_list[i].shape}"
+                    self.Logger.info(self, info_message)
 
-        info_message = "p1_get_datasets_as_dataFrames returned the following:"
-        for i in range(0, len(self.dataFramesList)):
-            info_message += f"\nDataset {i}\n|___label = {self.dataFramesUtilityList[i]}\n|___shape = {self.dataFramesList[i].shape}"
-        self.Logger.info(self, info_message)
+                    return (0, "Function p1_get_targeted_dataset exited successfully")
+                case "img":
+                    info_message = (
+                        "p1_get_targeted_dataset returned the following [img]:"
+                    )
+                    info_message += f"\nDataset path = {self.quasi_processed_datasets_list}\nImages sizes = height: {self.quasi_processed_datasets_utility_list['height']}, width: {self.quasi_processed_datasets_utility_list['width']}"
+                    self.Logger.info(self, info_message)
 
-        return (0, "Function p1_get_datasets_as_dataFrames exited successfully")
+                    return (0, "Function p1_get_targeted_dataset exited successfully")
+                case "ral":
+                    pass
 
     def p15_display_dataset_informations(self, path):
         dataset_EDA = Dataset_EDA(self.Logger, path)
@@ -195,8 +183,19 @@ class APES_Application:
             elif self.application_instance_metadata.solution_category == "img":
                 info_message = "Loading solution img_1"
                 self.Logger.info(self, info_message)
-                # TODO: actually implement the solution lol
-                pass
+
+                from type_img.apes_solution_img_1 import Solution_img_1
+
+                self.solution = Solution_img_1(
+                    self.application_instance_metadata,
+                    self.Logger,
+                )
+                self.solutions_list.append(self.solution)
+
+                return (
+                    0,
+                    "Function p2_get_desired_solutions exited successfully",
+                )
             else:
                 match solution_indexes[0]:
                     case 1:
@@ -296,8 +295,8 @@ class APES_Application:
 
             return_code, return_message = solution.adapt_dataset(
                 self.application_instance_metadata,
-                self.dataFramesList,
-                self.dataFramesUtilityList,
+                self.quasi_processed_datasets_list,
+                self.quasi_processed_datasets_utility_list,
             )
             if return_code != 0:
                 return return_code, return_message

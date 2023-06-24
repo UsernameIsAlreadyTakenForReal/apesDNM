@@ -6,7 +6,26 @@
 CUSTOM_USERNAME="apesdnm_user"
 
 ############
-## Create the first script. Need to restart terminal after running this one
+## Create the 0th script. Update and install general use stuff
+############
+tee 0script.sh << EOF
+############
+## Update and install stuff
+############
+echo "-----------------------------------------"
+echo "----- STEP: Update and install stuff ----"
+echo "-----------------------------------------"
+yum update -y
+yum install git -y
+yum -y install epel-release
+yum -y install wget make cmake gcc bzip2-devel libffi-devel zlib-devel
+yum -y groupinstall "Development Tools"
+EOF
+
+chmod 755 0script.sh
+
+############
+## Create the first script. Install OpenSSL for Python's pip install stuff. Need to restart terminal after running this one
 ############
 tee 1script.sh << EOF
 #!/bin/bash
@@ -29,18 +48,6 @@ CUSTOM_PASSWD="tempPa55wd!"
 
 MOUNT_DIR="/ebs_data"
 PROJECT_DIR=\${MOUNT_DIR}/project_home
-
-############
-## Update and install stuff
-############
-echo "-----------------------------------------"
-echo "----- STEP: Update and install stuff ----"
-echo "-----------------------------------------"
-yum update -y
-yum install git -y
-yum -y install epel-release
-yum -y install wget make cmake gcc bzip2-devel libffi-devel zlib-devel
-yum -y groupinstall "Development Tools"
 
 ############
 ## Update and install openSSL
@@ -85,7 +92,7 @@ AWS_REGION="eu-central-1"
 AWS_EC2_TAG_NAME="APESDNM-DEV-EC2"
 AWS_VOLUME_TAG_NAME="APESDNM-DEV-EBS"
 
-PYTHON_VERSION=3.11.3
+PYTHON_VERSION=3.10.10
 NODEJS_VERSION=v16.20.0
 CUSTOM_USERNAME="apesdnm_user"
 CUSTOM_PASSWD="tempPa55wd!"
@@ -159,7 +166,7 @@ if [ -d \${PROJECT_DIR}/apesdnm_python_venv ]; then
     echo "Python venv exists on EBS."
 else
     echo "Python venv does not exist on EBS. Creating..."
-    sudo python3.11 -m venv \${PROJECT_DIR}/apesdnm_python_venv
+    sudo python3.10 -m venv \${PROJECT_DIR}/apesdnm_python_venv
 fi
 
 ############
@@ -180,13 +187,8 @@ echo "---- STEP: Git connection key configuration ----"
 echo "------------------------------------------------"
 mkdir ~/.ssh
 touch ~/.ssh/id_ed25519
-echo "-----BEGIN OPENSSH PRIVATE KEY-----
-b3BlbnNzaC1rZXktdjEAAAAABG5vbmUAAAAEbm9uZQAAAAAAAAABAAAAMwAAAAtzc2gtZW
-QyNTUxOQAAACAvs7xAz/nkwTcXEXzfxFkoDf8CRUNx6r5gO9JsKSMyKQAAAJjrFfN56xXz
-eQAAAAtzc2gtZWQyNTUxOQAAACAvs7xAz/nkwTcXEXzfxFkoDf8CRUNx6r5gO9JsKSMyKQ
-AAAEBdqvJra+i2nbNekLj+75Jq1nSu8JXntsKf8ZjogKCzFC+zvEDP+eTBNxcRfN/EWSgN
-/wJFQ3HqvmA70mwpIzIpAAAAEGFwZWRubUBnbWFpbC5jb20BAgMEBQ==
------END OPENSSH PRIVATE KEY-----" >> ~/.ssh/id_ed25519
+aws s3 cp s3://apesdnm-s3/startup/apes_ssh_key.txt ~/startup/apes_ssh_key.txt
+cat ~/startup/apes_ssh_key.txt >> ~/.ssh/id_ed25519
 sudo chmod 700 ~/.ssh/
 sudo chmod 600 ~/.ssh/id_ed25519
 
@@ -225,6 +227,14 @@ chmod 755 /home/\${CUSTOM_USERNAME}/startup/pip_script.sh
 chmod 755 /home/\${CUSTOM_USERNAME}/startup/nodejs_script.sh
 chown apesdnm_user /home/\${CUSTOM_USERNAME}/startup/pip_script.sh
 chown apesdnm_user /home/\${CUSTOM_USERNAME}/startup/nodejs_script.sh
+
+############
+## Add swap memory (needs to finish configuration manually)
+############
+fallocate -l 2G /swapfile
+chmod 600 /swapfile
+mkswap /swapfile
+swapon /swapfile
 EOF
 
 chmod 755 2script.sh
@@ -245,7 +255,7 @@ AWS_REGION="eu-central-1"
 AWS_EC2_TAG_NAME="APESDNM-DEV-EC2"
 AWS_VOLUME_TAG_NAME="APESDNM-DEV-EBS"
 
-PYTHON_VERSION=3.11.3
+PYTHON_VERSION=3.10.10
 NODEJS_VERSION=v16.20.0
 CUSTOM_USERNAME="apesdnm_user"
 CUSTOM_PASSWD="tempPa55wd!"
@@ -260,7 +270,7 @@ if [ -d \${PROJECT_DIR}/apesdnm_python_venv ]; then
     pip install -r requirements.txt --no-cache-dir
 else
     echo "Python venv does not exist on EBS. It should be here, tho..."
-    sudo python3.11 -m venv \${PROJECT_DIR}/apesdnm_python_venv
+    sudo python3.10 -m venv \${PROJECT_DIR}/apesdnm_python_venv
     source \${PROJECT_DIR}/apesdnm_python_venv/bin/activate
     pip install --upgrade pip --no-cache-dir
     pip install -r requirements.txt --no-cache-dir
@@ -283,7 +293,7 @@ AWS_REGION="eu-central-1"
 AWS_EC2_TAG_NAME="APESDNM-DEV-EC2"
 AWS_VOLUME_TAG_NAME="APESDNM-DEV-EBS"
 
-PYTHON_VERSION=3.11.3
+PYTHON_VERSION=3.10.10
 NODEJS_VERSION=v16.20.0
 CUSTOM_USERNAME="apesdnm_user"
 CUSTOM_PASSWD="tempPa55wd!"
@@ -299,6 +309,15 @@ echo "cache=\${NODE_CACHE_DIR}" >> .npmrc
 npm install
 EOF
 
+############
+## Create the install all BUT openssl script
+############
+tee run_all_without_openssl.sh << EOF
+#!/bin/bash
+
+sh 0script.sh >> run_all_without_openssl_0.log
+sh 2script.sh >> run_all_without_openssl_2.log
+EOF
 
 ## clone if folder doesn't exist
 ## pip install reqs as user!!
