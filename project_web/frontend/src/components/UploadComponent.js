@@ -550,7 +550,10 @@ export default function UploadComponent() {
 
     const formData = new FormData();
     formData.append("dataset_category", localSelectedMethod);
-    formData.append("solution_category", localSelectedMethod);
+    formData.append(
+      "solution_category",
+      localSelectedMethod.replace(/[0-9]/g, "")
+    );
 
     setEdaRequestStarted(true);
 
@@ -1873,7 +1876,7 @@ export default function UploadComponent() {
                         --- {fileData.columns_with_missing_data} column(s)
                       </Typography>
                       <br></br>
-                      {/* 
+                      {/*
                       <Typography paragrah>
                         <span style={{ fontWeight: "bold" }}>info</span> ---{" "}
                         {fileData.info}

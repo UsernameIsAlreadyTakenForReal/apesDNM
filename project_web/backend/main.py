@@ -350,11 +350,16 @@ def run_apesdnm():
 
         save_data = request.form.get("save_data", False)
 
+        number_of_classes = len(class_names)
+        application_metadata__app_instance_ID = datetime.now().strftime("%Y%m%d_%H%M%S")[2:]
+
         dataset_metadata = Dataset_Metadata(
             logger,
             dataset_path,
+            dataset_name_stub,
             is_labeled,
             file_keyword_names,
+            number_of_classes,
             class_names,
             label_column_name,
             numerical_value_of_desired_label,
