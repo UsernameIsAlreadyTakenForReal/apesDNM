@@ -818,12 +818,13 @@ export default function UploadComponent() {
                 onClick={() => {
                   setShowResults(true);
 
-                  // let datasetPath = String.raw`C:\Users\DANIEL~1\AppData\Local\Temp\tmpuov3ww7j`;
-                  let datasetPath = String.raw`C:\Users\DANIEL~1\AppData\Local\Temp\tmpyh57kodh`;
+                  let datasetPathEkg1 = String.raw`C:\Users\DANIEL~1\AppData\Local\Temp\tmpuov3ww7j`;
+                  let datasetPathEkg2 = String.raw`C:\Users\DANIEL~1\AppData\Local\Temp\tmpyh57kodh`;
 
                   const formData = new FormData();
                   formData.append("test_run", true);
-                  formData.append("dataset_path", datasetPath);
+                  formData.append("dataset_path", datasetPathEkg1);
+                  // formData.append("dataset_path", datasetPathEkg2);
 
                   sendUploadRequest(formData);
                 }}
