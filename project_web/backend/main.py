@@ -327,7 +327,6 @@ def run_apesdnm():
         )
 
         # dataset metadata
-        dataset_name_stub = request.form.get("dataset_name_stub", "")
         dataset_path = request.form.get("dataset_path", "")
         is_labeled = request.form.get("is_labeled", True)
         file_keyword_names = request.form.get("file_keyword_names", [])
@@ -353,7 +352,13 @@ def run_apesdnm():
         model_origin = request.form.get("model_origin", "train_new_model")
         model_train_epochs = request.form.get("model_train_epochs", 40)
 
+        data_identifier = request.form.get("data_identifier", "777")
+
+
         save_data = request.form.get("save_data", False)
+
+        dataset_name_stub = dataset_category + data_identifier
+
 
         number_of_classes = len(class_names)
         application_metadata__app_instance_ID = datetime.now().strftime(
