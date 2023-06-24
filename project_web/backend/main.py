@@ -269,7 +269,7 @@ def run_apesdnm():
         dataset_category = request.form.get("dataset_category", "ekg")
         solution_category = request.form.get("solution_category", "ekg")
         solution_nature = request.form.get("solution_nature", "supervised")
-        solution_index = [request.form.get("solution_index", [1])]
+        solution_index = [int(request.form.get("solution_index", [1]))]
         model_origin = request.form.get("model_origin", "train_new_model")
         model_train_epochs = request.form.get("model_train_epochs", 40)
 
