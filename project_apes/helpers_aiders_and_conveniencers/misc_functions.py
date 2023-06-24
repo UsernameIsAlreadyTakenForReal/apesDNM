@@ -175,7 +175,7 @@ def write_to_solutions_runs_json_file(
     import os
     import platform
 
-    json_file = f"s_{solution}_{platform.system()}.json"
+    json_file = f"s_{solution}.json"
     json_file_path = (
         app_instance_metadata.shared_definitions.project_solution_runs_path
         + os.sep
