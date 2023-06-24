@@ -19,6 +19,5 @@
   "project_solution_img1_model_filename": "apes_solution_img_1_model.h5",
   "project_solution_img1_d_img1_best_model_filename": "",
   "plot_savefile_format": "png",
-  "plot_savefile_location_development": "./../project_web/backend/images/",
-  "plot_savefile_location": "./../project_web/backend/images/"
+  "plot_savefile_location_development": "./../backend/images/"
 }

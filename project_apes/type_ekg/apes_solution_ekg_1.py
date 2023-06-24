@@ -350,6 +350,7 @@ class Solution_ekg_1:
         info_message = f"Created picture at ./project_web/backend/images/ || {plot_save_location} || {plot_name}"
         self.Logger.info(self, info_message)
         self.plots_filenames.append(plot_save_location.split(os.sep)[-1])
+        plt.clf()
         ## Save plot section -- end
 
         info_message = "Training - it took {time} for {number} epochs".format(
@@ -438,6 +439,7 @@ class Solution_ekg_1:
         info_message = f"Created picture at ./project_web/backend/images/ || {plot_save_location} || {plot_name}"
         self.Logger.info(self, info_message)
         self.plots_filenames.append(plot_save_location.split(os.sep)[-1])
+        plt.clf()
         ## Save plot section -- end
 
         info_message = "test() -- end"
@@ -604,6 +606,7 @@ class Solution_ekg_1:
         info_message = f"Created picture at ./project_web/backend/images/ || {plot_save_location} || {plot_name}"
         self.Logger.info(self, info_message)
         self.plots_filenames.append(plot_save_location.split(os.sep)[-1])
+        plt.clf()
         ## Save plot section -- end
 
     def create_dataset(self, df):

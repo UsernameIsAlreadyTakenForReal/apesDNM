@@ -215,7 +215,7 @@ export default function UploadComponent() {
 
   // -------------------------------------------------------------------------
   async function getExistingDatasetItems() {
-    const response = await fetch(BASE_URL + "datasets", {
+    const response = await fetch("datasets", {
       method: "get",
     });
     const data = await response.json();
@@ -292,7 +292,7 @@ export default function UploadComponent() {
 
     setEdaRequestStarted(true);
 
-    const response = await fetch(BASE_URL + "perform_eda", {
+    const response = await fetch("perform_eda", {
       method: "POST",
       body: formData,
     });
@@ -554,7 +554,7 @@ export default function UploadComponent() {
 
     setEdaRequestStarted(true);
 
-    const response = await fetch(BASE_URL + "perform_eda", {
+    const response = await fetch("perform_eda", {
       method: "POST",
       body: formData,
     });
@@ -661,7 +661,7 @@ export default function UploadComponent() {
 
     setUploadRequestStarted(true);
 
-    const response = await fetch(BASE_URL + "upload", {
+    const response = await fetch("upload", {
       method: "POST",
       body: formData,
     });
@@ -813,11 +813,19 @@ export default function UploadComponent() {
               </Tooltip>
             </Divv>
 
-            {false && (
+            {true && (
               <Button
                 onClick={() => {
                   setShowResults(true);
-                  sendUploadRequest({ id: 1 });
+
+                  // let datasetPath = String.raw`C:\Users\DANIEL~1\AppData\Local\Temp\tmpuov3ww7j`;
+                  let datasetPath = String.raw`C:\Users\DANIEL~1\AppData\Local\Temp\tmpyh57kodh`;
+
+                  const formData = new FormData();
+                  formData.append("test_run", true);
+                  formData.append("dataset_path", datasetPath);
+
+                  sendUploadRequest(formData);
                 }}
               >
                 Fetch test
@@ -849,6 +857,7 @@ export default function UploadComponent() {
                 setShowFileUploadMethod(false);
                 setGoBackButtonHover(false);
                 setShowEdaButton(false);
+                setEdaRequestError(false);
               }}
               onMouseEnter={() => setGoBackButtonHover(true)}
               onMouseLeave={() => setGoBackButtonHover(false)}
@@ -1075,6 +1084,7 @@ export default function UploadComponent() {
                   setShowExistingMethod(false);
                   setShowFileUploadMethod(false);
                   setGoBackButtonHover(false);
+                  setEdaRequestError(false);
                 }}
                 onMouseEnter={() => setGoBackButtonHover(true)}
                 onMouseLeave={() => setGoBackButtonHover(false)}
@@ -1662,7 +1672,7 @@ export default function UploadComponent() {
               </Terminal>
             </div>
 
-            <Divv>{backendResults}</Divv>
+            <Divv>{backendResults.toLowerCase()}</Divv>
 
             <Divv left="0px">
               {backendMLPlots.map((src, index) => (
@@ -2006,11 +2016,12 @@ export default function UploadComponent() {
           }
 
           if (data.toLowerCase().includes("created picture")) {
+            // console.log("image", data);
             let imageData = data.split("||");
 
             setBackendMLPlots((backendMLPlots) => [
               ...backendMLPlots,
-              imageData[1].trim(),
+              "images" + "\\" + imageData[1].split("images")[1].trim(),
             ]);
 
             setBackendCptions((backendCaptions) => [

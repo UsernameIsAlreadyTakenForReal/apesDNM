@@ -114,4 +114,6 @@ class Shared_Definitions:
             else data["plot_savefile_location"]
         )
 
+        print(self.plot_savefile_location)
+
         ## DONE
