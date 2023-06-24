@@ -345,7 +345,7 @@ def run_apesdnm():
         # print(display_dataFrames)  # displays False, not (False,) # ????
         application_mode = request.form.get("application_mode", "compare_solutions")
         dataset_origin = request.form.get("dataset_origin", "new_dataset")
-        dataset_category = request.form.get("dataset_category", "")
+        dataset_category = request.form.get("dataset_category", "ekg")
         solution_category = request.form.get("solution_category", "ekg")
         solution_nature = request.form.get("solution_nature", "supervised")
         solution_index = request.form.get("solution_index", [1])
