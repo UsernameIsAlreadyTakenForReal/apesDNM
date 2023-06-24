@@ -50,6 +50,7 @@ class Dataset_EDA:
         self.dataset_path = dataset_path
 
     def perform_eda(self):
+        import pathlib
         results = []
 
         self.Logger.info(self, "EDA started for " + self.dataset_path)
@@ -67,95 +68,96 @@ class Dataset_EDA:
 
         for dirname, _, filenames in os.walk(self.dataset_path):
             for index, filename in enumerate(filenames):
-                dict = {}
+                if pathlib.Path(filename).suffix != ".json":
+                    dict = {}
 
-                full_path = os.path.join(dirname, filename)
-                self.Logger.info(self, full_path)
+                    full_path = os.path.join(dirname, filename)
+                    self.Logger.info(self, full_path)
 
-                return_code, return_message, df = load_file_type(self.Logger, full_path)
-                # self.Logger.info(self, str(type(df)))
+                    return_code, return_message, df = load_file_type(self.Logger, full_path)
+                    # self.Logger.info(self, str(type(df)))
 
-                dict["index"] = index
-                dict["filename"] = filename
+                    dict["index"] = index
+                    dict["filename"] = filename
 
-                x, y = df.shape
+                    x, y = df.shape
 
-                dict["rows"] = str(x)
-                dict["columns"] = str(y)
-                dict["head"] = str(df.head(5)).split("\n")
+                    dict["rows"] = str(x)
+                    dict["columns"] = str(y)
+                    dict["head"] = str(df.head(5)).split("\n")
 
-                missing_data = 0
-                nulls = df.isnull().sum().to_frame()
-                for _, row in nulls.iterrows():
-                    if row[0] != 0:
-                        missing_data = missing_data + 1
+                    missing_data = 0
+                    nulls = df.isnull().sum().to_frame()
+                    for _, row in nulls.iterrows():
+                        if row[0] != 0:
+                            missing_data = missing_data + 1
 
-                dict["columns_with_missing_data"] = str(missing_data)
+                    dict["columns_with_missing_data"] = str(missing_data)
 
-                plots = []
+                    plots = []
 
-                # #############################################################
+                    # #############################################################
 
-                # self.Logger.info(
-                #     self,
-                #     "creating heatmap for " + filename + "... this might take a while",
-                # )
-                # beginning_time = datetime.now()
+                    # self.Logger.info(
+                    #     self,
+                    #     "creating heatmap for " + filename + "... this might take a while",
+                    # )
+                    # beginning_time = datetime.now()
 
-                # plt.clf()
-                # plt.figure()
-                # sns.heatmap(df.corr(), annot=True, cmap="YlGnBu")
-                # caption = "heatmap for file #" + str(index) + ": " + filename
-                # plt.title(caption)
-                # full_path = os.path.join("images", str(uuid.uuid4()) + ".png")
-                # plt.savefig(full_path)
-                # plots.append(
-                #     {
-                #         "path": full_path,
-                #         "caption": caption,
-                #     }
-                # )
+                    # plt.clf()
+                    # plt.figure()
+                    # sns.heatmap(df.corr(), annot=True, cmap="YlGnBu")
+                    # caption = "heatmap for file #" + str(index) + ": " + filename
+                    # plt.title(caption)
+                    # full_path = os.path.join("images", str(uuid.uuid4()) + ".png")
+                    # plt.savefig(full_path)
+                    # plots.append(
+                    #     {
+                    #         "path": full_path,
+                    #         "caption": caption,
+                    #     }
+                    # )
 
-                # difference_in_seconds = (datetime.now() - beginning_time).seconds
-                # self.Logger.info(
-                #     self,
-                #     "took " + str(difference_in_seconds) + " seconds to create...",
-                # )
+                    # difference_in_seconds = (datetime.now() - beginning_time).seconds
+                    # self.Logger.info(
+                    #     self,
+                    #     "took " + str(difference_in_seconds) + " seconds to create...",
+                    # )
 
-                # #############################################################
+                    # #############################################################
 
-                plt.clf()
-                plt.scatter(df.iloc[:, 0], df.iloc[:, 1])
-                plt.xlabel("column 0")
-                plt.ylabel("column 1")
-                caption = "scatter plot for file #" + str(index) + ": " + filename
-                plt.title(caption)
-                full_path = os.path.join("images", str(uuid.uuid4()) + ".png")
-                plt.savefig(full_path)
-                plots.append({"path": full_path, "caption": caption})
+                    plt.clf()
+                    plt.scatter(df.iloc[:, 0], df.iloc[:, 1])
+                    plt.xlabel("column 0")
+                    plt.ylabel("column 1")
+                    caption = "scatter plot for file #" + str(index) + ": " + filename
+                    plt.title(caption)
+                    full_path = os.path.join("images", str(uuid.uuid4()) + ".png")
+                    plt.savefig(full_path)
+                    plots.append({"path": full_path, "caption": caption})
 
-                self.Logger.info(self, "creating histogram for " + filename + "...")
-                plt.clf()
-                plt.figure()
-                plt.hist(df.iloc[:, y - 1])
-                plt.xlabel("value")
-                plt.ylabel("frequency")
-                caption = "histogram for file #" + str(index) + ": " + filename
-                plt.title(caption)
-                full_path = os.path.join("images", str(uuid.uuid4()) + ".png")
-                plt.savefig(full_path)
-                plots.append({"path": full_path, "caption": caption})
+                    self.Logger.info(self, "creating histogram for " + filename + "...")
+                    plt.clf()
+                    plt.figure()
+                    plt.hist(df.iloc[:, y - 1])
+                    plt.xlabel("value")
+                    plt.ylabel("frequency")
+                    caption = "histogram for file #" + str(index) + ": " + filename
+                    plt.title(caption)
+                    full_path = os.path.join("images", str(uuid.uuid4()) + ".png")
+                    plt.savefig(full_path)
+                    plots.append({"path": full_path, "caption": caption})
 
-                # for _ in range(random.randint(1, 3)):
-                #     _full_path, _caption = plot()
-                #     plots.append({"path": _full_path, "caption": _caption})
+                    # for _ in range(random.randint(1, 3)):
+                    #     _full_path, _caption = plot()
+                    #     plots.append({"path": _full_path, "caption": _caption})
 
-                dict["plots"] = plots
+                    dict["plots"] = plots
 
-                dict["info"] = str(df.info())
-                dict["describe"] = str(df.describe()).split("\n")
+                    dict["info"] = str(df.info())
+                    dict["describe"] = str(df.describe()).split("\n")
 
-                results.append(dict)
+                    results.append(dict)
 
         self.Logger.info(
             self, "eda performed successfully for files in " + self.dataset_path
