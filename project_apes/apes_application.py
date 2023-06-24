@@ -36,14 +36,14 @@ class APES_Application:
     def update_app_instance_metadata(self, application_instance_metadata):
         self.application_instance_metadata = application_instance_metadata
 
-    def run_EDA(self, path):
+    def run_EDA(self, path, shared_definitions):
         ## Part 1.5 -- Display dataset informations
         (
             return_code,
             return_message,
             files_dicts,
             dataset_category
-        ) = self.p15_display_dataset_informations(path)
+        ) = self.p15_display_dataset_informations(path, shared_definitions)
         if return_code != 0:
             return return_code, return_message, files_dicts, dataset_category
         else:
@@ -163,8 +163,8 @@ class APES_Application:
                 case "ral":
                     pass
 
-    def p15_display_dataset_informations(self, path):
-        dataset_EDA = Dataset_EDA(self.Logger, path)
+    def p15_display_dataset_informations(self, path, shared_definitions):
+        dataset_EDA = Dataset_EDA(self.Logger, path, shared_definitions)
         return_code, return_message, files_dicts, dataset_category = dataset_EDA.perform_eda()
         if return_code != 0:
             self.Logger(self, return_message)

@@ -42,8 +42,8 @@ class Dataset_EDA:
     def __init__(
         self,
         Logger,
-        shared_definitions,
         dataset_path,
+        shared_definitions,
     ):
         self.Logger = Logger
         self.shared_definitions = shared_definitions
@@ -202,8 +202,8 @@ class Dataset_EDA:
                 contains_only_audio = False
                 break
 
-        info_message = f"discriminate_dataset_category() -- Given dataset contains only numerical: {contains_only_numerical}, contains only images: {contains_only_image}, contains only audio: {contains_only_audio}"
-        self.Logger(self, info_message)
+        #info_message = f"discriminate_dataset_category() -- Given dataset contains only numerical: {contains_only_numerical}, contains only images: {contains_only_image}, contains only audio: {contains_only_audio}"
+        #self.Logger(self, info_message)
 
         verifier = [contains_only_numerical, contains_only_image, contains_only_audio]
         if sum(verifier) != 1:
