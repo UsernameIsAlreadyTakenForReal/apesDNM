@@ -109,6 +109,7 @@ export default function UploadComponent() {
   const [backendConsole, setBackendConsole] = useState([]);
   const [backendResults, setBackendResults] = useState("");
   const [beDatasetPath, setBEDatasetPath] = useState("");
+  const [beDatasetCategory, setBEDatasetCategory] = useState("");
   const [eda, setEda] = useState([]);
 
   const [fileEdaShow, setFileEdaShow] = useState([]);
@@ -321,6 +322,8 @@ export default function UploadComponent() {
 
     setBackendResults(data.results);
     setBEDatasetPath(data.path);
+
+    setBEDatasetCategory(data.dataset_category);
 
     console.log();
 
@@ -544,6 +547,7 @@ export default function UploadComponent() {
     formData.append("model_train_epochs", epochs);
     formData.append("solution_index", selectedMethods);
 
+    formData.append("dataset_category", beDatasetCategory);
     formData.append("dataset_identifier", datasetId);
 
     formData.append("save_data", saveDataCheckbox);
