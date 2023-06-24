@@ -58,6 +58,10 @@ class Shared_Definitions:
         self.rough_filename_searches = data["rough_filename_searches"]
         self.supported_file_formats = data["supported_file_formats"]
 
+        self.possible_extensions_for_numerical_datasets = data["possible_extensions_for_numerical_datasets"]
+        self.possible_extensions_for_image_datasets = data["possible_extensions_for_image_datasets"]
+        self.possible_extensions_for_audio_datasets = data["possible_extensions_for_audio_datasets"]
+
         ## MODELS
         self.supported_model_extensions = data["supported_model_extensions"]
         self.project_model_root_path = (

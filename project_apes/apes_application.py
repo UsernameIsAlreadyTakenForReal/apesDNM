@@ -42,13 +42,14 @@ class APES_Application:
             return_code,
             return_message,
             files_dicts,
+            dataset_category
         ) = self.p15_display_dataset_informations(path)
-        # if return_code != 0:
-        #     return return_code, return_message, files_dicts
-        # else:
-        #     self.Logger.info(self, return_message)
+        if return_code != 0:
+            return return_code, return_message, files_dicts, dataset_category
+        else:
+            self.Logger.info(self, return_message)
 
-        return return_code, return_message, files_dicts
+        return return_code, return_message, files_dicts, dataset_category
 
     def run(self):
         self.application_instance_metadata.printMetadata()
@@ -164,8 +165,11 @@ class APES_Application:
 
     def p15_display_dataset_informations(self, path):
         dataset_EDA = Dataset_EDA(self.Logger, path)
-        files_dicts = dataset_EDA.perform_eda()
-        return 0, "p15_display_dataset_informations exited successfully", files_dicts
+        return_code, return_message, files_dicts, dataset_category = dataset_EDA.perform_eda()
+        if return_code != 0:
+            self.Logger(self, return_message)
+            return 1, return_message, [], []
+        return 0, "p15_display_dataset_informations exited successfully", files_dicts, dataset_category
 
     def p2_get_desired_solutions(self):
         solution_indexes = list(self.application_instance_metadata.solution_index)

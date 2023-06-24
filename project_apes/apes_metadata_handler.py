@@ -102,6 +102,7 @@ class Application_Instance_Metadata:
     def __init__(
         self,
         Logger,
+        shared_definitions,
         dataset_metadata,
         app_instance_ID,
         display_dataFrames=False,
@@ -130,7 +131,7 @@ class Application_Instance_Metadata:
         self.model_origin = model_origin
         self.model_train_epochs = model_train_epochs
 
-        self.shared_definitions = Shared_Definitions()
+        self.shared_definitions = shared_definitions
 
         info_message = "Created object of type Application_Instance_Metadata"
         self.Logger.info(self, info_message)

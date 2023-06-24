@@ -24,6 +24,7 @@ sys.path.append("../../project_apes")
 
 from logger import Logger
 from apes_application import APES_Application
+from apes_static_definitions import Shared_Definitions
 
 from apes_metadata_handler import *
 
@@ -35,6 +36,7 @@ CORS(app)
 
 logger = Logger(socketio)
 apes_application_instance = APES_Application(logger)
+shared_definitions = Shared_Definitions()
 
 
 def cls():
@@ -172,14 +174,14 @@ def perform_eda():
 
         # from apes_EDA_handler import Dataset_EDA
 
-        return_code, return_message, files_dicts = apes_application_instance.run_EDA(
+        return_code, return_message, files_dicts, dataset_category = apes_application_instance.run_EDA(
             path
         )
 
         # dataset_EDA = Dataset_EDA(logger, path)
         # files_dicts = dataset_EDA.perform_eda()
 
-        return jsonify({"results": return_message, "path": path, "eda": files_dicts})
+        return jsonify({"results": return_message, "path": path, "eda": files_dicts, "dataset_category": dataset_category})
     except Exception as e:
         logger.info(
             "perform_eda",
@@ -255,6 +257,7 @@ def mockup_test_run(Logger, path):
     )
     application_instance_metadata = Application_Instance_Metadata(
         Logger,
+        shared_definitions,
         dataset_metadata,
         application_metadata__app_instance_ID,
         application_metadata__display_dataFrames,

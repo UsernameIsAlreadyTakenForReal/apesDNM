@@ -3,6 +3,14 @@
   "rough_filename_searches": ["train", "test", "validation", "run"],
   "supported_file_formats": [".csv", ".arff", ".txt", ".npz", ".ts"],
   "supported_model_extensions": [".pth", ".h5"],
+  "possible_extensions_for_numerical_datasets": [
+    ".csv",
+    ".arff",
+    ".ts",
+    ".txt"
+  ],
+  "possible_extensions_for_image_datasets": [".img", ".jpg", ".jpeg", ".png"],
+  "possible_extensions_for_audio_datasets": [".wav", ".mp3"],
 
   "project_model_root_path_development": "./models",
   "project_model_root_path": "/ebs_data/project_home/apesDNM/project_apes/models",
