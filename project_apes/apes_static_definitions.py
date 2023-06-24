@@ -46,7 +46,11 @@ class Shared_Definitions:
     def __init__(self):
         # TODO: check centralized information (S3?)
 
-        file = open("apes_static_definitions.json")
+        if platform.system() == "Windows":
+            file = open("apes_static_definitions.json")
+        else:
+            file = open("/ebs_data/project_home/apesDNM/project_apes/apes_static_definitions.json")
+
         data = json.load(file)
 
         ## DATASETS
