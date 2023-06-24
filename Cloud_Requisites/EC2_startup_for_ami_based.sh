@@ -56,6 +56,12 @@ echo "-----------------------------------------"
 echo "-------- STEP: Git configuration --------"
 echo "-----------------------------------------"
 git config --global --add safe.directory /ebs_data/project_home/apesDNM
+
+############
+## Memory
+############
+sudo mkswap /ebs_data/swapfile
+sudo swapon /ebs_data/swapfile
 EOF
 
 chmod 755 mount_script.sh
