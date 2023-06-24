@@ -94,6 +94,7 @@ def perform_eda():
         print("perform_eda() function called")
 
         import shutil
+        import platform
 
         shutil.rmtree("images")
         os.makedirs("images")
@@ -126,11 +127,17 @@ def perform_eda():
             else:
                 if dataset_category == "ekg1":
                     logger.info("file_save", "ekg1 dataset selected")
-                    path = "../../../Datasets/Dataset - ECG5000"
+                    if platform.system() == "Windows":
+                        path = "../../../Datasets/Dataset - ECG5000"
+                    else:
+                        path = "/ebs_data/project_datasets/d_ekg1"
 
                 if dataset_category == "ekg2":
                     logger.info("file_save", "ekg2 dataset selected")
-                    path = "../../../Datasets/Dataset - ECG_Heartbeat/Dataset - ECG_Heartbeat"
+                    if platform.system() == "Windows":
+                        path = "../../../Datasets/Dataset - ECG_Heartbeat/Dataset - ECG_Heartbeat"
+                    else:
+                        path = "/ebs_data/project_datasets/d_ekg2"
 
         else:
             temp_dir = tempfile.mkdtemp()
