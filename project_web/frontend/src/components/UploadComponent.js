@@ -241,10 +241,10 @@ export default function UploadComponent() {
           [...Array(arrayOfPredictions[0]).keys()].map((element) => element + 1)
         );
         setPossibleNumberOfClasses(arrayOfPredictions[0]);
+      }
+    }
 
-        return arrayOfPredictions[0];
-      } else return -1;
-    } else return -1;
+    return arrayOfPredictions.toString().replaceAll(",", ", ");
   }
 
   // -------------------------------------------------------------------------
@@ -431,32 +431,38 @@ export default function UploadComponent() {
 
     setLabelColumn(localLabelColumn);
 
-    // classes logic
-    let classes = handleClassChange();
+    // classes logic has been removed as the normal value will be considered the lowest among all of them
 
-    if (classes.length !== classesTextfields.length) {
-      setClassesTextfieldsError(true);
-      setClassesTextfieldsErrorMessage("add a value for each class textfield");
-      return;
-    }
+    if (possibleNumberOfClasses === -1) {
+      // classes logic
+      let classes = handleClassChange();
 
-    if (classes.length < 2) {
-      setClassesTextfieldsError(true);
-      setClassesTextfieldsErrorMessage("provide at least 2 classes");
-      return;
-    }
+      if (classes.length !== classesTextfields.length) {
+        setClassesTextfieldsError(true);
+        setClassesTextfieldsErrorMessage(
+          "add a value for each class textfield"
+        );
+        return;
+      }
 
-    if (new Set(classes).size !== classes.length) {
-      setClassesTextfieldsError(true);
-      setClassesTextfieldsErrorMessage("remove duplicate classes");
-      return;
-    }
+      if (classes.length < 2) {
+        setClassesTextfieldsError(true);
+        setClassesTextfieldsErrorMessage("provide at least 2 classes");
+        return;
+      }
 
-    // normal class
-    if (normalClass === "") {
-      setNormalClassError(true);
-      setNormalClassErrorMessage("normal class must be selected");
-      return;
+      if (new Set(classes).size !== classes.length) {
+        setClassesTextfieldsError(true);
+        setClassesTextfieldsErrorMessage("remove duplicate classes");
+        return;
+      }
+
+      // normal class
+      if (normalClass === "") {
+        setNormalClassError(true);
+        setNormalClassErrorMessage("normal class must be selected");
+        return;
+      }
     }
 
     // dataset id logic
@@ -971,7 +977,7 @@ export default function UploadComponent() {
                 setShowEdaButton(false);
                 setEdaRequestError(false);
 
-                // setEda([]);
+                setEda([]);
                 setPossibleNumberOfClasses(-1);
               }}
               onMouseEnter={() => setGoBackButtonHover(true)}
@@ -1252,7 +1258,7 @@ export default function UploadComponent() {
                   setGoBackButtonHover(false);
                   setEdaRequestError(false);
 
-                  // setEda([]);
+                  setEda([]);
                   setPossibleNumberOfClasses(-1);
                 }}
                 onMouseEnter={() => setGoBackButtonHover(true)}
@@ -1494,16 +1500,39 @@ export default function UploadComponent() {
                   <Tooltip
                     title={
                       possibleNumberOfClasses === -1 ? (
-                        ""
+                        eda.length === 0 ? (
+                          // eda was not yet performed
+                          ""
+                        ) : (
+                          // eda was performed but files had different classes predictions
+                          <Typography
+                            fontSize={14}
+                            style={{ textAlign: "center", padding: "7.5px" }}
+                          >
+                            the system has found different number of classes for{" "}
+                            {eda.length} files you sent. please provide us with
+                            these values
+                            <br></br>
+                            <br></br>
+                            number of classes per file: [
+                            {getGlobalNumberOfClasses()}]
+                          </Typography>
+                        )
                       ) : (
+                        // eda was performed and all files had the same number of classes predictions
                         <Typography
                           fontSize={14}
                           style={{ textAlign: "justify", padding: "7.5px" }}
                         >
                           the system has analyzed the dataset and found{" "}
                           {possibleNumberOfClasses} distinct values in the last
-                          column. it needs the values of these classes in order
-                          to work properly
+                          column
+                          <br></br>
+                          <br></br>
+                          it only needs these names for plotting purposes,
+                          however if you provide no values at all, it will
+                          assume that the normal class is the lowest numerical
+                          value among those {possibleNumberOfClasses}
                         </Typography>
                       )
                     }
@@ -1607,9 +1636,23 @@ export default function UploadComponent() {
             })}
 
             <TextFieldFlex style={{ marginTop: "10px" }}>
-              <Divv size="22.5px" style={{ margin: "25px", width: "60%" }}>
-                what is normal (non-anomaly) class value?
-              </Divv>
+              <Tooltip
+                title={
+                  <Typography
+                    fontSize={14}
+                    style={{ textAlign: "justify", padding: "7.5px" }}
+                  >
+                    be aware that order counts: if you provide the normal class
+                    first, the numerical value of the non-anomaly class will be
+                    0. however, if provided second for example, value 1 will be
+                    considered the anomaly when running the methods
+                  </Typography>
+                }
+              >
+                <Divv size="22.5px" style={{ margin: "25px", width: "60%" }}>
+                  what is the normal (non-anomaly) class value?
+                </Divv>
+              </Tooltip>
               <FormControl
                 sx={{ width: "40%", margin: "25px" }}
                 variant="outlined"
