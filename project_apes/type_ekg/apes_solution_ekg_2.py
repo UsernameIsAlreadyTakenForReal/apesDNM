@@ -397,18 +397,12 @@ class Solution_ekg_2:
         info_message = "adapt_dataset() -- begin"
         self.Logger.info(self, info_message)
 
-        print(list_of_dataFrames)
-        print(list_of_dataFramesUtilityLabels)
-
         full_length = [x.shape[0] for x in list_of_dataFrames]
         full_length = sum(full_length)
         self.solution_serializer.dataset_full_size = (
             full_length,
             list_of_dataFrames[0].shape[1],
         )
-
-        print("ha?")
-
         try:
             train_df = list_of_dataFrames[
                 list_of_dataFramesUtilityLabels.index("train")
@@ -416,7 +410,9 @@ class Solution_ekg_2:
 
             print("hasdsdsdsds?")
             cols = train_df.shape[1]
+            print(application_instance_metadata.dataset_metadata.is_labeled)
             if application_instance_metadata.dataset_metadata.is_labeled == True:
+                print("e plm")
                 cols = cols - 1
                 target_train = [int(x) for x in train_df.iloc[:, cols].values]
                 if min(target_train) > 0:
