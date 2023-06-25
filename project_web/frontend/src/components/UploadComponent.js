@@ -489,7 +489,7 @@ export default function UploadComponent() {
       return;
     }
 
-    if (+localDatasetId > 999) {
+    if (+localDatasetId > 9999) {
       setDatasetIdError(true);
       setDatasetIdErrorMessage("please stop trying to break the app");
       return;

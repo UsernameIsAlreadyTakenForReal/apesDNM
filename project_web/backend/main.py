@@ -314,7 +314,7 @@ def run_apesdnm():
 
             # we need these first few ones to keep a nice order when defining the metadata
             logger.info("run_apesdnm()", "this_is_an_absolutely_new_dataset")
-            dataset_identifier = request.form.get("dataset_identifier", "1108")
+            dataset_identifier = request.form.get("dataset_identifier", "11080")
             dataset_category = request.form.get("dataset_category", "ekg")
             class_names = request.form.get("class_names", []).split(",")
             number_of_classes = len(class_names)
@@ -359,6 +359,7 @@ def run_apesdnm():
 
             if save_data == True:
                 import json
+
                 logger.info("run_apesdnm()", "saving dataset for later use")
                 if platform.system() == "Linux":
                     dataset_metadata__dataset_path_linux = (
@@ -386,7 +387,12 @@ def run_apesdnm():
                     "shuffle_rows": dataset_metadata__shuffle_rows,
                 }
 
-                dict_as_json = json.dumps(dataset_metadata_dict, default=lambda o: o.__dict__, sort_keys=True, indent=4)
+                dict_as_json = json.dumps(
+                    dataset_metadata_dict,
+                    default=lambda o: o.__dict__,
+                    sort_keys=True,
+                    indent=4,
+                )
                 print(dict_as_json)
 
                 # TODO: save all of above in json, and save files at path in the ./files subdirectory
@@ -418,9 +424,9 @@ def run_apesdnm():
         application_metadata__model_origin = request.form.get(
             "model_origin", "train_new_model"
         )
-        application_metadata__model_train_epochs = int(request.form.get(
-            "model_train_epochs", 5
-        ))
+        application_metadata__model_train_epochs = int(
+            request.form.get("model_train_epochs", 5)
+        )
 
         dataset_metadata = Dataset_Metadata(
             logger,
