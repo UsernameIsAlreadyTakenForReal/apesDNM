@@ -526,7 +526,7 @@ export default function UploadComponent() {
 
     formData.append("dataset_path", beDatasetPath);
 
-    formData.append("is_labeled", labeledRadioValue === "yes");
+    formData.append("is_labeled", labeledRadioValue);
     if (labeledRadioValue === "yes")
       formData.append("label_column_name", labelColumn);
 
