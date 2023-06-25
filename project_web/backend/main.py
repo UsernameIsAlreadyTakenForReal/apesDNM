@@ -314,6 +314,8 @@ def run_apesdnm():
                 application_metadata__dataset_category = "N/A"
             application_metadata__dataset_origin = "new_dataset"
 
+            print(request.form.get("save_data"))
+            print(type(request.form.get("save_data")))
             save_data = True if request.form.get("save_data", False) == "True" else False
 
             if save_data == True:
