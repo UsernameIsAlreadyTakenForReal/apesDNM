@@ -66,8 +66,12 @@ def handle_dataset_from_path(Logger, app_instance_metadata):
             app_instance_metadata.dataset_metadata.dataset_path[:-1]
         )
 
+    print("1")
     match app_instance_metadata.dataset_category:
         case "ekg":
+            info_message = "Dataset is of type numerical"
+            Logger.info("handle_dataset_from_path()", info_message)
+            print(app_instance_metadata.dataset_metadata.dataset_path)
             # # archive
             if os.path.isfile(app_instance_metadata.dataset_metadata.dataset_path) and (
                 pathlib.Path(app_instance_metadata.dataset_metadata.dataset_path).suffix
@@ -123,6 +127,8 @@ def handle_dataset_from_path(Logger, app_instance_metadata):
             )
 
         case "img":
+            info_message = "Dataset is of type image"
+            Logger.info("handle_dataset_from_path()", info_message)
             image_info = {"height": 213, "width": 288}
             return (
                 0,
