@@ -289,31 +289,32 @@ def run_apesdnm():
         else:
             # we need these first few ones to keep a nice order when defining the metadata
             logger.info("run_apesdnm()", "this_is_an_absolutely_new_dataset")
-            data_identifier = request.form.get("data_identifier", "1108")
+            dataset_identifier = request.form.get("dataset_identifier", "1108")
             dataset_category = request.form.get("dataset_category", "ekg")
             print(dataset_category)
-            print(data_identifier)
+            print(dataset_identifier)
             class_names = request.form.get("class_names", [])
             number_of_classes = len(class_names)
 
             dataset_metadata__dataset_path = request.form.get("dataset_path", "")
-            dataset_metadata__dataset_name_stub = dataset_category + data_identifier
-            dataset_metadata__is_labeled = request.form.get("is_labeled", True)
+            dataset_metadata__dataset_name_stub = dataset_category + dataset_identifier
+            dataset_metadata__is_labeled = True if request.form.get("is_labeled", True) == "True" else False
             dataset_metadata__file_keyword_names = request.form.get("file_keyword_names", [])
             dataset_metadata__number_of_classes = number_of_classes
-            dataset_metadata__class_names = request.form.get("class_names", [])
+            dataset_metadata__class_names = class_names
             dataset_metadata__label_column_name = request.form.get("label_column_name", "target")
-            dataset_metadata__numerical_value_of_desired_label = request.form.get("numerical_value_of_desired_label", 0)
-            dataset_metadata__separate_train_and_test = request.form.get("separate_train_and_test", False)
-            dataset_metadata__percentage_of_split = request.form.get("percentage_of_split", 0.7)
-            dataset_metadata__shuffle_rows = request.form.get("shuffle_rows", False)
+            dataset_metadata__numerical_value_of_desired_label = int(request.form.get("numerical_value_of_desired_label", 0))
+            dataset_metadata__separate_train_and_test = True if request.form.get("separate_train_and_test", False) == "True" else False
+            dataset_metadata__percentage_of_split = float(request.form.get("percentage_of_split", 0.7))
+            dataset_metadata__shuffle_rows = True if request.form.get("shuffle_rows", False) == "True" else False
 
             application_metadata__dataset_category = dataset_category
             application_metadata__dataset_origin = "new_dataset"
 
-            save_data = request.form.get("save_data", False)
+            save_data = True if request.form.get("save_data", False) == "True" else False
 
             if save_data == True:
+                logger.info("run_apesdnm()", "saving dataset for later use")
                 dataset_metadata_dict = {
                     "dataset_name_stub": dataset_metadata__dataset_name_stub,
                     "dataset_path_linux": dataset_metadata__dataset_path if platform.system() == "Linux" else "",
