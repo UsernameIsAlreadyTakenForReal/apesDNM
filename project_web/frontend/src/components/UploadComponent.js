@@ -1110,7 +1110,7 @@ export default function UploadComponent() {
                       fontSize={14}
                       style={{ textAlign: "justify", padding: "7.5px" }}
                     >
-                      ###PLACEHOLDER3###
+                      method 3 coming soon stay tuned
                     </Typography>
                   }
                   placement="bottom"
@@ -1850,7 +1850,12 @@ export default function UploadComponent() {
 
               <Tooltip
                 title={
-                  <Typography fontSize={14}>###PLACEHOLDER3###</Typography>
+                  <Typography
+                    fontSize={14}
+                    style={{ textAlign: "justify", padding: "7.5px" }}
+                  >
+                    method 3 coming soon stay tuned
+                  </Typography>
                 }
                 placement="bottom"
               >
