@@ -322,7 +322,10 @@ export default function UploadComponent() {
 
     setBackendResults(data.results);
     setBEDatasetPath(data.path);
-
+    console.log(
+      "dataset category isuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuu"
+    );
+    console.log(data.dataset_category);
     setBEDatasetCategory(data.dataset_category);
 
     console.log();
