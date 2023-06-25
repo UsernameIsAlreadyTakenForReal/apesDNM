@@ -71,7 +71,7 @@ def handle_dataset_from_path(Logger, app_instance_metadata):
         case "ekg":
             info_message = "Dataset is of type numerical"
             Logger.info("handle_dataset_from_path()", info_message)
-            print(app_instance_metadata.dataset_metadata.dataset_path)
+
             # # archive
             if os.path.isfile(app_instance_metadata.dataset_metadata.dataset_path) and (
                 pathlib.Path(app_instance_metadata.dataset_metadata.dataset_path).suffix
@@ -81,6 +81,9 @@ def handle_dataset_from_path(Logger, app_instance_metadata):
                 ).suffix
                 == ".rar"
             ):
+                info_message = "Dataset path points to an archive"
+                Logger.info("handle_dataset_from_path()", info_message)
+
                 return_code, return_message = treat_archive(
                     Logger, app_instance_metadata
                 )
@@ -91,6 +94,9 @@ def handle_dataset_from_path(Logger, app_instance_metadata):
 
             # folder
             if os.path.isdir(app_instance_metadata.dataset_metadata.dataset_path):
+                info_message = "Dataset path points to a directory"
+                Logger.info("handle_dataset_from_path()", info_message)
+
                 return_code, return_message, files_to_load = treat_folder(
                     Logger, app_instance_metadata
                 )
@@ -104,6 +110,9 @@ def handle_dataset_from_path(Logger, app_instance_metadata):
                 os.path.isfile(app_instance_metadata.dataset_metadata.dataset_path)
                 or len(files_to_load) != 0
             ):
+                info_message = "Dataset path points to a file"
+                Logger.info("handle_dataset_from_path()", info_message)
+
                 (
                     return_code,
                     return_message,
