@@ -240,43 +240,16 @@ def run_apesdnm():
             Application_Instance_Metadata,
         )
 
-        # see what the system flow is
+        # 0 -- See what the system flow is (comes from existing dataset or it is a new one)
         system_flow = request.form.get("system_flow", "using_a_previously_existing_dataset")
-        dataset_name_stub = request.form.get("dataset_name_stub", "")
 
-        # dataset metadata
-        dataset_path = request.form.get("dataset_path", "")
-        is_labeled = request.form.get("is_labeled", True)
-        file_keyword_names = request.form.get("file_keyword_names", [])
-        class_names = request.form.get("class_names", [])
-        label_column_name = request.form.get("label_column_name", "target")
-        numerical_value_of_desired_label = request.form.get(
-            "numerical_value_of_desired_label", 0
-        )
-        desired_label = request.form.get("desired_label", "")  # ????
-        separate_train_and_test = request.form.get("separate_train_and_test", False)
-        percentage_of_split = request.form.get("percentage_of_split", 0.7)
-        shuffle_rows = request.form.get("shuffle_rows", False)
-
-        # application instance metadata
-        app_instance_ID = datetime.now().strftime(
-            "%Y%m%d_%H%M%S"
-        )[2:]
-        display_dataFrames = request.form.get("display_dataFrames", False)
-        # print(display_dataFrames)  # displays False, not (False,) # ????
-        application_mode = request.form.get("application_mode", "compare_solutions")
-        dataset_origin = request.form.get("dataset_origin", "new_dataset")
-        dataset_category = request.form.get("dataset_category", "ekg")
-        solution_category = request.form.get("solution_category", "ekg")
-        solution_nature = request.form.get("solution_nature", "supervised")
-        solution_index = [int(request.form.get("solution_index", [1]))]
-        model_origin = request.form.get("model_origin", "train_new_model")
-        model_train_epochs = request.form.get("model_train_epochs", 40)
-
-        ## If using an existing dataset, overwrite the stuff with the saved one
+        # 1 -- Fill dataset metadata (+ dataset_category)
+        # If using an existing dataset, get the dataset_metadata from _desc.json
         if system_flow == "using_a_previously_existing_dataset":
             import json
             import platform
+
+            dataset_name_stub = request.form.get("dataset_name_stub", "")
 
             if platform.system() == "Windows":
                 file = open(f"../../project_apes/datasets/d_{dataset_name_stub}_description.json")
@@ -286,59 +259,128 @@ def run_apesdnm():
             data = json.load(file)
 
             if platform.system() == "Windows":
-                dataset_path = data["dataset_path_windows"]
+                dataset_metadata__dataset_path = data["dataset_path_windows"]
             else:
-                dataset_path = data["dataset_path_linux"]
-            is_labeled = data["is_labeled"]
-            number_of_classes = data["number_of_classes"]
-            class_names = data["class_names"]
-            label_column_name = data["label_column_name"]
-            numerical_value_of_desired_label = data["numerical_value_of_desired_label"]
-            separate_train_and_test = data["separate_train_and_test"]
-            percentage_of_split = data["percentage_of_split"]
-            shuffle_rows = data["shuffle_rows"]
-            file_keyword_names = data["file_keyword_names"]
+                dataset_metadata__dataset_path = data["dataset_path_linux"]
+            dataset_metadata__dataset_name_stub = dataset_name_stub # repetition to have all of them here in order
+            dataset_metadata__is_labeled = data["is_labeled"]
+            dataset_metadata__file_keyword_names = data["file_keyword_names"]
+            dataset_metadata__number_of_classes = data["number_of_classes"]
+            dataset_metadata__class_names = data["class_names"]
+            dataset_metadata__label_column_name = data["label_column_name"]
+            dataset_metadata__numerical_value_of_desired_label = data["numerical_value_of_desired_label"]
+            dataset_metadata__separate_train_and_test = data["separate_train_and_test"]
+            dataset_metadata__percentage_of_split = data["percentage_of_split"]
+            dataset_metadata__shuffle_rows = data["shuffle_rows"]
 
-            dataset_category = data["dataset_category"]
+            application_metadata__dataset_category = data["dataset_category"]
+            application_metadata__dataset_origin = "existing_dataset"
 
-            dataset_origin = "existing_dataset"
-        ##
+        # If this is a new dataset, fill from the frontend form and, if requested, save the dataset description + files
         else:
+            # we need these first few ones to keep a nice order when defining the metadata
             data_identifier = request.form.get("data_identifier", "1108")
+            dataset_category = request.form.get("dataset_category", "ekg")
+            class_names = request.form.get("class_names", [])
+            number_of_classes = len(class_names)
+
+            dataset_metadata__dataset_path = request.form.get("dataset_path", "")
+            dataset_metadata__dataset_name_stub = dataset_category + data_identifier
+            dataset_metadata__is_labeled = request.form.get("is_labeled", True)
+            dataset_metadata__file_keyword_names = request.form.get("file_keyword_names", [])
+            dataset_metadata__number_of_classes = number_of_classes
+            dataset_metadata__class_names = request.form.get("class_names", [])
+            dataset_metadata__label_column_name = request.form.get("label_column_name", "target")
+            dataset_metadata__numerical_value_of_desired_label = request.form.get("numerical_value_of_desired_label", 0)
+            dataset_metadata__separate_train_and_test = request.form.get("separate_train_and_test", False)
+            dataset_metadata__percentage_of_split = request.form.get("percentage_of_split", 0.7)
+            dataset_metadata__shuffle_rows = request.form.get("shuffle_rows", False)
+
+            application_metadata__dataset_category = dataset_category
+            application_metadata__dataset_origin = "new_dataset"
 
             save_data = request.form.get("save_data", False)
-            dataset_name_stub = dataset_category + data_identifier
-            number_of_classes = len(class_names)
+
+            if save_data == True:
+                dataset_metadata_list = {
+                    "dataset_name_stub": dataset_metadata__dataset_name_stub,
+                    "dataset_path_linux": dataset_metadata__dataset_path if platform.system() == "Linux" else "",
+                    "dataset_path_windows": dataset_metadata__dataset_path if platform.system() == "Windows" else "",
+
+                    "is_labeled": dataset_metadata__is_labeled,
+                    "number_of_classes": dataset_metadata__number_of_classes,
+                    "class_names": dataset_metadata__class_names,
+                    "label_column_name": dataset_metadata__label_column_name,
+                    "numerical_value_of_desired_label": dataset_metadata__numerical_value_of_desired_label,
+                    "separate_train_and_test": dataset_metadata__separate_train_and_test,
+                    "percentage_of_split": dataset_metadata__percentage_of_split,
+                    "shuffle_rows": dataset_metadata__shuffle_rows,
+                }
+
+
+
+                [dataset_metadata__dataset_path,
+                                         dataset_metadata__dataset_name_stub,
+                                         dataset_metadata__is_labeled,
+                                         dataset_metadata__file_keyword_names,
+                                         dataset_metadata__number_of_classes,
+                                         dataset_metadata__class_names,
+                                         dataset_metadata__label_column_name,
+                                         dataset_metadata__numerical_value_of_desired_label,
+                                         dataset_metadata__separate_train_and_test,
+                                         dataset_metadata__percentage_of_split,
+                                         dataset_metadata__shuffle_rows
+                                         ]
+
+                # TODO: save all of above in json, and save files at path in the ./files subdirectory
+                pass
+
+
+        # 1 -- Fill application instance metadata (+ dataset_category)
+        application_metadata__app_instance_ID = datetime.now().strftime(
+            "%Y%m%d_%H%M%S"
+        )[2:]
+        application_metadata__display_dataFrames = request.form.get("display_dataFrames", False)
+        # print(display_dataFrames)  # displays False, not (False,) # ????
+        application_metadata__application_mode = request.form.get("application_mode", "compare_solutions")
+        application_metadata__dataset_origin = request.form.get("dataset_origin", "new_dataset")
+        application_metadata__dataset_category = request.form.get("dataset_category", "ekg")
+        application_metadata__solution_category = request.form.get("solution_category", "ekg")
+        application_metadata__solution_nature = request.form.get("solution_nature", "supervised")
+        application_metadata__solution_index = [int(request.form.get("solution_index", [1]))] ## ???!!!?!?!?!
+        application_metadata__model_origin = request.form.get("model_origin", "train_new_model")
+        application_metadata__model_train_epochs = request.form.get("model_train_epochs", 40)
+
 
         dataset_metadata = Dataset_Metadata(
             logger,
-            dataset_path,
-            dataset_name_stub,
-            is_labeled,
-            file_keyword_names,
-            number_of_classes,
-            class_names,
-            label_column_name,
-            numerical_value_of_desired_label,
-            separate_train_and_test,
-            percentage_of_split,
-            shuffle_rows,
+            dataset_metadata__dataset_path,
+            dataset_metadata__dataset_name_stub,
+            dataset_metadata__is_labeled,
+            dataset_metadata__file_keyword_names,
+            dataset_metadata__number_of_classes,
+            dataset_metadata__class_names,
+            dataset_metadata__label_column_name,
+            dataset_metadata__numerical_value_of_desired_label,
+            dataset_metadata__separate_train_and_test,
+            dataset_metadata__percentage_of_split,
+            dataset_metadata__shuffle_rows,
         )
 
         application_instance_metadata = Application_Instance_Metadata(
             logger,
             shared_definitions,
             dataset_metadata,
-            app_instance_ID,
-            display_dataFrames,
-            application_mode,
-            dataset_origin,
-            dataset_category,
-            solution_category,
-            solution_nature,
-            solution_index,
-            model_origin,
-            model_train_epochs,
+            application_metadata__app_instance_ID,
+            application_metadata__display_dataFrames,
+            application_metadata__application_mode,
+            application_metadata__dataset_origin,
+            application_metadata__dataset_category,
+            application_metadata__solution_category,
+            application_metadata__solution_nature,
+            application_metadata__solution_index,
+            application_metadata__model_origin,
+            application_metadata__model_train_epochs,
         )
 
         # apes_application_instance = APES_Application(
@@ -499,3 +541,9 @@ def mockup_test_run(Logger, path):
 # console_info = output.getvalue()
 # sys.stdout = sys.__stdout__
 # result = {"results": results , "plots": plots, "console": console_info}
+
+# METHODS
+
+def jsonify_dataset_metadata(dataset_metadata_list): {
+
+}
