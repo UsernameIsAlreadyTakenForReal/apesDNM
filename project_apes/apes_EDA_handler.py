@@ -7,6 +7,7 @@ import uuid
 import random
 import os
 import pandas as pd
+import numpy as np
 
 from apes_dataset_handler import load_file_type
 from helpers_aiders_and_conveniencers.misc_functions import (
@@ -149,6 +150,17 @@ class Dataset_EDA:
                     plt.xlabel("value")
                     plt.ylabel("frequency")
                     caption = "histogram for file #" + str(index) + ": " + filename
+                    plt.title(caption)
+                    full_path = os.path.join("images", str(uuid.uuid4()) + ".png")
+                    plt.savefig(full_path)
+                    plots.append({"path": full_path, "caption": caption})
+
+                    plt.clf()
+                    plt.figure()
+                    plt.plot(np.array(df.iloc[0])[:-1])
+                    plt.ylabel("value")
+                    plt.xlabel("column")
+                    caption = "entry example for file #" + str(index) + ": " + filename
                     plt.title(caption)
                     full_path = os.path.join("images", str(uuid.uuid4()) + ".png")
                     plt.savefig(full_path)

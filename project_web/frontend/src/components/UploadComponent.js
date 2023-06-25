@@ -179,6 +179,7 @@ export default function UploadComponent() {
   const [stringOfFilesUploaded, setStringOfFilesUploaded] = useState("");
   const [triggerUseEffect, setTriggerUseEffect] = useState(false);
   const [alreadyRendered, setAlreadyRendered] = useState(false);
+  const [possibleNumberOfClasses, setPossibleNumberOfClasses] = useState(-1);
 
   // image viewer
   const [imageViewerOpen, setImageViewerOpen] = useState(false);
@@ -224,6 +225,26 @@ export default function UploadComponent() {
   function isNaturalNumber(value) {
     var pattern = /^(0|([1-9]\d*))$/;
     return pattern.test(value);
+  }
+
+  // -------------------------------------------------------------------------
+  function getGlobalNumberOfClasses() {
+    let arrayOfPredictions = [];
+
+    if (eda.length > 0) {
+      eda.forEach((eda_info) => {
+        arrayOfPredictions.push(parseInt(eda_info.possible_number_of_classes));
+      });
+
+      if (arrayOfPredictions.every((val, _, arr) => val === arr[0])) {
+        setClassesTextfields(
+          [...Array(arrayOfPredictions[0]).keys()].map((element) => element + 1)
+        );
+        setPossibleNumberOfClasses(arrayOfPredictions[0]);
+
+        return arrayOfPredictions[0];
+      } else return -1;
+    } else return -1;
   }
 
   // -------------------------------------------------------------------------
@@ -458,7 +479,7 @@ export default function UploadComponent() {
 
     if (+localDatasetId < 4) {
       setDatasetIdError(true);
-      setDatasetIdErrorMessage("numbers 1-3 are reserved");
+      setDatasetIdErrorMessage("numbers 1-3 are reserved by the system");
       return;
     }
 
@@ -749,7 +770,12 @@ export default function UploadComponent() {
 
     setUploadRequestCompleted(true);
 
-    handleResults(textResponse);
+    // handleResults(textResponse);
+    const data = JSON.parse(textResponse);
+    setBackendResults(data.results);
+
+    // setBackendMLPlots(data.plots);
+    // setBackendConsole(data.console.split("\n"));
   }
 
   // -------------------------------------------------------------------------
@@ -780,6 +806,10 @@ export default function UploadComponent() {
     getExistingDatasetItems();
   }, []);
 
+  useEffect(() => {
+    getGlobalNumberOfClasses();
+  }, [eda]);
+
   useEffect(() => {}, [triggerUseEffect]);
 
   return (
@@ -807,7 +837,10 @@ export default function UploadComponent() {
             <Divv>
               <Tooltip
                 title={
-                  <Typography fontSize={14}>
+                  <Typography
+                    fontSize={14}
+                    style={{ textAlign: "justify", padding: "7.5px" }}
+                  >
                     here you can choose one of the existing datasets that we
                     have provided, such as images or EKGs running on already
                     existing models, and you will get back details about their
@@ -849,7 +882,10 @@ export default function UploadComponent() {
             <Divv>
               <Tooltip
                 title={
-                  <Typography fontSize={14}>
+                  <Typography
+                    fontSize={14}
+                    style={{ textAlign: "justify", padding: "7.5px" }}
+                  >
                     here you can select one or more files and provide details
                     regarding the classes, the labels, and how you want that
                     data to be divided in order to train a model. afterwards, we
@@ -934,6 +970,9 @@ export default function UploadComponent() {
                 setGoBackButtonHover(false);
                 setShowEdaButton(false);
                 setEdaRequestError(false);
+
+                // setEda([]);
+                setPossibleNumberOfClasses(-1);
               }}
               onMouseEnter={() => setGoBackButtonHover(true)}
               onMouseLeave={() => setGoBackButtonHover(false)}
@@ -996,11 +1035,16 @@ export default function UploadComponent() {
                     <>
                       <Typography
                         fontSize={14}
-                        style={{ marginBottom: "5px", padding: "5px" }}
+                        style={{
+                          marginBottom: "5px",
+                          padding: "5px",
+                          textAlign: "justify",
+                          padding: "7.5px",
+                        }}
                       >
                         lstm auto-encoder (pytorch)
                       </Typography>
-                      <img src={lstmSVG} alt="m1" />
+                      <img src={lstmSVG} alt="m1" style={{ padding: "5px" }} />
                     </>
                   }
                   placement="bottom"
@@ -1025,11 +1069,16 @@ export default function UploadComponent() {
                     <>
                       <Typography
                         fontSize={14}
-                        style={{ marginBottom: "5px", padding: "5px" }}
+                        style={{
+                          marginBottom: "5px",
+                          padding: "5px",
+                          textAlign: "justify",
+                          padding: "7.5px",
+                        }}
                       >
                         convolutional nn (tensorflow/keras)
                       </Typography>
-                      <img src={cnnSVG} alt="m2" />
+                      <img src={cnnSVG} alt="m2" style={{ padding: "5px" }} />
                     </>
                   }
                   placement="bottom"
@@ -1051,7 +1100,12 @@ export default function UploadComponent() {
 
                 <Tooltip
                   title={
-                    <Typography fontSize={14}>###PLACEHOLDER3###</Typography>
+                    <Typography
+                      fontSize={14}
+                      style={{ textAlign: "justify", padding: "7.5px" }}
+                    >
+                      ###PLACEHOLDER3###
+                    </Typography>
                   }
                   placement="bottom"
                 >
@@ -1128,7 +1182,10 @@ export default function UploadComponent() {
                   (edaRequestError === true ||
                     (edaRequestStarted === true &&
                       edaRequestCompleted === false)) && (
-                    <Typography fontSize={14}>
+                    <Typography
+                      fontSize={14}
+                      style={{ textAlign: "justify", padding: "7.5px" }}
+                    >
                       {edaRequestError
                         ? "eda request error. check file type"
                         : "eda is still taking place"}
@@ -1194,6 +1251,9 @@ export default function UploadComponent() {
                   setShowFileUploadMethod(false);
                   setGoBackButtonHover(false);
                   setEdaRequestError(false);
+
+                  // setEda([]);
+                  setPossibleNumberOfClasses(-1);
                 }}
                 onMouseEnter={() => setGoBackButtonHover(true)}
                 onMouseLeave={() => setGoBackButtonHover(false)}
@@ -1233,7 +1293,10 @@ export default function UploadComponent() {
                 : <br></br>
                 <Tooltip
                   title={
-                    <Typography fontSize={14}>
+                    <Typography
+                      fontSize={14}
+                      style={{ textAlign: "justify", padding: "7.5px" }}
+                    >
                       click to check eda again
                     </Typography>
                   }
@@ -1304,7 +1367,10 @@ export default function UploadComponent() {
               <Tooltip
                 title={
                   labeledRadioValue !== "yes" && (
-                    <Typography fontSize={14} style={{ textAlign: "center" }}>
+                    <Typography
+                      fontSize={14}
+                      style={{ textAlign: "center", padding: "7.5px" }}
+                    >
                       if the dataset is not labeled, it cannot be supervised
                     </Typography>
                   )
@@ -1383,7 +1449,9 @@ export default function UploadComponent() {
               <Tooltip
                 title={
                   separateTrainAndTestCheckbox && (
-                    <Typography fontSize={14}>default value is 0.7</Typography>
+                    <Typography fontSize={14} style={{ padding: "7.5px" }}>
+                      default value is 0.7
+                    </Typography>
                   )
                 }
                 placement="top"
@@ -1423,61 +1491,94 @@ export default function UploadComponent() {
             {classesTextfields.map((textfield) => {
               return (
                 <TextFieldFlex style={{ marginTop: "10px" }}>
-                  <Divv size="22.5px" style={{ margin: "25px", width: "60%" }}>
-                    {textfield === 1 && (
-                      <>
-                        <span
-                          style={{
-                            cursor: "pointer",
-                            borderRadius: "52px",
-                            padding: "15px",
-                            margin: "10px",
-                            background:
-                              removeClassButtonHover === false
-                                ? "white"
-                                : "orange",
-                            transition: "background 0.4s linear",
-                          }}
-                          onMouseEnter={() => setRemoveClassButtonHover(true)}
-                          onMouseLeave={() => setRemoveClassButtonHover(false)}
-                          onClick={() => {
-                            if (classesTextfields.length === 2) return;
-                            setClassesTextfields(
-                              classesTextfields.slice(0, -1)
-                            );
-                            handleClassChange();
-                          }}
+                  <Tooltip
+                    title={
+                      possibleNumberOfClasses === -1 ? (
+                        ""
+                      ) : (
+                        <Typography
+                          fontSize={14}
+                          style={{ textAlign: "justify", padding: "7.5px" }}
                         >
-                          ((-))
-                        </span>
-                        what are the classes?
-                        <span
-                          style={{
-                            cursor: "pointer",
-                            borderRadius: "52px",
-                            padding: "15px",
-                            margin: "10px",
-                            background:
-                              addClassButtonHover === false
-                                ? "white"
-                                : "orange",
-                            transition: "background 0.4s linear",
-                          }}
-                          onMouseEnter={() => setAddClassButtonHover(true)}
-                          onMouseLeave={() => setAddClassButtonHover(false)}
-                          onClick={() => {
-                            setClassesTextfields([
-                              ...classesTextfields,
-                              classesTextfields.length + 1,
-                            ]);
-                            handleClassChange();
-                          }}
-                        >
-                          ((+))
-                        </span>
-                      </>
-                    )}
-                  </Divv>
+                          the system has analyzed the dataset and found{" "}
+                          {possibleNumberOfClasses} distinct values in the last
+                          column. it needs the values of these classes in order
+                          to work properly
+                        </Typography>
+                      )
+                    }
+                  >
+                    <Divv
+                      size="22.5px"
+                      style={{ margin: "25px", width: "60%" }}
+                    >
+                      {textfield === 1 && (
+                        <>
+                          {possibleNumberOfClasses === -1 && (
+                            <span
+                              style={{
+                                cursor: "pointer",
+                                borderRadius: "52px",
+                                padding: "15px",
+                                margin: "10px",
+                                background:
+                                  removeClassButtonHover === false
+                                    ? "white"
+                                    : "orange",
+                                transition: "background 0.4s linear",
+                              }}
+                              onMouseEnter={() =>
+                                setRemoveClassButtonHover(true)
+                              }
+                              onMouseLeave={() =>
+                                setRemoveClassButtonHover(false)
+                              }
+                              onClick={() => {
+                                if (classesTextfields.length === 2) return;
+                                setClassesTextfields(
+                                  classesTextfields.slice(0, -1)
+                                );
+                                handleClassChange();
+                              }}
+                            >
+                              ((-))
+                            </span>
+                          )}
+                          {possibleNumberOfClasses === -1
+                            ? "what are the classes?"
+                            : "what are the " +
+                              possibleNumberOfClasses +
+                              " classes?"}
+                          {possibleNumberOfClasses === -1 && (
+                            <span
+                              style={{
+                                cursor: "pointer",
+                                borderRadius: "52px",
+                                padding: "15px",
+                                margin: "10px",
+                                background:
+                                  addClassButtonHover === false
+                                    ? "white"
+                                    : "orange",
+                                transition: "background 0.4s linear",
+                              }}
+                              onMouseEnter={() => setAddClassButtonHover(true)}
+                              onMouseLeave={() => setAddClassButtonHover(false)}
+                              onClick={() => {
+                                setClassesTextfields([
+                                  ...classesTextfields,
+                                  classesTextfields.length + 1,
+                                ]);
+                                handleClassChange();
+                              }}
+                            >
+                              ((+))
+                            </span>
+                          )}
+                        </>
+                      )}
+                    </Divv>
+                  </Tooltip>
 
                   <TextField
                     style={{
@@ -1562,13 +1663,25 @@ export default function UploadComponent() {
             <TextFieldFlex style={{ marginTop: "10px" }} flexDirection="row">
               <Tooltip
                 title={
-                  <Typography
-                    fontSize={14}
-                    style={{ marginBottom: "5px", padding: "5px" }}
-                  >
-                    you can use this same id if you ever want to upload the same
-                    files again, as the app will use the same solution category
-                  </Typography>
+                  <>
+                    <Typography
+                      fontSize={14}
+                      style={{
+                        marginBottom: "5px",
+                        padding: "5px",
+                        textAlign: "justify",
+                        padding: "7.5px",
+                      }}
+                    >
+                      values must start from 4, as 1-3 are already reserved by
+                      the system
+                      <br></br>
+                      <br></br>
+                      you can use this same id if you ever want to upload the
+                      same files again, as the app will use the same solution
+                      category
+                    </Typography>
+                  </>
                 }
                 placement="bottom"
               >
@@ -1617,11 +1730,16 @@ export default function UploadComponent() {
                   <>
                     <Typography
                       fontSize={14}
-                      style={{ marginBottom: "5px", padding: "5px" }}
+                      style={{
+                        marginBottom: "5px",
+                        padding: "5px",
+                        textAlign: "justify",
+                        padding: "7.5px",
+                      }}
                     >
                       lstm auto-encoder (pytorch)
                     </Typography>
-                    <img src={lstmSVG} alt="m1" />
+                    <img src={lstmSVG} alt="m1" style={{ padding: "5px" }} />
                   </>
                 }
                 placement="bottom"
@@ -1652,11 +1770,16 @@ export default function UploadComponent() {
                   <>
                     <Typography
                       fontSize={14}
-                      style={{ marginBottom: "5px", padding: "5px" }}
+                      style={{
+                        marginBottom: "5px",
+                        padding: "5px",
+                        textAlign: "justify",
+                        padding: "7.5px",
+                      }}
                     >
                       convolutional nn (tensorflow/keras)
                     </Typography>
-                    <img src={cnnSVG} alt="m2" />
+                    <img src={cnnSVG} alt="m2" style={{ padding: "5px" }} />
                   </>
                 }
                 placement="bottom"
@@ -1734,7 +1857,10 @@ export default function UploadComponent() {
                   placement="right"
                   title={
                     epochs > 20 ? (
-                      <Typography fontSize={14}>
+                      <Typography
+                        fontSize={14}
+                        style={{ textAlign: "justify", padding: "7.5px" }}
+                      >
                         please don't. it will take a lot of time and cost us a
                         lot of money on aws, especially with... {epochs}{" "}
                         epochs?!?!?

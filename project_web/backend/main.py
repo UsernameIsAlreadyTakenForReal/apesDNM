@@ -132,14 +132,14 @@ def perform_eda():
                     if platform.system() == "Windows":
                         path = "../../../Datasets/Dataset - ECG5000"
                     else:
-                        path = "/ebs_data/project_datasets/d_ekg1"
+                        path = "/ebs_data/project_datasets/d_ekg1/files"
 
                 if dataset_name_stub == "ekg2":
                     logger.info("file_save", "ekg2 dataset selected")
                     if platform.system() == "Windows":
                         path = "../../../Datasets/Dataset - ECG_Heartbeat/Dataset - ECG_Heartbeat"
                     else:
-                        path = "/ebs_data/project_datasets/d_ekg2"
+                        path = "/ebs_data/project_datasets/d_ekg2/files"
 
         else:
             temp_dir = tempfile.mkdtemp()
@@ -183,8 +183,6 @@ def perform_eda():
 
         # dataset_EDA = Dataset_EDA(logger, path)
         # files_dicts = dataset_EDA.perform_eda()
-
-        print("dataset category issssssssssssssssssss10: " + dataset_category)
 
         return jsonify(
             {
