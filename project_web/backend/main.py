@@ -329,19 +329,22 @@ def run_apesdnm():
 
 
         # 1 -- Fill application instance metadata (+ dataset_category)
+        solution_indexes = request.form.get("solution_index", [1])
+        solution_indexes_list = solution_indexes.split(",")
+
         application_metadata__app_instance_ID = datetime.now().strftime(
             "%Y%m%d_%H%M%S"
         )[2:]
         application_metadata__display_dataFrames = request.form.get("display_dataFrames", False)
         # print(display_dataFrames)  # displays False, not (False,) # ????
         application_metadata__application_mode = request.form.get("application_mode", "compare_solutions")
-        application_metadata__dataset_origin = request.form.get("dataset_origin", "new_dataset")
-        application_metadata__dataset_category = request.form.get("dataset_category", "ekg")
+        application_metadata__dataset_origin = application_metadata__dataset_origin
+        application_metadata__dataset_category = application_metadata__dataset_category
         application_metadata__solution_category = request.form.get("solution_category", "ekg")
         application_metadata__solution_nature = request.form.get("solution_nature", "supervised")
-        application_metadata__solution_index = [int(request.form.get("solution_index", [1]))] ## ???!!!?!?!?!
+        application_metadata__solution_index = [int(x) for x in solution_indexes_list]
         application_metadata__model_origin = request.form.get("model_origin", "train_new_model")
-        application_metadata__model_train_epochs = request.form.get("model_train_epochs", 40)
+        application_metadata__model_train_epochs = request.form.get("model_train_epochs", 5)
 
 
         dataset_metadata = Dataset_Metadata(

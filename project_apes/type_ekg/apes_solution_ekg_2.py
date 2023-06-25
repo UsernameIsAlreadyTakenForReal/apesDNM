@@ -408,11 +408,8 @@ class Solution_ekg_2:
                 list_of_dataFramesUtilityLabels.index("train")
             ]
 
-            print("hasdsdsdsds?")
             cols = train_df.shape[1]
-            print(application_instance_metadata.dataset_metadata.is_labeled)
             if application_instance_metadata.dataset_metadata.is_labeled == True:
-                print("e plm")
                 cols = cols - 1
                 target_train = [int(x) for x in train_df.iloc[:, cols].values]
                 if min(target_train) > 0:
