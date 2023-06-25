@@ -1,6 +1,6 @@
 {
   "dataset_name_stub": "ekg1",
-  "dataset_path_linux": "/ebs_data/project_database/d_ekg1/files",
+  "dataset_path_linux": "/ebs_data/project_datasets/d_ekg1/files",
   "dataset_path_windows": "../../../Datasets/Dataset - ECG5000/Dataset - ECG5000",
 
   "is_labeled": "True",
