@@ -66,7 +66,6 @@ def handle_dataset_from_path(Logger, app_instance_metadata):
             app_instance_metadata.dataset_metadata.dataset_path[:-1]
         )
 
-    print("1")
     match app_instance_metadata.dataset_category:
         case "ekg":
             info_message = "Dataset is of type numerical"
@@ -93,6 +92,10 @@ def handle_dataset_from_path(Logger, app_instance_metadata):
                     Logger.info("handle_dataset_from_path", return_message)
 
             # folder
+            print(app_instance_metadata.dataset_metadata.dataset_path)
+            print(os.path.isdir(app_instance_metadata.dataset_metadata.dataset_path))
+            print(os.path.abspath(app_instance_metadata.dataset_metadata.dataset_path))
+            print(os.path.isdir(os.path.abspath(app_instance_metadata.dataset_metadata.dataset_path)))
             if os.path.isdir(app_instance_metadata.dataset_metadata.dataset_path):
                 info_message = "Dataset path points to a directory"
                 Logger.info("handle_dataset_from_path()", info_message)
