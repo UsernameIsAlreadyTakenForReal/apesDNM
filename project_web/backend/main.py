@@ -293,7 +293,7 @@ def run_apesdnm():
             dataset_category = request.form.get("dataset_category", "ekg")
             print(dataset_category)
             print(dataset_identifier)
-            class_names = request.form.get("class_names", [])
+            class_names = request.form.get("class_names", []).split(",")
             number_of_classes = len(class_names)
 
             dataset_metadata__dataset_path = request.form.get("dataset_path", "")
