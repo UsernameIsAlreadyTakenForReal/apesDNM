@@ -521,6 +521,9 @@ export default function UploadComponent() {
     //   formData.append(`file${i}`, selectedFiles[i]);
     // }
 
+    // System flow and dataset identifier first and foremost
+    formData.append("system_flow", "this_is_an_absolutely_new_dataset");
+
     formData.append("dataset_path", beDatasetPath);
 
     formData.append("is_labeled", labeledRadioValue === "yes");

@@ -248,6 +248,7 @@ def run_apesdnm():
         # 1 -- Fill dataset metadata (+ dataset_category)
         # If using an existing dataset, get the dataset_metadata from _desc.json
         if system_flow == "using_a_previously_existing_dataset":
+            logger.info("run_apesdnm()", "using_a_previously_existing_dataset")
             import json
             import platform
 
@@ -287,8 +288,10 @@ def run_apesdnm():
         # If this is a new dataset, fill from the frontend form and, if requested, save the dataset description + files
         else:
             # we need these first few ones to keep a nice order when defining the metadata
+            logger.info("run_apesdnm()", "this_is_an_absolutely_new_dataset")
             data_identifier = request.form.get("data_identifier", "1108")
             dataset_category = request.form.get("dataset_category", "ekg")
+            print(dataset_category)
             class_names = request.form.get("class_names", [])
             number_of_classes = len(class_names)
 
