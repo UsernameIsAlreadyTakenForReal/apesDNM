@@ -271,24 +271,13 @@ def run_apesdnm():
             dataset_metadata__dataset_name_stub = dataset_name_stub # repetition to have all of them here in order
             dataset_metadata__is_labeled = True if data["is_labeled"] == "True" else False
             dataset_metadata__file_keyword_names = data["file_keyword_names"]
-            dataset_metadata__number_of_classes = data["number_of_classes"]
+            dataset_metadata__number_of_classes = int(data["number_of_classes"])
             dataset_metadata__class_names = data["class_names"]
             dataset_metadata__label_column_name = data["label_column_name"]
-            dataset_metadata__numerical_value_of_desired_label = data["numerical_value_of_desired_label"]
+            dataset_metadata__numerical_value_of_desired_label = int(data["numerical_value_of_desired_label"])
             dataset_metadata__separate_train_and_test = True if data["separate_train_and_test"] == "True" else False
             dataset_metadata__percentage_of_split = [float(data["percentage_of_split"])]
             dataset_metadata__shuffle_rows = True if data["shuffle_rows"] == "True" else False
-
-            print(data["percentage_of_split"])
-            print(data["class_names"])
-            x = data["class_names"]
-            for s in x:
-                print(s)
-            gg = [str(s) for s in x]
-
-            hh = data["percentage_of_split"]
-            hghg = [float(s) for s in hh]
-            print(hghg)
 
             application_metadata__dataset_category = data["dataset_category"]
             application_metadata__dataset_origin = "existing_dataset"
