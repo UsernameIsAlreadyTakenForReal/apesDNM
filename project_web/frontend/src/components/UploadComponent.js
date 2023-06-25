@@ -1006,7 +1006,7 @@ export default function UploadComponent() {
                   placement="bottom"
                 >
                   <FormControlLabel
-                    style={{ margin: "25px", width: "10%" }}
+                    style={{ margin: "5px", width: "10%" }}
                     control={
                       <Checkbox
                         checked={method1Selected}
@@ -1035,7 +1035,7 @@ export default function UploadComponent() {
                   placement="bottom"
                 >
                   <FormControlLabel
-                    style={{ margin: "25px", width: "10%" }}
+                    style={{ margin: "5px", width: "10%" }}
                     control={
                       <Checkbox
                         checked={method2Selected}
@@ -1056,7 +1056,7 @@ export default function UploadComponent() {
                   placement="bottom"
                 >
                   <FormControlLabel
-                    style={{ margin: "25px", width: "10%" }}
+                    style={{ margin: "5px", width: "10%" }}
                     control={
                       <Checkbox
                         checked={method3Selected}
@@ -1075,7 +1075,7 @@ export default function UploadComponent() {
             <FormControl
               style={{
                 margin: "25px",
-                // marginTop: "0px",
+                marginTop: "0px",
                 display: "flex",
                 alignItems: "center",
               }}
