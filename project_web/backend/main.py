@@ -346,13 +346,13 @@ def run_apesdnm():
 
         dataset_metadata = Dataset_Metadata(
             logger,
-            dataset_metadata__dataset_path,
-            dataset_metadata__dataset_name_stub,
+            dataset_metadata__dataset_path.strip(),
+            dataset_metadata__dataset_name_stub.strip(),
             dataset_metadata__is_labeled,
             dataset_metadata__file_keyword_names,
             dataset_metadata__number_of_classes,
             dataset_metadata__class_names,
-            dataset_metadata__label_column_name,
+            dataset_metadata__label_column_name.strip(),
             dataset_metadata__numerical_value_of_desired_label,
             dataset_metadata__separate_train_and_test,
             dataset_metadata__percentage_of_split,
