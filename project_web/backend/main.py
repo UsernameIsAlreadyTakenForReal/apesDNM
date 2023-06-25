@@ -390,11 +390,11 @@ def run_apesdnm():
 
         # ########################### plot processing ############################
 
-        number_of_plots = random.randint(1, 5)
-        logger.info("run_apesdnm", "there are " + str(number_of_plots) + " plots")
+        # number_of_plots = random.randint(1, 5)
+        # logger.info("run_apesdnm", "there are " + str(number_of_plots) + " plots")
 
-        for _ in range(number_of_plots):
-            plot()
+        # for _ in range(number_of_plots):
+        #     plot()
 
         # ########################### creating results ###########################
 
