@@ -305,7 +305,7 @@ def run_apesdnm():
             dataset_metadata__label_column_name = request.form.get("label_column_name", "target")
             dataset_metadata__numerical_value_of_desired_label = int(request.form.get("numerical_value_of_desired_label", 0))
             dataset_metadata__separate_train_and_test = True if request.form.get("separate_train_and_test", False) == "True" else False
-            dataset_metadata__percentage_of_split = float(request.form.get("percentage_of_split", 0.7))
+            dataset_metadata__percentage_of_split = [float(request.form.get("percentage_of_split", 0.7))]
             dataset_metadata__shuffle_rows = True if request.form.get("shuffle_rows", False) == "True" else False
 
             application_metadata__dataset_category = dataset_category

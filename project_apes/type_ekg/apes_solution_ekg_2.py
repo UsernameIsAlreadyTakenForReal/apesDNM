@@ -407,9 +407,12 @@ class Solution_ekg_2:
             train_df = list_of_dataFrames[
                 list_of_dataFramesUtilityLabels.index("train")
             ]
-
+            print("here?")
             cols = train_df.shape[1]
+            print(application_instance_metadata.dataset_metadata.is_labeled)
+            print(type(application_instance_metadata.dataset_metadata.is_labeled))
             if application_instance_metadata.dataset_metadata.is_labeled == True:
+                print("but here?")
                 cols = cols - 1
                 target_train = [int(x) for x in train_df.iloc[:, cols].values]
                 if min(target_train) > 0:
