@@ -682,7 +682,7 @@ export default function UploadComponent() {
         localSelectedMethods.length > 1
           ? "compare_solutions"
           : "run_one_solution",
-      model_origin: "use_existing_model",
+      model_origin: modelOrigin,
     };
 
     setDialogText(JSON.stringify(dialogData, null, "\t"));
@@ -709,18 +709,14 @@ export default function UploadComponent() {
       selectedMethods.length > 1 ? "compare_solutions" : "run_one_solution";
 
     formData.append("application_mode", applicationMode);
-    formData.append("dataset_origin", "existing_dataset");
+    formData.append("dataset_origin", modelOrigin);
+
+    let localDatasetCategory = localSelectedDataset.replace(/[0-9]/g, "");
+
     // formData.append("dataset_category", localSelectedDataset);
     // formData.append("solution_category", localSelectedDataset);
-
-    formData.append(
-      "dataset_category",
-      localSelectedDataset.replace(/[0-9]/g, "")
-    );
-    formData.append(
-      "solution_category",
-      localSelectedDataset.replace(/[0-9]/g, "")
-    );
+    formData.append("dataset_category", localDatasetCategory);
+    formData.append("solution_category", localDatasetCategory);
 
     formData.append("solution_index", selectedMethods);
 
@@ -989,7 +985,12 @@ export default function UploadComponent() {
             </div>
 
             {selectedDataset.includes("EKG") && (
-              <div style={{ marginBottom: "20px" }}>
+              <div
+                style={{
+                  // marginBottom: "20px",
+                  marginBottom: "0px",
+                }}
+              >
                 <Tooltip
                   title={
                     <>
@@ -1005,7 +1006,7 @@ export default function UploadComponent() {
                   placement="bottom"
                 >
                   <FormControlLabel
-                    style={{ margin: "25px", width: "10%" }}
+                    style={{ margin: "5px", width: "10%" }}
                     control={
                       <Checkbox
                         checked={method1Selected}
@@ -1034,7 +1035,7 @@ export default function UploadComponent() {
                   placement="bottom"
                 >
                   <FormControlLabel
-                    style={{ margin: "25px", width: "10%" }}
+                    style={{ margin: "5px", width: "10%" }}
                     control={
                       <Checkbox
                         checked={method2Selected}
@@ -1055,7 +1056,7 @@ export default function UploadComponent() {
                   placement="bottom"
                 >
                   <FormControlLabel
-                    style={{ margin: "25px", width: "10%" }}
+                    style={{ margin: "5px", width: "10%" }}
                     control={
                       <Checkbox
                         checked={method3Selected}
@@ -1070,6 +1071,34 @@ export default function UploadComponent() {
                 </Tooltip>
               </div>
             )}
+
+            <FormControl
+              style={{
+                margin: "25px",
+                marginTop: "0px",
+                display: "flex",
+                alignItems: "center",
+              }}
+            >
+              <RadioGroup
+                row
+                defaultValue="use_existing_model"
+                value={modelOrigin}
+                onChange={(event) => setModelOrigin(event.target.value)}
+              >
+                <FormControlLabel
+                  value="use_existing_model"
+                  control={<Radio />}
+                  label="use an existing model if found"
+                />
+
+                <FormControlLabel
+                  value="train_new_model"
+                  control={<Radio />}
+                  label="train new model"
+                />
+              </RadioGroup>
+            </FormControl>
 
             <Divv top="0px">
               {showEdaButton && (
@@ -1985,6 +2014,13 @@ export default function UploadComponent() {
                   />
                   <Collapse in={fileEdaShow[index]}>
                     <CardContent>
+                      <Typography paragrah>
+                        <span style={{ fontWeight: "bold" }}>
+                          possible number of classes
+                        </span>{" "}
+                        --- {fileData.possible_number_of_classes}
+                      </Typography>
+                      <br></br>
                       <Typography paragrah>
                         <span style={{ fontWeight: "bold" }}>shape</span> ---{" "}
                         {fileData.rows} rows, {fileData.columns} columns
