@@ -182,6 +182,8 @@ def perform_eda():
         # dataset_EDA = Dataset_EDA(logger, path)
         # files_dicts = dataset_EDA.perform_eda()
 
+        print("dataset category issssssssssssssssssss10: " + dataset_category)
+
         return jsonify({"results": return_message, "path": path, "eda": files_dicts, "dataset_category": dataset_category})
     except Exception as e:
         logger.info(
