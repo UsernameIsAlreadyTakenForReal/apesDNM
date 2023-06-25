@@ -252,8 +252,14 @@ def run_apesdnm():
             dataset_name_stub = request.form.get("dataset_name_stub", "")
 
             if platform.system() == "Windows":
+                file_path = f"../../project_apes/datasets/d_{dataset_name_stub}_description.json"
+                info_message = f"Importing known dataset descriptor from {file_path}"
+                logger.info("run_apesdnm()", info_message)
                 file = open(f"../../project_apes/datasets/d_{dataset_name_stub}_description.json")
             else:
+                file_path = f"/ebs_data/project_datasets/d_{dataset_name_stub}/d_{dataset_name_stub}_description.json"
+                info_message = f"Importing known dataset descriptor from {file_path}"
+                logger.info("run_apesdnm()", info_message)
                 file = open(f"/ebs_data/project_datasets/d_{dataset_name_stub}/d_{dataset_name_stub}_description.json")
 
             data = json.load(file)
