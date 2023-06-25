@@ -358,6 +358,7 @@ def run_apesdnm():
             )
 
             if save_data == True:
+                import json
                 logger.info("run_apesdnm()", "saving dataset for later use")
                 if platform.system() == "Linux":
                     dataset_metadata__dataset_path_linux = (
@@ -385,7 +386,9 @@ def run_apesdnm():
                     "shuffle_rows": dataset_metadata__shuffle_rows,
                 }
 
-                print(jsonify(dataset_metadata_dict))
+                dict_as_json = json.dumps(dataset_metadata_dict, default=lambda o: o.__dict__, sort_keys=True, indent=4)
+                print(dict_as_json)
+
                 # TODO: save all of above in json, and save files at path in the ./files subdirectory
                 pass
 
@@ -415,9 +418,9 @@ def run_apesdnm():
         application_metadata__model_origin = request.form.get(
             "model_origin", "train_new_model"
         )
-        application_metadata__model_train_epochs = request.form.get(
+        application_metadata__model_train_epochs = int(request.form.get(
             "model_train_epochs", 5
-        )
+        ))
 
         dataset_metadata = Dataset_Metadata(
             logger,
