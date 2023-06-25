@@ -322,13 +322,7 @@ export default function UploadComponent() {
 
     setBackendResults(data.results);
     setBEDatasetPath(data.path);
-    console.log(
-      "dataset category isuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuu"
-    );
-    console.log(data.dataset_category);
     setBEDatasetCategory(data.dataset_category);
-
-    console.log();
 
     let edaData = [];
     data.eda.forEach((fileInEda) => {
@@ -551,6 +545,10 @@ export default function UploadComponent() {
     formData.append("solution_index", selectedMethods);
 
     formData.append("dataset_category", beDatasetCategory);
+    console.log(
+      "huaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+      beDatasetCategory
+    );
     formData.append("dataset_identifier", datasetId);
 
     formData.append("save_data", saveDataCheckbox);
