@@ -290,8 +290,9 @@ def run_apesdnm():
             # we need these first few ones to keep a nice order when defining the metadata
             logger.info("run_apesdnm()", "this_is_an_absolutely_new_dataset")
             data_identifier = request.form.get("data_identifier", "1108")
-            dataset_category = request.form.get("dataset_category", "gg")
+            dataset_category = request.form.get("dataset_category", "ekg")
             print(dataset_category)
+            print(data_identifier)
             class_names = request.form.get("class_names", [])
             number_of_classes = len(class_names)
 

@@ -550,7 +550,7 @@ export default function UploadComponent() {
     formData.append("dataset_category", beDatasetCategory);
     console.log(
       "huaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
-      beDatasetCategory
+      datasetId
     );
     formData.append("dataset_identifier", datasetId);
 
