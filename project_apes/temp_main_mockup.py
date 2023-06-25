@@ -65,6 +65,9 @@ init_message = "Begin"
 Logger.info("Program", init_message)
 
 from apes_application import APES_Application
+from apes_static_definitions import Shared_Definitions
+
+shared_definitions = Shared_Definitions()
 
 init_message = "Imported APES_Application"
 Logger.info("Program", init_message)
@@ -117,6 +120,7 @@ dataset_metadata = Dataset_Metadata(
 )
 application_instance_metadata = Application_Instance_Metadata(
     Logger,
+    shared_definitions,
     dataset_metadata,
     application_metadata__app_instance_ID,
     application_metadata__display_dataFrames,
