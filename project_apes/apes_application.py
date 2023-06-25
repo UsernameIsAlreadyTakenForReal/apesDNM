@@ -145,7 +145,7 @@ class APES_Application:
             match self.application_instance_metadata.dataset_category:
                 case "ekg":
                     info_message = (
-                        "p1_get_targeted_dataset returned the following [ekg]:"
+                        "p1_get_targeted_dataset returned the following [numerical]:"
                     )
                     for i in range(0, len(self.quasi_processed_datasets_list)):
                         info_message += f"\nDataset {i}\n|___label = {self.quasi_processed_datasets_utility_list[i]}\n|___shape = {self.quasi_processed_datasets_list[i].shape}"
