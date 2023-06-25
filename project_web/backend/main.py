@@ -302,7 +302,7 @@ def run_apesdnm():
             save_data = request.form.get("save_data", False)
 
             if save_data == True:
-                dataset_metadata_list = {
+                dataset_metadata_dict = {
                     "dataset_name_stub": dataset_metadata__dataset_name_stub,
                     "dataset_path_linux": dataset_metadata__dataset_path if platform.system() == "Linux" else "",
                     "dataset_path_windows": dataset_metadata__dataset_path if platform.system() == "Windows" else "",
@@ -317,21 +317,7 @@ def run_apesdnm():
                     "shuffle_rows": dataset_metadata__shuffle_rows,
                 }
 
-
-
-                [dataset_metadata__dataset_path,
-                                         dataset_metadata__dataset_name_stub,
-                                         dataset_metadata__is_labeled,
-                                         dataset_metadata__file_keyword_names,
-                                         dataset_metadata__number_of_classes,
-                                         dataset_metadata__class_names,
-                                         dataset_metadata__label_column_name,
-                                         dataset_metadata__numerical_value_of_desired_label,
-                                         dataset_metadata__separate_train_and_test,
-                                         dataset_metadata__percentage_of_split,
-                                         dataset_metadata__shuffle_rows
-                                         ]
-
+                print(jsonify(dataset_metadata_dict))
                 # TODO: save all of above in json, and save files at path in the ./files subdirectory
                 pass
 
@@ -544,6 +530,5 @@ def mockup_test_run(Logger, path):
 
 # METHODS
 
-def jsonify_dataset_metadata(dataset_metadata_list): {
-
+def jsonify_dataset_metadata(dataset_metadata_dict): {
 }
