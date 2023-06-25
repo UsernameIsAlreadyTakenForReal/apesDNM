@@ -2015,6 +2015,13 @@ export default function UploadComponent() {
                   <Collapse in={fileEdaShow[index]}>
                     <CardContent>
                       <Typography paragrah>
+                        <span style={{ fontWeight: "bold" }}>
+                          possible number of classes
+                        </span>{" "}
+                        --- {fileData.possible_number_of_classes}
+                      </Typography>
+                      <br></br>
+                      <Typography paragrah>
                         <span style={{ fontWeight: "bold" }}>shape</span> ---{" "}
                         {fileData.rows} rows, {fileData.columns} columns
                       </Typography>

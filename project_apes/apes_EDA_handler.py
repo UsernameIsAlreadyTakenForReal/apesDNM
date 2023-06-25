@@ -9,6 +9,9 @@ import os
 import pandas as pd
 
 from apes_dataset_handler import load_file_type
+from helpers_aiders_and_conveniencers.misc_functions import (
+    how_many_different_values_in_list,
+)
 
 
 def plot():
@@ -51,6 +54,7 @@ class Dataset_EDA:
 
     def perform_eda(self):
         import pathlib
+
         results = []
 
         self.Logger.info(self, "EDA started for " + self.dataset_path)
@@ -74,7 +78,9 @@ class Dataset_EDA:
                     full_path = os.path.join(dirname, filename)
                     self.Logger.info(self, full_path)
 
-                    return_code, return_message, df = load_file_type(self.Logger, full_path)
+                    return_code, return_message, df = load_file_type(
+                        self.Logger, full_path
+                    )
                     # self.Logger.info(self, str(type(df)))
 
                     dict["index"] = index
@@ -157,27 +163,47 @@ class Dataset_EDA:
                     dict["info"] = str(df.info())
                     dict["describe"] = str(df.describe()).split("\n")
 
+                    possible_number_of_classes = how_many_different_values_in_list(
+                        df.iloc[:, y - 1]
+                    )
+                    dict["possible_number_of_classes"] = str(possible_number_of_classes)
+
                     results.append(dict)
 
         self.Logger.info(
             self, "eda performed successfully for files in " + self.dataset_path
         )
 
-        return 0, "Dataset_EDA.perform_eda() exited successfully", results, self.dataset_category
+        return (
+            0,
+            "Dataset_EDA.perform_eda() exited successfully",
+            results,
+            self.dataset_category,
+        )
 
     def discriminate_dataset_category(self):
         import os
         import pathlib
 
-        possible_extensions_for_numerical = self.shared_definitions.possible_extensions_for_numerical_datasets
-        possible_extensions_for_image = self.shared_definitions.possible_extensions_for_image_datasets
-        possible_extensions_for_audio = self.shared_definitions.possible_extensions_for_audio_datasets
+        possible_extensions_for_numerical = (
+            self.shared_definitions.possible_extensions_for_numerical_datasets
+        )
+        possible_extensions_for_image = (
+            self.shared_definitions.possible_extensions_for_image_datasets
+        )
+        possible_extensions_for_audio = (
+            self.shared_definitions.possible_extensions_for_audio_datasets
+        )
 
         contains_only_numerical = True
         contains_only_image = True
         contains_only_audio = True
 
-        file_extensions = possible_extensions_for_numerical + possible_extensions_for_image + possible_extensions_for_audio
+        file_extensions = (
+            possible_extensions_for_numerical
+            + possible_extensions_for_image
+            + possible_extensions_for_audio
+        )
 
         file_candidates = []
 
@@ -204,11 +230,14 @@ class Dataset_EDA:
                 contains_only_audio = False
                 break
 
-        #info_message = f"discriminate_dataset_category() -- Given dataset contains only numerical: {contains_only_numerical}, contains only images: {contains_only_image}, contains only audio: {contains_only_audio}"
-        #self.Logger(self, info_message)
+        # info_message = f"discriminate_dataset_category() -- Given dataset contains only numerical: {contains_only_numerical}, contains only images: {contains_only_image}, contains only audio: {contains_only_audio}"
+        # self.Logger(self, info_message)
 
         verifier = [contains_only_numerical, contains_only_image, contains_only_audio]
         if sum(verifier) != 1:
-            return 1, "discriminate_dataset_category() -- can't have multiple dataset categories at the same time"
+            return (
+                1,
+                "discriminate_dataset_category() -- can't have multiple dataset categories at the same time",
+            )
         else:
             return 0, "discriminate_dataset_category() -- exited successfully", verifier
