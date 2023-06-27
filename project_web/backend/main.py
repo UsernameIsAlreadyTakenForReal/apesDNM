@@ -196,8 +196,7 @@ def perform_eda():
                 "results": return_message,
                 "path": path,
                 "eda": files_dicts,
-                "dataset_category": dataset_category,
-                "unprocessed_files":
+                "dataset_category": dataset_category
             }
         )
     except Exception as e:
