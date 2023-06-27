@@ -66,55 +66,84 @@ def handle_dataset_from_path(Logger, app_instance_metadata):
             app_instance_metadata.dataset_metadata.dataset_path[:-1]
         )
 
-    # # archive
-    if os.path.isfile(app_instance_metadata.dataset_metadata.dataset_path) and (
-        pathlib.Path(app_instance_metadata.dataset_metadata.dataset_path).suffix
-        == ".zip"
-        or pathlib.Path(app_instance_metadata.dataset_metadata.dataset_path).suffix
-        == ".rar"
-    ):
-        return_code, return_message = treat_archive(Logger, app_instance_metadata)
-        if return_code != 0:
-            return (return_code, return_message)
-        else:
-            Logger.info("handle_dataset_from_path", return_message)
+    match app_instance_metadata.dataset_category:
+        case "ekg":
+            info_message = "Dataset is of type numerical"
+            Logger.info("handle_dataset_from_path()", info_message)
 
-    # folder
-    if os.path.isdir(app_instance_metadata.dataset_metadata.dataset_path):
-        return_code, return_message, files_to_load = treat_folder(
-            Logger, app_instance_metadata
-        )
-        if return_code != 0:
-            return (return_code, return_message)
-        else:
-            Logger.info("handle_dataset_from_path", return_message)
+            # # archive
+            if os.path.isfile(app_instance_metadata.dataset_metadata.dataset_path) and (
+                pathlib.Path(app_instance_metadata.dataset_metadata.dataset_path).suffix
+                == ".zip"
+                or pathlib.Path(
+                    app_instance_metadata.dataset_metadata.dataset_path
+                ).suffix
+                == ".rar"
+            ):
+                info_message = "Dataset path points to an archive"
+                Logger.info("handle_dataset_from_path()", info_message)
 
-    # file
-    if (
-        os.path.isfile(app_instance_metadata.dataset_metadata.dataset_path)
-        or len(files_to_load) != 0
-    ):
-        (
-            return_code,
-            return_message,
-            list_of_dataFrames,
-            list_of_dataFramesUtilityLabels,
-        ) = treat_files(
-            Logger,
-            app_instance_metadata,
-            files_to_load,
-        )
-        if return_code != 0:
-            return return_code, return_message, [], []
-        else:
-            Logger.info("handle_dataset_from_path", return_message)
+                return_code, return_message = treat_archive(
+                    Logger, app_instance_metadata
+                )
+                if return_code != 0:
+                    return (return_code, return_message)
+                else:
+                    Logger.info("handle_dataset_from_path", return_message)
 
-    return (
-        0,
-        "handle_dataset_from_path exited successfully",
-        list_of_dataFrames,
-        list_of_dataFramesUtilityLabels,
-    )
+            # folder
+            if os.path.isdir(app_instance_metadata.dataset_metadata.dataset_path):
+                info_message = "Dataset path points to a directory"
+                Logger.info("handle_dataset_from_path()", info_message)
+
+                return_code, return_message, files_to_load = treat_folder(
+                    Logger, app_instance_metadata
+                )
+                if return_code != 0:
+                    return (return_code, return_message)
+                else:
+                    Logger.info("handle_dataset_from_path", return_message)
+
+            # file
+            if (
+                os.path.isfile(app_instance_metadata.dataset_metadata.dataset_path)
+                or len(files_to_load) != 0
+            ):
+                info_message = "Dataset path points to a file"
+                Logger.info("handle_dataset_from_path()", info_message)
+
+                (
+                    return_code,
+                    return_message,
+                    list_of_dataFrames,
+                    list_of_dataFramesUtilityLabels,
+                ) = treat_files(
+                    Logger,
+                    app_instance_metadata,
+                    files_to_load,
+                )
+                if return_code != 0:
+                    return return_code, return_message, [], []
+                else:
+                    Logger.info("handle_dataset_from_path", return_message)
+
+            return (
+                0,
+                "handle_dataset_from_path exited successfully",
+                list_of_dataFrames,
+                list_of_dataFramesUtilityLabels,
+            )
+
+        case "img":
+            info_message = "Dataset is of type image"
+            Logger.info("handle_dataset_from_path()", info_message)
+            image_info = {"height": 213, "width": 288}
+            return (
+                0,
+                "handle_dataset_from_path exited successfully",
+                os.path.abspath(app_instance_metadata.dataset_metadata.dataset_path),
+                image_info,
+            )
 
 
 def unarchive(path, overwrite_existing=True, delete_after_unarchiving=False):

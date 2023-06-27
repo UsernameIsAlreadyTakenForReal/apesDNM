@@ -22,7 +22,7 @@ def get_last_model(Logger, solution_name, app_instance_metadata):
     match solution_name:
         case "ekg1":
             file_extension = ".pth"
-        case "ekg2":
+        case "ekg2", "img1":
             file_extension = ".h5"
 
     for dirname, _, filenames in os.walk(
@@ -137,7 +137,7 @@ def get_plot_save_filename(plot_caption, solution, app_instance_metadata):
 
     file_absolute_path = (
         os.path.abspath(app_instance_metadata.shared_definitions.plot_savefile_location)
-        + os.sep
+        + "/"
         + filename
     )
     return filename, file_absolute_path
@@ -173,6 +173,7 @@ def write_to_solutions_runs_json_file(
 ):
     import json
     import os
+    import platform
 
     json_file = f"s_{solution}.json"
     json_file_path = (

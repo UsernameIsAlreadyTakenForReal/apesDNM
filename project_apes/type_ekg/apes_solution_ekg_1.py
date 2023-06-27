@@ -350,6 +350,7 @@ class Solution_ekg_1:
         info_message = f"Created picture at ./project_web/backend/images/ || {plot_save_location} || {plot_name}"
         self.Logger.info(self, info_message)
         self.plots_filenames.append(plot_save_location.split(os.sep)[-1])
+        plt.clf()
         ## Save plot section -- end
 
         info_message = "Training - it took {time} for {number} epochs".format(
@@ -383,20 +384,27 @@ class Solution_ekg_1:
 
         # normal heartbeats
         predictions, pred_losses = self.predict(self.model, self.test_normal_dataset)
+        print(len(predictions))
+        print(len(predictions[0]))
         sns.displot(pred_losses, bins=50, kde=True)
         normal_correct = sum(l <= THRESHOLD for l in pred_losses)
         info_message = f"Correct normal predictions: {normal_correct}/{len(self.test_normal_dataset)}"
         self.Logger.info(self, info_message)
 
+        #self.print_results(predictions)
+
         # anomalies
         anomaly_dataset = self.test_anomaly_dataset[: len(self.test_normal_dataset)]
         predictions, pred_losses = self.predict(self.model, anomaly_dataset)
+        #print(predictions)
         sns.displot(pred_losses, bins=50, kde=True)
         anomaly_correct = sum(l > THRESHOLD for l in pred_losses)
         info_message = (
             f"Correct anomaly predictions: {anomaly_correct}/{len(anomaly_dataset)}"
         )
         self.Logger.info(self, info_message)
+
+        #self.print_results(predictions)
 
         f2_time = datetime.now()
         difference = f2_time - f1_time
@@ -438,6 +446,7 @@ class Solution_ekg_1:
         info_message = f"Created picture at ./project_web/backend/images/ || {plot_save_location} || {plot_name}"
         self.Logger.info(self, info_message)
         self.plots_filenames.append(plot_save_location.split(os.sep)[-1])
+        plt.clf()
         ## Save plot section -- end
 
         info_message = "test() -- end"
@@ -466,7 +475,6 @@ class Solution_ekg_1:
             application_instance_metadata.dataset_metadata.numerical_value_of_desired_label
         )
         if class_normal != 0:
-            print("You don' fuck up")
             return 1, f"{self} adapt_dataset() -- class_normal == {class_normal}"
 
         normal_df = df[df.target == int(class_normal)].drop(labels="target", axis=1)
@@ -604,6 +612,7 @@ class Solution_ekg_1:
         info_message = f"Created picture at ./project_web/backend/images/ || {plot_save_location} || {plot_name}"
         self.Logger.info(self, info_message)
         self.plots_filenames.append(plot_save_location.split(os.sep)[-1])
+        plt.clf()
         ## Save plot section -- end
 
     def create_dataset(self, df):
@@ -611,3 +620,31 @@ class Solution_ekg_1:
         dataset = [torch.tensor(s).unsqueeze(1).float() for s in sequences]
         n_seq, seq_len, n_features = torch.stack(dataset).shape
         return dataset, seq_len, n_features
+
+    def print_results(self, predictions):
+
+        print(predictions.shape)
+        number_of_classes = 2
+        list_of_classes = ["normal", "anormal"]
+
+        list_of_discovered_rows = []
+        for i in range(number_of_classes):
+            temp_list = []
+            list_of_discovered_rows.append(temp_list)
+
+        columns = predictions.shape[1]
+        for i in range(predictions.shape[0]):
+            row_max = max(predictions[i])
+            for j in range(columns):
+                if predictions[i][j] == row_max:
+                    list_of_discovered_rows[j].append(i)
+
+        for i in range(number_of_classes):
+            if len(list_of_classes) != 0:
+                info_message = f"Found {len(list_of_discovered_rows[i])} entries in class {list_of_classes[i]}. A full list can be found..."
+                self.Logger.info(self, info_message)
+                # self.Logger.info(self, str(list_of_discovered_rows[i]))
+            else:
+                info_message = f"Found {len(list_of_discovered_rows[i])} entries in class no. {i + 1} (inside index {i}). A full list can be found..."
+                self.Logger.info(self, info_message)
+                # self.Logger.info(self, str(list_of_discovered_rows[i]))

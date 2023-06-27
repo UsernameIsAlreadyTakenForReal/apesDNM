@@ -1,0 +1,18 @@
+{
+  "dataset_name_stub": "ekg1",
+  "dataset_path_linux": "/ebs_data/project_datasets/d_ekg1/files",
+  "dataset_path_windows": "../../../Datasets/Dataset - ECG5000",
+
+  "is_labeled": "True",
+  "number_of_classes": "5",
+  "class_names": ["Normal", "R on T", "PVC", "SP", "UB"],
+  "label_column_name": "target",
+  "numerical_value_of_desired_label": 0,
+  "separate_train_and_test": "False",
+  "percentage_of_split": 0.7,
+  "shuffle_rows": "False",
+
+  "file_keyword_names": [],
+
+  "dataset_category": "ekg"
+}

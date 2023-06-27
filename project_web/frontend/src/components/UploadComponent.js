@@ -98,6 +98,8 @@ export default function UploadComponent() {
 
   const [normalClass, setNormalClass] = useState("");
 
+  const [datasetId, setDatasetId] = useState("");
+
   const [epochs, setEpochs] = useState(40);
 
   const [responseData, setResponseData] = useState(null);
@@ -107,6 +109,7 @@ export default function UploadComponent() {
   const [backendConsole, setBackendConsole] = useState([]);
   const [backendResults, setBackendResults] = useState("");
   const [beDatasetPath, setBEDatasetPath] = useState("");
+  const [beDatasetCategory, setBEDatasetCategory] = useState("");
   const [eda, setEda] = useState([]);
 
   const [fileEdaShow, setFileEdaShow] = useState([]);
@@ -169,10 +172,14 @@ export default function UploadComponent() {
   const [classesTextfieldsErrorMessage, setClassesTextfieldsErrorMessage] =
     useState(false);
 
+  const [datasetIdError, setDatasetIdError] = useState(false);
+  const [datasetIdErrorMessage, setDatasetIdErrorMessage] = useState("");
+
   // misc
   const [stringOfFilesUploaded, setStringOfFilesUploaded] = useState("");
   const [triggerUseEffect, setTriggerUseEffect] = useState(false);
   const [alreadyRendered, setAlreadyRendered] = useState(false);
+  const [possibleNumberOfClasses, setPossibleNumberOfClasses] = useState(-1);
 
   // image viewer
   const [imageViewerOpen, setImageViewerOpen] = useState(false);
@@ -211,11 +218,38 @@ export default function UploadComponent() {
     setLabelColumnError(false);
     setNormalClassError(false);
     setClassesTextfieldsError(false);
+    setDatasetIdError(false);
+  }
+
+  // -------------------------------------------------------------------------
+  function isNaturalNumber(value) {
+    var pattern = /^(0|([1-9]\d*))$/;
+    return pattern.test(value);
+  }
+
+  // -------------------------------------------------------------------------
+  function getGlobalNumberOfClasses() {
+    let arrayOfPredictions = [];
+
+    if (eda.length > 0) {
+      eda.forEach((eda_info) => {
+        arrayOfPredictions.push(parseInt(eda_info.possible_number_of_classes));
+      });
+
+      if (arrayOfPredictions.every((val, _, arr) => val === arr[0])) {
+        setClassesTextfields(
+          [...Array(arrayOfPredictions[0]).keys()].map((element) => element + 1)
+        );
+        setPossibleNumberOfClasses(arrayOfPredictions[0]);
+      }
+    }
+
+    return arrayOfPredictions.toString().replaceAll(",", ", ");
   }
 
   // -------------------------------------------------------------------------
   async function getExistingDatasetItems() {
-    const response = await fetch(BASE_URL + "datasets", {
+    const response = await fetch("datasets", {
       method: "get",
     });
     const data = await response.json();
@@ -292,7 +326,7 @@ export default function UploadComponent() {
 
     setEdaRequestStarted(true);
 
-    const response = await fetch(BASE_URL + "perform_eda", {
+    const response = await fetch("perform_eda", {
       method: "POST",
       body: formData,
     });
@@ -309,8 +343,7 @@ export default function UploadComponent() {
 
     setBackendResults(data.results);
     setBEDatasetPath(data.path);
-
-    console.log();
+    setBEDatasetCategory(data.dataset_category);
 
     let edaData = [];
     data.eda.forEach((fileInEda) => {
@@ -350,6 +383,7 @@ export default function UploadComponent() {
     setClassesTextfieldsError(false);
     setNormalClassError(false);
     setMethodsError(false);
+    setDatasetIdError(false);
 
     // file logic
     if (!selectedFiles[0]) {
@@ -397,33 +431,71 @@ export default function UploadComponent() {
 
     setLabelColumn(localLabelColumn);
 
-    // classes logic
-    let classes = handleClassChange();
+    // classes logic has been removed as the normal value will be considered the lowest among all of them
 
-    if (classes.length !== classesTextfields.length) {
-      setClassesTextfieldsError(true);
-      setClassesTextfieldsErrorMessage("add a value for each class textfield");
+    if (possibleNumberOfClasses === -1) {
+      // classes logic
+      let classes = handleClassChange();
+
+      if (classes.length !== classesTextfields.length) {
+        setClassesTextfieldsError(true);
+        setClassesTextfieldsErrorMessage(
+          "add a value for each class textfield"
+        );
+        return;
+      }
+
+      if (classes.length < 2) {
+        setClassesTextfieldsError(true);
+        setClassesTextfieldsErrorMessage("provide at least 2 classes");
+        return;
+      }
+
+      if (new Set(classes).size !== classes.length) {
+        setClassesTextfieldsError(true);
+        setClassesTextfieldsErrorMessage("remove duplicate classes");
+        return;
+      }
+
+      // normal class
+      if (normalClass === "") {
+        setNormalClassError(true);
+        setNormalClassErrorMessage("normal class must be selected");
+        return;
+      }
+    }
+
+    // dataset id logic
+    let localDatasetId = "";
+    localDatasetId = document.getElementById("dataset-id-field").value;
+
+    console.log(localDatasetId);
+
+    if (localDatasetId === "" || isNaN(localDatasetId)) {
+      setDatasetIdError(true);
+      setDatasetIdErrorMessage("please provide a natural number");
       return;
     }
 
-    if (classes.length < 2) {
-      setClassesTextfieldsError(true);
-      setClassesTextfieldsErrorMessage("provide at least 2 classes");
+    if (+localDatasetId < 0 || parseInt(+localDatasetId) != +localDatasetId) {
+      setDatasetIdError(true);
+      setDatasetIdErrorMessage("number must be natural");
       return;
     }
 
-    if (new Set(classes).size !== classes.length) {
-      setClassesTextfieldsError(true);
-      setClassesTextfieldsErrorMessage("remove duplicate classes");
+    if (+localDatasetId < 4) {
+      setDatasetIdError(true);
+      setDatasetIdErrorMessage("numbers 1-3 are reserved by the system");
       return;
     }
 
-    // normal class
-    if (normalClass === "") {
-      setNormalClassError(true);
-      setNormalClassErrorMessage("normal class must be selected");
+    if (+localDatasetId > 9999) {
+      setDatasetIdError(true);
+      setDatasetIdErrorMessage("please stop trying to break the app");
       return;
     }
+
+    setDatasetId(localDatasetId);
 
     // methods logic
     let localSelectedMethods = [];
@@ -457,6 +529,7 @@ export default function UploadComponent() {
       dataset_origin: modelOrigin,
       methods: localSelectedMethods,
       epochs: epochs,
+      dataset_identifier: localDatasetId,
     };
 
     setDialogText(JSON.stringify(dialogData, null, "\t"));
@@ -475,9 +548,12 @@ export default function UploadComponent() {
     //   formData.append(`file${i}`, selectedFiles[i]);
     // }
 
+    // System flow and dataset identifier first and foremost
+    formData.append("system_flow", "this_is_an_absolutely_new_dataset");
+
     formData.append("dataset_path", beDatasetPath);
 
-    formData.append("is_labeled", labeledRadioValue === "yes");
+    formData.append("is_labeled", labeledRadioValue);
     if (labeledRadioValue === "yes")
       formData.append("label_column_name", labelColumn);
 
@@ -497,6 +573,13 @@ export default function UploadComponent() {
     formData.append("dataset_origin", modelOrigin);
     formData.append("model_train_epochs", epochs);
     formData.append("solution_index", selectedMethods);
+
+    formData.append("dataset_category", beDatasetCategory);
+    console.log(
+      "huaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+      datasetId
+    );
+    formData.append("dataset_identifier", datasetId);
 
     formData.append("save_data", saveDataCheckbox);
     formData.append("clear_images", true);
@@ -537,24 +620,31 @@ export default function UploadComponent() {
     setBackendResults("");
     setEda([]);
 
-    let localSelectedMethod = value
+    let localSelectedDataset = value
       .replace(" ", "")
       .replace("#", "")
       .toLowerCase();
 
-    console.log("selected method is", localSelectedMethod);
+    console.log("selected dataset is", localSelectedDataset);
 
     // eda-request-for-existing-datasets
     await loadingResultsScreen("loading eda");
     setShowEda(true);
 
     const formData = new FormData();
-    formData.append("dataset_category", localSelectedMethod);
-    formData.append("solution_category", localSelectedMethod);
+    formData.append("dataset_name_stub", localSelectedDataset);
+    formData.append(
+      "dataset_category",
+      localSelectedDataset.replace(/[0-9]/g, "")
+    );
+    formData.append(
+      "solution_category",
+      localSelectedDataset.replace(/[0-9]/g, "")
+    );
 
     setEdaRequestStarted(true);
 
-    const response = await fetch(BASE_URL + "perform_eda", {
+    const response = await fetch("perform_eda", {
       method: "POST",
       body: formData,
     });
@@ -616,8 +706,10 @@ export default function UploadComponent() {
       dataset: selectedDataset,
       methods: localSelectedMethods,
       application_mode:
-        localSelectedMethods.length > 1 ? "compare_solutions" : "retrieve_data",
-      model_origin: "use_existing_model",
+        localSelectedMethods.length > 1
+          ? "compare_solutions"
+          : "run_one_solution",
+      model_origin: modelOrigin,
     };
 
     setDialogText(JSON.stringify(dialogData, null, "\t"));
@@ -631,17 +723,28 @@ export default function UploadComponent() {
     // upload-request for existing datasets
     const formData = new FormData();
 
-    let localSelectedMethod = selectedDataset
+    let localSelectedDataset = selectedDataset
       .replace(" ", "")
       .replace("#", "")
       .toLowerCase();
 
+    // System flow and dataset identifier first and foremost
+    formData.append("system_flow", "using_a_previously_existing_dataset");
+    formData.append("dataset_name_stub", localSelectedDataset);
+
     const applicationMode =
-      selectedMethods.length > 1 ? "compare_solutions" : "retrieve_data";
+      selectedMethods.length > 1 ? "compare_solutions" : "run_one_solution";
 
     formData.append("application_mode", applicationMode);
-    formData.append("dataset_category", localSelectedMethod);
-    formData.append("solution_category", localSelectedMethod);
+    formData.append("model_origin", modelOrigin);
+
+    let localDatasetCategory = localSelectedDataset.replace(/[0-9]/g, "");
+
+    // formData.append("dataset_category", localSelectedDataset);
+    // formData.append("solution_category", localSelectedDataset);
+    formData.append("dataset_category", localDatasetCategory);
+    formData.append("solution_category", localDatasetCategory);
+
     formData.append("solution_index", selectedMethods);
 
     formData.append("clear_images", true);
@@ -661,7 +764,7 @@ export default function UploadComponent() {
 
     setUploadRequestStarted(true);
 
-    const response = await fetch(BASE_URL + "upload", {
+    const response = await fetch("upload", {
       method: "POST",
       body: formData,
     });
@@ -673,7 +776,12 @@ export default function UploadComponent() {
 
     setUploadRequestCompleted(true);
 
-    handleResults(textResponse);
+    // handleResults(textResponse);
+    const data = JSON.parse(textResponse);
+    setBackendResults(data.results);
+
+    // setBackendMLPlots(data.plots);
+    // setBackendConsole(data.console.split("\n"));
   }
 
   // -------------------------------------------------------------------------
@@ -704,6 +812,10 @@ export default function UploadComponent() {
     getExistingDatasetItems();
   }, []);
 
+  useEffect(() => {
+    getGlobalNumberOfClasses();
+  }, [eda]);
+
   useEffect(() => {}, [triggerUseEffect]);
 
   return (
@@ -731,7 +843,10 @@ export default function UploadComponent() {
             <Divv>
               <Tooltip
                 title={
-                  <Typography fontSize={14}>
+                  <Typography
+                    fontSize={14}
+                    style={{ textAlign: "justify", padding: "7.5px" }}
+                  >
                     here you can choose one of the existing datasets that we
                     have provided, such as images or EKGs running on already
                     existing models, and you will get back details about their
@@ -773,7 +888,10 @@ export default function UploadComponent() {
             <Divv>
               <Tooltip
                 title={
-                  <Typography fontSize={14}>
+                  <Typography
+                    fontSize={14}
+                    style={{ textAlign: "justify", padding: "7.5px" }}
+                  >
                     here you can select one or more files and provide details
                     regarding the classes, the labels, and how you want that
                     data to be divided in order to train a model. afterwards, we
@@ -817,7 +935,15 @@ export default function UploadComponent() {
               <Button
                 onClick={() => {
                   setShowResults(true);
-                  sendUploadRequest({ id: 1 });
+
+                  // let datasetPath = String.raw`C:\Users\DANIEL~1\AppData\Local\Temp\tmpuov3ww7j`;
+                  let datasetPath = String.raw`C:\Users\DANIEL~1\AppData\Local\Temp\tmpyh57kodh`;
+
+                  const formData = new FormData();
+                  formData.append("test_run", true);
+                  formData.append("dataset_path", datasetPath);
+
+                  sendUploadRequest(formData);
                 }}
               >
                 Fetch test
@@ -849,6 +975,10 @@ export default function UploadComponent() {
                 setShowFileUploadMethod(false);
                 setGoBackButtonHover(false);
                 setShowEdaButton(false);
+                setEdaRequestError(false);
+
+                setEda([]);
+                setPossibleNumberOfClasses(-1);
               }}
               onMouseEnter={() => setGoBackButtonHover(true)}
               onMouseLeave={() => setGoBackButtonHover(false)}
@@ -900,23 +1030,33 @@ export default function UploadComponent() {
             </div>
 
             {selectedDataset.includes("EKG") && (
-              <div style={{ marginBottom: "20px" }}>
+              <div
+                style={{
+                  // marginBottom: "20px",
+                  marginBottom: "0px",
+                }}
+              >
                 <Tooltip
                   title={
                     <>
                       <Typography
                         fontSize={14}
-                        style={{ marginBottom: "5px", padding: "5px" }}
+                        style={{
+                          marginBottom: "5px",
+                          padding: "5px",
+                          textAlign: "justify",
+                          padding: "7.5px",
+                        }}
                       >
                         lstm auto-encoder (pytorch)
                       </Typography>
-                      <img src={lstmSVG} alt="m1" />
+                      <img src={lstmSVG} alt="m1" style={{ padding: "5px" }} />
                     </>
                   }
                   placement="bottom"
                 >
                   <FormControlLabel
-                    style={{ margin: "25px", width: "10%" }}
+                    style={{ margin: "5px", width: "10%" }}
                     control={
                       <Checkbox
                         checked={method1Selected}
@@ -935,17 +1075,22 @@ export default function UploadComponent() {
                     <>
                       <Typography
                         fontSize={14}
-                        style={{ marginBottom: "5px", padding: "5px" }}
+                        style={{
+                          marginBottom: "5px",
+                          padding: "5px",
+                          textAlign: "justify",
+                          padding: "7.5px",
+                        }}
                       >
                         convolutional nn (tensorflow/keras)
                       </Typography>
-                      <img src={cnnSVG} alt="m2" />
+                      <img src={cnnSVG} alt="m2" style={{ padding: "5px" }} />
                     </>
                   }
                   placement="bottom"
                 >
                   <FormControlLabel
-                    style={{ margin: "25px", width: "10%" }}
+                    style={{ margin: "5px", width: "10%" }}
                     control={
                       <Checkbox
                         checked={method2Selected}
@@ -961,12 +1106,17 @@ export default function UploadComponent() {
 
                 <Tooltip
                   title={
-                    <Typography fontSize={14}>###PLACEHOLDER3###</Typography>
+                    <Typography
+                      fontSize={14}
+                      style={{ textAlign: "justify", padding: "7.5px" }}
+                    >
+                      method 3 coming soon stay tuned
+                    </Typography>
                   }
                   placement="bottom"
                 >
                   <FormControlLabel
-                    style={{ margin: "25px", width: "10%" }}
+                    style={{ margin: "5px", width: "10%" }}
                     control={
                       <Checkbox
                         checked={method3Selected}
@@ -981,6 +1131,34 @@ export default function UploadComponent() {
                 </Tooltip>
               </div>
             )}
+
+            <FormControl
+              style={{
+                margin: "25px",
+                marginTop: "0px",
+                display: "flex",
+                alignItems: "center",
+              }}
+            >
+              <RadioGroup
+                row
+                defaultValue="use_existing_model"
+                value={modelOrigin}
+                onChange={(event) => setModelOrigin(event.target.value)}
+              >
+                <FormControlLabel
+                  value="use_existing_model"
+                  control={<Radio />}
+                  label="use an existing model if found"
+                />
+
+                <FormControlLabel
+                  value="train_new_model"
+                  control={<Radio />}
+                  label="train new model"
+                />
+              </RadioGroup>
+            </FormControl>
 
             <Divv top="0px">
               {showEdaButton && (
@@ -1010,7 +1188,10 @@ export default function UploadComponent() {
                   (edaRequestError === true ||
                     (edaRequestStarted === true &&
                       edaRequestCompleted === false)) && (
-                    <Typography fontSize={14}>
+                    <Typography
+                      fontSize={14}
+                      style={{ textAlign: "justify", padding: "7.5px" }}
+                    >
                       {edaRequestError
                         ? "eda request error. check file type"
                         : "eda is still taking place"}
@@ -1075,6 +1256,10 @@ export default function UploadComponent() {
                   setShowExistingMethod(false);
                   setShowFileUploadMethod(false);
                   setGoBackButtonHover(false);
+                  setEdaRequestError(false);
+
+                  setEda([]);
+                  setPossibleNumberOfClasses(-1);
                 }}
                 onMouseEnter={() => setGoBackButtonHover(true)}
                 onMouseLeave={() => setGoBackButtonHover(false)}
@@ -1114,7 +1299,10 @@ export default function UploadComponent() {
                 : <br></br>
                 <Tooltip
                   title={
-                    <Typography fontSize={14}>
+                    <Typography
+                      fontSize={14}
+                      style={{ textAlign: "justify", padding: "7.5px" }}
+                    >
                       click to check eda again
                     </Typography>
                   }
@@ -1185,7 +1373,10 @@ export default function UploadComponent() {
               <Tooltip
                 title={
                   labeledRadioValue !== "yes" && (
-                    <Typography fontSize={14} style={{ textAlign: "center" }}>
+                    <Typography
+                      fontSize={14}
+                      style={{ textAlign: "center", padding: "7.5px" }}
+                    >
                       if the dataset is not labeled, it cannot be supervised
                     </Typography>
                   )
@@ -1264,7 +1455,9 @@ export default function UploadComponent() {
               <Tooltip
                 title={
                   separateTrainAndTestCheckbox && (
-                    <Typography fontSize={14}>default value is 0.7</Typography>
+                    <Typography fontSize={14} style={{ padding: "7.5px" }}>
+                      default value is 0.7
+                    </Typography>
                   )
                 }
                 placement="top"
@@ -1304,61 +1497,117 @@ export default function UploadComponent() {
             {classesTextfields.map((textfield) => {
               return (
                 <TextFieldFlex style={{ marginTop: "10px" }}>
-                  <Divv size="22.5px" style={{ margin: "25px", width: "60%" }}>
-                    {textfield === 1 && (
-                      <>
-                        <span
-                          style={{
-                            cursor: "pointer",
-                            borderRadius: "52px",
-                            padding: "15px",
-                            margin: "10px",
-                            background:
-                              removeClassButtonHover === false
-                                ? "white"
-                                : "orange",
-                            transition: "background 0.4s linear",
-                          }}
-                          onMouseEnter={() => setRemoveClassButtonHover(true)}
-                          onMouseLeave={() => setRemoveClassButtonHover(false)}
-                          onClick={() => {
-                            if (classesTextfields.length === 2) return;
-                            setClassesTextfields(
-                              classesTextfields.slice(0, -1)
-                            );
-                            handleClassChange();
-                          }}
+                  <Tooltip
+                    title={
+                      possibleNumberOfClasses === -1 ? (
+                        eda.length === 0 ? (
+                          // eda was not yet performed
+                          ""
+                        ) : (
+                          // eda was performed but files had different classes predictions
+                          <Typography
+                            fontSize={14}
+                            style={{ textAlign: "center", padding: "7.5px" }}
+                          >
+                            the system has found different number of classes for{" "}
+                            {eda.length} files you sent. please provide us with
+                            these values
+                            <br></br>
+                            <br></br>
+                            number of classes per file: [
+                            {getGlobalNumberOfClasses()}]
+                          </Typography>
+                        )
+                      ) : (
+                        // eda was performed and all files had the same number of classes predictions
+                        <Typography
+                          fontSize={14}
+                          style={{ textAlign: "justify", padding: "7.5px" }}
                         >
-                          ((-))
-                        </span>
-                        what are the classes?
-                        <span
-                          style={{
-                            cursor: "pointer",
-                            borderRadius: "52px",
-                            padding: "15px",
-                            margin: "10px",
-                            background:
-                              addClassButtonHover === false
-                                ? "white"
-                                : "orange",
-                            transition: "background 0.4s linear",
-                          }}
-                          onMouseEnter={() => setAddClassButtonHover(true)}
-                          onMouseLeave={() => setAddClassButtonHover(false)}
-                          onClick={() => {
-                            setClassesTextfields([
-                              ...classesTextfields,
-                              classesTextfields.length + 1,
-                            ]);
-                            handleClassChange();
-                          }}
-                        >
-                          ((+))
-                        </span>
-                      </>
-                    )}
-                  </Divv>
+                          the system has analyzed the dataset and found{" "}
+                          {possibleNumberOfClasses} distinct values in the last
+                          column
+                          <br></br>
+                          <br></br>
+                          it only needs these names for plotting purposes,
+                          however if you provide no values at all, it will
+                          assume that the normal class is the lowest numerical
+                          value among those {possibleNumberOfClasses}
+                        </Typography>
+                      )
+                    }
+                  >
+                    <Divv
+                      size="22.5px"
+                      style={{ margin: "25px", width: "60%" }}
+                    >
+                      {textfield === 1 && (
+                        <>
+                          {possibleNumberOfClasses === -1 && (
+                            <span
+                              style={{
+                                cursor: "pointer",
+                                borderRadius: "52px",
+                                padding: "15px",
+                                margin: "10px",
+                                background:
+                                  removeClassButtonHover === false
+                                    ? "white"
+                                    : "orange",
+                                transition: "background 0.4s linear",
+                              }}
+                              onMouseEnter={() =>
+                                setRemoveClassButtonHover(true)
+                              }
+                              onMouseLeave={() =>
+                                setRemoveClassButtonHover(false)
+                              }
+                              onClick={() => {
+                                if (classesTextfields.length === 2) return;
+                                setClassesTextfields(
+                                  classesTextfields.slice(0, -1)
+                                );
+                                handleClassChange();
+                              }}
+                            >
+                              ((-))
+                            </span>
+                          )}
+                          {possibleNumberOfClasses === -1
+                            ? "what are the classes?"
+                            : "what are the " +
+                              possibleNumberOfClasses +
+                              " classes?"}
+                          {possibleNumberOfClasses === -1 && (
+                            <span
+                              style={{
+                                cursor: "pointer",
+                                borderRadius: "52px",
+                                padding: "15px",
+                                margin: "10px",
+                                background:
+                                  addClassButtonHover === false
+                                    ? "white"
+                                    : "orange",
+                                transition: "background 0.4s linear",
+                              }}
+                              onMouseEnter={() => setAddClassButtonHover(true)}
+                              onMouseLeave={() => setAddClassButtonHover(false)}
+                              onClick={() => {
+                                setClassesTextfields([
+                                  ...classesTextfields,
+                                  classesTextfields.length + 1,
+                                ]);
+                                handleClassChange();
+                              }}
+                            >
+                              ((+))
+                            </span>
+                          )}
+                        </>
+                      )}
+                    </Divv>
+                  </Tooltip>
 
                   <TextField
                     style={{
@@ -1369,6 +1618,7 @@ export default function UploadComponent() {
                       marginBottom:
                         textfield === classesTextfields.length ? "25px" : "0px",
                     }}
+                    normalClass
                     error={classesTextfieldsError}
                     helperText={
                       classesTextfieldsError &&
@@ -1386,9 +1636,23 @@ export default function UploadComponent() {
             })}
 
             <TextFieldFlex style={{ marginTop: "10px" }}>
-              <Divv size="22.5px" style={{ margin: "25px", width: "60%" }}>
-                what is normal (non-anomaly) class value?
-              </Divv>
+              <Tooltip
+                title={
+                  <Typography
+                    fontSize={14}
+                    style={{ textAlign: "justify", padding: "7.5px" }}
+                  >
+                    be aware that order counts: if you provide the normal class
+                    first, the numerical value of the non-anomaly class will be
+                    0. however, if provided second for example, value 1 will be
+                    considered the anomaly when running the methods
+                  </Typography>
+                }
+              >
+                <Divv size="22.5px" style={{ margin: "25px", width: "60%" }}>
+                  what is the normal (non-anomaly) class value?
+                </Divv>
+              </Tooltip>
               <FormControl
                 sx={{ width: "40%", margin: "25px" }}
                 variant="outlined"
@@ -1439,6 +1703,49 @@ export default function UploadComponent() {
               />
             </TextFieldFlex>
 
+            <TextFieldFlex style={{ marginTop: "10px" }} flexDirection="row">
+              <Tooltip
+                title={
+                  <>
+                    <Typography
+                      fontSize={14}
+                      style={{
+                        marginBottom: "5px",
+                        padding: "5px",
+                        textAlign: "justify",
+                        padding: "7.5px",
+                      }}
+                    >
+                      values must start from 4, as 1-3 are already reserved by
+                      the system
+                      <br></br>
+                      <br></br>
+                      you can use this same id if you ever want to upload the
+                      same files again, as the app will use the same solution
+                      category
+                    </Typography>
+                  </>
+                }
+                placement="bottom"
+              >
+                <Divv
+                  size="22.5px"
+                  style={{ margin: "25px", width: "60%" }}
+                  // color={labeledRadioValue === "yes" ? "black" : "lightgray"}
+                >
+                  give your dataset an identifier
+                </Divv>
+              </Tooltip>
+              <TextField
+                style={{ margin: "25px", width: "40%" }}
+                error={datasetIdError}
+                helperText={datasetIdError ? datasetIdErrorMessage : ""}
+                id="dataset-id-field"
+                variant="outlined"
+                label="dataset identifier"
+              />
+            </TextFieldFlex>
+
             <TextFieldFlex style={{ marginTop: "10px" }}>
               <Divv size="22.5px" style={{ margin: "25px", width: "60%" }}>
                 {/* save my data for future uses */}
@@ -1458,16 +1765,24 @@ export default function UploadComponent() {
             </TextFieldFlex>
 
             <div style={{ marginBottom: "20px" }}>
+              <Divv top="75px" bottom="0px">
+                choose method(s) to use for classification
+              </Divv>
               <Tooltip
                 title={
                   <>
                     <Typography
                       fontSize={14}
-                      style={{ marginBottom: "5px", padding: "5px" }}
+                      style={{
+                        marginBottom: "5px",
+                        padding: "5px",
+                        textAlign: "justify",
+                        padding: "7.5px",
+                      }}
                     >
                       lstm auto-encoder (pytorch)
                     </Typography>
-                    <img src={lstmSVG} alt="m1" />
+                    <img src={lstmSVG} alt="m1" style={{ padding: "5px" }} />
                   </>
                 }
                 placement="bottom"
@@ -1475,6 +1790,7 @@ export default function UploadComponent() {
                 <FormControlLabel
                   style={{
                     margin: "25px",
+                    marginBottom: "10px",
                     width: "10%",
                     color: methodsError ? "red" : "",
                   }}
@@ -1497,11 +1813,16 @@ export default function UploadComponent() {
                   <>
                     <Typography
                       fontSize={14}
-                      style={{ marginBottom: "5px", padding: "5px" }}
+                      style={{
+                        marginBottom: "5px",
+                        padding: "5px",
+                        textAlign: "justify",
+                        padding: "7.5px",
+                      }}
                     >
                       convolutional nn (tensorflow/keras)
                     </Typography>
-                    <img src={cnnSVG} alt="m2" />
+                    <img src={cnnSVG} alt="m2" style={{ padding: "5px" }} />
                   </>
                 }
                 placement="bottom"
@@ -1509,6 +1830,7 @@ export default function UploadComponent() {
                 <FormControlLabel
                   style={{
                     margin: "25px",
+                    marginBottom: "10px",
                     width: "10%",
                     color: methodsError ? "red" : "",
                   }}
@@ -1528,13 +1850,20 @@ export default function UploadComponent() {
 
               <Tooltip
                 title={
-                  <Typography fontSize={14}>###PLACEHOLDER3###</Typography>
+                  <Typography
+                    fontSize={14}
+                    style={{ textAlign: "justify", padding: "7.5px" }}
+                  >
+                    method 3 coming soon stay tuned
+                  </Typography>
                 }
                 placement="bottom"
               >
                 <FormControlLabel
                   style={{
                     margin: "25px",
+                    marginBottom: "10px",
+
                     width: "10%",
                     color: methodsError ? "red" : "",
                   }}
@@ -1575,10 +1904,18 @@ export default function UploadComponent() {
                 <Tooltip
                   placement="right"
                   title={
-                    <Typography fontSize={14}>
-                      please don't. it will take a lot of time and cost us a lot
-                      of money on aws, especially with... {epochs} epochs?!?!?
-                    </Typography>
+                    epochs > 20 ? (
+                      <Typography
+                        fontSize={14}
+                        style={{ textAlign: "justify", padding: "7.5px" }}
+                      >
+                        please don't. it will take a lot of time and cost us a
+                        lot of money on aws, especially with... {epochs}{" "}
+                        epochs?!?!?
+                      </Typography>
+                    ) : (
+                      ""
+                    )
                   }
                 >
                   <FormControlLabel
@@ -1605,7 +1942,7 @@ export default function UploadComponent() {
               placement="bottom"
               arrow={false}
             >
-              <Divv>
+              <Divv top="75px">
                 <Button
                   style={{
                     background:
@@ -1662,7 +1999,7 @@ export default function UploadComponent() {
               </Terminal>
             </div>
 
-            <Divv>{backendResults}</Divv>
+            <Divv>{backendResults.toLowerCase()}</Divv>
 
             <Divv left="0px">
               {backendMLPlots.map((src, index) => (
@@ -1852,6 +2189,13 @@ export default function UploadComponent() {
                   <Collapse in={fileEdaShow[index]}>
                     <CardContent>
                       <Typography paragrah>
+                        <span style={{ fontWeight: "bold" }}>
+                          possible number of classes
+                        </span>{" "}
+                        --- {fileData.possible_number_of_classes}
+                      </Typography>
+                      <br></br>
+                      <Typography paragrah>
                         <span style={{ fontWeight: "bold" }}>shape</span> ---{" "}
                         {fileData.rows} rows, {fileData.columns} columns
                       </Typography>
@@ -1863,7 +2207,7 @@ export default function UploadComponent() {
                         --- {fileData.columns_with_missing_data} column(s)
                       </Typography>
                       <br></br>
-                      {/* 
+                      {/*
                       <Typography paragrah>
                         <span style={{ fontWeight: "bold" }}>info</span> ---{" "}
                         {fileData.info}
@@ -2006,11 +2350,12 @@ export default function UploadComponent() {
           }
 
           if (data.toLowerCase().includes("created picture")) {
+            // console.log("image", data);
             let imageData = data.split("||");
 
             setBackendMLPlots((backendMLPlots) => [
               ...backendMLPlots,
-              imageData[1].trim(),
+              "images" + "\\" + imageData[1].split("images")[1].trim(),
             ]);
 
             setBackendCptions((backendCaptions) => [

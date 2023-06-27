@@ -28,7 +28,7 @@ class Logger(metaclass=Singleton):
         print(message)
 
         if self.socketio is not None:
-            gevent.spawn(self.socketio.emit("console", str(message), broadcast=True))
+            gevent.spawn(self.socketio.emit("console", str(message)))
 
         time.sleep(0.1)
 

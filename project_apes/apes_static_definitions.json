@@ -3,8 +3,21 @@
   "rough_filename_searches": ["train", "test", "validation", "run"],
   "supported_file_formats": [".csv", ".arff", ".txt", ".npz", ".ts"],
   "supported_model_extensions": [".pth", ".h5"],
+
+  "accepted_dataset_types": ["ekg", "img", "ral"],
+  "possible_extensions_for_numerical_datasets": [
+    ".csv",
+    ".arff",
+    ".ts",
+    ".txt"
+  ],
+  "possible_extensions_for_image_datasets": [".img", ".jpg", ".jpeg", ".png"],
+  "possible_extensions_for_audio_datasets": [".wav", ".mp3"],
+
   "project_model_root_path_development": "./models",
+  "project_model_root_path": "/ebs_data/project_home/apesDNM/project_apes/models",
   "project_solution_runs_path_development": "./runs",
+  "project_solution_runs_path": "/ebs_data/project_home/apesDNM/project_apes/runs",
 
   "project_solution_ekg1_class_filename": "apes_solution_ekg_1.py",
   "project_solution_ekg1_model_filename": "apes_solution_ekg_1_model.pth",
@@ -13,9 +26,14 @@
 
   "project_solution_ekg2_class_filename": "apes_solution_ekg_2.py",
   "project_solution_ekg2_model_filename": "apes_solution_ekg_2_model.h5",
-  "project_solution_ekg2_d_ekg1_best_model_filename": "s_ekg2_d_ekg1_20230611_221523.h5",
+  "project_solution_ekg2_d_ekg1_best_model_filename": "s_ekg2_d_ekg1_20230614_161924.h5",
   "project_solution_ekg2_d_ekg2_best_model_filename": "s_ekg2_d_ekg2_20230611_223507.h5",
 
+  "project_solution_img1_class_filename": "apes_solution_img_1.py",
+  "project_solution_img1_model_filename": "apes_solution_img_1_model.h5",
+  "project_solution_img1_d_img1_best_model_filename": "",
+
   "plot_savefile_format": "png",
-  "plot_savefile_location_development": "./../project_web/backend/images/"
+  "plot_savefile_location_development": "./../project_web/backend/images/",
+  "plot_savefile_location": "/ebs_data/project_home/apesDNM/project_web/backend/images/"
 }

@@ -41,18 +41,35 @@ class Shared_Definitions:
     )
     plot_savefile_format = "png"
     plot_show_at_runtime = False
-    plot_savefile_location = "./../project_web/backend/images/"  # '.' is proejct_apes
+    plot_savefile_location = "./../backend/images/"  # '.' is proejct_apes
 
     def __init__(self):
         # TODO: check centralized information (S3?)
 
-        file = open("apes_static_definitions.json")
+        if platform.system() == "Windows":
+            file = open("apes_static_definitions.json")
+        else:
+            file = open(
+                "/ebs_data/project_home/apesDNM/project_apes/apes_static_definitions.json"
+            )
+
         data = json.load(file)
 
         ## DATASETS
+        self.accepted_dataset_types = data["accepted_dataset_types"]
         self.default_file_to_dataset_label = data["default_file_to_dataset_label"]
         self.rough_filename_searches = data["rough_filename_searches"]
         self.supported_file_formats = data["supported_file_formats"]
+
+        self.possible_extensions_for_numerical_datasets = data[
+            "possible_extensions_for_numerical_datasets"
+        ]
+        self.possible_extensions_for_image_datasets = data[
+            "possible_extensions_for_image_datasets"
+        ]
+        self.possible_extensions_for_audio_datasets = data[
+            "possible_extensions_for_audio_datasets"
+        ]
 
         ## MODELS
         self.supported_model_extensions = data["supported_model_extensions"]
@@ -95,6 +112,17 @@ class Shared_Definitions:
             "project_solution_ekg2_d_ekg2_best_model_filename"
         ]
 
+        ## S_IMG1
+        self.project_solution_img1_class_filename = data[
+            "project_solution_img1_class_filename"
+        ]
+        self.project_solution_img1_model_filename = data[
+            "project_solution_img1_model_filename"
+        ]
+        self.project_solution_img1_d_img1_best_model_filename = data[
+            "project_solution_img1_d_img1_best_model_filename"
+        ]
+
         ## PLOTS
         self.plot_savefile_format = data["plot_savefile_format"]
         self.plot_savefile_location = (
@@ -102,5 +130,7 @@ class Shared_Definitions:
             if platform.system() == "Windows"
             else data["plot_savefile_location"]
         )
+
+        print(self.plot_savefile_location)
 
         ## DONE
