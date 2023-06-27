@@ -127,6 +127,7 @@ class APES_Application:
             if return_code != 0:
                 return (return_code, return_message)
             else:
+                self.application_instance_metadata.is_labeled = True
                 self.Logger.info(self, return_message)
 
 
