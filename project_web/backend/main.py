@@ -141,6 +141,13 @@ def perform_eda():
                     else:
                         path = "/ebs_data/project_datasets/d_ekg2/files"
 
+                if dataset_name_stub == "img1":
+                    logger.info("file_save", "img1 dataset selected")
+                    if platform.system() == "Windows":
+                        path = "D:\Facultate\Master II\Sem I\PCIM\Proiect\Proj\dataset_tensor_test"
+                    else:
+                        path = "/ebs_data/project_datasets/d_img1/files"
+
         else:
             temp_dir = tempfile.mkdtemp()
             for file in files:
@@ -190,6 +197,7 @@ def perform_eda():
                 "path": path,
                 "eda": files_dicts,
                 "dataset_category": dataset_category,
+                "unprocessed_files":
             }
         )
     except Exception as e:

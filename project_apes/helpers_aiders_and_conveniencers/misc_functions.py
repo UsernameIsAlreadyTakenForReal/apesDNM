@@ -137,7 +137,7 @@ def get_plot_save_filename(plot_caption, solution, app_instance_metadata):
 
     file_absolute_path = (
         os.path.abspath(app_instance_metadata.shared_definitions.plot_savefile_location)
-        + os.sep
+        + "/"
         + filename
     )
     return filename, file_absolute_path

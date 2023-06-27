@@ -56,6 +56,7 @@ class Shared_Definitions:
         data = json.load(file)
 
         ## DATASETS
+        self.accepted_dataset_types = data["accepted_dataset_types"]
         self.default_file_to_dataset_label = data["default_file_to_dataset_label"]
         self.rough_filename_searches = data["rough_filename_searches"]
         self.supported_file_formats = data["supported_file_formats"]

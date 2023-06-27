@@ -71,9 +71,12 @@ class Dataset_EDA:
         if verifier[2]:
             self.dataset_category = "ral"
 
+        temp_EDA_accepted_file_formats = [".csv", ".arff"]
+        unprocessed_files = []
+
         for dirname, _, filenames in os.walk(self.dataset_path):
             for index, filename in enumerate(filenames):
-                if pathlib.Path(filename).suffix != ".json":
+                if pathlib.Path(filename).suffix in temp_EDA_accepted_file_formats:
                     dict = {}
 
                     full_path = os.path.join(dirname, filename)
@@ -181,10 +184,16 @@ class Dataset_EDA:
                     dict["possible_number_of_classes"] = str(possible_number_of_classes)
 
                     results.append(dict)
+                else:
+                    unprocessed_files.append(filename)
 
         self.Logger.info(
             self, "eda performed successfully for files in " + self.dataset_path
         )
+        if len(unprocessed_files) != 0:
+            self.Logger.info(
+                self, f"WARNING: files {unprocessed_files} were not processed by EDA"
+            )
 
         return (
             0,

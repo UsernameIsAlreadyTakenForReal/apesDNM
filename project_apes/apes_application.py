@@ -100,7 +100,7 @@ class APES_Application:
         if (
             self.application_instance_metadata.dataset_category
             != self.application_instance_metadata.solution_category
-        ):
+        ) and self.application_instance_metadata.dataset_category != "N/A":
             info_message = "Dataset category and solution category do not match"
             self.Logger.info(self, info_message)
 
@@ -122,9 +122,15 @@ class APES_Application:
 
             from apes_discerner import Discerner
 
-            discerner = Discerner(self.Logger)
+            discerner = Discerner(self.Logger, self.application_instance_metadata)
+            return_code, return_message, self.application_instance_metadata.dataset_category = discerner.get_dataset_type()
+            if return_code != 0:
+                return (return_code, return_message)
+            else:
+                self.Logger.info(self, return_message)
 
-        else:
+
+        if self.application_instance_metadata.dataset_category != "N/A":
             info_message = "We know this dataset is of type " + str(
                 self.application_instance_metadata.dataset_category
             )
@@ -162,6 +168,9 @@ class APES_Application:
                     return (0, "Function p1_get_targeted_dataset exited successfully")
                 case "ral":
                     pass
+        else:
+            return (1, "Function p1_get_targeted_dataset couldn't perform successfully")
+
 
     def p15_display_dataset_informations(self, path, shared_definitions):
         dataset_EDA = Dataset_EDA(self.Logger, path, shared_definitions)

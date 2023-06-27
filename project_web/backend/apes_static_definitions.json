@@ -3,6 +3,8 @@
   "rough_filename_searches": ["train", "test", "validation", "run"],
   "supported_file_formats": [".csv", ".arff", ".txt", ".npz", ".ts"],
   "supported_model_extensions": [".pth", ".h5"],
+
+  "accepted_dataset_types": ["ekg", "img", "ral"],
   "possible_extensions_for_numerical_datasets": [
     ".csv",
     ".arff",
@@ -32,6 +34,6 @@
   "project_solution_img1_d_img1_best_model_filename": "",
 
   "plot_savefile_format": "png",
-  "plot_savefile_location_development": "./../backend/images/",
+  "plot_savefile_location_development": "./../project_web/backend/images/",
   "plot_savefile_location": "/ebs_data/project_home/apesDNM/project_web/backend/images/"
 }

@@ -338,8 +338,8 @@ class Solution_ekg_2:
             self.X_test, batch_size=32, callbacks=callbacks, max_queue_size=10
         )
 
-        # print(predictions)
-        # print(predictions.shape)
+        print(predictions)
+        print(predictions.shape)
 
         f2_time = datetime.now()
         difference = f2_time - f1_time
