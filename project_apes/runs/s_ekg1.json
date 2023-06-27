@@ -384,6 +384,111 @@
       "time_test_end": "2023-06-27_21:35:26",
       "time_test_start": "2023-06-27_21:22:41",
       "time_test_total": 764
+    },
+    {
+      "_app_instance_ID": "230627_230237",
+      "_time_object_creation": "2023-06-27_23:02:44",
+      "_used_test_function": true,
+      "correct_abnormal_predictions": "145/145",
+      "correct_normal_predictions": "111/145",
+      "dataset_full_size": [
+        5000,
+        141
+    ],
+      "dataset_name": "ekg1",
+      "dataset_test_size": [
+        145,
+        140
+    ],
+      "dataset_train_size": [
+        2481,
+        140
+    ],
+      "dataset_val_size": [
+        293,
+        140
+    ],
+      "device_used": "cuda",
+      "model_filename": "s_ekg1_d_ekg1_20230611_224100.pth",
+      "plots_filenames": [
+          "images/s_ekg1_d_ekg1__Beat_and_prediction__20230627_230309.png"
+    ],
+      "prediction_threshold": 46,
+      "solution_name": "ekg1",
+      "test_loss_average": 79.23551690989527,
+      "time_test_end": "2023-06-27_23:03:09",
+      "time_test_start": "2023-06-27_23:02:46",
+      "time_test_total": 22
+    },
+    {
+      "_app_instance_ID": "230627_230334",
+      "_time_object_creation": "2023-06-27_23:03:42",
+      "_used_test_function": true,
+      "correct_abnormal_predictions": "144/145",
+      "correct_normal_predictions": "121/145",
+      "dataset_full_size": [
+        5000,
+        141
+    ],
+      "dataset_name": "ekg1",
+      "dataset_test_size": [
+        145,
+        140
+    ],
+      "dataset_train_size": [
+        2481,
+        140
+    ],
+      "dataset_val_size": [
+        293,
+        140
+    ],
+      "device_used": "cuda",
+      "model_filename": "s_ekg1_d_ekg1_20230611_224100.pth",
+      "plots_filenames": [
+          "images/s_ekg1_d_ekg1__Beat_and_prediction__20230627_230405.png"
+    ],
+      "prediction_threshold": 46,
+      "solution_name": "ekg1",
+      "test_loss_average": 76.95724684616616,
+      "time_test_end": "2023-06-27_23:04:04",
+      "time_test_start": "2023-06-27_23:03:44",
+      "time_test_total": 20
+    },
+    {
+      "_app_instance_ID": "230627_230421",
+      "_time_object_creation": "2023-06-27_23:04:29",
+      "_used_test_function": true,
+      "correct_abnormal_predictions": "145/145",
+      "correct_normal_predictions": "111/145",
+      "dataset_full_size": [
+        5000,
+        141
+    ],
+      "dataset_name": "ekg1",
+      "dataset_test_size": [
+        145,
+        140
+    ],
+      "dataset_train_size": [
+        2481,
+        140
+    ],
+      "dataset_val_size": [
+        293,
+        140
+    ],
+      "device_used": "cuda",
+      "model_filename": "s_ekg1_d_ekg1_20230611_224100.pth",
+      "plots_filenames": [
+          "images/s_ekg1_d_ekg1__Beat_and_prediction__20230627_230453.png"
+    ],
+      "prediction_threshold": 46,
+      "solution_name": "ekg1",
+      "test_loss_average": 79.23551690989527,
+      "time_test_end": "2023-06-27_23:04:53",
+      "time_test_start": "2023-06-27_23:04:31",
+      "time_test_total": 21
     }
   ]
 }

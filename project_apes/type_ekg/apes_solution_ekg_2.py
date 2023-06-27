@@ -113,15 +113,18 @@ class Solution_ekg_2:
         info_message = "save_run() -- assess_whether_to_save_model_as_best"
         self.Logger.info(self, info_message)
 
-        if self.solution_serializer._used_train_function == True:
-            assess_whether_to_save_model_as_best(
-                self.Logger,
-                self.app_instance_metadata,
-                "ekg2",
-                self.MODEL_SAVE_PATH.split("/")[-1],
-                self.accuracy_per_class,
-                self.mean_total_accuracy,
-            )
+        try:
+            if self.solution_serializer._used_train_function == True:
+                assess_whether_to_save_model_as_best(
+                    self.Logger,
+                    self.app_instance_metadata,
+                    "ekg2",
+                    self.MODEL_SAVE_PATH.split("/")[-1],
+                    self.accuracy_per_class,
+                    self.mean_total_accuracy,
+                )
+        except:
+            pass
 
         info_message = "save_run() -- end"
         self.Logger.info(self, info_message)
@@ -338,8 +341,7 @@ class Solution_ekg_2:
             self.X_test, batch_size=32, callbacks=callbacks, max_queue_size=10
         )
 
-        print(predictions)
-        print(predictions.shape)
+        self.print_results(predictions)
 
         f2_time = datetime.now()
         difference = f2_time - f1_time
@@ -553,3 +555,31 @@ class Solution_ekg_2:
         self.plots_filenames.append(plot_save_location.split(os.sep)[-1])
         plt.clf()
         ## Save plot section -- end
+
+    def print_results(self, predictions):
+
+        print(predictions.shape)
+        number_of_classes = self.app_instance_metadata.dataset_metadata.number_of_classes
+        list_of_classes = self.app_instance_metadata.dataset_metadata.class_names
+
+        list_of_discovered_rows = []
+        for i in range(number_of_classes):
+            temp_list = []
+            list_of_discovered_rows.append(temp_list)
+
+        columns = predictions.shape[1]
+        for i in range(predictions.shape[0]):
+            row_max = max(predictions[i])
+            for j in range(columns):
+                if predictions[i][j] == row_max:
+                    list_of_discovered_rows[j].append(i)
+
+        for i in range(number_of_classes):
+            if len(list_of_classes) != 0:
+                info_message = f"Found {len(list_of_discovered_rows[i])} entries in class {list_of_classes[i]}. A full list can be found..."
+                self.Logger.info(self, info_message)
+                # self.Logger.info(self, str(list_of_discovered_rows[i]))
+            else:
+                info_message = f"Found {len(list_of_discovered_rows[i])} entries in class no. {i + 1} (inside index {i}). A full list can be found..."
+                self.Logger.info(self, info_message)
+                # self.Logger.info(self, str(list_of_discovered_rows[i]))

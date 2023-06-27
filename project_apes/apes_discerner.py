@@ -34,8 +34,6 @@ class Discerner:
 
         self.get_1weight()
 
-        print(self.dataset_type_probabilities_matrix)
-
         self.predicted_dataset_type = self.interpret_probability_matrix()
 
         info_message = f"Determined dataset type to be {self.predicted_dataset_type}"
@@ -71,7 +69,6 @@ class Discerner:
             self.Logger.info(self, info_message)
 
             for index, filename in enumerate(filenames):
-                print(filename)
                 if pathlib.Path(filename).suffix in possible_extensions_for_numerical:
                     self.dataset_type_probabilities_matrix[index, 0] += 1
                 elif pathlib.Path(filename).suffix in possible_extensions_for_numerical:
