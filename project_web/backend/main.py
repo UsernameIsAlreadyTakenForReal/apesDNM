@@ -432,7 +432,7 @@ def run_apesdnm():
             "model_origin", "train_new_model"
         )
         application_metadata__model_train_epochs = int(
-            request.form.get("model_train_epochs", 5)
+            request.form.get("model_train_epochs", 1)
         )
 
         dataset_metadata = Dataset_Metadata(

@@ -41,7 +41,7 @@ class Shared_Definitions:
     )
     plot_savefile_format = "png"
     plot_show_at_runtime = False
-    plot_savefile_location = "./../project_web/backend/images/"  # '.' is proejct_apes
+    plot_savefile_location = "./../backend/images/"  # '.' is proejct_apes
 
     def __init__(self):
         # TODO: check centralized information (S3?)

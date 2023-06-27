@@ -135,3 +135,5 @@ dmypy.json
 
 # plot images for backend
 /project_web/backend/images/*.png
+
+!/project_web/frontend/.env
