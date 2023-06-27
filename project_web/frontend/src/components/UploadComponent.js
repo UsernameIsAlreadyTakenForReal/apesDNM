@@ -736,7 +736,7 @@ export default function UploadComponent() {
       selectedMethods.length > 1 ? "compare_solutions" : "run_one_solution";
 
     formData.append("application_mode", applicationMode);
-    formData.append("dataset_origin", modelOrigin);
+    formData.append("model_origin", modelOrigin);
 
     let localDatasetCategory = localSelectedDataset.replace(/[0-9]/g, "");
 
