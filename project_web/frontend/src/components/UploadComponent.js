@@ -931,7 +931,7 @@ export default function UploadComponent() {
               </Tooltip>
             </Divv>
 
-            {true && (
+            {false && (
               <Button
                 onClick={() => {
                   setShowResults(true);
