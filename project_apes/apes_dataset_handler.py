@@ -275,6 +275,23 @@ def treat_files(
                 if return_code != 0:
                     return return_code, return_message, [], []
 
+        if (app_instance_metadata.model_origin == "train_new_model"
+            and len(list_of_dataFramesUtilityLabels) == 1
+            and list_of_dataFramesUtilityLabels[0] == "test"):
+            (
+                return_code,
+                return_message,
+                list_of_dataFrames,
+                list_of_dataFramesUtilityLabels,
+            ) = split_dataFrames(
+                Logger,
+                app_instance_metadata,
+                list_of_dataFrames,
+                list_of_dataFramesUtilityLabels,
+            )
+            if return_code != 0:
+                return return_code, return_message, [], []
+
         if app_instance_metadata.display_dataFrames == True:
             info_message = f"list_of_dataFrames: {list_of_dataFrames}"
             Logger.info("apes_dataset_handler.treat_files", info_message)
