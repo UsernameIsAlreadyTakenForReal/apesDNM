@@ -153,6 +153,8 @@ def model_filename_fits_expected_name(
             file_extension = ".pth"
         case "ekg2":
             file_extension = ".h5"
+        case "img1":
+            file_extension = ".h5"
 
     search_expression = (
         "^s_{solution_name}_d_{name_stub}_.{{6,8}}_.{{4,6}}{extension}".format(

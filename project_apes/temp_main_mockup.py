@@ -100,8 +100,8 @@ application_metadata__dataset_category = dataset_category
 application_metadata__solution_category = solution_category
 application_metadata__solution_nature = "supervised"
 application_metadata__solution_index = solution_index
-# application_metadata__model_origin = "train_new_model"
-application_metadata__model_origin = "use_existing_model"
+application_metadata__model_origin = "train_new_model"
+# application_metadata__model_origin = "use_existing_model"
 application_metadata__model_train_epochs = 1
 
 application_metadata__dataset_category = "N/A"

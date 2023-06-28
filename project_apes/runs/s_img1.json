@@ -322,6 +322,58 @@
         0.41699570417404175,
         0.4158819317817688
     ]
+    },
+    {
+      "_app_instance_ID": "230628_061835",
+      "_time_object_creation": "2023-06-28_06:18:41",
+      "batch_size": 32,
+      "class_names": [
+          "exudates",
+          "non_exudates"
+    ],
+      "dataset_name": "img1",
+      "model_filename": "s_img1_d_img1_20230620_013531.h5",
+      "num_classes": 2,
+      "plots_filenames": [],
+      "solution_name": "img1",
+      "tensor_shape_image_shape":     {    },
+      "tensor_shape_labels_batch":     {    }
+    },
+    {
+      "_app_instance_ID": "230628_061905",
+      "_time_object_creation": "2023-06-28_06:19:11",
+      "_used_train_function": true,
+      "batch_size": 32,
+      "class_names": [
+          "exudates",
+          "non_exudates"
+    ],
+      "dataset_name": "img1",
+      "model_filename": "s_img1_d_img1_20230628_061937.h5",
+      "num_classes": 2,
+      "plots_filenames": [
+          "images/s_img1_d_img1__Training_and_Validation_Accuracy_--_Training_and_Validation_Loss__20230628_061936.png"
+    ],
+      "solution_name": "img1",
+      "tensor_shape_image_shape":     {    },
+      "tensor_shape_labels_batch":     {    },
+      "time_train_end": "2023-06-28_06:19:35",
+      "time_train_start": "2023-06-28_06:19:14",
+      "time_train_total": 21,
+      "train_acc": [
+        0.556352436542511
+    ],
+      "train_accuracy": 0.556352436542511,
+      "train_epochs": 1,
+      "train_loss": 0.8953773975372314,
+      "train_val_accuracy": 0.7860082387924194,
+      "train_val_loss": 0.556502103805542,
+      "val_acc": [
+        0.7860082387924194
+    ],
+      "val_loss": [
+        0.556502103805542
+    ]
     }
   ]
 }

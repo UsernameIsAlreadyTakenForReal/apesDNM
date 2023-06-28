@@ -91,7 +91,7 @@ class Solution_img_1:
         #     assess_whether_to_save_model_as_best(
         #         self.Logger,
         #         self.app_instance_metadata,
-        #         "ekg2",
+        #         "img1",
         #         self.MODEL_SAVE_PATH.split("/")[-1],
         #         self.accuracy_per_class,
         #         self.mean_total_accuracy,
@@ -170,8 +170,47 @@ class Solution_img_1:
 
         return 0, f"{self} -- save_model() completed successfully"
 
-    def load_model(self):
-        pass
+    def load_model(self, filename="", path=""):
+        info_message = "load_model() -- begin"
+        self.Logger.info(self, info_message)
+
+        if filename != "" and path != "":
+            pass
+        elif filename != "":
+            pass
+        else:
+            if model_filename_fits_expected_name(
+                "img1",
+                self.app_instance_metadata,
+                self.last_good_suitable_model,
+            ):
+                info_message = "Loading the last good model saved"
+                self.Logger.info(self, info_message)
+                model_absolute_path = get_full_path_of_given_model(
+                    self.last_good_suitable_model,
+                    self.app_instance_metadata.shared_definitions.project_model_root_path,
+                )
+                self.model = keras.models.load_model(model_absolute_path)
+                self.solution_serializer.model_filename = model_absolute_path.split(
+                    "/"
+                )[-1]
+            else:
+                info_message = "Loading last available model"
+                self.Logger.info(self, info_message)
+                return_code, return_message, model_path = get_last_model(
+                    self.Logger, "img1", self.app_instance_metadata
+                )
+                if return_code != 0:
+                    self.Logger.info(self, return_message)
+                    return return_code, return_message
+                else:
+                    self.model = keras.models.load_model(model_path)
+                    self.solution_serializer.model_filename = model_path.split("/")[-1]
+
+        info_message = "load_model() -- end"
+        self.Logger.info(self, info_message)
+
+        return 0, f"{self} -- load_model() completed successfully"
 
     ## Functionality method
     def train(self, epochs=40):

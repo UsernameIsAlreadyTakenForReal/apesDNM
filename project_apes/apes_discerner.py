@@ -71,11 +71,12 @@ class Discerner:
             for index, filename in enumerate(filenames):
                 if pathlib.Path(filename).suffix in possible_extensions_for_numerical:
                     self.dataset_type_probabilities_matrix[index, 0] += 1
-                elif pathlib.Path(filename).suffix in possible_extensions_for_numerical:
+                elif pathlib.Path(filename).suffix in possible_extensions_for_image:
                     self.dataset_type_probabilities_matrix[index, 1] += 1
-                elif pathlib.Path(filename).suffix in possible_extensions_for_numerical:
+                elif pathlib.Path(filename).suffix in possible_extensions_for_audio:
                     self.dataset_type_probabilities_matrix[index, 2] += 1
                 pass
+
 
     def get_number_of_files_to_handle(self, path):
         number_of_files = 0
