@@ -4,4 +4,4 @@ This project represents the work of @UsernameIsAlreadyTakenForReal and @IsTheUse
 
 ## APES
 
-Sometime I will write a description here and make this project public. Until then, fuck you
+Sometime I will write a description here and make this project public. Until then, youtube.com/shorts/Kx5GgLuH0o0
